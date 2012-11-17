@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>rc/image/edit_16x16.png</file>
+        <file>rc/image/editcopy.png</file>
+        <file>rc/image/editcut.png</file>
+        <file>rc/image/editpaste.png</file>
+        <file>rc/image/file.png</file>
+        <file>rc/image/filefind.png</file>
+        <file>rc/image/filenew.png</file>
+        <file>rc/image/fileopen.png</file>
+        <file>rc/image/fileprint.png</file>
+        <file>rc/image/filesave.png</file>
+        <file>rc/image/filesaveall.png</file>
+        <file>rc/image/redo.png</file>
+        <file>rc/image/searchreplace.png</file>
+        <file>rc/image/undo.png</file>
+        <file>rc/Ainesmile.png</file>
+    </qresource>
+</RCC>

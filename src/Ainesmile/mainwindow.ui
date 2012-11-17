@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1298</width>
+    <height>795</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Ainesmile</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Ainesmile.qrc">
+    <normaloff>:/rc/Ainesmile.png</normaloff>:/rc/Ainesmile.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="TabWidget" name="tabWidget" native="true">
+      <property name="documentMode" stdset="0">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable" stdset="0">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1298</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNewFile"/>
+    <addaction name="actionOpenFile"/>
+    <addaction name="actionReloadFromDisk"/>
+    <addaction name="actionSaveFile"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="actionSaveAll"/>
+    <addaction name="actionClose"/>
+    <addaction name="actionCloseAll"/>
+    <addaction name="actionCloseAllButActiveDocument"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="actionPrintNow"/>
+    <addaction name="separator"/>
+    <addaction name="actionRecentFiles"/>
+    <addaction name="actionOpenAllRecentFiles"/>
+    <addaction name="actionEmptyRecentFilesList"/>
+    <addaction name="separator"/>
+    <addaction name="actionExitApp"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelpContent"/>
+    <addaction name="separator"/>
+    <addaction name="actionDForDSoftwareHome"/>
+    <addaction name="actionAinesmileProductPage"/>
+    <addaction name="separator"/>
+    <addaction name="actionRegistration"/>
+    <addaction name="actionAboutApp"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <widget class="QMenu" name="menuCopyToClipboard">
+     <property name="title">
+      <string>Copy to Clipboard</string>
+     </property>
+     <addaction name="actionCurrentFullFilePathToClipboard"/>
+     <addaction name="actionCurrentFileNameToClipboard"/>
+     <addaction name="actionCurrentDirectoryPathToClipboard"/>
+    </widget>
+    <widget class="QMenu" name="menuIndent">
+     <property name="title">
+      <string>Indent</string>
+     </property>
+     <addaction name="actionIncreaseLineIndent"/>
+     <addaction name="actionDecreaseLineIndent"/>
+    </widget>
+    <widget class="QMenu" name="menuConvert_case_to">
+     <property name="title">
+      <string>Convert case to</string>
+     </property>
+     <addaction name="actionUppercase"/>
+     <addaction name="actionLowercase"/>
+    </widget>
+    <widget class="QMenu" name="menuLineOperations">
+     <property name="title">
+      <string>Line Operations</string>
+     </property>
+     <addaction name="actionDuplicateCurrentLine"/>
+     <addaction name="actionSplitLines"/>
+     <addaction name="actionJoinLines"/>
+     <addaction name="actionMoveUpCurrentLine"/>
+     <addaction name="actionMoveDownCurrentLine"/>
+    </widget>
+    <widget class="QMenu" name="menuComment_Uncomment">
+     <property name="title">
+      <string>Comment/Uncomment</string>
+     </property>
+     <addaction name="actionToggleBlockComment"/>
+     <addaction name="actionBlockComment"/>
+     <addaction name="actionBlockUncomment"/>
+     <addaction name="actionStreamComment"/>
+    </widget>
+    <widget class="QMenu" name="menuAutoCompletion">
+     <property name="title">
+      <string>Auto-Completion</string>
+     </property>
+     <addaction name="actionFunctionCompletion"/>
+     <addaction name="actionWordCompletion"/>
+     <addaction name="actionFunctionParametersHint"/>
+    </widget>
+    <widget class="QMenu" name="menuEOLConversion">
+     <property name="title">
+      <string>EOL Conversion</string>
+     </property>
+     <addaction name="actionWindowsFormat"/>
+     <addaction name="actionUNIXFormat"/>
+     <addaction name="actionMacFormat"/>
+    </widget>
+    <widget class="QMenu" name="menuBlankOperations">
+     <property name="title">
+      <string>Blank Operations</string>
+     </property>
+     <addaction name="actionTrimTrailingSpace"/>
+     <addaction name="actionTrimLeadingSpace"/>
+     <addaction name="actionTrimLeadingAndTrailingSpace"/>
+     <addaction name="actionEOLToSpace"/>
+     <addaction name="actionRemoveUnnecessaryBlankAndEOL"/>
+     <addaction name="separator"/>
+     <addaction name="actionTABToSpace"/>
+     <addaction name="actionSpaceToTAB"/>
+    </widget>
+    <widget class="QMenu" name="menuPasteSpecial">
+     <property name="title">
+      <string>Paste Special</string>
+     </property>
+     <addaction name="actionPasteHTMLContent"/>
+     <addaction name="actionPasteRTFContent"/>
+     <addaction name="separator"/>
+     <addaction name="actionCopyBinaryContent"/>
+     <addaction name="actionCutBinaryContent"/>
+     <addaction name="actionPasteBinaryContent"/>
+    </widget>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionSelectAll"/>
+    <addaction name="separator"/>
+    <addaction name="menuCopyToClipboard"/>
+    <addaction name="menuIndent"/>
+    <addaction name="menuConvert_case_to"/>
+    <addaction name="menuLineOperations"/>
+    <addaction name="menuComment_Uncomment"/>
+    <addaction name="menuAutoCompletion"/>
+    <addaction name="menuEOLConversion"/>
+    <addaction name="menuBlankOperations"/>
+    <addaction name="menuPasteSpecial"/>
+    <addaction name="separator"/>
+    <addaction name="actionColumnMode"/>
+    <addaction name="actionColumnEditor"/>
+    <addaction name="actionCharacterPanel"/>
+    <addaction name="actionClipboardHistory"/>
+    <addaction name="separator"/>
+    <addaction name="actionSetReadOnly"/>
+    <addaction name="actionClearReadOnlyFlag"/>
+   </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>&amp;Search</string>
+    </property>
+    <widget class="QMenu" name="menuMarkAll">
+     <property name="title">
+      <string>Mark All</string>
+     </property>
+     <addaction name="actionUsing1stStyle"/>
+     <addaction name="actionUsing2ndStyle"/>
+     <addaction name="actionUsing3rdStyle"/>
+     <addaction name="actionUsing4thStyle"/>
+     <addaction name="actionUsing5thStyle"/>
+    </widget>
+    <widget class="QMenu" name="menuUnmarkAll">
+     <property name="title">
+      <string>Unmark All</string>
+     </property>
+     <addaction name="actionClear1stStyle"/>
+     <addaction name="actionClear2ndStyle"/>
+     <addaction name="actionClear3rdStyle"/>
+     <addaction name="actionClear4thStyle"/>
+     <addaction name="actionClear5thStyle"/>
+     <addaction name="actionClearAllStyle"/>
+    </widget>
+    <widget class="QMenu" name="menuJumpUp">
+     <property name="title">
+      <string>Jump up</string>
+     </property>
+     <addaction name="actionJumpUp1stStyle"/>
+     <addaction name="actionJumpUp2ndStyle"/>
+     <addaction name="actionJumpUp3rdStyle"/>
+     <addaction name="actionJumpUp4thStyle"/>
+     <addaction name="actionJumpUp5thStyle"/>
+     <addaction name="actionJumpUpFindStyle"/>
+    </widget>
+    <widget class="QMenu" name="menuJumpDown">
+     <property name="title">
+      <string>Jump down</string>
+     </property>
+     <addaction name="actionJumpDown1stStyle"/>
+     <addaction name="actionJumpDown2ndStyle"/>
+     <addaction name="actionJumpDown3rdStyle"/>
+     <addaction name="actionJumpDown4thStyle"/>
+     <addaction name="actionJumpDown5thStyle"/>
+     <addaction name="actionJumpDownFindStyle"/>
+    </widget>
+    <widget class="QMenu" name="menuBookmark">
+     <property name="title">
+      <string>Bookmark</string>
+     </property>
+     <addaction name="actionToggleBookmark"/>
+     <addaction name="actionNextBookmark"/>
+     <addaction name="actionPreviousBookmark"/>
+     <addaction name="actionClearAllBookmarks"/>
+     <addaction name="actionCutBookmarkedLines"/>
+     <addaction name="actionCopyBookmarkedLines"/>
+     <addaction name="actionPasteToReplaceBookmarkedLines"/>
+     <addaction name="actionRemoveBookmarkedLines"/>
+     <addaction name="actionRemoveUnmarkedLines"/>
+     <addaction name="actionInverseBookmark"/>
+    </widget>
+    <addaction name="actionFind"/>
+    <addaction name="actionFindInFiles"/>
+    <addaction name="actionFindNext"/>
+    <addaction name="actionFindPrevious"/>
+    <addaction name="actionSelectAndFindNext"/>
+    <addaction name="actionSelectAndFindPrevious"/>
+    <addaction name="actionFindVolatieNext"/>
+    <addaction name="actionFindVolatiePrevious"/>
+    <addaction name="actionReplace"/>
+    <addaction name="actionIncrementalSearch"/>
+    <addaction name="actionSearchResultsWindow"/>
+    <addaction name="actionNextSearchResult"/>
+    <addaction name="actionPreviousSearchResult"/>
+    <addaction name="actionGoTo"/>
+    <addaction name="actionGoToMatchingBrace"/>
+    <addaction name="separator"/>
+    <addaction name="menuMarkAll"/>
+    <addaction name="menuUnmarkAll"/>
+    <addaction name="menuJumpUp"/>
+    <addaction name="menuJumpDown"/>
+    <addaction name="separator"/>
+    <addaction name="menuBookmark"/>
+    <addaction name="separator"/>
+    <addaction name="actionFindCharactersInRange"/>
+   </widget>
+   <widget class="QMenu" name="menuExtension">
+    <property name="title">
+     <string>E&amp;xtension</string>
+    </property>
+    <widget class="QMenu" name="menuMacros">
+     <property name="title">
+      <string>Macros</string>
+     </property>
+     <addaction name="actionStartRecording"/>
+     <addaction name="actionAbortRecording"/>
+     <addaction name="separator"/>
+     <addaction name="actionSaveLastRecording"/>
+     <addaction name="actionReplayLastRecording"/>
+    </widget>
+    <widget class="QMenu" name="menuExtensionEditor">
+     <property name="title">
+      <string>Extension Editor</string>
+     </property>
+     <addaction name="actionShowExtensionEditor"/>
+     <addaction name="separator"/>
+     <addaction name="actionEditCommands"/>
+     <addaction name="actionEditSnippets"/>
+     <addaction name="separator"/>
+     <addaction name="actionReloadExtensions"/>
+    </widget>
+    <addaction name="actionSelectExtensionItem"/>
+    <addaction name="separator"/>
+    <addaction name="menuMacros"/>
+    <addaction name="menuExtensionEditor"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuShowSymbol">
+     <property name="title">
+      <string>Show Symbol</string>
+     </property>
+     <addaction name="actionShowWhiteSpaceAndTAB"/>
+     <addaction name="actionShowEndOfLine"/>
+     <addaction name="actionShowAllCharacters"/>
+     <addaction name="separator"/>
+     <addaction name="actionShowIndentGuide"/>
+     <addaction name="actionShowWrapSymbol"/>
+    </widget>
+    <widget class="QMenu" name="menuZoom">
+     <property name="title">
+      <string>Zoom</string>
+     </property>
+     <addaction name="actionZoomIn"/>
+     <addaction name="actionZoomOut"/>
+     <addaction name="actionRestoreDefaultZoom"/>
+    </widget>
+    <addaction name="actionAlwaysOnTop"/>
+    <addaction name="actionToggleFullScreenMode"/>
+    <addaction name="actionPostIt"/>
+    <addaction name="separator"/>
+    <addaction name="menuShowSymbol"/>
+    <addaction name="menuZoom"/>
+    <addaction name="actionWordWrap"/>
+    <addaction name="actionFocusOnAnotherView"/>
+    <addaction name="actionHideLines"/>
+    <addaction name="actionUserDefinedDialog"/>
+    <addaction name="separator"/>
+    <addaction name="actionFoldAll"/>
+    <addaction name="actionUnfoldAll"/>
+    <addaction name="actionCollapseCurrentLevel"/>
+    <addaction name="actionUncollapseCurrentLevel"/>
+    <addaction name="actionCollapseLevel"/>
+    <addaction name="actionUnCollapseLevel"/>
+    <addaction name="separator"/>
+    <addaction name="actionSummary"/>
+    <addaction name="separator"/>
+    <addaction name="actionSynchronizeVerticalScrolling"/>
+    <addaction name="actionSynchronizeHorizontalScrolling"/>
+    <addaction name="separator"/>
+    <addaction name="actionTextDirectionRTL"/>
+    <addaction name="actionTextDirectionLTR"/>
+   </widget>
+   <widget class="QMenu" name="menuEn_coding">
+    <property name="title">
+     <string>En&amp;coding</string>
+    </property>
+    <addaction name="actionEncodeInANSI"/>
+    <addaction name="actionEncodeInUTF8WithoutBOM"/>
+    <addaction name="actionEncodeInUTF8"/>
+    <addaction name="actionEncodeInUCS2BigEndian"/>
+    <addaction name="actionEncodeInUCS2LittleEndian"/>
+    <addaction name="actionCharacterSets"/>
+    <addaction name="separator"/>
+    <addaction name="actionConvertToANSI"/>
+    <addaction name="actionConvertToUTF8WithoutBOM"/>
+    <addaction name="actionConvertToUTF8"/>
+    <addaction name="actionConvertToUCS2BigEndian"/>
+    <addaction name="actionConvertToUCS2LittleEndian"/>
+   </widget>
+   <widget class="QMenu" name="menuTool">
+    <property name="title">
+     <string>&amp;Tool</string>
+    </property>
+    <addaction name="actionPreferences"/>
+    <addaction name="separator"/>
+    <addaction name="actionExternal_Tools"/>
+    <addaction name="actionLanguage"/>
+   </widget>
+   <widget class="QMenu" name="menuPlugins">
+    <property name="title">
+     <string>&amp;Plugins</string>
+    </property>
+    <addaction name="actionPluginManager"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+    <addaction name="actionWindowsList"/>
+    <addaction name="actionCloseAllDocuments"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>Pro&amp;ject</string>
+    </property>
+    <addaction name="actionNewProject"/>
+    <addaction name="actionOpenProject"/>
+    <addaction name="actionCloseProject"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSearch"/>
+   <addaction name="menuView"/>
+   <addaction name="menuEn_coding"/>
+   <addaction name="menuProject"/>
+   <addaction name="menuTool"/>
+   <addaction name="menuExtension"/>
+   <addaction name="menuPlugins"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNewFile"/>
+   <addaction name="actionOpenFile"/>
+   <addaction name="actionSaveFile"/>
+   <addaction name="actionSaveAll"/>
+   <addaction name="actionPrint"/>
+   <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="separator"/>
+   <addaction name="actionCut"/>
+   <addaction name="actionCopy"/>
+   <addaction name="actionPaste"/>
+   <addaction name="separator"/>
+   <addaction name="actionFind"/>
+   <addaction name="actionReplace"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpenFile">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/fileopen.png</normaloff>:/rc/image/fileopen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSaveFile">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/filesave.png</normaloff>:/rc/image/filesave.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>Save &amp;As...</string>
+   </property>
+  </action>
+  <action name="actionExitApp">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionHelpContent">
+   <property name="text">
+    <string>&amp;Content</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAboutApp">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionNewFile">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/filenew.png</normaloff>:/rc/image/filenew.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionReloadFromDisk">
+   <property name="text">
+    <string>Reload from Disk</string>
+   </property>
+  </action>
+  <action name="actionSaveAll">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/filesaveall.png</normaloff>:/rc/image/filesaveall.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save All</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionCloseAll">
+   <property name="text">
+    <string>Close All</string>
+   </property>
+  </action>
+  <action name="actionCloseAllButActiveDocument">
+   <property name="text">
+    <string>Close All but Active Document</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/fileprint.png</normaloff>:/rc/image/fileprint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPrintNow">
+   <property name="text">
+    <string>Print Now</string>
+   </property>
+  </action>
+  <action name="actionOpenAllRecentFiles">
+   <property name="text">
+    <string>Open All Recent Files</string>
+   </property>
+  </action>
+  <action name="actionEmptyRecentFilesList">
+   <property name="text">
+    <string>Empty Recent Files List</string>
+   </property>
+  </action>
+  <action name="actionRecentFiles">
+   <property name="text">
+    <string>Recent Files</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/undo.png</normaloff>:/rc/image/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/redo.png</normaloff>:/rc/image/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/editcut.png</normaloff>:/rc/image/editcut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cu&amp;t</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/editcopy.png</normaloff>:/rc/image/editcopy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/editpaste.png</normaloff>:/rc/image/editpaste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionSelectAll">
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionColumnMode">
+   <property name="text">
+    <string>Column Mode...</string>
+   </property>
+  </action>
+  <action name="actionColumnEditor">
+   <property name="text">
+    <string>Column Editor...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionCharacterPanel">
+   <property name="text">
+    <string>Character Panel</string>
+   </property>
+  </action>
+  <action name="actionClipboardHistory">
+   <property name="text">
+    <string>Clipboard History</string>
+   </property>
+  </action>
+  <action name="actionSetReadOnly">
+   <property name="text">
+    <string>Set Read-Only</string>
+   </property>
+  </action>
+  <action name="actionClearReadOnlyFlag">
+   <property name="text">
+    <string>Clear Read-Only Flag</string>
+   </property>
+  </action>
+  <action name="actionCurrentFullFilePathToClipboard">
+   <property name="text">
+    <string>Current Full File Path to Clipboard</string>
+   </property>
+  </action>
+  <action name="actionCurrentFileNameToClipboard">
+   <property name="text">
+    <string>Current File Name to Clipboard</string>
+   </property>
+  </action>
+  <action name="actionCurrentDirectoryPathToClipboard">
+   <property name="text">
+    <string>Current Directory Path to Clipboard</string>
+   </property>
+  </action>
+  <action name="actionIncreaseLineIndent">
+   <property name="text">
+    <string>Increase Line Indent</string>
+   </property>
+  </action>
+  <action name="actionDecreaseLineIndent">
+   <property name="text">
+    <string>Decrease Line Indent</string>
+   </property>
+  </action>
+  <action name="actionUppercase">
+   <property name="text">
+    <string>UPPERCASE</string>
+   </property>
+  </action>
+  <action name="actionLowercase">
+   <property name="text">
+    <string>lowercase</string>
+   </property>
+  </action>
+  <action name="actionDuplicateCurrentLine">
+   <property name="text">
+    <string>Duplicate Current Line</string>
+   </property>
+  </action>
+  <action name="actionSplitLines">
+   <property name="text">
+    <string>Split Lines</string>
+   </property>
+  </action>
+  <action name="actionJoinLines">
+   <property name="text">
+    <string>Join Lines</string>
+   </property>
+  </action>
+  <action name="actionMoveUpCurrentLine">
+   <property name="text">
+    <string>Move Up Current Line</string>
+   </property>
+  </action>
+  <action name="actionMoveDownCurrentLine">
+   <property name="text">
+    <string>Move Down Current Line</string>
+   </property>
+  </action>
+  <action name="actionToggleBlockComment">
+   <property name="text">
+    <string>Toggle Block Comment</string>
+   </property>
+  </action>
+  <action name="actionBlockComment">
+   <property name="text">
+    <string>Block Comment</string>
+   </property>
+  </action>
+  <action name="actionBlockUncomment">
+   <property name="text">
+    <string>Block Uncomment</string>
+   </property>
+  </action>
+  <action name="actionStreamComment">
+   <property name="text">
+    <string>Stream Comment</string>
+   </property>
+  </action>
+  <action name="actionFunctionCompletion">
+   <property name="text">
+    <string>Function Completion</string>
+   </property>
+  </action>
+  <action name="actionWordCompletion">
+   <property name="text">
+    <string>Word Completion</string>
+   </property>
+  </action>
+  <action name="actionFunctionParametersHint">
+   <property name="text">
+    <string>Function Parameters Hint</string>
+   </property>
+  </action>
+  <action name="actionWindowsFormat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Windows Format</string>
+   </property>
+  </action>
+  <action name="actionUNIXFormat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>UNIX Format</string>
+   </property>
+  </action>
+  <action name="actionMacFormat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Mac Format</string>
+   </property>
+  </action>
+  <action name="actionTrimTrailingSpace">
+   <property name="text">
+    <string>Trim Trailing Space</string>
+   </property>
+  </action>
+  <action name="actionTrimLeadingSpace">
+   <property name="text">
+    <string>Trim Leading Space</string>
+   </property>
+  </action>
+  <action name="actionTrimLeadingAndTrailingSpace">
+   <property name="text">
+    <string>Trim Leading and Trailing Space</string>
+   </property>
+  </action>
+  <action name="actionEOLToSpace">
+   <property name="text">
+    <string>EOL to Space</string>
+   </property>
+  </action>
+  <action name="actionRemoveUnnecessaryBlankAndEOL">
+   <property name="text">
+    <string>Remove Unnecessary Blank and EOL</string>
+   </property>
+  </action>
+  <action name="actionTABToSpace">
+   <property name="text">
+    <string>TAB to Space</string>
+   </property>
+  </action>
+  <action name="actionSpaceToTAB">
+   <property name="text">
+    <string>Space to TAB</string>
+   </property>
+  </action>
+  <action name="actionPasteHTMLContent">
+   <property name="text">
+    <string>Paste HTML Content</string>
+   </property>
+  </action>
+  <action name="actionPasteRTFContent">
+   <property name="text">
+    <string>Paste RTF Content</string>
+   </property>
+  </action>
+  <action name="actionCopyBinaryContent">
+   <property name="text">
+    <string>Copy Binary Content</string>
+   </property>
+  </action>
+  <action name="actionCutBinaryContent">
+   <property name="text">
+    <string>Cut Binary Content</string>
+   </property>
+  </action>
+  <action name="actionPasteBinaryContent">
+   <property name="text">
+    <string>Paste Binary Content</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Find...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFindInFiles">
+   <property name="text">
+    <string>Find in Files...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionFindNext">
+   <property name="text">
+    <string>Find &amp;Next</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionFindPrevious">
+   <property name="text">
+    <string>Find &amp;Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionSelectAndFindNext">
+   <property name="text">
+    <string>Select and Find Next</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F3</string>
+   </property>
+  </action>
+  <action name="actionSelectAndFindPrevious">
+   <property name="text">
+    <string>Select and Find Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionFindVolatieNext">
+   <property name="text">
+    <string>Find (Volatie) Next</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F3</string>
+   </property>
+  </action>
+  <action name="actionFindVolatiePrevious">
+   <property name="text">
+    <string>Find (Volatie) Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="icon">
+    <iconset resource="Ainesmile.qrc">
+     <normaloff>:/rc/image/searchreplace.png</normaloff>:/rc/image/searchreplace.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Replace...</string>
+   </property>
+  </action>
+  <action name="actionIncrementalSearch">
+   <property name="text">
+    <string>Incremental Search</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+I</string>
+   </property>
+  </action>
+  <action name="actionSearchResultsWindow">
+   <property name="text">
+    <string>Search Results Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
+   </property>
+  </action>
+  <action name="actionNextSearchResult">
+   <property name="text">
+    <string>Next Search Result</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionPreviousSearchResult">
+   <property name="text">
+    <string>Previous Search Result</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F4</string>
+   </property>
+  </action>
+  <action name="actionGoTo">
+   <property name="text">
+    <string>Go to...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionGoToMatchingBrace">
+   <property name="text">
+    <string>Go to Matching Brace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionFindCharactersInRange">
+   <property name="text">
+    <string>Find characters in range...</string>
+   </property>
+  </action>
+  <action name="actionUsing1stStyle">
+   <property name="text">
+    <string>Using 1st Style</string>
+   </property>
+  </action>
+  <action name="actionUsing2ndStyle">
+   <property name="text">
+    <string>Using 2nd Style</string>
+   </property>
+  </action>
+  <action name="actionUsing3rdStyle">
+   <property name="text">
+    <string>Using 3rd Style</string>
+   </property>
+  </action>
+  <action name="actionUsing4thStyle">
+   <property name="text">
+    <string>Using 4th Style</string>
+   </property>
+  </action>
+  <action name="actionUsing5thStyle">
+   <property name="text">
+    <string>Using 5th Style</string>
+   </property>
+  </action>
+  <action name="actionClear1stStyle">
+   <property name="text">
+    <string>Clear 1st Style</string>
+   </property>
+  </action>
+  <action name="actionClear2ndStyle">
+   <property name="text">
+    <string>Clear 2nd Style</string>
+   </property>
+  </action>
+  <action name="actionClear3rdStyle">
+   <property name="text">
+    <string>Clear 3rd Style</string>
+   </property>
+  </action>
+  <action name="actionClear4thStyle">
+   <property name="text">
+    <string>Clear 4th Style</string>
+   </property>
+  </action>
+  <action name="actionClear5thStyle">
+   <property name="text">
+    <string>Clear 5th Style</string>
+   </property>
+  </action>
+  <action name="actionClearAllStyle">
+   <property name="text">
+    <string>Clear All Style</string>
+   </property>
+  </action>
+  <action name="actionJumpUp1stStyle">
+   <property name="text">
+    <string>1st Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+1</string>
+   </property>
+  </action>
+  <action name="actionJumpUp2ndStyle">
+   <property name="text">
+    <string>2nd Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+2</string>
+   </property>
+  </action>
+  <action name="actionJumpUp3rdStyle">
+   <property name="text">
+    <string>3rd Style</string>
+   </property>
+  </action>
+  <action name="actionJumpUp4thStyle">
+   <property name="text">
+    <string>4th Style</string>
+   </property>
+  </action>
+  <action name="actionJumpUp5thStyle">
+   <property name="text">
+    <string>5th Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+5</string>
+   </property>
+  </action>
+  <action name="actionJumpUpFindStyle">
+   <property name="text">
+    <string>Find Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+0</string>
+   </property>
+  </action>
+  <action name="actionJumpDown1stStyle">
+   <property name="text">
+    <string>1st Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="actionJumpDown2ndStyle">
+   <property name="text">
+    <string>2nd Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionJumpDown3rdStyle">
+   <property name="text">
+    <string>3rd Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionJumpDown4thStyle">
+   <property name="text">
+    <string>4th Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionJumpDown5thStyle">
+   <property name="text">
+    <string>5th Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+5</string>
+   </property>
+  </action>
+  <action name="actionJumpDownFindStyle">
+   <property name="text">
+    <string>Find Style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
+  </action>
+  <action name="actionToggleBookmark">
+   <property name="text">
+    <string>Toggle Bookmark</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F2</string>
+   </property>
+  </action>
+  <action name="actionNextBookmark">
+   <property name="text">
+    <string>Next Bookmark</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionPreviousBookmark">
+   <property name="text">
+    <string>Previous Bookmark</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F2</string>
+   </property>
+  </action>
+  <action name="actionClearAllBookmarks">
+   <property name="text">
+    <string>Clear All Bookmarks</string>
+   </property>
+  </action>
+  <action name="actionCutBookmarkedLines">
+   <property name="text">
+    <string>Cut Bookmarked Lines</string>
+   </property>
+  </action>
+  <action name="actionCopyBookmarkedLines">
+   <property name="text">
+    <string>Copy Bookmarked Lines</string>
+   </property>
+  </action>
+  <action name="actionPasteToReplaceBookmarkedLines">
+   <property name="text">
+    <string>Paste to (Replace) Bookmarked Lines</string>
+   </property>
+  </action>
+  <action name="actionRemoveBookmarkedLines">
+   <property name="text">
+    <string>Remove Bookmarked Lines</string>
+   </property>
+  </action>
+  <action name="actionRemoveUnmarkedLines">
+   <property name="text">
+    <string>Remove Unmarked Lines</string>
+   </property>
+  </action>
+  <action name="actionInverseBookmark">
+   <property name="text">
+    <string>Inverse Bookmark</string>
+   </property>
+  </action>
+  <action name="actionRegistration">
+   <property name="text">
+    <string>Registration...</string>
+   </property>
+  </action>
+  <action name="actionSelectExtensionItem">
+   <property name="text">
+    <string>Select Extension Item...</string>
+   </property>
+  </action>
+  <action name="actionStartRecording">
+   <property name="text">
+    <string>Start Recording...</string>
+   </property>
+  </action>
+  <action name="actionAbortRecording">
+   <property name="text">
+    <string>Abort Recording</string>
+   </property>
+  </action>
+  <action name="actionSaveLastRecording">
+   <property name="text">
+    <string>Save Last Recording</string>
+   </property>
+  </action>
+  <action name="actionReplayLastRecording">
+   <property name="text">
+    <string>Replay Last Recording</string>
+   </property>
+  </action>
+  <action name="actionShowExtensionEditor">
+   <property name="text">
+    <string>Show Extension Editor</string>
+   </property>
+  </action>
+  <action name="actionEditCommands">
+   <property name="text">
+    <string>Edit Commands...</string>
+   </property>
+  </action>
+  <action name="actionEditSnippets">
+   <property name="text">
+    <string>Edit Snippets...</string>
+   </property>
+  </action>
+  <action name="actionReloadExtensions">
+   <property name="text">
+    <string>Reload Extensions</string>
+   </property>
+  </action>
+  <action name="action_Plugins">
+   <property name="text">
+    <string>&amp;Plugins</string>
+   </property>
+  </action>
+  <action name="actionDForDSoftwareHome">
+   <property name="text">
+    <string>DForD Software Home</string>
+   </property>
+  </action>
+  <action name="actionAinesmileProductPage">
+   <property name="text">
+    <string>Ainesmile Product Page</string>
+   </property>
+  </action>
+  <action name="actionAlwaysOnTop">
+   <property name="text">
+    <string>Always on &amp;Top</string>
+   </property>
+  </action>
+  <action name="actionToggleFullScreenMode">
+   <property name="text">
+    <string>Toggle Full Screen Mode</string>
+   </property>
+  </action>
+  <action name="actionPostIt">
+   <property name="text">
+    <string>Post-It</string>
+   </property>
+  </action>
+  <action name="actionMove_Clone_Current_Document">
+   <property name="text">
+    <string>Move/Clone Current Document</string>
+   </property>
+  </action>
+  <action name="actionWordWrap">
+   <property name="text">
+    <string>Word Wrap</string>
+   </property>
+  </action>
+  <action name="actionFocusOnAnotherView">
+   <property name="text">
+    <string>Focus on Another View</string>
+   </property>
+  </action>
+  <action name="actionHideLines">
+   <property name="text">
+    <string>Hide Lines</string>
+   </property>
+  </action>
+  <action name="actionUserDefinedDialog">
+   <property name="text">
+    <string>User-Defined Dialog...</string>
+   </property>
+  </action>
+  <action name="actionFoldAll">
+   <property name="text">
+    <string>Fold All</string>
+   </property>
+  </action>
+  <action name="actionUnfoldAll">
+   <property name="text">
+    <string>Unfold All</string>
+   </property>
+  </action>
+  <action name="actionCollapseCurrentLevel">
+   <property name="text">
+    <string>Collapse Current Level</string>
+   </property>
+  </action>
+  <action name="actionUncollapseCurrentLevel">
+   <property name="text">
+    <string>Uncollapse Current Level</string>
+   </property>
+  </action>
+  <action name="actionCollapseLevel">
+   <property name="text">
+    <string>Collapse Level</string>
+   </property>
+  </action>
+  <action name="actionUnCollapseLevel">
+   <property name="text">
+    <string>UnCollapse Level</string>
+   </property>
+  </action>
+  <action name="actionSummary">
+   <property name="text">
+    <string>Summary...</string>
+   </property>
+  </action>
+  <action name="actionProject">
+   <property name="text">
+    <string>Project</string>
+   </property>
+  </action>
+  <action name="actionSynchronizeVerticalScrolling">
+   <property name="text">
+    <string>Synchronize Vertical Scrolling</string>
+   </property>
+  </action>
+  <action name="actionSynchronizeHorizontalScrolling">
+   <property name="text">
+    <string>Synchronize Horizontal Scrolling</string>
+   </property>
+  </action>
+  <action name="actionTextDirectionRTL">
+   <property name="text">
+    <string>Text Direction RTL</string>
+   </property>
+  </action>
+  <action name="actionTextDirectionLTR">
+   <property name="text">
+    <string>Text Direction LTR</string>
+   </property>
+  </action>
+  <action name="actionEncodeInANSI">
+   <property name="text">
+    <string>Encode in ANSI</string>
+   </property>
+  </action>
+  <action name="actionEncodeInUTF8WithoutBOM">
+   <property name="text">
+    <string>Encode in UTF-8 without BOM</string>
+   </property>
+  </action>
+  <action name="actionEncodeInUTF8">
+   <property name="text">
+    <string>Encode in UTF-8</string>
+   </property>
+  </action>
+  <action name="actionEncodeInUCS2BigEndian">
+   <property name="text">
+    <string>Encode in UCS-2 Big Endian</string>
+   </property>
+  </action>
+  <action name="actionEncodeInUCS2LittleEndian">
+   <property name="text">
+    <string>Encode in UCS-2 Little Endian</string>
+   </property>
+  </action>
+  <action name="actionCharacterSets">
+   <property name="text">
+    <string>Character sets</string>
+   </property>
+  </action>
+  <action name="actionConvertToANSI">
+   <property name="text">
+    <string>Convert to ANSI</string>
+   </property>
+  </action>
+  <action name="actionConvertToUTF8WithoutBOM">
+   <property name="text">
+    <string>Convert to UTF-8 without BOM</string>
+   </property>
+  </action>
+  <action name="actionConvertToUTF8">
+   <property name="text">
+    <string>Convert to UTF-8</string>
+   </property>
+  </action>
+  <action name="actionConvertToUCS2BigEndian">
+   <property name="text">
+    <string>Convert to UCS-2 Big Endian</string>
+   </property>
+  </action>
+  <action name="actionConvertToUCS2LittleEndian">
+   <property name="text">
+    <string>Convert to UCS-2 Little Endian</string>
+   </property>
+  </action>
+  <action name="actionShowWhiteSpaceAndTAB">
+   <property name="text">
+    <string>Show White Space and TAB</string>
+   </property>
+  </action>
+  <action name="actionShowEndOfLine">
+   <property name="text">
+    <string>Show End of Line</string>
+   </property>
+  </action>
+  <action name="actionShowAllCharacters">
+   <property name="text">
+    <string>Show All Characters</string>
+   </property>
+  </action>
+  <action name="actionShowIndentGuide">
+   <property name="text">
+    <string>Show Indent Guide</string>
+   </property>
+  </action>
+  <action name="actionShowWrapSymbol">
+   <property name="text">
+    <string>Show Wrap Symbol</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionRestoreDefaultZoom">
+   <property name="text">
+    <string>Restore Default Zoom</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionTool">
+   <property name="text">
+    <string>Tool</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+  </action>
+  <action name="actionExternal_Tools">
+   <property name="text">
+    <string>External Tools...</string>
+   </property>
+  </action>
+  <action name="actionLanguage">
+   <property name="text">
+    <string>Language</string>
+   </property>
+  </action>
+  <action name="actionPluginManager">
+   <property name="text">
+    <string>Plugin Manager...</string>
+   </property>
+  </action>
+  <action name="actionWindowsList">
+   <property name="text">
+    <string>Windows List...</string>
+   </property>
+  </action>
+  <action name="actionCloseAllDocuments">
+   <property name="text">
+    <string>Close All Documents</string>
+   </property>
+  </action>
+  <action name="actionOpenProject">
+   <property name="text">
+    <string>&amp;Open Project...</string>
+   </property>
+  </action>
+  <action name="actionCloseProject">
+   <property name="text">
+    <string>Close Project...</string>
+   </property>
+  </action>
+  <action name="actionNewProject">
+   <property name="text">
+    <string>&amp;New Project...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TabWidget</class>
+   <extends>QWidget</extends>
+   <header>tabwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Ainesmile.qrc"/>
+ </resources>
+ <connections/>
+</ui>
