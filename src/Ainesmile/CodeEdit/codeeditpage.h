@@ -2,7 +2,7 @@
 #define CODEEDITPAGE_H
 
 #include <QWidget>
-#include <QtWebKit/QWebView>
+#include <QWebView>
 #include <QSplitter>
 #include "ScintillaEditBase.h"
 

@@ -6,7 +6,10 @@
 
 QT       += core gui webkit
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): {
+    QT += widgets webkitwidgets
+    QT -= webkit
+}
 
 TARGET = Ainesmile
 TEMPLATE = app
