@@ -15,11 +15,15 @@ TARGET = Ainesmile
 TEMPLATE = app
 
 
-INCLUDEPATH += CodeEdit scintilla/qt/ScintillaEditBase scintilla/include scintilla/src scintilla/lexlib
+INCLUDEPATH += CodeEdit \
+	../../3rdparty/scintilla/qt/ScintillaEditBase \
+	../../3rdparty/scintilla/include \
+	../../3rdparty/scintilla/src \
+	../../3rdparty/scintilla/lexlib
 
 DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
-LIBS += -L scintilla/bin -lScintillaEdit3
+LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit3
 
 SOURCES += main.cpp\
         mainwindow.cpp \
