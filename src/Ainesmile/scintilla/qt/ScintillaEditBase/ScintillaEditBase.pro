@@ -5,12 +5,13 @@
 #-------------------------------------------------
 
 QT       += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ScintillaEditBase
 TEMPLATE = lib
 CONFIG += lib_bundle
 
-VERSION = 3.2.0
+VERSION = 3.3.3
 
 SOURCES += \
     PlatQt.cpp \
@@ -48,6 +49,7 @@ SOURCES += \
     ../../lexlib/LexerBase.cxx \
     ../../lexlib/CharacterSet.cxx \
     ../../lexlib/Accessor.cxx \
+    ../../lexlib/CharacterCategory.cxx \
     ../../lexers/*.cxx
 
 HEADERS  += \
@@ -57,7 +59,6 @@ HEADERS  += \
     ../../src/XPM.h \
     ../../src/ViewStyle.h \
     ../../src/UniConversion.h \
-    ../../src/SVector.h \
     ../../src/Style.h \
     ../../src/SplitVector.h \
     ../../src/Selection.h \
@@ -96,6 +97,7 @@ HEADERS  += \
     ../../lexlib/LexerBase.h \
     ../../lexlib/LexAccessor.h \
     ../../lexlib/CharacterSet.h \
+    ../../lexlib/CharacterCategory.h \
     ../../lexlib/Accessor.h
 
 OTHER_FILES +=

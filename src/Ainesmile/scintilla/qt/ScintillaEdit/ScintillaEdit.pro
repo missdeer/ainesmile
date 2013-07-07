@@ -5,12 +5,13 @@
 #-------------------------------------------------
 
 QT       += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ScintillaEdit
 TEMPLATE = lib
 CONFIG += lib_bundle
 
-VERSION = 3.2.0
+VERSION = 3.3.3
 
 SOURCES += \
     ScintillaEdit.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
     ../../lexlib/LexerModule.cxx \
     ../../lexlib/LexerBase.cxx \
     ../../lexlib/CharacterSet.cxx \
+    ../../lexlib/CharacterCategory.cxx \
     ../../lexlib/Accessor.cxx \
     ../../lexers/*.cxx
 

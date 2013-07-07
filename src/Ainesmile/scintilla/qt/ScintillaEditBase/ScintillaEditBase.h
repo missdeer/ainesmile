@@ -30,12 +30,10 @@ struct SCNotification;
 #ifdef WIN32
 #ifdef MAKING_LIBRARY
 #define EXPORT_IMPORT_API __declspec(dllexport)
-#elif !defined(SCI_STATIC_LINK)
+#else
 // Defining dllimport upsets moc
 #define EXPORT_IMPORT_API __declspec(dllimport)
 //#define EXPORT_IMPORT_API
-#else
-#define EXPORT_IMPORT_API
 #endif
 #else
 #define EXPORT_IMPORT_API
@@ -103,6 +101,7 @@ signals:
 	void hotSpotDoubleClick(int position, int modifiers);
 	void callTipClick();
 	void autoCompleteSelection(int position, const QString &text);
+	void autoCompleteCancelled();
 
 	// Base notifications for compatibility with other Scintilla implementations
 	void notify(SCNotification *pscn);
