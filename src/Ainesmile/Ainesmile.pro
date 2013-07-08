@@ -23,7 +23,7 @@ INCLUDEPATH += CodeEdit \
 
 DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
-LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit3
+LIBS += -L ../../3rdparty/scintilla/bin
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -48,6 +48,12 @@ RESOURCES += \
 # Windows icons
 RC_FILE = Ainesmile.rc
 
+win32: {
+LIBS +=  -lScintillaEdit3
+}
+unix: {
+LIBS +=  -lScintillaEdit
+}
 
 # Mac OS X icon
 macx: {
