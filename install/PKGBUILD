@@ -1,0 +1,27 @@
+# Maintainer: Yang Fan <missdeer AT gmail DOT com> 
+
+pkgname=Ninayan
+pkgver=2012.3
+pkgrel=1
+pkgdesc="Ninayan is a powerful information getting and reading tool based on SNS services and Google Reader."
+arch=('i686' 'x86_64')
+url="http://www.dfordsoft.com/ninayan"
+license=('DForD Software License')
+depends=('qt>=4.8.0' 'qtwebkit>=2.2.1')
+replaces=('ninayan-beta')
+provides=('Ninayan')
+
+build() {
+ 
+  mkdir -p ${pkgdir}/usr/bin || return 1
+  mkdir -p ${pkgdir}/usr/share/Ninayan || return 1
+   
+  install -m644 ${srcdir}/../usr/share/Ninayan/wqy-microhei.ttc ${pkgdir}/usr/share/Ninayan/wqy-microhei.ttc || return 1
+
+  install -m755 ${srcdir}/../usr/bin/Ninayan ${pkgdir}/usr/bin/Ninayan || return 1
+
+  install -m755 ${srcdir}/../usr/bin/messages.db ${pkgdir}/usr/bin/messages.db || return 1
+  
+  install -m755 ${srcdir}/../usr/bin/Ninayan.app ${pkgdir}/usr/bin/Ninayan.app || return 1
+}  
+

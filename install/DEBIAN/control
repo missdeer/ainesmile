@@ -1,0 +1,10 @@
+Package: Ninayan
+Version: 2011.3
+Section: net
+Priority: optional
+Architecture: i386
+Depends:
+Installed-Size: 100,000
+Maintainer: missdeer@gmail.com
+Description: Ninayan - A powerful cross-platform information getting & reading tool.
+
