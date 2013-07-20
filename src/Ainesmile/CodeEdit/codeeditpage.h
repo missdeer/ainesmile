@@ -16,6 +16,7 @@ private:
     QWebView* m_webView;
 
     QString m_filePath;
+    void init();
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
