@@ -24,10 +24,18 @@ public:
     void saveFile(const QString& filePath);
     const QString& getFilePath() const;
     bool canClose();
+    bool canCut();
+    bool canCopy();
+    bool canPaste();
+    bool canUndo();
+    bool canRedo();
+    bool isModified();
 signals:
-    
+    void modifiedNotification();
 public slots:
 
+    void modified(int type, int position, int length, int linesAdded,
+                  const QByteArray &text, int line, int foldNow, int foldPrev);
 };
 
 #endif // CODEEDITPAGE_H

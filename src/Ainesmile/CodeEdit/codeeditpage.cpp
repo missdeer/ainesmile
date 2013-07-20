@@ -88,6 +88,41 @@ bool CodeEditPage::canClose()
     return !m_sciControlMaster->send(SCI_GETMODIFY);
 }
 
+bool CodeEditPage::canCut()
+{
+    return !m_sciControlMaster->send(SCI_GETSELECTIONEMPTY);
+}
+
+bool CodeEditPage::canCopy()
+{
+    return !m_sciControlMaster->send(SCI_GETSELECTIONEMPTY);
+}
+
+bool CodeEditPage::canPaste()
+{
+    return !!m_sciControlMaster->send(SCI_CANPASTE);
+}
+
+bool CodeEditPage::canUndo()
+{
+    return !!m_sciControlMaster->send(SCI_CANUNDO);
+}
+
+bool CodeEditPage::canRedo()
+{
+    return !!m_sciControlMaster->send(SCI_CANREDO);
+}
+
+bool CodeEditPage::isModified()
+{
+    return m_sciControlMaster->send(SCI_GETMODIFY);
+}
+
+void CodeEditPage::modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev)
+{
+
+}
+
 void CodeEditPage::init()
 {
     m_sciControlMaster->send(SCI_STYLERESETDEFAULT, 0, 0);
@@ -98,7 +133,7 @@ void CodeEditPage::init()
     m_sciControlMaster->send(SCI_SETXOFFSET, 0, 0);
     m_sciControlMaster->send(SCI_SETSCROLLWIDTH, 1, 0);
     m_sciControlMaster->send(SCI_SETSCROLLWIDTHTRACKING, 1, 0);
-    m_sciControlMaster->send(SCI_ENDATLASTLINE, 1, 0);
+    //m_sciControlMaster->send(SCI_ENDATLASTLINE, 1, 0);
     m_sciControlMaster->send(SCI_SETWHITESPACEFORE, 1, 0x808080);
     m_sciControlMaster->send(SCI_SETWHITESPACEBACK, 1, 0xFFFFFF);
     m_sciControlMaster->send(SCI_SETMOUSEDOWNCAPTURES, 1, 0);
@@ -108,7 +143,7 @@ void CodeEditPage::init()
     m_sciControlMaster->send(SCI_SETCARETFORE, 0x0000FF, 0);
     m_sciControlMaster->send(SCI_SETCARETLINEVISIBLE, 1, 0);
     m_sciControlMaster->send(SCI_SETCARETLINEBACK, 0xFFFFD0, 0);
-    m_sciControlMaster->send(SCI_SETLINEBACKALPHA, 256, 0);
+    //m_sciControlMaster->send(SCI_SETLINEBACKALPHA, 256, 0);
     m_sciControlMaster->send(SCI_SETCARETPERIOD, 500, 0);
     m_sciControlMaster->send(SCI_SETCARETWIDTH, 2, 0);
     m_sciControlMaster->send(SCI_SETCARETSTICKY, 0, 0);
@@ -142,9 +177,9 @@ void CodeEditPage::init()
     m_sciControlMaster->send(SCI_SETFOLDMARGINHICOLOUR, 1, 0xFFFFFF);
     
     
-    m_sciControlMaster->send(SCI_SETTABWIDTH,  4,  0);
-    m_sciControlMaster->send(SCI_SETUSETABS,   0,  0);
-    m_sciControlMaster->send(SCI_SETINDENT,   4,  0);
+    m_sciControlMaster->send(SCI_SETTABWIDTH, 4, 0);
+    m_sciControlMaster->send(SCI_SETUSETABS, 0, 0);
+    m_sciControlMaster->send(SCI_SETINDENT, 4, 0);
     m_sciControlMaster->send(SCI_SETTABINDENTS,   0,  0);
     m_sciControlMaster->send(SCI_SETBACKSPACEUNINDENTS,  0, 0);
     m_sciControlMaster->send(SCI_SETINDENTATIONGUIDES,  0,  0);
@@ -155,25 +190,25 @@ void CodeEditPage::init()
     
     //set_folder_style( sci )
     
-    m_sciControlMaster->send(SCI_SETWRAPMODE,    SC_WRAP_NONE,   0);
-    m_sciControlMaster->send(SCI_SETWRAPVISUALFLAGS,    SC_WRAPVISUALFLAG_NONE,  0);
-    m_sciControlMaster->send(SCI_SETWRAPVISUALFLAGSLOCATION,   SC_WRAPVISUALFLAGLOC_DEFAULT,  0);
-    m_sciControlMaster->send(SCI_SETWRAPSTARTINDENT,  0,  0);
+    m_sciControlMaster->send(SCI_SETWRAPMODE, SC_WRAP_NONE, 0);
+    m_sciControlMaster->send(SCI_SETWRAPVISUALFLAGS, SC_WRAPVISUALFLAG_NONE, 0);
+    m_sciControlMaster->send(SCI_SETWRAPVISUALFLAGSLOCATION, SC_WRAPVISUALFLAGLOC_DEFAULT, 0);
+    m_sciControlMaster->send(SCI_SETWRAPSTARTINDENT, 0, 0);
 
-    m_sciControlMaster->send(SCI_SETLAYOUTCACHE,  2,  0);
-    m_sciControlMaster->send(SCI_LINESSPLIT, 0,   0);
-    m_sciControlMaster->send(SCI_SETEDGEMODE,  0, 0);
-    m_sciControlMaster->send(SCI_SETEDGECOLUMN,  200,  0);
-    m_sciControlMaster->send(SCI_SETEDGECOLOUR,  0xC0DCC0,   0);
+    m_sciControlMaster->send(SCI_SETLAYOUTCACHE, 2, 0);
+    m_sciControlMaster->send(SCI_LINESSPLIT, 0, 0);
+    m_sciControlMaster->send(SCI_SETEDGEMODE, 0, 0);
+    m_sciControlMaster->send(SCI_SETEDGECOLUMN, 200, 0);
+    m_sciControlMaster->send(SCI_SETEDGECOLOUR, 0xC0DCC0, 0);
         
     m_sciControlMaster->send(SCI_USEPOPUP, 0, 0);
-    m_sciControlMaster->send(SCI_SETUSEPALETTE, 1, 0);
+    //m_sciControlMaster->send(SCI_SETUSEPALETTE, 1, 0);
     m_sciControlMaster->send(SCI_SETBUFFEREDDRAW, 1, 0);
     m_sciControlMaster->send(SCI_SETTWOPHASEDRAW, 1, 0);
     m_sciControlMaster->send(SCI_SETCODEPAGE, SC_CP_UTF8, 0);
-    m_sciControlMaster->send(SCI_SETWORDCHARS, 0, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    m_sciControlMaster->sends(SCI_SETWORDCHARS, 0, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
     m_sciControlMaster->send(SCI_SETZOOM,  1,  0);
-    //m_sciControlMaster->send(SCI_SETWHITESPACECHARS, 0, 0);
+    m_sciControlMaster->send(SCI_SETWHITESPACECHARS, 0, 0);
     m_sciControlMaster->send(SCI_SETMOUSEDWELLTIME,  2500,   0);
 
     m_sciControlMaster->send(SCI_SETSAVEPOINT, 0, 0);
