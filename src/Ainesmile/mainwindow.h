@@ -8,6 +8,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class CodeEditPage;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -24,10 +26,12 @@ protected:
 
 private:
     void setActionShortcuts();
+    void updateUI(CodeEditPage* page);
 
 private slots:
     void currentPageChanged(int index);
     void closeRequested(int index);
+    void currentDocumentChanged();
 
     void on_actionNewFile_triggered();
 

@@ -120,7 +120,7 @@ bool CodeEditPage::isModified()
 
 void CodeEditPage::modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev)
 {
-
+    emit modifiedNotification();
 }
 
 void CodeEditPage::init()

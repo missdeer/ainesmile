@@ -67,6 +67,15 @@ void MainWindow::setActionShortcuts()
     ui->actionSelectAll->setShortcut(QKeySequence::SelectAll);
 }
 
+void MainWindow::updateUI(CodeEditPage* page)
+{
+    ui->actionCut->setEnabled(page->canCut());
+    ui->actionCopy->setEnabled(page->canCopy());
+    ui->actionPaste->setEnabled(page->canPaste());
+    ui->actionUndo->setEnabled(page->canUndo());
+    ui->actionRedo->setEnabled(page->canRedo());
+}
+
 void MainWindow::openFiles(const QStringList &files)
 {
     int index = 0;
@@ -129,7 +138,11 @@ void MainWindow::currentPageChanged(int index)
     else
     {
         // update action UI
-
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+        disconnect(this, SLOT(currentDocumentChanged()));
+        connect(page, SIGNAL(modifiedNotification()), this, SLOT(currentDocumentChanged()));
+        updateUI(page);
     }
 }
 
@@ -168,6 +181,13 @@ void MainWindow::closeRequested(int index)
 
     ui->tabWidget->removeTab(index);
     page->deleteLater();
+}
+
+void MainWindow::currentDocumentChanged()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    Q_ASSERT(page);
+    updateUI(page);
 }
 
 void MainWindow::on_actionNewFile_triggered()
