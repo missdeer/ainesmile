@@ -60,6 +60,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    bool m_aboutToQuit;
 };
 
 #endif // MAINWINDOW_H

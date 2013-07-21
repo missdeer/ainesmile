@@ -11,7 +11,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_aboutToQuit(false)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentPageChanged(int)));
@@ -29,12 +30,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    m_aboutToQuit = true;
     // query all pages can close
-//    if (maybeSave()) {
+    int count = ui->tabWidget->count();
+    for (int index = 0; index< count; index++)
+    {
+        closeRequested(index);
+    }
+
+    if (ui->tabWidget->count() != 0)
+    {
+        event->ignore();
+    }
+    else
+    {
         event->accept();
-//    } else {
-//        event->ignore();
-        //    }
+    }
+    m_aboutToQuit = false;
 }
 
 void MainWindow::setActionShortcuts()
@@ -110,9 +122,9 @@ void MainWindow::openFiles(const QStringList &files)
             // check if the file has been opened already
             bool bExists = false;
             int count = ui->tabWidget->count();
-            for (int index = 0; index< count; index++)
+            for (int i = 0; i< count; i++)
             {
-                CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+                CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
                 Q_ASSERT(page);
                 const QString& pageFileName = page->getFilePath();
                 if (!pageFileName.isEmpty())
@@ -161,7 +173,8 @@ void MainWindow::currentPageChanged(int index)
 {
     if (index == -1)
     {
-        newDocument();
+        if (!m_aboutToQuit)
+            newDocument();
     }
     else
     {
@@ -211,6 +224,7 @@ void MainWindow::currentDocumentChanged()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
+    Q_UNUSED(page);
 }
 
 void MainWindow::copyAvailableChanged()
