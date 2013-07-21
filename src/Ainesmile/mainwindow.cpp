@@ -33,7 +33,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_aboutToQuit = true;
     // query all pages can close
     int count = ui->tabWidget->count();
-    for (int index = 0; index< count; index++)
+    for (int index = count -1; index >=0; index--)
     {
         closeRequested(index);
     }
