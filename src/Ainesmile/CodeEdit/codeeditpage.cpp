@@ -9,7 +9,7 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent)
   ,m_splitter(new QSplitter( Qt::Vertical, this))
   ,m_sciControlMaster(new ScintillaEditBase(this))
-  ,m_sciControlSlave(new ScintillaEditBase(this))
+//  ,m_sciControlSlave(new ScintillaEditBase(this))
 //  ,m_webView(new QWebView(this))
 {
     Q_ASSERT(m_splitter);
@@ -17,17 +17,17 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     Q_ASSERT(m_sciControlSlave);
     Q_ASSERT(m_webView);
 
-    sptr_t docPtr = m_sciControlMaster->send(SCI_GETDOCPOINTER);
-    m_sciControlSlave->send(SCI_SETDOCPOINTER, 0, docPtr);
+//    sptr_t docPtr = m_sciControlMaster->send(SCI_GETDOCPOINTER);
+//    m_sciControlSlave->send(SCI_SETDOCPOINTER, 0, docPtr);
 
     //webView->load(QUrl("http://www.dfordsoft.com"));
-    m_splitter->addWidget(m_sciControlSlave);
+//    m_splitter->addWidget(m_sciControlSlave);
     m_splitter->addWidget(m_sciControlMaster);
  //   m_splitter->addWidget(m_webView);
 
-    QList<int> sizes;
-    sizes << 0 << 0x7FFFF;//<< 0;
-    m_splitter->setSizes(sizes);
+//    QList<int> sizes;
+//    sizes << 0 << 0x7FFFF;//<< 0;
+//    m_splitter->setSizes(sizes);
 
     QVBoxLayout* m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);

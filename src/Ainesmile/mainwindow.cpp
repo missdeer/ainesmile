@@ -166,6 +166,8 @@ void MainWindow::newDocument()
     count++;
     connectSignals(codeeditpage);
     updateUI(codeeditpage);
+    ui->tabWidget->setFocus();
+    codeeditpage->setFocus();
 }
 
 
