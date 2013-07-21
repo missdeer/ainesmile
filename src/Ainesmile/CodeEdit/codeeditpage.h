@@ -10,6 +10,10 @@ class CodeEditPage : public QWidget
 {
     Q_OBJECT
 private:
+    bool m_lastCopyAvailable;
+    bool m_lastPasteAvailable;
+    bool m_lastRedoAvailable;
+    bool m_lastUndoAvailable;
     QSplitter* m_splitter;
     ScintillaEditBase* m_sciControlMaster;
     ScintillaEditBase* m_sciControlSlave;
@@ -31,11 +35,21 @@ public:
     bool canRedo();
     bool isModified();
 signals:
+    void copyAvailableChanged();
+    void pasteAvailableChanged();
+    void redoAvailableChanged();
+    void undoAvailableChanged();
     void modifiedNotification();
 public slots:
-
+    void updateUI();
     void modified(int type, int position, int length, int linesAdded,
                   const QByteArray &text, int line, int foldNow, int foldPrev);
+
+    void undo();
+    void redo();
+    void copy();
+    void cut();
+    void paste();
 };
 
 #endif // CODEEDITPAGE_H

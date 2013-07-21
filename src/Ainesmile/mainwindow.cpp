@@ -76,6 +76,30 @@ void MainWindow::updateUI(CodeEditPage* page)
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
+void MainWindow::connectSignals(CodeEditPage *page)
+{
+    disconnect(this, SLOT(currentDocumentChanged()));
+    connect(page, SIGNAL(modifiedNotification()), this, SLOT(currentDocumentChanged()));
+    disconnect(this, SLOT(copyAvailableChanged()));
+    connect(page, SIGNAL(copyAvailableChanged()), this, SLOT(copyAvailableChanged()));
+    disconnect(this, SLOT(pasteAvailableChanged()));
+    connect(page, SIGNAL(pasteAvailableChanged()), this, SLOT(pasteAvailableChanged()));
+    disconnect(this, SLOT(undoAvailableChanged()));
+    connect(page, SIGNAL(undoAvailableChanged()), this, SLOT(undoAvailableChanged()));
+    disconnect(this, SLOT(redoAvailableChanged()));
+    connect(page, SIGNAL(redoAvailableChanged()), this, SLOT(redoAvailableChanged()));
+    disconnect(ui->actionCut, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCut, SIGNAL(triggered()), page, SLOT(cut()));
+    disconnect(ui->actionCopy, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCopy, SIGNAL(triggered()), page, SLOT(copy()));
+    disconnect(ui->actionPaste, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPaste, SIGNAL(triggered()), page, SLOT(paste()));
+    disconnect(ui->actionUndo, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUndo, SIGNAL(triggered()), page, SLOT(undo()));
+    disconnect(ui->actionRedo, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionRedo, SIGNAL(triggered()), page, SLOT(redo()));
+}
+
 void MainWindow::openFiles(const QStringList &files)
 {
     int index = 0;
@@ -108,6 +132,8 @@ void MainWindow::openFiles(const QStringList &files)
                 // create an edit page, open the file
                 CodeEditPage* codeeditpage = new CodeEditPage(this);
                 index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+                connectSignals(codeeditpage);
+                updateUI(codeeditpage);
                 codeeditpage->openFile(file);
                 ui->tabWidget->setTabToolTip(index, file);
             }
@@ -126,6 +152,8 @@ void MainWindow::newDocument()
     int index = ui->tabWidget->addTab(codeeditpage, QIcon(), title);
     ui->tabWidget->setCurrentIndex(index);
     count++;
+    connectSignals(codeeditpage);
+    updateUI(codeeditpage);
 }
 
 
@@ -140,9 +168,7 @@ void MainWindow::currentPageChanged(int index)
         // update action UI
         CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
         Q_ASSERT(page);
-        disconnect(this, SLOT(currentDocumentChanged()));
-        connect(page, SIGNAL(modifiedNotification()), this, SLOT(currentDocumentChanged()));
-        updateUI(page);
+        connectSignals(page);
     }
 }
 
@@ -170,13 +196,11 @@ void MainWindow::closeRequested(int index)
                                                         options);
             }
 
-            if (!filePath.isEmpty())
-                page->saveFile(filePath);
-            else
+            if (filePath.isEmpty())
                 return; // don't close this tab
+
+            page->saveFile(filePath);
         }
-        else
-            return;
     }
 
     ui->tabWidget->removeTab(index);
@@ -187,7 +211,35 @@ void MainWindow::currentDocumentChanged()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
-    updateUI(page);
+}
+
+void MainWindow::copyAvailableChanged()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    Q_ASSERT(page);
+    ui->actionCopy->setEnabled(page->canCopy());
+    ui->actionCut->setEnabled(page->canCut());
+}
+
+void MainWindow::pasteAvailableChanged()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    Q_ASSERT(page);
+    ui->actionPaste->setEnabled(page->canPaste());
+}
+
+void MainWindow::undoAvailableChanged()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    Q_ASSERT(page);
+    ui->actionUndo->setEnabled(page->canUndo());
+}
+
+void MainWindow::redoAvailableChanged()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    Q_ASSERT(page);
+    ui->actionRedo->setEnabled(page->canRedo());
 }
 
 void MainWindow::on_actionNewFile_triggered()

@@ -26,7 +26,7 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
  //   m_splitter->addWidget(m_webView);
 
     QList<int> sizes;
-    sizes << 0 << 0x7FFFF << 0;
+    sizes << 0 << 0x7FFFF;//<< 0;
     m_splitter->setSizes(sizes);
 
     QVBoxLayout* m_mainLayout = new QVBoxLayout;
@@ -118,9 +118,61 @@ bool CodeEditPage::isModified()
     return m_sciControlMaster->send(SCI_GETMODIFY);
 }
 
+void CodeEditPage::updateUI()
+{
+    if (m_lastCopyAvailable != canCopy())
+    {
+        m_lastCopyAvailable = !m_lastCopyAvailable;
+        emit copyAvailableChanged();
+    }
+
+    if (m_lastPasteAvailable != canPaste())
+    {
+        m_lastPasteAvailable = !m_lastPasteAvailable;
+        emit pasteAvailableChanged();
+    }
+
+    if (m_lastRedoAvailable != canRedo())
+    {
+        m_lastRedoAvailable = !m_lastRedoAvailable;
+        emit redoAvailableChanged();
+    }
+
+    if (m_lastUndoAvailable != canUndo())
+    {
+        m_lastUndoAvailable = !m_lastUndoAvailable;
+        emit undoAvailableChanged();
+    }
+}
+
 void CodeEditPage::modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev)
 {
     emit modifiedNotification();
+}
+
+void CodeEditPage::undo()
+{
+    m_sciControlMaster->send(SCI_UNDO);
+}
+
+void CodeEditPage::redo()
+{
+    m_sciControlMaster->send(SCI_REDO);
+}
+
+void CodeEditPage::copy()
+{
+    m_sciControlMaster->send(SCI_COPY);
+}
+
+void CodeEditPage::cut()
+{
+    m_sciControlMaster->send(SCI_CUT);
+}
+
+void CodeEditPage::paste()
+{
+    m_sciControlMaster->send(SCI_PASTE);
 }
 
 void CodeEditPage::init()
@@ -215,5 +267,14 @@ void CodeEditPage::init()
     m_sciControlMaster->send(SCI_SETFONTQUALITY, SC_EFF_QUALITY_LCD_OPTIMIZED, 0 );
 
     //sci:SetEncoding( cfg:GetString("config/encoding") )
+
+    m_lastCopyAvailable = canCopy();
+    m_lastPasteAvailable = canPaste();
+    m_lastUndoAvailable = canUndo();
+    m_lastRedoAvailable = canRedo();
+
+    connect(m_sciControlMaster, SIGNAL(updateUi()), this, SLOT(updateUI()));
+    connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
+            this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
 }
 

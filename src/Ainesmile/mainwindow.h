@@ -27,11 +27,16 @@ protected:
 private:
     void setActionShortcuts();
     void updateUI(CodeEditPage* page);
+    void connectSignals(CodeEditPage* page);
 
 private slots:
     void currentPageChanged(int index);
     void closeRequested(int index);
     void currentDocumentChanged();
+    void copyAvailableChanged();
+    void pasteAvailableChanged();
+    void undoAvailableChanged();
+    void redoAvailableChanged();
 
     void on_actionNewFile_triggered();
 
