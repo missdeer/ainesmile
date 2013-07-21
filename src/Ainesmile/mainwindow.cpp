@@ -290,7 +290,7 @@ void MainWindow::on_actionOpenFile_triggered()
 
 void MainWindow::on_actionExitApp_triggered()
 {
-    qApp->quit();
+    close();
 }
 
 void MainWindow::on_actionSaveFile_triggered()
