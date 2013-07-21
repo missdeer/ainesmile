@@ -58,6 +58,20 @@ private slots:
 
     void on_actionAinesmileProductPage_triggered();
 
+    void on_actionSaveAll_triggered();
+
+    void on_actionCloseAll_triggered();
+
+    void on_actionCloseAllButActiveDocument_triggered();
+
+    void on_actionOpenAllRecentFiles_triggered();
+
+    void on_actionEmptyRecentFilesList_triggered();
+
+    void on_actionAlwaysOnTop_triggered();
+
+    void on_actionCloseAllDocuments_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool m_aboutToQuit;

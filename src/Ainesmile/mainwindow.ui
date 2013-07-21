@@ -388,7 +388,7 @@
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="separator"/>
-    <addaction name="actionExternal_Tools"/>
+    <addaction name="actionExternalTools"/>
     <addaction name="actionLanguage"/>
    </widget>
    <widget class="QMenu" name="menuPlugins">
@@ -1250,7 +1250,7 @@
     <string>Reload Extensions</string>
    </property>
   </action>
-  <action name="action_Plugins">
+  <action name="actionPlugins">
    <property name="text">
     <string>&amp;Plugins</string>
    </property>
@@ -1280,7 +1280,7 @@
     <string>Post-It</string>
    </property>
   </action>
-  <action name="actionMove_Clone_Current_Document">
+  <action name="actionMoveCloneCurrentDocument">
    <property name="text">
     <string>Move/Clone Current Document</string>
    </property>
@@ -1479,7 +1479,7 @@
     <string>Preferences...</string>
    </property>
   </action>
-  <action name="actionExternal_Tools">
+  <action name="actionExternalTools">
    <property name="text">
     <string>External Tools...</string>
    </property>

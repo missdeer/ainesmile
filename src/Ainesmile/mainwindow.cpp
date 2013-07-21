@@ -376,3 +376,38 @@ void MainWindow::on_actionAinesmileProductPage_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile/"));
 }
+
+void MainWindow::on_actionSaveAll_triggered()
+{
+
+}
+
+void MainWindow::on_actionCloseAll_triggered()
+{
+
+}
+
+void MainWindow::on_actionCloseAllButActiveDocument_triggered()
+{
+
+}
+
+void MainWindow::on_actionOpenAllRecentFiles_triggered()
+{
+
+}
+
+void MainWindow::on_actionEmptyRecentFilesList_triggered()
+{
+
+}
+
+void MainWindow::on_actionAlwaysOnTop_triggered()
+{
+
+}
+
+void MainWindow::on_actionCloseAllDocuments_triggered()
+{
+
+}
