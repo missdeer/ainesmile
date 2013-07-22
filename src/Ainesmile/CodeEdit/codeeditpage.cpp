@@ -8,7 +8,7 @@
 CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent)
   ,m_splitter(new QSplitter( Qt::Vertical, this))
-  ,m_sciControlMaster(new ScintillaEditBase(this))
+  ,m_sciControlMaster(new ScintillaEdit(this))
 //  ,m_sciControlSlave(new ScintillaEditBase(this))
 //  ,m_webView(new QWebView(this))
 {

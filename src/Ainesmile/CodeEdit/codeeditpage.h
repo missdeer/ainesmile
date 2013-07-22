@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QWebView>
 #include <QSplitter>
-#include "ScintillaEditBase.h"
+#include "ScintillaEdit.h"
 
 class CodeEditPage : public QWidget
 {
@@ -15,8 +15,8 @@ private:
     bool m_lastRedoAvailable;
     bool m_lastUndoAvailable;
     QSplitter* m_splitter;
-    ScintillaEditBase* m_sciControlMaster;
-    ScintillaEditBase* m_sciControlSlave;
+    ScintillaEdit* m_sciControlMaster;
+    ScintillaEdit* m_sciControlSlave;
     QWebView* m_webView;
 
     QString m_filePath;

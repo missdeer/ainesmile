@@ -16,7 +16,8 @@ TEMPLATE = app
 
 
 INCLUDEPATH += CodeEdit \
-	../../3rdparty/scintilla/qt/ScintillaEditBase \
+        ../../3rdparty/scintilla/qt/ScintillaEditBase \
+        ../../3rdparty/scintilla/qt/ScintillaEdit \
 	../../3rdparty/scintilla/include \
 	../../3rdparty/scintilla/src \
 	../../3rdparty/scintilla/lexlib
