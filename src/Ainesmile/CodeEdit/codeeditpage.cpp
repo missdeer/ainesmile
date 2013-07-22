@@ -285,7 +285,7 @@ void CodeEditPage::moveUpCurrentLine()
 
 }
 
-void CodeEditPage::moveDonwCurrentLine()
+void CodeEditPage::moveDownCurrentLine()
 {
 
 }

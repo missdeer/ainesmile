@@ -72,7 +72,7 @@ public slots:
     void splitLines();
     void joinLines();
     void moveUpCurrentLine();
-    void moveDonwCurrentLine();
+    void moveDownCurrentLine();
     void toggleBlockComment();
     void blockComment();
     void blockUncomment();
