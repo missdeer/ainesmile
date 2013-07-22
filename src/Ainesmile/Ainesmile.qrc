@@ -15,5 +15,7 @@
         <file>rc/image/searchreplace.png</file>
         <file>rc/image/undo.png</file>
         <file>rc/Ainesmile.png</file>
+        <file>DATE</file>
+        <file>REVISION</file>
     </qresource>
 </RCC>

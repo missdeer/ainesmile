@@ -554,7 +554,7 @@ void MainWindow::on_actionHelpContent_triggered()
 
 void MainWindow::on_actionAboutApp_triggered()
 {
-    AboutDialog dlg;
+    AboutDialog dlg(this);
     dlg.exec();
 }
 
