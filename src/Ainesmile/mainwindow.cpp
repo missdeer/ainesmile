@@ -373,6 +373,7 @@ void MainWindow::currentPageChanged(int index)
         // update action UI
         CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
         Q_ASSERT(page);
+        updateUI(page);
         connectSignals(page);
     }
 }
