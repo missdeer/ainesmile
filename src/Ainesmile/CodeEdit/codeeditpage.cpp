@@ -334,17 +334,20 @@ void CodeEditPage::functionParametersHint()
 
 void CodeEditPage::eolWindowsFormat()
 {
-
+    m_sciControlMaster->setEOLMode(SC_EOL_CRLF);
+    m_sciControlMaster->convertEOLs(SC_EOL_CRLF);
 }
 
 void CodeEditPage::eolUNIXFormat()
 {
-
+    m_sciControlMaster->setEOLMode(SC_EOL_LF);
+    m_sciControlMaster->convertEOLs(SC_EOL_LF);
 }
 
 void CodeEditPage::eolMacFormat()
 {
-
+    m_sciControlMaster->setEOLMode(SC_EOL_CR);
+    m_sciControlMaster->convertEOLs(SC_EOL_CR);
 }
 
 void CodeEditPage::trimTrailingSpace()
@@ -539,7 +542,10 @@ void CodeEditPage::replayLastRecording()
 
 void CodeEditPage::wordWrap()
 {
-
+    if (m_sciControlMaster->wrapMode() == SC_WRAP_NONE)
+        m_sciControlMaster->setWrapMode(SC_WRAP_WORD);
+    else
+        m_sciControlMaster->setWrapMode(SC_WRAP_NONE);
 }
 
 void CodeEditPage::focusOnAnotherView()
@@ -604,7 +610,7 @@ void CodeEditPage::encodeInUTF8WithoutBOM()
 
 void CodeEditPage::encodeInUTF8()
 {
-
+    m_sciControlMaster->setCodePage(SC_CP_UTF8);
 }
 
 void CodeEditPage::encodeInUCS2BigEndian()
@@ -629,7 +635,6 @@ void CodeEditPage::convertToUTF8WithoutBOM()
 
 void CodeEditPage::convertToUTF8()
 {
-
 }
 
 void CodeEditPage::convertToUCS2BigEndian()
