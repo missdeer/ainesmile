@@ -85,37 +85,37 @@ const QString &CodeEditPage::getFilePath() const
 
 bool CodeEditPage::canClose()
 {
-    return !m_sciControlMaster->send(SCI_GETMODIFY);
+    return !m_sciControlMaster->modify();
 }
 
 bool CodeEditPage::canCut()
 {
-    return !m_sciControlMaster->send(SCI_GETSELECTIONEMPTY);
+    return !m_sciControlMaster->selectionEmpty();
 }
 
 bool CodeEditPage::canCopy()
 {
-    return !m_sciControlMaster->send(SCI_GETSELECTIONEMPTY);
+    return !m_sciControlMaster->selectionEmpty();
 }
 
 bool CodeEditPage::canPaste()
 {
-    return !!m_sciControlMaster->send(SCI_CANPASTE);
+    return !!m_sciControlMaster->canPaste();
 }
 
 bool CodeEditPage::canUndo()
 {
-    return !!m_sciControlMaster->send(SCI_CANUNDO);
+    return !!m_sciControlMaster->canUndo();
 }
 
 bool CodeEditPage::canRedo()
 {
-    return !!m_sciControlMaster->send(SCI_CANREDO);
+    return !!m_sciControlMaster->canRedo();
 }
 
 bool CodeEditPage::isModified()
 {
-    return m_sciControlMaster->send(SCI_GETMODIFY);
+    return m_sciControlMaster->modify();
 }
 
 void CodeEditPage::updateUI()
@@ -152,27 +152,502 @@ void CodeEditPage::modified(int type, int position, int length, int linesAdded, 
 
 void CodeEditPage::undo()
 {
-    m_sciControlMaster->send(SCI_UNDO);
+    m_sciControlMaster->undo();
 }
 
 void CodeEditPage::redo()
 {
-    m_sciControlMaster->send(SCI_REDO);
+    m_sciControlMaster->redo();
 }
 
 void CodeEditPage::copy()
 {
-    m_sciControlMaster->send(SCI_COPY);
+    m_sciControlMaster->copy();
 }
 
 void CodeEditPage::cut()
 {
-    m_sciControlMaster->send(SCI_CUT);
+    m_sciControlMaster->cut();
 }
 
 void CodeEditPage::paste()
 {
-    m_sciControlMaster->send(SCI_PASTE);
+    m_sciControlMaster->paste();
+}
+
+void CodeEditPage::reloadFromDisk()
+{
+
+}
+
+void CodeEditPage::print()
+{
+
+}
+
+void CodeEditPage::printNow()
+{
+
+}
+
+void CodeEditPage::deleteCurrent()
+{
+
+}
+
+void CodeEditPage::selectAll()
+{
+    m_sciControlMaster->selectAll();
+}
+
+void CodeEditPage::columnMode()
+{
+
+}
+
+void CodeEditPage::columnEditor()
+{
+
+}
+
+void CodeEditPage::characterPanel()
+{
+
+}
+
+void CodeEditPage::clipboardHistory()
+{
+
+}
+
+void CodeEditPage::setReadOnly()
+{
+
+}
+
+void CodeEditPage::clearReadOnlyFlag()
+{
+
+}
+
+void CodeEditPage::currentFullFilePathToClipboard()
+{
+
+}
+
+void CodeEditPage::currentFileNameToClipboard()
+{
+
+}
+
+void CodeEditPage::currentDirectoryPathToClipboard()
+{
+
+}
+
+void CodeEditPage::increaseLineIndent()
+{
+
+}
+
+void CodeEditPage::decreaseLineIndent()
+{
+
+}
+
+void CodeEditPage::upperCase()
+{
+
+}
+
+void CodeEditPage::lowerCase()
+{
+
+}
+
+void CodeEditPage::duplicateCurrentLine()
+{
+
+}
+
+void CodeEditPage::splitLines()
+{
+
+}
+
+void CodeEditPage::joinLines()
+{
+
+}
+
+void CodeEditPage::moveUpCurrentLine()
+{
+
+}
+
+void CodeEditPage::moveDonwCurrentLine()
+{
+
+}
+
+void CodeEditPage::toggleBlockComment()
+{
+
+}
+
+void CodeEditPage::blockComment()
+{
+
+}
+
+void CodeEditPage::blockUncomment()
+{
+
+}
+
+void CodeEditPage::streamComment()
+{
+
+}
+
+void CodeEditPage::functionCompletion()
+{
+
+}
+
+void CodeEditPage::wordCompletion()
+{
+
+}
+
+void CodeEditPage::functionParametersHint()
+{
+
+}
+
+void CodeEditPage::eolWindowsFormat()
+{
+
+}
+
+void CodeEditPage::eolUNIXFormat()
+{
+
+}
+
+void CodeEditPage::eolMacFormat()
+{
+
+}
+
+void CodeEditPage::trimTrailingSpace()
+{
+
+}
+
+void CodeEditPage::trimLeadingSpace()
+{
+
+}
+
+void CodeEditPage::trimLeadingAndTrailingSpace()
+{
+
+}
+
+void CodeEditPage::eolToSpace()
+{
+
+}
+
+void CodeEditPage::removeUnnecessaryBlankAndEOL()
+{
+
+}
+
+void CodeEditPage::tabToSpace()
+{
+
+}
+
+void CodeEditPage::spaceToTab()
+{
+
+}
+
+void CodeEditPage::pasteHTMLContent()
+{
+
+}
+
+void CodeEditPage::pasteRTFContent()
+{
+
+}
+
+void CodeEditPage::copyBinaryContent()
+{
+
+}
+
+void CodeEditPage::cutBinaryContent()
+{
+
+}
+
+void CodeEditPage::pasteBinaryContent()
+{
+
+}
+
+void CodeEditPage::find()
+{
+
+}
+
+void CodeEditPage::findNext()
+{
+
+}
+
+void CodeEditPage::findPrevious()
+{
+
+}
+
+void CodeEditPage::selectAndFindNext()
+{
+
+}
+
+void CodeEditPage::selectAndFindPrevious()
+{
+
+}
+
+void CodeEditPage::findVolatieNext()
+{
+
+}
+
+void CodeEditPage::findVolatiePrevious()
+{
+
+}
+
+void CodeEditPage::replace()
+{
+
+}
+
+void CodeEditPage::incrementalSearch()
+{
+
+}
+
+void CodeEditPage::gotoPos()
+{
+
+}
+
+void CodeEditPage::gotoMatchingBrace()
+{
+
+}
+
+void CodeEditPage::findCharactersInRange()
+{
+
+}
+
+void CodeEditPage::toggleBookmark()
+{
+
+}
+
+void CodeEditPage::nextBookmark()
+{
+
+}
+
+void CodeEditPage::previousBookmark()
+{
+
+}
+
+void CodeEditPage::clearAllBookmarks()
+{
+
+}
+
+void CodeEditPage::cutBookmarkLines()
+{
+
+}
+
+void CodeEditPage::copyBookmarkLines()
+{
+
+}
+
+void CodeEditPage::pasteToReplaceBookmarkedLines()
+{
+
+}
+
+void CodeEditPage::removeBookmarkedLines()
+{
+
+}
+
+void CodeEditPage::removeUnbookmarkedLines()
+{
+
+}
+
+void CodeEditPage::inverseBookmark()
+{
+
+}
+
+void CodeEditPage::startRecording()
+{
+
+}
+
+void CodeEditPage::abortRecording()
+{
+
+}
+
+void CodeEditPage::saveLastRecording()
+{
+
+}
+
+void CodeEditPage::replayLastRecording()
+{
+
+}
+
+void CodeEditPage::wordWrap()
+{
+
+}
+
+void CodeEditPage::focusOnAnotherView()
+{
+
+}
+
+void CodeEditPage::hideLines()
+{
+
+}
+
+void CodeEditPage::foldAll()
+{
+
+}
+
+void CodeEditPage::unfoldAll()
+{
+
+}
+
+void CodeEditPage::collapseCurrentLevel()
+{
+
+}
+
+void CodeEditPage::uncollapseCurrentLevel()
+{
+
+}
+
+void CodeEditPage::collapseLevel()
+{
+
+}
+
+void CodeEditPage::uncollapseLevel()
+{
+
+}
+
+void CodeEditPage::textDirectionRTL()
+{
+
+}
+
+void CodeEditPage::textDirectionLTR()
+{
+
+}
+
+void CodeEditPage::encodeInANSI()
+{
+
+}
+
+void CodeEditPage::encodeInUTF8WithoutBOM()
+{
+
+}
+
+void CodeEditPage::encodeInUTF8()
+{
+
+}
+
+void CodeEditPage::encodeInUCS2BigEndian()
+{
+
+}
+
+void CodeEditPage::encodeInUCS2LittleEndian()
+{
+
+}
+
+void CodeEditPage::convertToANSI()
+{
+
+}
+
+void CodeEditPage::convertToUTF8WithoutBOM()
+{
+
+}
+
+void CodeEditPage::convertToUTF8()
+{
+
+}
+
+void CodeEditPage::convertToUCS2BigEndian()
+{
+
+}
+
+void CodeEditPage::convertToUCS2LittleEndian()
+{
+
+}
+
+void CodeEditPage::zoomIn()
+{
+    m_sciControlMaster->zoomIn();
+}
+
+void CodeEditPage::zoomOut()
+{
+    m_sciControlMaster->zoomOut();
+}
+
+void CodeEditPage::restoreDefaultZoom()
+{
+    m_sciControlMaster->setZoom(1);
 }
 
 void CodeEditPage::init()

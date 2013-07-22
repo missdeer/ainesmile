@@ -110,6 +110,196 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionUndo, SIGNAL(triggered()), page, SLOT(undo()));
     disconnect(ui->actionRedo, SIGNAL(triggered()), 0, 0);
     connect(ui->actionRedo, SIGNAL(triggered()), page, SLOT(redo()));
+    disconnect(ui->actionReloadFromDisk, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionReloadFromDisk, SIGNAL(triggered()), page, SLOT(reloadFromDisk()));
+    disconnect(ui->actionPrint, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPrint, SIGNAL(triggered()), page, SLOT(print()));
+    disconnect(ui->actionPrintNow, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPrintNow, SIGNAL(triggered()), page, SLOT(printNow()));
+    disconnect(ui->actionDelete, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionDelete, SIGNAL(triggered()), page, SLOT(deleteCurrent()));
+    disconnect(ui->actionSelectAll, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSelectAll, SIGNAL(triggered()), page, SLOT(selectAll()));
+    disconnect(ui->actionColumnMode, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionColumnMode, SIGNAL(triggered()), page, SLOT(columnMode()));
+    disconnect(ui->actionColumnEditor, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionColumnEditor, SIGNAL(triggered()), page, SLOT(columnEditor()));
+    disconnect(ui->actionCharacterPanel, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCharacterPanel, SIGNAL(triggered()), page, SLOT(characterPanel()));
+    disconnect(ui->actionClipboardHistory, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionClipboardHistory, SIGNAL(triggered()), page, SLOT(clipboardHistory()));
+    disconnect(ui->actionSetReadOnly, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSetReadOnly, SIGNAL(triggered()), page, SLOT(setReadOnly()));
+    disconnect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), page, SLOT(clearReadOnlyFlag()));
+    disconnect(ui->actionCurrentFullFilePathToClipboard, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCurrentFullFilePathToClipboard, SIGNAL(triggered()), page, SLOT(currentFullFilePathToClipboard()));
+    disconnect(ui->actionCurrentFileNameToClipboard, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCurrentFileNameToClipboard, SIGNAL(triggered()), page, SLOT(currentFileNameToClipboard()));
+    disconnect(ui->actionCurrentDirectoryPathToClipboard, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCurrentDirectoryPathToClipboard, SIGNAL(triggered()), page, SLOT(currentDirectoryPathToClipboard()));
+    disconnect(ui->actionIncreaseLineIndent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionIncreaseLineIndent, SIGNAL(triggered()), page, SLOT(increaseLineIndent()));
+    disconnect(ui->actionDecreaseLineIndent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionDecreaseLineIndent, SIGNAL(triggered()), page, SLOT(decreaseLineIndent()));
+    disconnect(ui->actionUppercase, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUppercase, SIGNAL(triggered()), page, SLOT(upperCase()));
+    disconnect(ui->actionLowercase, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionLowercase, SIGNAL(triggered()), page, SLOT(lowerCase()));
+    disconnect(ui->actionDuplicateCurrentLine, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionDuplicateCurrentLine, SIGNAL(triggered()), page, SLOT(duplicateCurrentLine()));
+    disconnect(ui->actionSplitLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSplitLines, SIGNAL(triggered()), page, SLOT(splitLines()));
+    disconnect(ui->actionJoinLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionJoinLines, SIGNAL(triggered()), page, SLOT(joinLines()));
+    disconnect(ui->actionMoveUpCurrentLine, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionMoveUpCurrentLine, SIGNAL(triggered()), page, SLOT(moveUpCurrentLine()));
+    disconnect(ui->actionMoveDownCurrentLine, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionMoveDownCurrentLine, SIGNAL(triggered()), page, SLOT(moveDownCurrentLine()));
+    disconnect(ui->actionToggleBlockComment, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionToggleBlockComment, SIGNAL(triggered()), page, SLOT(toggleBlockComment()));
+    disconnect(ui->actionBlockComment, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionBlockComment, SIGNAL(triggered()), page, SLOT(blockComment()));
+    disconnect(ui->actionBlockUncomment, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionBlockUncomment, SIGNAL(triggered()), page, SLOT(blockUncomment()));
+    disconnect(ui->actionStreamComment, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionStreamComment, SIGNAL(triggered()), page, SLOT(streamComment()));
+    disconnect(ui->actionFunctionCompletion, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFunctionCompletion, SIGNAL(triggered()), page, SLOT(functionCompletion()));
+    disconnect(ui->actionWordCompletion, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionWordCompletion, SIGNAL(triggered()), page, SLOT(wordCompletion()));
+    disconnect(ui->actionFunctionParametersHint, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFunctionParametersHint, SIGNAL(triggered()), page, SLOT(functionParametersHint()));
+    disconnect(ui->actionWindowsFormat, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionWindowsFormat, SIGNAL(triggered()), page, SLOT(eolWindowsFormat()));
+    disconnect(ui->actionUNIXFormat, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUNIXFormat, SIGNAL(triggered()), page, SLOT(eolUNIXFormat()));
+    disconnect(ui->actionMacFormat, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));
+    disconnect(ui->actionTrimTrailingSpace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTrimTrailingSpace, SIGNAL(triggered()), page, SLOT(trimTrailingSpace()));
+    disconnect(ui->actionTrimLeadingSpace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTrimLeadingSpace, SIGNAL(triggered()), page, SLOT(trimLeadingSpace()));
+    disconnect(ui->actionTrimLeadingAndTrailingSpace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTrimLeadingAndTrailingSpace, SIGNAL(triggered()), page, SLOT(trimLeadingAndTrailingSpace()));
+    disconnect(ui->actionEOLToSpace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEOLToSpace, SIGNAL(triggered()), page, SLOT(eolToSpace()));
+    disconnect(ui->actionRemoveUnnecessaryBlankAndEOL, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionRemoveUnnecessaryBlankAndEOL, SIGNAL(triggered()), page, SLOT(removeUnnecessaryBlankAndEOL()));
+    disconnect(ui->actionTABToSpace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTABToSpace, SIGNAL(triggered()), page, SLOT(tabToSpace()));
+    disconnect(ui->actionSpaceToTAB, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSpaceToTAB, SIGNAL(triggered()), page, SLOT(spaceToTab()));
+    disconnect(ui->actionPasteHTMLContent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPasteHTMLContent, SIGNAL(triggered()), page, SLOT(pasteHTMLContent()));
+    disconnect(ui->actionPasteRTFContent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPasteRTFContent, SIGNAL(triggered()), page, SLOT(pasteRTFContent()));
+    disconnect(ui->actionCopyBinaryContent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCopyBinaryContent, SIGNAL(triggered()), page, SLOT(copyBinaryContent()));
+    disconnect(ui->actionCutBinaryContent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCutBinaryContent, SIGNAL(triggered()), page, SLOT(cutBinaryContent()));
+    disconnect(ui->actionPasteBinaryContent, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPasteBinaryContent, SIGNAL(triggered()), page, SLOT(pasteBinaryContent()));
+    disconnect(ui->actionFind, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFind, SIGNAL(triggered()), page, SLOT(find()));
+    disconnect(ui->actionFindNext, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFindNext, SIGNAL(triggered()), page, SLOT(findNext()));
+    disconnect(ui->actionFindPrevious, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFindPrevious, SIGNAL(triggered()), page, SLOT(findPrevious()));
+    disconnect(ui->actionSelectAndFindNext, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSelectAndFindNext, SIGNAL(triggered()), page, SLOT(selectAndFindNext()));
+    disconnect(ui->actionSelectAndFindPrevious, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSelectAndFindPrevious, SIGNAL(triggered()), page, SLOT(selectAndFindPrevious()));
+    disconnect(ui->actionFindVolatieNext, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFindVolatieNext, SIGNAL(triggered()), page, SLOT(findVolatieNext()));
+    disconnect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), page, SLOT(findVolatiePrevious()));
+    disconnect(ui->actionReplace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionReplace, SIGNAL(triggered()), page, SLOT(replace()));
+    disconnect(ui->actionIncrementalSearch, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionIncrementalSearch, SIGNAL(triggered()), page, SLOT(incrementalSearch()));
+    disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoPos()));
+    disconnect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), page, SLOT(gotoMatchingBrace()));
+    disconnect(ui->actionFindCharactersInRange, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFindCharactersInRange, SIGNAL(triggered()), page, SLOT(findCharactersInRange()));
+    disconnect(ui->actionToggleBookmark, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionToggleBookmark, SIGNAL(triggered()), page, SLOT(toggleBookmark()));
+    disconnect(ui->actionNextBookmark, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionNextBookmark, SIGNAL(triggered()), page, SLOT(nextBookmark()));
+    disconnect(ui->actionPreviousBookmark, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPreviousBookmark, SIGNAL(triggered()), page, SLOT(previousBookmark()));
+    disconnect(ui->actionClearAllBookmarks, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionClearAllBookmarks, SIGNAL(triggered()), page, SLOT(clearAllBookmarks()));
+    disconnect(ui->actionCutBookmarkedLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCutBookmarkedLines, SIGNAL(triggered()), page, SLOT(cutBookmarkLines()));
+    disconnect(ui->actionCopyBookmarkedLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCopyBookmarkedLines, SIGNAL(triggered()), page, SLOT(copyBookmarkLines()));
+    disconnect(ui->actionPasteToReplaceBookmarkedLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionPasteToReplaceBookmarkedLines, SIGNAL(triggered()), page, SLOT(pasteToReplaceBookmarkedLines()));
+    disconnect(ui->actionRemoveBookmarkedLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionRemoveBookmarkedLines, SIGNAL(triggered()), page, SLOT(removeBookmarkedLines()));
+    disconnect(ui->actionRemoveUnmarkedLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionRemoveUnmarkedLines, SIGNAL(triggered()), page, SLOT(removeUnbookmarkedLines()));
+    disconnect(ui->actionInverseBookmark, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionInverseBookmark, SIGNAL(triggered()), page, SLOT(inverseBookmark()));
+    disconnect(ui->actionStartRecording, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionStartRecording, SIGNAL(triggered()), page, SLOT(startRecording()));
+    disconnect(ui->actionAbortRecording, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionAbortRecording, SIGNAL(triggered()), page, SLOT(abortRecording()));
+    disconnect(ui->actionSaveLastRecording, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionSaveLastRecording, SIGNAL(triggered()), page, SLOT(saveLastRecording()));
+    disconnect(ui->actionReplayLastRecording, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionReplayLastRecording, SIGNAL(triggered()), page, SLOT(replayLastRecording()));
+    disconnect(ui->actionWordWrap, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));
+    disconnect(ui->actionFocusOnAnotherView, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFocusOnAnotherView, SIGNAL(triggered()), page, SLOT(focusOnAnotherView()));
+    disconnect(ui->actionHideLines, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionHideLines, SIGNAL(triggered()), page, SLOT(hideLines()));
+    disconnect(ui->actionFoldAll, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionFoldAll, SIGNAL(triggered()), page, SLOT(foldAll()));
+    disconnect(ui->actionUnfoldAll, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUnfoldAll, SIGNAL(triggered()), page, SLOT(unfoldAll()));
+    disconnect(ui->actionCollapseCurrentLevel, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCollapseCurrentLevel, SIGNAL(triggered()), page, SLOT(collapseCurrentLevel()));
+    disconnect(ui->actionUncollapseCurrentLevel, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUncollapseCurrentLevel, SIGNAL(triggered()), page, SLOT(uncollapseCurrentLevel()));
+    disconnect(ui->actionCollapseLevel, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionCollapseLevel, SIGNAL(triggered()), page, SLOT(collapseLevel()));
+    disconnect(ui->actionUnCollapseLevel, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionUnCollapseLevel, SIGNAL(triggered()), page, SLOT(uncollapseLevel()));
+    disconnect(ui->actionTextDirectionRTL, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTextDirectionRTL, SIGNAL(triggered()), page, SLOT(textDirectionRTL()));
+    disconnect(ui->actionTextDirectionLTR, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionTextDirectionLTR, SIGNAL(triggered()), page, SLOT(textDirectionLTR()));
+    disconnect(ui->actionEncodeInANSI, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEncodeInANSI, SIGNAL(triggered()), page, SLOT(encodeInANSI()));
+    disconnect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), page, SLOT(encodeInUTF8WithoutBOM()));
+    disconnect(ui->actionEncodeInUTF8, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEncodeInUTF8, SIGNAL(triggered()), page, SLOT(encodeInUTF8()));
+    disconnect(ui->actionEncodeInUCS2BigEndian, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEncodeInUCS2BigEndian, SIGNAL(triggered()), page, SLOT(encodeInUCS2BigEndian()));
+    disconnect(ui->actionEncodeInUCS2LittleEndian, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionEncodeInUCS2LittleEndian, SIGNAL(triggered()), page, SLOT(encodeInUCS2LittleEndian()));
+    disconnect(ui->actionConvertToANSI, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionConvertToANSI, SIGNAL(triggered()), page, SLOT(convertToANSI()));
+    disconnect(ui->actionConvertToUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionConvertToUTF8WithoutBOM, SIGNAL(triggered()), page, SLOT(convertToUTF8WithoutBOM()));
+    disconnect(ui->actionConvertToUTF8, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionConvertToUTF8, SIGNAL(triggered()), page, SLOT(convertToUTF8()));
+    disconnect(ui->actionConvertToUCS2BigEndian, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionConvertToUCS2BigEndian, SIGNAL(triggered()), page, SLOT(convertToUCS2BigEndian()));
+    disconnect(ui->actionConvertToUCS2LittleEndian, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionConvertToUCS2LittleEndian, SIGNAL(triggered()), page, SLOT(convertToUCS2LittleEndian()));
+    disconnect(ui->actionZoomIn, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionZoomIn, SIGNAL(triggered()), page, SLOT(zoomIn()));
+    disconnect(ui->actionZoomOut, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionZoomOut, SIGNAL(triggered()), page, SLOT(zoomOut()));
+    disconnect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), 0, 0);
+    connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
 }
 
 void MainWindow::openFiles(const QStringList &files)
@@ -408,6 +598,121 @@ void MainWindow::on_actionAlwaysOnTop_triggered()
 }
 
 void MainWindow::on_actionCloseAllDocuments_triggered()
+{
+
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+
+}
+
+void MainWindow::on_actionFindInFiles_triggered()
+{
+
+}
+
+void MainWindow::on_actionSearchResultsWindow_triggered()
+{
+
+}
+
+void MainWindow::on_actionNextSearchResult_triggered()
+{
+
+}
+
+void MainWindow::on_actionPreviousSearchResult_triggered()
+{
+
+}
+
+void MainWindow::on_actionRegistration_triggered()
+{
+
+}
+
+void MainWindow::on_actionSelectExtensionItem_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowExtensionEditor_triggered()
+{
+
+}
+
+void MainWindow::on_actionEditCommands_triggered()
+{
+
+}
+
+void MainWindow::on_actionEditSnippets_triggered()
+{
+
+}
+
+void MainWindow::on_actionReloadExtensions_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowEndOfLine_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowAllCharacters_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowIndentGuide_triggered()
+{
+
+}
+
+void MainWindow::on_actionShowWrapSymbol_triggered()
+{
+
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+
+}
+
+void MainWindow::on_actionExternalTools_triggered()
+{
+
+}
+
+void MainWindow::on_actionPluginManager_triggered()
+{
+
+}
+
+void MainWindow::on_actionWindowsList_triggered()
+{
+
+}
+
+void MainWindow::on_actionOpenProject_triggered()
+{
+
+}
+
+void MainWindow::on_actionCloseProject_triggered()
+{
+
+}
+
+void MainWindow::on_actionNewProject_triggered()
 {
 
 }

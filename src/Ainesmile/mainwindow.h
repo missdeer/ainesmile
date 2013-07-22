@@ -72,6 +72,52 @@ private slots:
 
     void on_actionCloseAllDocuments_triggered();
 
+    void on_actionClose_triggered();
+
+    void on_actionFindInFiles_triggered();
+
+    void on_actionSearchResultsWindow_triggered();
+
+    void on_actionNextSearchResult_triggered();
+
+    void on_actionPreviousSearchResult_triggered();
+
+    void on_actionRegistration_triggered();
+
+    void on_actionSelectExtensionItem_triggered();
+
+    void on_actionShowExtensionEditor_triggered();
+
+    void on_actionEditCommands_triggered();
+
+    void on_actionEditSnippets_triggered();
+
+    void on_actionReloadExtensions_triggered();
+
+    void on_actionShowWhiteSpaceAndTAB_triggered();
+
+    void on_actionShowEndOfLine_triggered();
+
+    void on_actionShowAllCharacters_triggered();
+
+    void on_actionShowIndentGuide_triggered();
+
+    void on_actionShowWrapSymbol_triggered();
+
+    void on_actionPreferences_triggered();
+
+    void on_actionExternalTools_triggered();
+
+    void on_actionPluginManager_triggered();
+
+    void on_actionWindowsList_triggered();
+
+    void on_actionOpenProject_triggered();
+
+    void on_actionCloseProject_triggered();
+
+    void on_actionNewProject_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool m_aboutToQuit;
