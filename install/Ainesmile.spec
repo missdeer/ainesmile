@@ -1,60 +1,59 @@
-Name: 		Ninayan
-Version:	2011.3
+Name: 		Ainesmile
+Version:	2013
 Release:	2
-Summary:	DForD Ninayan
+Summary:	Ainesmile
 Vendor:		DForD Software
 License:	DForD Software License
-Group:		Applications/Communications
-BuildRoot:	/tmp/yum-ninayan
+Group:		Applications/Editor
+BuildRoot:	/tmp/yum-Ainesmile
 
 %description
-Ninayan is a powerful information getting and reading tool based on SNS services.
-
+Ainesmile is a powerful source code editor and browser.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-cp -r ${HOME}/Shareware/ninayan/NinayanSetup/ $RPM_BUILD_ROOT
+cp -r ${HOME}/Shareware/Ainesmile/AinesmileSetup/ $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/usr/bin/Ninayan
-/usr/bin/Ninayan.app
-/usr/share/Ninayan/imports/QtWebKit/libqmlwebkitplugin.so
-/usr/share/Ninayan/imports/QtWebKit/qmldir
-/usr/share/Ninayan/libQtCore.so.4
-/usr/share/Ninayan/libQtCore.so.4.7.2
-/usr/share/Ninayan/libQtDeclarative.so.4
-/usr/share/Ninayan/libQtDeclarative.so.4.7.2
-/usr/share/Ninayan/libQtGui.so.4
-/usr/share/Ninayan/libQtGui.so.4.7.2
-/usr/share/Ninayan/libQtMultimedia.so.4
-/usr/share/Ninayan/libQtMultimedia.so.4.7.2
-/usr/share/Ninayan/libQtNetwork.so.4
-/usr/share/Ninayan/libQtNetwork.so.4.7.2
-/usr/share/Ninayan/libQtScript.so.4
-/usr/share/Ninayan/libQtScript.so.4.7.2
-/usr/share/Ninayan/libQtSql.so.4
-/usr/share/Ninayan/libQtSql.so.4.7.2
-/usr/share/Ninayan/libQtSvg.so.4
-/usr/share/Ninayan/libQtSvg.so.4.7.2
-/usr/share/Ninayan/libQtWebKit.so.4
-/usr/share/Ninayan/libQtWebKit.so.4.7.2
-/usr/share/Ninayan/libQtXml.so.4
-/usr/share/Ninayan/libQtXml.so.4.7.2
-/usr/share/Ninayan/libQtXmlPatterns.so.4
-/usr/share/Ninayan/libQtXmlPatterns.so.4.7.2
-/usr/share/Ninayan/plugins/bearer/libqgenericbearer.so
-/usr/share/Ninayan/plugins/codecs/libqcncodecs.so
-/usr/share/Ninayan/plugins/codecs/libqjpcodecs.so
-/usr/share/Ninayan/plugins/codecs/libqkrcodecs.so
-/usr/share/Ninayan/plugins/codecs/libqtwcodecs.so
-/usr/share/Ninayan/plugins/imageformats/libqgif.so
-/usr/share/Ninayan/plugins/imageformats/libqico.so
-/usr/share/Ninayan/plugins/imageformats/libqjpeg.so
-/usr/share/Ninayan/plugins/imageformats/libqmng.so
-/usr/share/Ninayan/plugins/imageformats/libqsvg.so
-/usr/share/Ninayan/plugins/imageformats/libqtiff.so
-/usr/share/Ninayan/plugins/inputmethods/libqimsw-multi.so
-/usr/share/Ninayan/plugins/sqldrivers/libqsqlite.so
-/usr/share/Ninayan/wqy-microhei.ttc
+/usr/bin/Ainesmile
+/usr/bin/Ainesmile.app
+/usr/share/Ainesmile/imports/QtWebKit/libqmlwebkitplugin.so
+/usr/share/Ainesmile/imports/QtWebKit/qmldir
+/usr/share/Ainesmile/libQtCore.so.4
+/usr/share/Ainesmile/libQtCore.so.4.7.2
+/usr/share/Ainesmile/libQtDeclarative.so.4
+/usr/share/Ainesmile/libQtDeclarative.so.4.7.2
+/usr/share/Ainesmile/libQtGui.so.4
+/usr/share/Ainesmile/libQtGui.so.4.7.2
+/usr/share/Ainesmile/libQtMultimedia.so.4
+/usr/share/Ainesmile/libQtMultimedia.so.4.7.2
+/usr/share/Ainesmile/libQtNetwork.so.4
+/usr/share/Ainesmile/libQtNetwork.so.4.7.2
+/usr/share/Ainesmile/libQtScript.so.4
+/usr/share/Ainesmile/libQtScript.so.4.7.2
+/usr/share/Ainesmile/libQtSql.so.4
+/usr/share/Ainesmile/libQtSql.so.4.7.2
+/usr/share/Ainesmile/libQtSvg.so.4
+/usr/share/Ainesmile/libQtSvg.so.4.7.2
+/usr/share/Ainesmile/libQtWebKit.so.4
+/usr/share/Ainesmile/libQtWebKit.so.4.7.2
+/usr/share/Ainesmile/libQtXml.so.4
+/usr/share/Ainesmile/libQtXml.so.4.7.2
+/usr/share/Ainesmile/libQtXmlPatterns.so.4
+/usr/share/Ainesmile/libQtXmlPatterns.so.4.7.2
+/usr/share/Ainesmile/plugins/bearer/libqgenericbearer.so
+/usr/share/Ainesmile/plugins/codecs/libqcncodecs.so
+/usr/share/Ainesmile/plugins/codecs/libqjpcodecs.so
+/usr/share/Ainesmile/plugins/codecs/libqkrcodecs.so
+/usr/share/Ainesmile/plugins/codecs/libqtwcodecs.so
+/usr/share/Ainesmile/plugins/imageformats/libqgif.so
+/usr/share/Ainesmile/plugins/imageformats/libqico.so
+/usr/share/Ainesmile/plugins/imageformats/libqjpeg.so
+/usr/share/Ainesmile/plugins/imageformats/libqmng.so
+/usr/share/Ainesmile/plugins/imageformats/libqsvg.so
+/usr/share/Ainesmile/plugins/imageformats/libqtiff.so
+/usr/share/Ainesmile/plugins/inputmethods/libqimsw-multi.so
+/usr/share/Ainesmile/plugins/sqldrivers/libqsqlite.so
+/usr/share/Ainesmile/wqy-microhei.ttc
 
