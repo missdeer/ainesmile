@@ -1,7 +1,9 @@
+#include <QApplication>
 #include <QFile>
 #include <QVBoxLayout>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QClipboard>
 #include "SciLexer.h"
 #include "codeeditpage.h"
 
@@ -222,27 +224,32 @@ void CodeEditPage::clipboardHistory()
 
 void CodeEditPage::setReadOnly()
 {
-
+    m_sciControlMaster->setReadOnly(true);
 }
 
 void CodeEditPage::clearReadOnlyFlag()
 {
-
+    m_sciControlMaster->setReadOnly(false);
 }
 
 void CodeEditPage::currentFullFilePathToClipboard()
 {
-
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(m_filePath);
 }
 
 void CodeEditPage::currentFileNameToClipboard()
 {
-
+    QFileInfo fi(m_filePath);
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(fi.fileName());
 }
 
 void CodeEditPage::currentDirectoryPathToClipboard()
 {
-
+    QFileInfo fi(m_filePath);
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(fi.absolutePath());
 }
 
 void CodeEditPage::increaseLineIndent()
