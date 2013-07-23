@@ -219,7 +219,7 @@ void MainWindow::connectSignals(CodeEditPage *page)
     disconnect(ui->actionIncrementalSearch, SIGNAL(triggered()), 0, 0);
     connect(ui->actionIncrementalSearch, SIGNAL(triggered()), page, SLOT(incrementalSearch()));
     disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoPos()));
+    connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoLine()));
     disconnect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), 0, 0);
     connect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), page, SLOT(gotoMatchingBrace()));
     disconnect(ui->actionFindCharactersInRange, SIGNAL(triggered()), 0, 0);

@@ -29,15 +29,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     CodeEdit/codeeditpage.cpp \
     tabwidget.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    gotolinedialog.cpp
 
 HEADERS  += mainwindow.h \
     CodeEdit/codeeditpage.h \
     tabwidget.h \
-    aboutdialog.h
+    aboutdialog.h \
+    gotolinedialog.h
 
 FORMS    += mainwindow.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    gotolinedialog.ui
 
 OTHER_FILES += \
     Ainesmile.rc

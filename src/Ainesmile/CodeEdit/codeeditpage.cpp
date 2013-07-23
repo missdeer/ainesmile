@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include "SciLexer.h"
+#include "gotolinedialog.h"
 #include "codeeditpage.h"
 
 CodeEditPage::CodeEditPage(QWidget *parent) :
@@ -455,9 +456,13 @@ void CodeEditPage::incrementalSearch()
 
 }
 
-void CodeEditPage::gotoPos()
+void CodeEditPage::gotoLine()
 {
-
+    GotoLineDialog dlg(this);
+    if (dlg.exec())
+    {
+        m_sciControlMaster->gotoLine(dlg.line);
+    }
 }
 
 void CodeEditPage::gotoMatchingBrace()
