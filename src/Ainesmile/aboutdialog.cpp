@@ -15,6 +15,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     {
         QByteArray d = fileDate.readAll();
         date = d.data();
+        date = date.replace("\n", " ");
         fileDate.close();
     }
 
@@ -27,7 +28,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
         fileRevision.close();
     }
 
-    ui->labelBuildInfo->setText(tr("Build at ") + date + tr("Rev ") + revision);
+    ui->labelBuildInfo->setText(tr("Build at ") + date + "\n" + tr("Rev ") + revision);
 }
 
 AboutDialog::~AboutDialog()
