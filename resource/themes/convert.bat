@@ -1,0 +1,1 @@
+for %i IN (*.xml) do ..\..\tool\npp2pt.exe "%i"

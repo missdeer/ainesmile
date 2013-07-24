@@ -4,9 +4,12 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <direct.h>
 #include <boost/assert.hpp>
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
+
+std::string _theme_name;
 
 struct keywords
 {
@@ -94,8 +97,169 @@ void parse_language_definition(rapidxml::xml_node<>* languages_node)
     }
 }
 
-void parse_theme_definition(rapidxml::xml_node<>* lexers_node, rapidxml::xml_node<>* gloablstyles_node)
+struct words_style
 {
+    std::string name_;
+    std::string style_id_;
+    std::string fg_color_;
+    std::string bg_color_;
+    std::string font_name_;
+    std::string font_style_;
+    std::string font_size_;
+};
+
+struct lexer
+{
+    std::string name_;
+    std::string description_;
+    std::string ext_;
+    std::vector<words_style> words_style_list_;
+};
+
+void write_theme_lexer_definition(lexer& l)
+{
+    std::string file_path(_theme_name + "\\" + l.name_ +".xml");
+
+    rapidxml::xml_document<> doc;
+    doc.parse<0>(doc.allocate_string("<AinesmileTheme/>"));
+    rapidxml::xml_node<>* root_node = doc.first_node("AinesmileTheme");
+    BOOST_ASSERT(root_node);
+    root_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(l.name_.c_str())));
+    root_node->append_attribute(doc.allocate_attribute("desc", doc.allocate_string(l.description_.c_str())));
+    root_node->append_attribute(doc.allocate_attribute("ext", doc.allocate_string(l.ext_.c_str())));
+    for (std::vector<words_style>::iterator it = l.words_style_list_.begin();
+            l.words_style_list_.end() != it;
+            ++it)
+    {
+        rapidxml::xml_node<>* style_node = doc.allocate_node(rapidxml::node_element, "style");
+        root_node->append_node(style_node);
+        words_style& ws = *it;
+        style_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(ws.name_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("style_id", doc.allocate_string(ws.style_id_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("fg_color", doc.allocate_string(ws.fg_color_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("bg_color", doc.allocate_string(ws.bg_color_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_name", doc.allocate_string(ws.font_name_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_style", doc.allocate_string(ws.font_style_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_size", doc.allocate_string(ws.font_size_.c_str())));
+    }
+    std::ofstream ofs(file_path.c_str(), std::ios::trunc);
+    std::string xmldoc;
+    rapidxml::print(std::back_inserter(xmldoc), doc, 0);
+    ofs << xmldoc;
+    ofs.close();
+
+}
+
+void write_theme_global_definition( std::vector<words_style>& globalstyles)
+{
+    std::string file_path(_theme_name + "\\global_style.xml");
+
+    rapidxml::xml_document<> doc;
+    doc.parse<0>(doc.allocate_string("<AinesmileTheme/>"));
+    rapidxml::xml_node<>* root_node = doc.first_node("AinesmileTheme");
+    BOOST_ASSERT(root_node);
+    for (std::vector<words_style>::iterator it = globalstyles.begin();
+            globalstyles.end() != it;
+            ++it)
+    {
+        rapidxml::xml_node<>* style_node = doc.allocate_node(rapidxml::node_element, "style");
+        root_node->append_node(style_node);
+        words_style& ws = *it;
+        style_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(ws.name_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("style_id", doc.allocate_string(ws.style_id_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("fg_color", doc.allocate_string(ws.fg_color_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("bg_color", doc.allocate_string(ws.bg_color_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_name", doc.allocate_string(ws.font_name_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_style", doc.allocate_string(ws.font_style_.c_str())));
+        style_node->append_attribute(doc.allocate_attribute("font_size", doc.allocate_string(ws.font_size_.c_str())));
+    }
+    std::ofstream ofs(file_path.c_str(), std::ios::trunc);
+    std::string xmldoc;
+    rapidxml::print(std::back_inserter(xmldoc), doc, 0);
+    ofs << xmldoc;
+    ofs.close();
+}
+
+void parse_theme_definition(rapidxml::xml_node<>* lexers_node, rapidxml::xml_node<>* globalstyles_node)
+{
+    rapidxml::xml_node<>* lexer_node = lexers_node->first_node("LexerType");
+    while (lexer_node)
+    {
+        lexer l;
+        rapidxml::xml_attribute<>* name_attr = lexer_node->first_attribute("name");
+        if (name_attr)
+            l.name_ = name_attr->value();
+        rapidxml::xml_attribute<>* desc_attr = lexer_node->first_attribute("desc");
+        if (desc_attr)
+            l.description_ = desc_attr->value();
+        rapidxml::xml_attribute<>* ext_attr = lexer_node->first_attribute("ext");
+        if (ext_attr)
+            l.ext_ = ext_attr->value();
+        rapidxml::xml_node<>* words_style_node = lexer_node->first_node("WordsStyle");
+        while(words_style_node)
+        {
+            words_style ws;
+            rapidxml::xml_attribute<>* name_attr = words_style_node->first_attribute("name");
+            if (name_attr)
+                ws.name_ = name_attr->value();
+            rapidxml::xml_attribute<>* style_id_attr = words_style_node->first_attribute("styleID");
+            if (style_id_attr)
+                ws.style_id_ = style_id_attr->value();
+            rapidxml::xml_attribute<>* fg_color_attr = words_style_node->first_attribute("fgColor");
+            if (fg_color_attr)
+                ws.fg_color_ = fg_color_attr->value();
+            rapidxml::xml_attribute<>* bg_color_attr = words_style_node->first_attribute("bgColor");
+            if (bg_color_attr)
+                ws.bg_color_ = bg_color_attr->value();
+            rapidxml::xml_attribute<>* font_name_attr = words_style_node->first_attribute("fontName");
+            if (font_name_attr)
+                ws.font_name_ = font_name_attr->value();
+            rapidxml::xml_attribute<>* font_style_attr = words_style_node->first_attribute("fontStyle");
+            if (font_style_attr)
+                ws.font_style_ = font_style_attr->value();
+            rapidxml::xml_attribute<>* font_size_attr = words_style_node->first_attribute("fontSize");
+            if (font_size_attr)
+                ws.font_size_ = font_size_attr->value();
+
+            l.words_style_list_.push_back(ws);
+            words_style_node = words_style_node->next_sibling("WordsStyle");
+        }
+        write_theme_lexer_definition(l);
+        lexer_node = lexer_node->next_sibling("LexerType");
+    }
+
+    std::vector<words_style> globalstyles;
+    rapidxml::xml_node<>* words_style_node = globalstyles_node->first_node("WidgetStyle");
+    while(words_style_node)
+    {
+        words_style ws;
+        rapidxml::xml_attribute<>* name_attr = words_style_node->first_attribute("name");
+        if (name_attr)
+            ws.name_ = name_attr->value();
+        rapidxml::xml_attribute<>* style_id_attr = words_style_node->first_attribute("styleID");
+        if (style_id_attr)
+            ws.style_id_ = style_id_attr->value();
+        rapidxml::xml_attribute<>* fg_color_attr = words_style_node->first_attribute("fgColor");
+        if (fg_color_attr)
+            ws.fg_color_ = fg_color_attr->value();
+        rapidxml::xml_attribute<>* bg_color_attr = words_style_node->first_attribute("bgColor");
+        if (bg_color_attr)
+            ws.bg_color_ = bg_color_attr->value();
+        rapidxml::xml_attribute<>* font_name_attr = words_style_node->first_attribute("fontName");
+        if (font_name_attr)
+            ws.font_name_ = font_name_attr->value();
+        rapidxml::xml_attribute<>* font_style_attr = words_style_node->first_attribute("fontStyle");
+        if (font_style_attr)
+            ws.font_style_ = font_style_attr->value();
+        rapidxml::xml_attribute<>* font_size_attr = words_style_node->first_attribute("fontSize");
+        if (font_size_attr)
+            ws.font_size_ = font_size_attr->value();
+
+        globalstyles.push_back(ws);
+        words_style_node = words_style_node->next_sibling("WidgetStyle");
+    }
+
+    write_theme_global_definition(globalstyles);
 }
 
 int main(int argc, char *argv[])
@@ -152,6 +316,10 @@ int main(int argc, char *argv[])
     rapidxml::xml_node<>* globalstyle_node = root_node->first_node("GlobalStyles");
     if (type_node && globalstyle_node)
     {
+        char *dot = strrchr(argv[1], '.');
+        _theme_name = std::string(argv[1], dot - argv[1]);
+        _theme_name.append(".asTheme");
+        mkdir(_theme_name.c_str());
         std::cout << "this is a theme definition file" << std::endl;
         parse_theme_definition(type_node, globalstyle_node);
         return 0;
