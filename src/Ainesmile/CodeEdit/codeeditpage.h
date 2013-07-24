@@ -20,7 +20,9 @@ private:
     QWebView* m_webView;
 
     QString m_filePath;
-    void init(ScintillaEdit* sci);
+    void initScintilla(ScintillaEdit* sci);
+    void initFolderStyle(ScintillaEdit* sci);
+    void initEditorStyle(ScintillaEdit* sci);
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
@@ -41,6 +43,7 @@ signals:
     void redoAvailableChanged();
     void undoAvailableChanged();
     void modifiedNotification();
+    void filePathChanged(const QString& filePath);
 public slots:
     void updateUI();
     void modified(int type, int position, int length, int linesAdded,

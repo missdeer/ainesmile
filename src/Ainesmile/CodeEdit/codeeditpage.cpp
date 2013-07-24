@@ -15,11 +15,6 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     m_sciControlSlave(new ScintillaEdit(this))
   //  ,m_webView(new QWebView(this))
 {
-    Q_ASSERT(m_splitter);
-    Q_ASSERT(m_sciControlMaster);
-    Q_ASSERT(m_sciControlSlave);
-    Q_ASSERT(m_webView);
-
     sptr_t docPtr = m_sciControlMaster->send(SCI_GETDOCPOINTER);
     m_sciControlSlave->send(SCI_SETDOCPOINTER, 0, docPtr);
 
@@ -38,8 +33,8 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     m_mainLayout->addWidget(m_splitter);
     setLayout(m_mainLayout);
 
-    init(m_sciControlMaster);
-    init(m_sciControlSlave);
+    initScintilla(m_sciControlMaster);
+    initScintilla(m_sciControlSlave);
 }
 
 void CodeEditPage::openFile(const QString &filePath)
@@ -51,6 +46,9 @@ void CodeEditPage::openFile(const QString &filePath)
         m_sciControlMaster->send(SCI_SETTEXT, 0, (sptr_t)file.readAll().data());
         m_sciControlMaster->send(SCI_EMPTYUNDOBUFFER, 0, 0);
         file.close();
+        emit filePathChanged(m_filePath);
+        initEditorStyle(m_sciControlMaster);
+        initEditorStyle(m_sciControlSlave);
     }
 }
 
@@ -61,6 +59,12 @@ void CodeEditPage::saveFile(const QString &filePath)
     if (saveFileInfo != fileInfo)
     {
         m_filePath = filePath;
+        emit filePathChanged(m_filePath);
+        if (saveFileInfo.suffix() != fileInfo.suffix())
+        {
+            initEditorStyle(m_sciControlMaster);
+            initEditorStyle(m_sciControlSlave);
+        }
     }
 
     QFile file(filePath);
@@ -715,7 +719,7 @@ void CodeEditPage::restoreDefaultZoom()
     m_sciControlSlave->setZoom(1);
 }
 
-void CodeEditPage::init(ScintillaEdit* sci)
+void CodeEditPage::initScintilla(ScintillaEdit* sci)
 {
     sci->send(SCI_STYLERESETDEFAULT, 0, 0);
     sci->send(SCI_STYLECLEARALL, 0, 0);
@@ -780,7 +784,7 @@ void CodeEditPage::init(ScintillaEdit* sci)
     sci->send(SCI_SETPRINTCOLOURMODE,  0, 0);
     sci->send(SCI_SETPRINTWRAPMODE,  1,  0);
     
-    //set_folder_style( sci )
+    initFolderStyle( sci );
     
     sci->send(SCI_SETWRAPMODE, SC_WRAP_NONE, 0);
     sci->send(SCI_SETWRAPVISUALFLAGS, SC_WRAPVISUALFLAG_NONE, 0);
@@ -817,5 +821,46 @@ void CodeEditPage::init(ScintillaEdit* sci)
     connect(m_sciControlSlave, SIGNAL(updateUi()), this, SLOT(updateUI()));
     connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
             this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
+}
+
+void CodeEditPage::initFolderStyle(ScintillaEdit *sci)
+{
+    sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED);
+
+    sci->markerDefine(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS);
+    sci->markerDefine(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS);
+    sci->markerDefine(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE);
+    sci->markerDefine(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNER);
+    sci->markerDefine(SC_MARKNUM_FOLDEREND, SC_MARK_BOXPLUSCONNECTED);
+    sci->markerDefine(SC_MARKNUM_FOLDEROPENMID, SC_MARK_BOXMINUSCONNECTED);
+    sci->markerDefine(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNER);
+
+    sci->markerSetFore(SC_MARKNUM_FOLDEROPEN, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDEROPEN, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDER, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDER, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDERSUB, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDERSUB, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDERTAIL, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDERTAIL, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDEREND, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDEREND, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDEROPENMID, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDEROPENMID, 0x808080);
+    sci->markerSetFore(SC_MARKNUM_FOLDERMIDTAIL, 0xFFFFFF);
+    sci->markerSetBack(SC_MARKNUM_FOLDERMIDTAIL, 0x808080);
+    sci->setProperty( "fold", "1");
+    sci->setProperty( "fold.compact", "1");
+    sci->setProperty( "fold.at.else", "1");
+    sci->setProperty( "fold.preprocessor", "1");
+    sci->setProperty( "fold.view", "1");
+    sci->setProperty( "fold.comment", "1");
+    sci->setProperty( "fold.html", "1");
+    sci->setProperty( "fold.comment.python", "1");
+    sci->setProperty( "fold.quotes.python", "1");
+}
+
+void CodeEditPage::initEditorStyle(ScintillaEdit *sci)
+{
 }
 
