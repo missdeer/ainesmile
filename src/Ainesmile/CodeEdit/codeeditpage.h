@@ -104,7 +104,7 @@ public slots:
     void findVolatiePrevious();
     void replace();
     void incrementalSearch();
-    void gotoPos();
+    void gotoLine();
     void gotoMatchingBrace();
     void findCharactersInRange();
     void toggleBookmark();
