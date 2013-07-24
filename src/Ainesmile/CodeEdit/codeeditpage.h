@@ -20,7 +20,7 @@ private:
     QWebView* m_webView;
 
     QString m_filePath;
-    void init();
+    void init(ScintillaEdit* sci);
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
@@ -34,6 +34,7 @@ public:
     bool canUndo();
     bool canRedo();
     bool isModified();
+    void grabFocus();
 signals:
     void copyAvailableChanged();
     void pasteAvailableChanged();

@@ -16,18 +16,19 @@ TEMPLATE = app
 
 
 INCLUDEPATH += CodeEdit \
-        ../../3rdparty/scintilla/qt/ScintillaEditBase \
-        ../../3rdparty/scintilla/qt/ScintillaEdit \
-	../../3rdparty/scintilla/include \
-	../../3rdparty/scintilla/src \
-	../../3rdparty/scintilla/lexlib
+    ../../3rdparty/rapidxml-1.13 \
+    ../../3rdparty/scintilla/qt/ScintillaEditBase \
+    ../../3rdparty/scintilla/qt/ScintillaEdit \
+    ../../3rdparty/scintilla/include \
+    ../../3rdparty/scintilla/src \
+    ../../3rdparty/scintilla/lexlib
 
 DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     CodeEdit/codeeditpage.cpp \
+    mainwindow.cpp \
     tabwidget.cpp \
     aboutdialog.cpp \
     gotolinedialog.cpp

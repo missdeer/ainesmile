@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeRequested(int)));
 
     setActionShortcuts();
-
     setAcceptDrops(true);
 }
 
@@ -358,6 +357,7 @@ void MainWindow::newDocument()
     updateUI(codeeditpage);
     ui->tabWidget->setFocus();
     codeeditpage->setFocus();
+    codeeditpage->grabFocus();
 }
 
 
