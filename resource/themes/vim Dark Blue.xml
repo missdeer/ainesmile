@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252" ?>
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="actionscript" desc="ActionScript" ext="">
             <!--
@@ -727,6 +727,6 @@
         <WidgetStyle name="Unsaved change marker" styleID="0" bgColor="FF0000" />
         <WidgetStyle name="Saved change marker" styleID="0" bgColor="80FF00" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>
 
  	  	 

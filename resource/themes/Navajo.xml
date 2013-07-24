@@ -24,15 +24,8 @@ License:             Feel free to modify this theme.
                      more than a framework for an entirely different color scheme, you
                      may, and should, omit such attribution.
 
-Installation:
-    Copy this file to C:\Program Files (x86)\Notepad++\themes  OR
-    For WindowsXP:
-    Copy this file to C:\Documents and Settings\%%USERNAME%%\Application Data\Notepad++\themes
-    For Windows Vista or 7:
-    Copy this file to C:\Users\%%USERNAME%%\AppData\Roaming\Notepad++\themes
-
 //-->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="actionscript" desc="ActionScript" ext="">
             <WordsStyle name="DEFAULT" styleID="11" fgColor="000000" bgColor="BA9C80" fontName="" fontStyle="0" fontSize="" />
@@ -870,4 +863,4 @@ Installation:
         <WidgetStyle name="Active tab text" styleID="0" fgColor="000000" />
         <WidgetStyle name="Inactive tabs" styleID="0" fgColor="181880" bgColor="BA9C80" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

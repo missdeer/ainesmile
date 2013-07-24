@@ -8,16 +8,9 @@ Featured language:	Php, Css, Javascript, Html, XML, others?
 Note:				Feel free to modify this style and re-release it.  Any additions to languages or syntax to bring it closer to VibrantInk would be appreciated.
 					This style available under the terms of the GNU Free License.
 
-Install: copy your installed Notepad++ directory root, overwrite old stylers.xml (backup old file first), 
-or copy %APPDATA%\Notepad++\
-overwrite old stylers.xml (backup old file first)
-
-Keep Notepad++ development active, donate!:
-http://sourceforge.net/donate/index.php?group_id=95717
-
 2007.11.16
 -->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="c" desc="C" ext="">
             <WordsStyle name="PREPROCESSOR" styleID="9" fgColor="EDF8F9" bgColor="000000" fontName="" fontStyle="0" fontSize="" />
@@ -734,4 +727,4 @@ http://sourceforge.net/donate/index.php?group_id=95717
         <WidgetStyle name="Active tab text" styleID="0" fgColor="000000" />
         <WidgetStyle name="Inactive tabs" styleID="0" fgColor="808080" bgColor="C0C0C0" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

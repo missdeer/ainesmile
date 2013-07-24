@@ -27,19 +27,14 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 Requirements:
     * This style is based on DejaVu fonts <http://dejavu.sourceforge.net/wiki/index.php/Main_Page>.
-    * Notepad++, of course.
-
-Installation:
-    Copy this file to C:\Documents and Settings\%%USERNAME%%\Application Data\Notepad++\themes
-
-
+   
 Credits:
     Thanks for the original Textmate theme author.
     Thanks for Fabio Zendhi Nagao for the tmTheme2nppStyler.
     Thanks for the user for the tmTheme source.
 
 //-->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="c" desc="C" ext="">
             <WordsStyle name="PREPROCESSOR" styleID="9" fgColor="FFAA00" bgColor="2A211C" fontName="" fontStyle="0" fontSize="10" />
@@ -764,4 +759,4 @@ Credits:
         <WidgetStyle name="Active tab text" styleID="0" fgColor="000000" bgColor="8000FF" />
         <WidgetStyle name="Inactive tabs" styleID="0" fgColor="808080" bgColor="C0C0C0" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

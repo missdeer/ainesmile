@@ -10,7 +10,7 @@ Created by:          Jani Kesänen (jani dot kesanen gmail com)
 Released:            12.01.2010
 License:             Feel free to modify this style and re-release it. This style is available under the terms of the GNU Free License.
 -->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="actionscript" desc="ActionScript" ext="">
             <WordsStyle name="DEFAULT" styleID="11" fgColor="DCDCCC" bgColor="3F3F3F" fontName="" fontStyle="0" fontSize="" />
@@ -827,4 +827,4 @@ License:             Feel free to modify this style and re-release it. This styl
         <WidgetStyle name="Mark Style 4" styleID="22" bgColor="408040" fgColor="000000" />
         <WidgetStyle name="Mark Style 5" styleID="21" bgColor="968CF1" fgColor="000000" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

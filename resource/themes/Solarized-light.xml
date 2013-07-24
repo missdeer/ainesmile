@@ -33,17 +33,9 @@ Requirements:
       Note 3/29/2012: I have replaced Inconsola-dz with Consolas, since Consolas is
       installed by default in recent versions of Windows.
       
-    * Notepad++, of course.
-
-Installation:
-    Copy this file to C:\Program Files (x86)\Notepad++\themes  OR
-    For WindowsXP:
-    Copy this file to C:\Documents and Settings\%%USERNAME%%\Application Data\Notepad++\themes
-    For Windows Vista or 7:
-    Copy this file to C:\Users\%%USERNAME%%\AppData\Roaming\Notepad++\themes
 
 //-->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="actionscript" desc="ActionScript" ext="">
             <WordsStyle name="DEFAULT" styleID="11" fgColor="657B83" bgColor="FDF6E3" fontName="" fontStyle="0" fontSize="" />
@@ -881,4 +873,4 @@ Installation:
         <WidgetStyle name="Active tab text" styleID="0" fgColor="000000" />
         <WidgetStyle name="Inactive tabs" styleID="0" fgColor="073642" bgColor="93A1A1" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

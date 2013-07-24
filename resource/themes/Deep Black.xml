@@ -7,12 +7,9 @@ Created by:         Mariusz Kasperkiewicz
 Featured language:  SQL, C, C++, Pascal, Php, Css, Javascript, Html, XML, others?
 Note:               Feel free to modify this style and re-release it. This style is available under the terms of the GNU Free License.
 
-Keep Notepad++ development active, donate!:
-http://sourceforge.net/donate/index.php?group_id=95717
-
 2009.05.28
 -->
-<NotepadPlus>
+<Ainesmile>
     <LexerStyles>
         <LexerType name="c" desc="C" ext="">
             <WordsStyle name="PREPROCESSOR" styleID="9" fgColor="C0C0C0" bgColor="000000" fontName="" fontStyle="0" fontSize="" />
@@ -733,4 +730,4 @@ http://sourceforge.net/donate/index.php?group_id=95717
         <WidgetStyle name="Active tab text" styleID="0" fgColor="000000" bgColor="8000FF" fontSize="10" fontStyle="0" />
         <WidgetStyle name="Inactive tabs" styleID="0" fgColor="808080" bgColor="C0C0C0" />
     </GlobalStyles>
-</NotepadPlus>
+</Ainesmile>

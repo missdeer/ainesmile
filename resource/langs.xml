@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252" ?>
-<NotepadPlus>
+<Ainesmile>
    <!-- The key words of the supported languages, don't touch them! -->
    <Languages>
         <Language name="normal" ext="txt"/>
@@ -234,4 +234,4 @@
         </Language>
 -->
     </Languages>
-</NotepadPlus>
+</Ainesmile>
