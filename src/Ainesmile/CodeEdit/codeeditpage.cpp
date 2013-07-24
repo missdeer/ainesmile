@@ -9,11 +9,11 @@
 #include "codeeditpage.h"
 
 CodeEditPage::CodeEditPage(QWidget *parent) :
-    QWidget(parent)
-  ,m_splitter(new QSplitter( Qt::Vertical, this))
-  ,m_sciControlMaster(new ScintillaEdit(this))
-  ,m_sciControlSlave(new ScintillaEdit(this))
-//  ,m_webView(new QWebView(this))
+    QWidget(parent),
+    m_splitter(new QSplitter( Qt::Vertical, this)),
+    m_sciControlMaster(new ScintillaEdit(this)),
+    m_sciControlSlave(new ScintillaEdit(this))
+  //  ,m_webView(new QWebView(this))
 {
     Q_ASSERT(m_splitter);
     Q_ASSERT(m_sciControlMaster);
@@ -94,12 +94,18 @@ bool CodeEditPage::canClose()
 
 bool CodeEditPage::canCut()
 {
-    return !m_sciControlMaster->selectionEmpty();
+    if (m_sciControlMaster->focus())
+        return !m_sciControlMaster->selectionEmpty();
+    else
+        return !m_sciControlSlave->selectionEmpty();
 }
 
 bool CodeEditPage::canCopy()
 {
-    return !m_sciControlMaster->selectionEmpty();
+    if (m_sciControlMaster->focus())
+        return !m_sciControlMaster->selectionEmpty();
+    else
+        return !m_sciControlSlave->selectionEmpty();
 }
 
 bool CodeEditPage::canPaste()
@@ -161,27 +167,42 @@ void CodeEditPage::modified(int type, int position, int length, int linesAdded, 
 
 void CodeEditPage::undo()
 {
-    m_sciControlMaster->undo();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->undo();
+    else
+        m_sciControlSlave->undo();
 }
 
 void CodeEditPage::redo()
 {
-    m_sciControlMaster->redo();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->redo();
+    else
+        m_sciControlSlave->redo();
 }
 
 void CodeEditPage::copy()
 {
-    m_sciControlMaster->copy();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->copy();
+    else
+        m_sciControlSlave->copy();
 }
 
 void CodeEditPage::cut()
 {
-    m_sciControlMaster->cut();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->cut();
+    else
+        m_sciControlSlave->cut();
 }
 
 void CodeEditPage::paste()
 {
-    m_sciControlMaster->paste();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->paste();
+    else
+        m_sciControlSlave->paste();
 }
 
 void CodeEditPage::reloadFromDisk()
@@ -206,7 +227,10 @@ void CodeEditPage::deleteCurrent()
 
 void CodeEditPage::selectAll()
 {
-    m_sciControlMaster->selectAll();
+    if (m_sciControlMaster->focus())
+        m_sciControlMaster->selectAll();
+    else
+        m_sciControlSlave->selectAll();
 }
 
 void CodeEditPage::columnMode()
@@ -232,11 +256,13 @@ void CodeEditPage::clipboardHistory()
 void CodeEditPage::setReadOnly()
 {
     m_sciControlMaster->setReadOnly(true);
+    m_sciControlSlave->setReadOnly(true);
 }
 
 void CodeEditPage::clearReadOnlyFlag()
 {
     m_sciControlMaster->setReadOnly(false);
+    m_sciControlSlave->setReadOnly(false);
 }
 
 void CodeEditPage::currentFullFilePathToClipboard()
@@ -467,7 +493,10 @@ void CodeEditPage::gotoLine()
     GotoLineDialog dlg(this);
     if (dlg.exec())
     {
-        m_sciControlMaster->gotoLine(dlg.line);
+        if (m_sciControlMaster->focus())
+            m_sciControlMaster->gotoLine(dlg.line);
+        else
+            m_sciControlSlave->gotoLine(dlg.line);
     }
 }
 
@@ -554,14 +583,20 @@ void CodeEditPage::replayLastRecording()
 void CodeEditPage::wordWrap()
 {
     if (m_sciControlMaster->wrapMode() == SC_WRAP_NONE)
+    {
         m_sciControlMaster->setWrapMode(SC_WRAP_WORD);
+        m_sciControlSlave->setWrapMode(SC_WRAP_WORD);
+    }
     else
+    {
         m_sciControlMaster->setWrapMode(SC_WRAP_NONE);
+        m_sciControlSlave->setWrapMode(SC_WRAP_NONE);
+    }
 }
 
 void CodeEditPage::focusOnAnotherView()
 {
-    if (m_sciControlMaster->send(SCI_GETFOCUS))
+    if (m_sciControlMaster->focus())
         m_sciControlSlave->grabFocus();
     else
         m_sciControlMaster->grabFocus();
@@ -625,6 +660,7 @@ void CodeEditPage::encodeInUTF8WithoutBOM()
 void CodeEditPage::encodeInUTF8()
 {
     m_sciControlMaster->setCodePage(SC_CP_UTF8);
+    m_sciControlSlave->setCodePage(SC_CP_UTF8);
 }
 
 void CodeEditPage::encodeInUCS2BigEndian()
@@ -664,16 +700,19 @@ void CodeEditPage::convertToUCS2LittleEndian()
 void CodeEditPage::zoomIn()
 {
     m_sciControlMaster->zoomIn();
+    m_sciControlSlave->zoomIn();
 }
 
 void CodeEditPage::zoomOut()
 {
     m_sciControlMaster->zoomOut();
+    m_sciControlSlave->zoomOut();
 }
 
 void CodeEditPage::restoreDefaultZoom()
 {
     m_sciControlMaster->setZoom(1);
+    m_sciControlSlave->setZoom(1);
 }
 
 void CodeEditPage::init(ScintillaEdit* sci)
@@ -775,6 +814,7 @@ void CodeEditPage::init(ScintillaEdit* sci)
     m_lastRedoAvailable = canRedo();
 
     connect(m_sciControlMaster, SIGNAL(updateUi()), this, SLOT(updateUI()));
+    connect(m_sciControlSlave, SIGNAL(updateUi()), this, SLOT(updateUI()));
     connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
             this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
 }
