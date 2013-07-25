@@ -867,5 +867,6 @@ void CodeEditPage::initFolderStyle(ScintillaEdit *sci)
 
 void CodeEditPage::initEditorStyle(ScintillaEdit *sci)
 {
+
 }
 
