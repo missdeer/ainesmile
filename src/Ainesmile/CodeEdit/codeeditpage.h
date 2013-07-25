@@ -37,6 +37,7 @@ public:
     bool canRedo();
     bool isModified();
     void grabFocus();
+    void applyEditorStyles();
 signals:
     void copyAvailableChanged();
     void pasteAvailableChanged();

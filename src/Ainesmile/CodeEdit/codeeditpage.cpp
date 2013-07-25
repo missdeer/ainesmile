@@ -137,6 +137,12 @@ void CodeEditPage::grabFocus()
     m_sciControlMaster->grabFocus();
 }
 
+void CodeEditPage::applyEditorStyles()
+{
+    initEditorStyle(m_sciControlMaster);
+    initEditorStyle(m_sciControlSlave);
+}
+
 void CodeEditPage::updateUI()
 {
     if (m_lastCopyAvailable != canCopy())
@@ -721,94 +727,93 @@ void CodeEditPage::restoreDefaultZoom()
 
 void CodeEditPage::initScintilla(ScintillaEdit* sci)
 {
-    sci->send(SCI_STYLERESETDEFAULT, 0, 0);
-    sci->send(SCI_STYLECLEARALL, 0, 0);
-    sci->send(SCI_CLEARDOCUMENTSTYLE, 0, 0);
-    sci->send(SCI_SETHSCROLLBAR, 1, 0);
-    sci->send(SCI_SETVSCROLLBAR, 1, 0);
-    sci->send(SCI_SETXOFFSET, 0, 0);
-    sci->send(SCI_SETSCROLLWIDTH, 1, 0);
-    sci->send(SCI_SETSCROLLWIDTHTRACKING, 1, 0);
-    //sci->send(SCI_ENDATLASTLINE, 1, 0);
-    sci->send(SCI_SETWHITESPACEFORE, 1, 0x808080);
-    sci->send(SCI_SETWHITESPACEBACK, 1, 0xFFFFFF);
-    sci->send(SCI_SETMOUSEDOWNCAPTURES, 1, 0);
-    sci->send(SCI_SETEOLMODE, SC_EOL_LF, 0);
-    sci->send(SCI_SETVIEWEOL, 0, 0);
-    sci->send(SCI_SETSTYLEBITS, 5, 0);
-    sci->send(SCI_SETCARETFORE, 0x0000FF, 0);
-    sci->send(SCI_SETCARETLINEVISIBLE, 1, 0);
-    sci->send(SCI_SETCARETLINEBACK, 0xFFFFD0, 0);
-    //sci->send(SCI_SETLINEBACKALPHA, 256, 0);
-    sci->send(SCI_SETCARETPERIOD, 500, 0);
-    sci->send(SCI_SETCARETWIDTH, 2, 0);
-    sci->send(SCI_SETCARETSTICKY, 0, 0);
-    sci->send(SCI_SETSELFORE, 1, 0xFFFFFF);
-    sci->send(SCI_SETSELBACK, 1, 0xC56A31);
-    sci->send(SCI_SETSELALPHA, 256, 0);
-    sci->send(SCI_SETSELEOLFILLED, 1, 0);
-    sci->send(SCI_SETADDITIONALSELECTIONTYPING, 1, 0);
-    sci->send(SCI_SETVIRTUALSPACEOPTIONS, SCVS_RECTANGULARSELECTION, 0);
-    sci->send(SCI_SETHOTSPOTACTIVEFORE, 0x0000FF, 0);
-    sci->send(SCI_SETHOTSPOTACTIVEBACK, 0xFFFFFF, 0);
-    sci->send(SCI_SETHOTSPOTACTIVEUNDERLINE, 1, 0);
-    sci->send(SCI_SETHOTSPOTSINGLELINE, 0, 0);
-    sci->send(SCI_SETCONTROLCHARSYMBOL, 0, 0);
-    sci->send(SCI_SETMARGINLEFT, 0, 3);
-    sci->send(SCI_SETMARGINRIGHT, 0, 3);
-    sci->send(SCI_SETMARGINTYPEN, 0, SC_MARGIN_NUMBER);
-    sci->send(SCI_SETMARGINWIDTHN, 0, 24);
-    sci->send(SCI_SETMARGINMASKN, 0, 0);
-    sci->send(SCI_SETMARGINSENSITIVEN, 0, 0);
-    sci->send(SCI_SETMARGINTYPEN, 1, SC_MARGIN_SYMBOL);
-    sci->send(SCI_SETMARGINWIDTHN, 1, 14);
-    sci->send(SCI_SETMARGINMASKN, 1, 33554431);
-    sci->send(SCI_SETMARGINSENSITIVEN, 1, 1);
-    sci->send(SCI_SETMARGINTYPEN, 2, SC_MARGIN_SYMBOL);
-    sci->send(SCI_SETMARGINWIDTHN, 2, 14);
-    sci->send(SCI_SETMARGINMASKN, 2, SC_MASK_FOLDERS); // -33554432)
-    sci->send(SCI_SETMARGINSENSITIVEN, 2, 1);
+    sci->styleResetDefault();
+    sci->styleClearAll();
+    sci->clearDocumentStyle();
+    sci->setHScrollBar(true);
+    sci->setVScrollBar(true);
+    sci->setXOffset(0);
+    sci->setScrollWidth(1);
+    sci->setScrollWidthTracking(true);
+    sci->setEndAtLastLine(true);
+    sci->setWhitespaceFore(true, 0x808080);
+    sci->setWhitespaceBack(true, 0xFFFFFF);
+    sci->setMouseDownCaptures(true);
+    sci->setEOLMode(SC_EOL_LF);
+    sci->setViewEOL(false);
+    sci->setStyleBits(5);
+    sci->setCaretFore(0x0000FF);
+    sci->setCaretLineVisible(true);
+    sci->setCaretLineBack(0xFFFFD0);
+    sci->setCaretLineBackAlpha(256);
+    sci->setCaretPeriod(500);
+    sci->setCaretWidth(2);
+    sci->setCaretSticky(0);
+    sci->setSelFore(true, 0xFFFFFF);
+    sci->setSelBack(true, 0xC56A31);
+    sci->setSelAlpha(256);
+    sci->setSelEOLFilled(true);
+    sci->setAdditionalSelectionTyping(true);
+    sci->setVirtualSpaceOptions(SCVS_RECTANGULARSELECTION);
+    sci->setHotspotActiveFore(true, 0x0000FF);
+    sci->setHotspotActiveBack(true, 0xFFFFFF);
+    sci->setHotspotActiveUnderline(true);
+    sci->setHotspotSingleLine(false);
+    sci->setControlCharSymbol(0);
+    sci->setMarginLeft(3);
+    sci->setMarginRight(3);
+    sci->setMarginTypeN(0, SC_MARGIN_NUMBER);
+    sci->setMarginWidthN(0, 24);
+    sci->setMarginMaskN(0, 0);
+    sci->setMarginSensitiveN(0, false);
+    sci->setMarginTypeN(1, SC_MARGIN_SYMBOL);
+    sci->setMarginWidthN(1, 14);
+    sci->setMarginMaskN(1, 33554431);
+    sci->setMarginSensitiveN(1, true);
+    sci->setMarginTypeN(2, SC_MARGIN_SYMBOL);
+    sci->setMarginWidthN(2, 14);
+    sci->setMarginMaskN(2, SC_MASK_FOLDERS);// -33554432)
+    sci->setMarginSensitiveN(2, true);
 
-    sci->send(SCI_SETFOLDMARGINCOLOUR, 1, 0xCDCDCD);
-    sci->send(SCI_SETFOLDMARGINHICOLOUR, 1, 0xFFFFFF);
-    
-    
-    sci->send(SCI_SETTABWIDTH, 4, 0);
-    sci->send(SCI_SETUSETABS, 0, 0);
-    sci->send(SCI_SETINDENT, 4, 0);
-    sci->send(SCI_SETTABINDENTS,   0,  0);
-    sci->send(SCI_SETBACKSPACEUNINDENTS,  0, 0);
-    sci->send(SCI_SETINDENTATIONGUIDES,  0,  0);
-    sci->send(SCI_SETHIGHLIGHTGUIDE,   1,  0);
-    sci->send(SCI_SETPRINTMAGNIFICATION,  1, 0);
-    sci->send(SCI_SETPRINTCOLOURMODE,  0, 0);
-    sci->send(SCI_SETPRINTWRAPMODE,  1,  0);
+    sci->setFoldMarginColour(true, 0xCDCDCD);
+    sci->setFoldMarginHiColour(true, 0xFFFFFF);
+
+    sci->setTabWidth(4);
+    sci->setUseTabs(false);
+    sci->setIndent(4);
+    sci->setTabIndents(false);
+    sci->setBackSpaceUnIndents(false);
+    sci->setIndentationGuides(0);
+    sci->setHighlightGuide(1);
+    sci->setPrintMagnification(1);
+    sci->setPrintColourMode(0);
+    sci->setPrintWrapMode(1);
     
     initFolderStyle( sci );
-    
-    sci->send(SCI_SETWRAPMODE, SC_WRAP_NONE, 0);
-    sci->send(SCI_SETWRAPVISUALFLAGS, SC_WRAPVISUALFLAG_NONE, 0);
-    sci->send(SCI_SETWRAPVISUALFLAGSLOCATION, SC_WRAPVISUALFLAGLOC_DEFAULT, 0);
-    sci->send(SCI_SETWRAPSTARTINDENT, 0, 0);
 
-    sci->send(SCI_SETLAYOUTCACHE, 2, 0);
-    sci->send(SCI_LINESSPLIT, 0, 0);
-    sci->send(SCI_SETEDGEMODE, 0, 0);
-    sci->send(SCI_SETEDGECOLUMN, 200, 0);
-    sci->send(SCI_SETEDGECOLOUR, 0xC0DCC0, 0);
-      
-    sci->send(SCI_USEPOPUP, 0, 0);
+    sci->setWrapMode(SC_WRAP_NONE);
+    sci->setWrapVisualFlags(SC_WRAPVISUALFLAG_NONE);
+    sci->setWrapVisualFlagsLocation(SC_WRAPVISUALFLAGLOC_DEFAULT);
+    sci->setWrapStartIndent(0);
+
+    sci->setLayoutCache(2);
+    sci->linesSplit(0);
+    sci->setEdgeMode(0);
+    sci->setEdgeColumn(200);
+    sci->setEdgeColour(0xC0DCC0);
+
+    sci->usePopUp(false);
     //sci->send(SCI_SETUSEPALETTE, 1, 0);
-    sci->send(SCI_SETBUFFEREDDRAW, 1, 0);
-    sci->send(SCI_SETTWOPHASEDRAW, 1, 0);
-    sci->send(SCI_SETCODEPAGE, SC_CP_UTF8, 0);
-    sci->sends(SCI_SETWORDCHARS, 0, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
-    sci->send(SCI_SETZOOM,  1,  0);
-    sci->send(SCI_SETWHITESPACECHARS, 0, 0);
-    sci->send(SCI_SETMOUSEDWELLTIME,  2500,   0);
+    sci->setBufferedDraw(true);
+    sci->setTwoPhaseDraw(true);
+    sci->setCodePage(SC_CP_UTF8);
+    sci->setWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    sci->setZoom(1);
+    sci->setWhitespaceChars(NULL);
+    sci->setMouseDwellTime(2500);
 
-    sci->send(SCI_SETSAVEPOINT, 0, 0);
-    sci->send(SCI_SETFONTQUALITY, SC_EFF_QUALITY_LCD_OPTIMIZED, 0 );
+    sci->setSavePoint();
+    sci->setFontQuality(SC_EFF_QUALITY_LCD_OPTIMIZED);
 
     //sci:SetEncoding( cfg:GetString("config/encoding") )
 
