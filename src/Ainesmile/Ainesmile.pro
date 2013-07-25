@@ -31,13 +31,15 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     tabwidget.cpp \
     aboutdialog.cpp \
-    gotolinedialog.cpp
+    gotolinedialog.cpp \
+    CodeEdit/scintillaconfig.cpp
 
 HEADERS  += mainwindow.h \
     CodeEdit/codeeditpage.h \
     tabwidget.h \
     aboutdialog.h \
-    gotolinedialog.h
+    gotolinedialog.h \
+    CodeEdit/scintillaconfig.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui \

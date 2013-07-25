@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QWebView>
 #include <QSplitter>
-#include "ScintillaEdit.h"
+#include "ScintillaConfig.h"
 
 class CodeEditPage : public QWidget
 {
@@ -20,9 +20,9 @@ private:
     QWebView* m_webView;
 
     QString m_filePath;
-    void initScintilla(ScintillaEdit* sci);
-    void initFolderStyle(ScintillaEdit* sci);
-    void initEditorStyle(ScintillaEdit* sci);
+    ScintillaConfig m_sc;
+
+    void init();
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
