@@ -34,7 +34,7 @@ void write_language_definition(language& lang)
     rapidxml::xml_node<>* root_node = doc.first_node("AinesmileLanguage");
     BOOST_ASSERT(root_node);
     root_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(lang.name_.c_str())));
-    root_node->append_attribute(doc.allocate_attribute("filename_pattern", ""));
+    root_node->append_attribute(doc.allocate_attribute("pattern", ""));
     root_node->append_attribute(doc.allocate_attribute("suffix", doc.allocate_string(lang.ext_.c_str())));
     root_node->append_attribute(doc.allocate_attribute("comment_line", doc.allocate_string(lang.comment_line_.c_str())));
     root_node->append_attribute(doc.allocate_attribute("comment_start", doc.allocate_string(lang.comment_start_.c_str())));
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
     if (argc != 2)
     {
         std::cerr << "Usage:\n"
-            << "npp2pt nppcfg.xml" << std::endl;
+            << "npp2ainesmile nppcfg.xml" << std::endl;
         return 1;
     }
 
