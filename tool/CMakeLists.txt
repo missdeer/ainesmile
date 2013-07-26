@@ -44,4 +44,4 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(includedir "${CMAKE_INSTALL_PREFIX}/include")
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
-add_executable (npp2pt main.cpp )
+add_executable (npp2ainesmile npp2ainesmile.cpp )
