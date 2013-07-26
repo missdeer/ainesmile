@@ -46,3 +46,5 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 add_executable (npp2ainesmile npp2ainesmile.cpp )
 add_executable (npp2langmap   npp2langmap.cpp )
+add_executable (gen_cfg gen_cfg.cpp)
+
