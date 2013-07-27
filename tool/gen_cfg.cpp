@@ -4,7 +4,6 @@
 #include <iterator>
 #include <string>
 #include <vector>
-#include <direct.h>
 #include <boost/assert.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

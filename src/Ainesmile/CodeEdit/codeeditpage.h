@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QWebView>
 #include <QSplitter>
-#include "ScintillaConfig.h"
+#include "scintillaconfig.h"
 
 class CodeEditPage : public QWidget
 {

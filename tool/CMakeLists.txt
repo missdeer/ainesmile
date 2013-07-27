@@ -27,23 +27,6 @@ if(MSVC)
   add_definitions("/wd4244 /wd4996")
 endif(MSVC)
 
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  # uninstall target
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
-  add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-  set(prefix "${CMAKE_INSTALL_PREFIX}")
-  set(exec_prefix "${CMAKE_INSTALL_PREFIX}")
-  set(bindir "${exec_prefix}/bin")
-  set(libdir "${LIB_INSTALL_DIR}")
-  set(pkgdatadir "${prefix}${RIME_DATA_DIR}")
-  set(includedir "${CMAKE_INSTALL_PREFIX}/include")
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
 add_executable (npp2ainesmile npp2ainesmile.cpp )
 add_executable (npp2langmap   npp2langmap.cpp )
 add_executable (gen_cfg gen_cfg.cpp)
