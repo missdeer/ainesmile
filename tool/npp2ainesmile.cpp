@@ -4,7 +4,13 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <cstring>
+#if defined(WIN32)
 #include <direct.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
 #include <boost/assert.hpp>
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
@@ -319,7 +325,11 @@ int main(int argc, char *argv[])
         char *dot = strrchr(argv[1], '.');
         _theme_name = std::string(argv[1], dot - argv[1]);
         _theme_name.append(".asTheme");
+#if defined(WIN32)
         mkdir(_theme_name.c_str());
+#else
+        mkdir(_theme_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
         std::cout << "this is a theme definition file" << std::endl;
         parse_theme_definition(type_node, globalstyle_node);
         return 0;

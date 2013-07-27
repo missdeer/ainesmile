@@ -4,6 +4,11 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#if defined(WIN32)
+#include <direct.h>
+#else
+#include <dirent.h>
+#endif
 #include <boost/assert.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -85,6 +90,10 @@ int main(int argc, char *argv[])
     pt.put("codepage", 0);
     pt.put("zoom", 1);
     pt.put("mousedwelltime", 2500);
+
+
+    pt.put("theme", "Default");
+
     // Write the property tree to the XML file.
     write_xml(".Ainesmilerc.xml", pt);
     write_json(".Ainesmilerc.json", pt);

@@ -4,7 +4,11 @@
 #include <iterator>
 #include <string>
 #include <list>
+#if defined(WIN32)
 #include <direct.h>
+#else
+#include <dirent.h>
+#endif
 #include <boost/assert.hpp>
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
