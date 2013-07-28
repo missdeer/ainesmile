@@ -14,6 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): {
 TARGET = Ainesmile
 TEMPLATE = app
 
+include(../../Boost.pri)
 
 INCLUDEPATH += CodeEdit \
     ../../3rdparty/rapidxml-1.13 \
@@ -28,18 +29,20 @@ DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK
 
 SOURCES += main.cpp\
     CodeEdit/codeeditpage.cpp \
+    CodeEdit/scintillaconfig.cpp \
     mainwindow.cpp \
     tabwidget.cpp \
     aboutdialog.cpp \
     gotolinedialog.cpp \
-    CodeEdit/scintillaconfig.cpp
+    config.cpp
 
 HEADERS  += mainwindow.h \
     CodeEdit/codeeditpage.h \
+    CodeEdit/scintillaconfig.h \
     tabwidget.h \
     aboutdialog.h \
     gotolinedialog.h \
-    CodeEdit/scintillaconfig.h
+    config.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui \
