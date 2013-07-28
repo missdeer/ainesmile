@@ -6,3 +6,4 @@ date /T > src\Ainesmile\DATE
 time /T >> src\Ainesmile\DATE
 qmake -r CONFIG+=release
 mingw32-make -j 4
+copy /y 3rdparty\scintilla\bin\ScintillaEdit3.dll src\Ainesmile\release\ScintillaEdit3.dll
