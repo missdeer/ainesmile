@@ -16,6 +16,8 @@ public:
     static Config* instance();
     boost::property_tree::ptree& pt();
     void sync();
+    QString getConfigPath();
+    QString getThemePath();
 };
 
 #endif // CONFIG_H
