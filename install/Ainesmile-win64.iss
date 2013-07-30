@@ -5,9 +5,9 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppID={{8A57C9FF-E384-4B22-80AC-845E5E303B87}
-AppName=Ainesmile 2013 - x86_64
-AppVerName=Ainesmile 2013 - x86_64
+AppId={{2A5B39DF-FA8A-41AC-B1ED-FEA620AE9FFB}
+AppName=Ainesmile 2013 - x64
+AppVerName=Ainesmile 2013 - x64
 AppPublisher=support@dfordsoft.com
 AppPublisherURL=http://www.dfordsoft.com/ainesmile
 AppSupportURL=http://www.dfordsoft.com/ainesmile
@@ -15,14 +15,14 @@ AppUpdatesURL=http://www.dfordsoft.com/ainesmile
 DefaultDirName={pf}\Ainesmile
 AllowNoIcons=true
 OutputDir=.\
-OutputBaseFilename=AinesmileSetup_x86_64
+OutputBaseFilename=AinesmileSetup_x64
 SolidCompression=true
 Compression=lzma/Ultra
 InternalCompressLevel=Ultra
 VersionInfoVersion=2012
 VersionInfoCompany=missdeer
-VersionInfoDescription=Ainesmile 2013 - x86_64
-VersionInfoTextVersion=Ainesmile 2013 - x86_64
+VersionInfoDescription=Ainesmile 2013 - x64
+VersionInfoTextVersion=Ainesmile 2013 - x64
 VersionInfoCopyright=Copyright (c) 2010 - 2013 DForD Software. All rights reserved.
 AppCopyright=Copyright (C) 2010 - 2013 DForD Software. All rights reserved.
 PrivilegesRequired=none
@@ -32,13 +32,13 @@ ShowLanguageDialog=auto
 WizardImageFile=compiler:wizimage.bmp
 WizardSmallImageFile=compiler:wizsmallimage.bmp
 AppVersion=2012
-UninstallDisplayName=Ainesmile 2013 - x86_64
+UninstallDisplayName=Ainesmile 2013 - x64
 ChangesAssociations=true
 ChangesEnvironment=true
 DefaultGroupName=Ainesmile
 AppContact=support@dfordsoft.com
 SetupIconFile=..\src\Ainesmile\rc\Ainesmile.ico
-ArchitecturesInstallIn64BitMode=x86_64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: enu; MessagesFile: compiler:Default.isl
@@ -57,8 +57,8 @@ Source: "..\..\..\mingw64\bin\libgcc_s_seh-1.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\icudt51.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\icudt51.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\icuuc51.dll"; DestDir: "{app}"
-Source: "..\..\..\Qt64-5.1.0\bin\libEGL.dll.dll"; DestDir: "{app}"
-Source: "..\..\..\Qt64-5.1.0\bin\libGLESv2.dll.dll"; DestDir: "{app}"
+Source: "..\..\..\Qt64-5.1.0\bin\libEGL.dll"; DestDir: "{app}"
+Source: "..\..\..\Qt64-5.1.0\bin\libGLESv2.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\libiconv-2.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\libjbig-2.dll"; DestDir: "{app}"
 Source: "..\..\..\Qt64-5.1.0\bin\libjpeg-8.dll"; DestDir: "{app}"
