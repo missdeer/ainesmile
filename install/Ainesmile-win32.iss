@@ -5,7 +5,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppID={{8A57C9FF-E384-4B22-80AC-845E5E303B87}
+AppID={{2A5B39DF-FA8A-41AC-B1ED-FEA620AE9FFB}
 AppName=Ainesmile 2013 - x86
 AppVerName=Ainesmile 2013 - x86
 AppPublisher=support@dfordsoft.com
@@ -50,6 +50,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\src\Ainesmile\release\Ainesmile.exe"; DestDir: "{app}"
 Source: "..\3rdparty\scintilla\bin\ScintillaEdit3.dll"; DestDir: "{app}"
+Source: "..\resource\*"; DestDir: "{app}"
 Source: "..\..\..\mingw32\bin\libwinpthread-1.dll"; DestDir: "{app}"
 Source: "..\..\..\mingw32\bin\libstdc++-6.dll"; DestDir: "{app}"
 Source: "..\..\..\mingw32\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"

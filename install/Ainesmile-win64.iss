@@ -51,6 +51,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 [Files]
 Source: "..\src\Ainesmile\release\Ainesmile.exe"; DestDir: "{app}"
 Source: "..\3rdparty\scintilla\bin\ScintillaEdit3.dll"; DestDir: "{app}"
+Source: "..\resource\*"; DestDir: "{app}"
 Source: "..\..\..\mingw64\bin\libwinpthread-1.dll"; DestDir: "{app}"
 Source: "..\..\..\mingw64\bin\libstdc++-6.dll"; DestDir: "{app}"
 Source: "..\..\..\mingw64\bin\libgcc_s_seh-1.dll"; DestDir: "{app}"

@@ -1,0 +1,114 @@
+{
+    "hscrollbar": "true",
+    "vscrollbar": "true",
+    "xoffset": "0",
+    "scrollwidth": "1",
+    "scrollwidthtracking": "true",
+    "endatlastline": "true",
+    "whitespacefore":
+    {
+        "enable": "true",
+        "color": "8421504"
+    },
+    "whitespaceback":
+    {
+        "enable": "true",
+        "color": "16777215"
+    },
+    "mousedowncapture": "true",
+    "vieweol": "false",
+    "stylebits": "5",
+    "caret":
+    {
+        "fore": "255",
+        "linevisible": "true",
+        "lineback": "16777168",
+        "linebackalpha": "256",
+        "period": "500",
+        "width": "2",
+        "sticky": "0"
+    },
+    "sel":
+    {
+        "fore":
+        {
+            "enable": "true",
+            "color": "16777215"
+        },
+        "back":
+        {
+            "enable": "true",
+            "color": "12937777"
+        },
+        "alpha": "256",
+        "eolfilled": "true"
+    },
+    "additionalselectiontyping": "true",
+    "virtualspaceoption": "0",
+    "hotspot":
+    {
+        "active":
+        {
+            "fore":
+            {
+                "enable": "true",
+                "color": "255"
+            },
+            "back":
+            {
+                "enable": "true",
+                "color": "16777215"
+            },
+            "underline": "true"
+        },
+        "singleline": "false"
+    },
+    "controlcharsymbol": "0",
+    "fold":
+    {
+        "margin":
+        {
+            "color":
+            {
+                "enable": "true",
+                "color": "13487565"
+            },
+            "hicolor":
+            {
+                "enable": "true",
+                "color": "16777215"
+            }
+        }
+    },
+    "tabwidth": "4",
+    "usetabs": "false",
+    "indent": "4",
+    "tabindents": "false",
+    "backspaceunindents": "false",
+    "indentationguids": "0",
+    "highlightguid": "1",
+    "print":
+    {
+        "magnification": "1",
+        "colormode": "0",
+        "wrapmode": "1"
+    },
+    "wrap":
+    {
+        "mode": "0",
+        "visualflags": "0",
+        "visualflagslocation": "0",
+        "startindent": "0"
+    },
+    "layoutcache": "2",
+    "linessplit": "0",
+    "edge":
+    {
+        "mode": "0",
+        "column": "200",
+        "color": "12639424"
+    },
+    "codepage": "0",
+    "zoom": "1",
+    "mousedwelltime": "2500"
+}
