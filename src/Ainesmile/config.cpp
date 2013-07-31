@@ -65,7 +65,7 @@ QString Config::getConfigPath()
 
 QString Config::getThemePath()
 {
-    std::string currentTheme = pt_.get("theme");
+    std::string currentTheme = pt_.get<std::string>("theme");
 }
 
 Config::Config()
