@@ -31,7 +31,7 @@ QString Config::getConfigPath()
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #endif
-    configPath.append("/Ainesmile");
+    configPath.append("/ainesmile");
 #else
     // get config path
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -39,7 +39,7 @@ QString Config::getConfigPath()
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 #endif
-    configPath.append("/.config/Ainesmile");
+    configPath.append("/.config/ainesmile");
 #endif
     QDir dir(configPath);
     if (!dir.exists())
@@ -47,7 +47,7 @@ QString Config::getConfigPath()
         dir.mkpath(configPath);
     }
 
-    configPath.append("/.Ainesmilerc");
+    configPath.append("/.ainesmilerc");
     QFile file(configPath);
     if (!file.exists())
     {

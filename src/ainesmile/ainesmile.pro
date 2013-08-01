@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): {
     QT -= webkit
 }
 
-TARGET = Ainesmile
+TARGET = ainesmile
 TEMPLATE = app
 
 include(../../Boost.pri)
@@ -49,13 +49,13 @@ FORMS    += mainwindow.ui \
     gotolinedialog.ui
 
 OTHER_FILES += \
-    Ainesmile.rc
+    ainesmile.rc
 
 RESOURCES += \
-    Ainesmile.qrc
+    ainesmile.qrc
 
 # Windows icons
-RC_FILE = Ainesmile.rc
+RC_FILE = ainesmile.rc
 
 win32: {
 LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit3
@@ -68,8 +68,8 @@ LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
 macx: {
 QT += opengl
 LIBS += -F ../../3rdparty/scintilla/bin -framework ScintillaEdit 
-ICON = rc/Ainesmile.icns
-icon.files += rc/Ainesmile.png
+ICON = rc/ainesmile.icns
+icon.files += rc/ainesmile.png
 INSTALLS = target \
     desktop \
     icon

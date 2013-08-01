@@ -14,12 +14,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "DForD Software"
-            VALUE "FileDescription", "Ainesmile - The best cross platform code editor!"
+            VALUE "FileDescription", "ainesmile - The best cross platform code editor!"
             VALUE "FileVersion", "1.0.0.1"
-            VALUE "InternalName", "Ainesmile"
+            VALUE "InternalName", "ainesmile"
             VALUE "LegalCopyright", "Copyright (C) 2012 DForD Software. All rights reserved."
-            VALUE "OriginalFilename", "Ainesmile.exe"
-            VALUE "ProductName", "Ainesmile"
+            VALUE "OriginalFilename", "ainesmile.exe"
+            VALUE "ProductName", "ainesmile"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -31,4 +31,4 @@ END
 
 
 
-IDI_ICON1 ICON DISCARDABLE "rc/Ainesmile.ico"
+IDI_ICON1 ICON DISCARDABLE "rc/ainesmile.ico"

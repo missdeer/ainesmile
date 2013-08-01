@@ -395,7 +395,7 @@ void MainWindow::closeRequested(int index)
                 QFileDialog::Options options;
                 QString selectedFilter;
                 filePath = QFileDialog::getSaveFileName(this,
-                                                        tr("Ainesmile Save File To"),
+                                                        tr("ainesmile Save File To"),
                                                         tr(""),
                                                         tr("All Files (*);;Text Files (*.txt)"),
                                                         &selectedFilter,
@@ -473,7 +473,7 @@ void MainWindow::on_actionOpenFile_triggered()
     QFileDialog::Options options;
     QString selectedFilter;
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-                                                    tr("Ainesmile Open Files"),
+                                                    tr("ainesmile Open Files"),
                                                     tr(""),
                                                     tr("All Files (*);;Text Files (*.txt)"),
                                                     &selectedFilter,
@@ -497,7 +497,7 @@ void MainWindow::on_actionSaveFile_triggered()
         QFileDialog::Options options;
         QString selectedFilter;
         filePath = QFileDialog::getSaveFileName(this,
-                                     tr("Ainesmile Save File To"),
+                                     tr("ainesmile Save File To"),
                                      tr(""),
                                      tr("All Files (*);;Text Files (*.txt)"),
                                      &selectedFilter,
@@ -525,7 +525,7 @@ void MainWindow::on_actionSaveAs_triggered()
     QFileDialog::Options options;
     QString selectedFilter;
     QString filePath = QFileDialog::getSaveFileName(this,
-                                            tr("Ainesmile Save File To"),
+                                            tr("ainesmile Save File To"),
                                             tr(""),
                                             tr("All Files (*);;Text Files (*.txt)"),
                                             &selectedFilter,

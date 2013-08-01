@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Q_INIT_RESOURCE( Ainesmile );
+    Q_INIT_RESOURCE( ainesmile );
 
     MainWindow w;
     w.showMaximized();
