@@ -109,7 +109,7 @@ QString Config::getThemePath()
         themeDir.mkpath(themePath);
         QStringList files = QDir(themeDirPath).entryList(QDir::Files);
         QStringList::const_iterator constIterator;
-        for (constIterator = fonts.constBegin(); constIterator != files.constEnd(); ++constIterator)
+        for (constIterator = files.constBegin(); constIterator != files.constEnd(); ++constIterator)
         {
             QString src = themeDirPath + "/" + *constIterator;
             QString dst = themePath + "/" + *constIterator;
