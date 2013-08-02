@@ -10,6 +10,8 @@ private:
 
     boost::property_tree::ptree pt_;
     Config();
+    bool matchPattern(const QString& filename, const QString& pattern);
+    bool matchSuffix(const QString& filename, const QString& suffix);
 public:
     static Config* instance();
     boost::property_tree::ptree& pt();
@@ -17,6 +19,8 @@ public:
     QString getConfigDirPath();
     QString getConfigPath();
     QString getThemePath();
+    QString getLanguageMapPath();
+    QString matchPatternLanguage(const QString& filename);
 };
 
 #endif // CONFIG_H

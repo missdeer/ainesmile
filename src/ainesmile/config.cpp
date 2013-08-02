@@ -4,6 +4,9 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QStandardPaths>
 #endif
+#include <QFileInfo>
+#include <QtXml>
+#include <QRegExp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "config.h"
@@ -119,9 +122,93 @@ QString Config::getThemePath()
     return themePath;
 }
 
+QString Config::getLanguageMapPath()
+{
+    QString configPath = getConfigDirPath();
+    configPath.append("/langmap.xml");
+    QFile file(configPath);
+    if (!file.exists())
+    {
+        // copy from installed directory
+        QString appDirPath = QApplication::applicationDirPath();
+        QDir configDir(appDirPath);
+#if defined(Q_OS_MAC)
+        configDir.cdUp();
+        configDir.cd("Resource");
+#endif
+        QString configFile = configDir.absolutePath();
+        file.copy(configFile, configPath);
+    }
+
+    return configPath;
+}
+
+QString Config::matchPatternLanguage(const QString &filename)
+{
+    QString langMapPath = getLanguageMapPath();
+    QDomDocument doc;
+    QFile file(langMapPath);
+    if (!file.open(QIODevice::ReadOnly))
+        return "";
+    if (!doc.setContent(&file))
+    {
+        file.close();
+        return "";
+    }
+    file.close();
+
+    QDomElement docElem = doc.documentElement();
+
+    QDomElement langElem = docElem.firstChildElement("language");
+    while(!langElem.isNull())
+    {
+        QString pattern = langElem.attribute("pattern");
+        QString suffix = langElem.attribute("suffix");
+        if (matchSuffix(filename, suffix) || matchPattern(filename, pattern))
+        {
+            QString name = langElem.attribute("name");
+            return name;
+        }
+        langElem = langElem.nextSiblingElement("language");
+    }
+    return "";
+}
+
 Config::Config()
 {
     boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
+}
+
+bool Config::matchPattern(const QString &filename, const QString &pattern)
+{
+#if defined(Q_OS_WIN)
+    QRegExp regex(pattern, Qt::CaseInsensitive);
+#else
+    QRegExp regex(pattern, Qt::CaseSensitive);
+#endif
+    QFileInfo fi(filename);
+    if (regex.exactMatch(fi.fileName()))
+        return true;
+    return false;
+}
+
+bool Config::matchSuffix(const QString &filename, const QString &suffix)
+{
+    QStringList suffixes = suffix.split(' ');
+    QFileInfo fi(filename);
+    Q_FOREACH( QString ext, suffixes)
+    {
+#if defined(Q_OS_WIN)
+        if (QString::compare(ext, fi.suffix(), Qt::CaseInsensitive) == 0)
+#else
+        if (QString::compare(ext, fi.suffix(), Qt::CaseSensitive) == 0)
+#endif
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 Config *Config::instance()
