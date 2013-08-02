@@ -2,7 +2,7 @@
 #define CODEEDITPAGE_H
 
 #include <QWidget>
-#include <QWebView>
+//#include <QWebView>
 #include <QSplitter>
 #include "scintillaconfig.h"
 
@@ -17,7 +17,7 @@ private:
     QSplitter* m_splitter;
     ScintillaEdit* m_sciControlMaster;
     ScintillaEdit* m_sciControlSlave;
-    QWebView* m_webView;
+//    QWebView* m_webView;
 
     QString m_filePath;
     ScintillaConfig m_sc;
