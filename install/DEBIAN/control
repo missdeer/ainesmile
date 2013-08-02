@@ -1,10 +1,10 @@
-Package: Ainesmile
+Package: ainesmile
 Version: 2013
 Section: editor
 Priority: optional
 Architecture: i386, x86_64
 Build-Depends: qt (>= 4.8.0), qtwebkit (>= 2.2.1)
 Depends: qt qtwebkit
-Installed-Size: 100,000
+Installed-Size: 1,000,000
 Maintainer: missdeer@dfordsoft.com
-Description: Ainesmile - A powerful source code editor and browser.
+Description: ainesmile - A powerful source code editor and browser.

@@ -6,23 +6,23 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppID={{2A5B39DF-FA8A-41AC-B1ED-FEA620AE9FFB}
-AppName=Ainesmile 2013 - x86
-AppVerName=Ainesmile 2013 - x86
+AppName=ainesmile 2013 - x86
+AppVerName=ainesmile 2013 - x86
 AppPublisher=support@dfordsoft.com
 AppPublisherURL=http://www.dfordsoft.com/ainesmile
 AppSupportURL=http://www.dfordsoft.com/ainesmile
 AppUpdatesURL=http://www.dfordsoft.com/ainesmile
-DefaultDirName={pf}\Ainesmile
+DefaultDirName={pf}\ainesmile
 AllowNoIcons=true
 OutputDir=.\
-OutputBaseFilename=AinesmileSetup_x86
+OutputBaseFilename=ainesmileSetup_x86
 SolidCompression=true
 Compression=lzma/Ultra
 InternalCompressLevel=Ultra
 VersionInfoVersion=2012
 VersionInfoCompany=missdeer
-VersionInfoDescription=Ainesmile 2013 - x86
-VersionInfoTextVersion=Ainesmile 2013 - x86
+VersionInfoDescription=ainesmile 2013 - x86
+VersionInfoTextVersion=ainesmile 2013 - x86
 VersionInfoCopyright=Copyright (c) 2010 - 2013 DForD Software. All rights reserved.
 AppCopyright=Copyright (C) 2010 - 2013 DForD Software. All rights reserved.
 PrivilegesRequired=none
@@ -32,12 +32,12 @@ ShowLanguageDialog=auto
 WizardImageFile=compiler:wizimage.bmp
 WizardSmallImageFile=compiler:wizsmallimage.bmp
 AppVersion=2012
-UninstallDisplayName=Ainesmile 2013 - x86
+UninstallDisplayName=ainesmile 2013 - x86
 ChangesAssociations=true
 ChangesEnvironment=true
-DefaultGroupName=Ainesmile
+DefaultGroupName=ainesmile
 AppContact=support@dfordsoft.com
-SetupIconFile=..\src\Ainesmile\rc\Ainesmile.ico
+SetupIconFile=..\src\ainesmile\rc\ainesmile.ico
 
 [Languages]
 Name: enu; MessagesFile: compiler:Default.isl
@@ -48,7 +48,7 @@ Name: cht; MessagesFile: compiler:Languages\ChineseTraditional-5.5.0.isl
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "..\src\Ainesmile\release\Ainesmile.exe"; DestDir: "{app}"
+Source: "..\src\ainesmile\release\ainesmile.exe"; DestDir: "{app}"
 Source: "..\3rdparty\scintilla\bin\ScintillaEdit3.dll"; DestDir: "{app}"
 Source: "..\resource\*"; DestDir: "{app}"
 Source: "..\..\..\mingw32\bin\libwinpthread-1.dll"; DestDir: "{app}"
@@ -83,9 +83,9 @@ Source: "..\..\..\Qt32-5.1.0\plugins\imageformats\qwbmp.dll"; DestDir: "{app}\pl
 Source: "..\..\..\Qt32-5.1.0\plugins\platforms\qwindows.dll"; DestDir: "{app}\plugins\platforms"
 
 [Icons]
-Name: {commondesktop}\Ainesmile; Filename: {app}\Ainesmile.exe; WorkingDir: {app}; Tasks: desktopicon; Comment: Launch Ainesmile
-Name: {group}\Ainesmile; Filename: {app}\Ainesmile.exe; WorkingDir: {app}; Comment: Launch Ainesmile
-Name: {group}\{cm:UninstallProgram, Ainesmile}; Filename: {uninstallexe}; IconFilename: {app}\Ainesmile.exe; IconIndex: 0; 
+Name: {commondesktop}\ainesmile; Filename: {app}\ainesmile.exe; WorkingDir: {app}; Tasks: desktopicon; Comment: Launch ainesmile
+Name: {group}\ainesmile; Filename: {app}\ainesmile.exe; WorkingDir: {app}; Comment: Launch ainesmile
+Name: {group}\{cm:UninstallProgram, ainesmile}; Filename: {uninstallexe}; IconFilename: {app}\ainesmile.exe; IconIndex: 0; 
 
 [Messages]
 BeveledLabel=DForD Software
@@ -93,7 +93,7 @@ BeveledLabel=DForD Software
 [UninstallDelete]
 
 [Registry]
-Root: HKLM; Subkey: Software\Microsoft\Windows\CurrentVersion\App Paths\Ainesmile.exe; ValueType: string; ValueData: {app}\Ainesmile.exe; Flags: uninsdeletekey
+Root: HKLM; Subkey: Software\Microsoft\Windows\CurrentVersion\App Paths\ainesmile.exe; ValueType: string; ValueData: {app}\ainesmile.exe; Flags: uninsdeletekey
 
 [Code]
 var

@@ -1,23 +1,23 @@
 # Maintainer: Yang Fan <missdeer AT dfordsoft DOT com> 
 
-pkgname=Ainesmile
+pkgname=ainesmile
 pkgver=2012.3
 pkgrel=1
-pkgdesc="Ainesmile is a powerful source code editor and browser."
+pkgdesc="ainesmile is a powerful source code editor and browser."
 arch=('i686' 'x86_64')
 url="http://www.dfordsoft.com/ainesmile"
 license=('DForD Software License')
 depends=('qt>=4.8.0' 'qtwebkit>=2.2.1')
-replaces=('Ainesmile-beta')
-provides=('Ainesmile')
+replaces=('ainesmile-beta')
+provides=('ainesmile')
 
 build() {
  
   mkdir -p ${pkgdir}/usr/bin || return 1
-  mkdir -p ${pkgdir}/usr/share/Ainesmile || return 1
+  mkdir -p ${pkgdir}/usr/share/ainesmile || return 1
    
-  install -m755 ${srcdir}/../usr/bin/Ainesmile ${pkgdir}/usr/bin/Ainesmile || return 1
+  install -m755 ${srcdir}/../usr/bin/ainesmile ${pkgdir}/usr/bin/ainesmile || return 1
   
-  install -m755 ${srcdir}/../usr/bin/Ainesmile.app ${pkgdir}/usr/bin/Ainesmile.app || return 1
+  install -m755 ${srcdir}/../usr/bin/ainesmile.app ${pkgdir}/usr/bin/ainesmile.app || return 1
 }  
 
