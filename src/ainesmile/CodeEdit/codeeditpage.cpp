@@ -63,8 +63,8 @@ void CodeEditPage::openFile(const QString &filePath)
         m_sciControlMaster->send(SCI_EMPTYUNDOBUFFER, 0, 0);
         file.close();
         emit filePathChanged(m_filePath);
-        m_sc.initEditorStyle(m_sciControlMaster);
-        m_sc.initEditorStyle(m_sciControlSlave);
+        m_sc.initEditorStyle(m_sciControlMaster, filePath);
+        m_sc.initEditorStyle(m_sciControlSlave, filePath);
     }
 }
 
@@ -76,11 +76,9 @@ void CodeEditPage::saveFile(const QString &filePath)
     {
         m_filePath = filePath;
         emit filePathChanged(m_filePath);
-        if (saveFileInfo.suffix() != fileInfo.suffix())
-        {
-            m_sc.initEditorStyle(m_sciControlMaster);
-            m_sc.initEditorStyle(m_sciControlSlave);
-        }
+
+        m_sc.initEditorStyle(m_sciControlMaster, filePath);
+        m_sc.initEditorStyle(m_sciControlSlave, filePath);
     }
 
     QFile file(filePath);
@@ -155,8 +153,8 @@ void CodeEditPage::grabFocus()
 
 void CodeEditPage::applyEditorStyles()
 {
-    m_sc.initEditorStyle(m_sciControlMaster);
-    m_sc.initEditorStyle(m_sciControlSlave);
+    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
+    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
 }
 
 void CodeEditPage::updateUI()

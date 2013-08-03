@@ -20,6 +20,7 @@ public:
     QString getConfigPath();
     QString getThemePath();
     QString getLanguageMapPath();
+    QString getLanguageDirPath();
     QString matchPatternLanguage(const QString& filename);
 };
 

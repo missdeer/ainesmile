@@ -68,6 +68,7 @@ QString Config::getConfigPath()
         configDir.cd("Resource");
 #endif
         QString configFile = configDir.absolutePath();
+        configFile.append("/.ainesmilerc");
         file.copy(configFile, configPath);
     }
 
@@ -137,10 +138,40 @@ QString Config::getLanguageMapPath()
         configDir.cd("Resource");
 #endif
         QString configFile = configDir.absolutePath();
+        configFile.append("/langmap.xml");
         file.copy(configFile, configPath);
     }
 
     return configPath;
+}
+
+QString Config::getLanguageDirPath()
+{
+    QString langDirPath = getConfigDirPath() + "/language";
+    QDir langDir(langDirPath);
+    if (!langDir.exists())
+    {
+        // copy from installed directory
+        QString appDirPath = QApplication::applicationDirPath();
+        QDir configDir(appDirPath);
+#if defined(Q_OS_MAC)
+        configDir.cdUp();
+        configDir.cd("Resource");
+#endif
+        QString configFile = configDir.absolutePath();
+        configFile.append("/language");
+        // copy all files from configFile to langDirPath
+        langDir.mkpath(langDirPath);
+        QStringList files = QDir(configFile).entryList(QDir::Files);
+        QStringList::const_iterator constIterator;
+        for (constIterator = files.constBegin(); constIterator != files.constEnd(); ++constIterator)
+        {
+            QString src = configFile + "/" + *constIterator;
+            QString dst = langDirPath + "/" + *constIterator;
+            QFile::copy(src, dst);
+        }
+    }
+    return langDirPath;
 }
 
 QString Config::matchPatternLanguage(const QString &filename)

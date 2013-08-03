@@ -1,5 +1,8 @@
+#include <QtXml>
+#include <QFile>
 #include "ScintillaEdit.h"
 #include "scintillaconfig.h"
+#include "config.h"
 
 ScintillaConfig::ScintillaConfig()
 {
@@ -135,7 +138,132 @@ void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
     sci->setProperty( "fold.quotes.python", "1");
 }
 
-void ScintillaConfig::initEditorStyle(ScintillaEdit *sci)
+void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filename)
 {
+    //qDebug() << "init editor style by filename: " << filename;
+    Config* config = Config::instance();
+    Q_ASSERT(config);
 
+    QString lang = config->matchPatternLanguage(filename);
+    //qDebug() << "language: " << lang;
+    sci->setLexerLanguage(lang.toStdString().c_str());
+
+    QString themePath = config->getThemePath();
+    //qDebug() << "theme path: " << themePath;
+    applyThemeStyle(sci, themePath + "/global_style.xml");
+    themePath.append("/");
+    themePath.append(lang);
+    themePath.append(".xml");
+    applyThemeStyle(sci, themePath);
+    //qDebug() << "theme file: " << themePath;
+
+    QString langPath = config->getLanguageDirPath();
+    langPath.append("/");
+    langPath.append(lang);
+    langPath.append(".xml");
+    applyLanguageStyle(sci, langPath);
+    //qDebug() << "language file: " << langPath;
+}
+
+void ScintillaConfig::applyLanguageStyle(ScintillaEdit *sci, const QString &configPath)
+{
+    QDomDocument doc;
+    QFile file(configPath);
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+    if (!doc.setContent(&file))
+    {
+        file.close();
+        return;
+    }
+    file.close();
+
+    QDomElement docElem = doc.documentElement();
+    QString commentLine = docElem.attribute("comment_line");
+    QString commentStart = docElem.attribute("comment_start");
+    QString commentEnd = docElem.attribute("comment_end");
+
+    QDomElement keywordElem = docElem.firstChildElement("keyword");
+    int keywordSet = 0;
+    while(!keywordElem.isNull())
+    {
+        QString name = keywordElem.attribute("name");
+        QString keyword = keywordElem.text();
+        sci->setKeyWords(keywordSet++, keyword.toStdString().c_str());
+        //qDebug() << "set keywords: " << keywordSet -1 << keyword;
+        keywordElem = keywordElem.nextSiblingElement("keyword");
+    }
+
+}
+
+void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePath)
+{
+    QDomDocument doc;
+    QFile file(themePath);
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+    if (!doc.setContent(&file))
+    {
+        file.close();
+        return;
+    }
+    file.close();
+
+    QDomElement docElem = doc.documentElement();
+
+    bool zeroStyle = false;
+    for(QDomElement styleElem = docElem.firstChildElement("style");
+        !styleElem.isNull();
+        styleElem = styleElem.nextSiblingElement("style"))
+    {
+        int id = styleElem.attribute("style_id").toInt();
+        if (id == 0)
+        {
+            if (!zeroStyle)
+                zeroStyle = true;
+            else
+                continue;
+        }
+        QString foreColor = styleElem.attribute("fg_color");
+        if (!foreColor.isEmpty())
+        {
+            int color = foreColor.toLong(NULL, 16);
+            color = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
+            sci->styleSetFore(id, color);
+        }
+        QString backColor = styleElem.attribute("bg_color");
+        if (!backColor.isEmpty())
+        {
+            int color = backColor.toLong(NULL, 16);
+            color = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
+            sci->styleSetBack(id, color);
+        }
+        QString fontName = styleElem.attribute("font_name");
+        if (!fontName.isEmpty())
+            sci->styleSetFont(id, fontName.toStdString().c_str());
+        uint fontStyle = styleElem.attribute("font_style").toUInt();
+        if (fontStyle & 0x01)
+            sci->styleSetBold(id, true);
+        if (fontStyle & 0x02)
+            sci->styleSetItalic(id, true);
+        if (fontStyle & 0x04)
+            sci->styleSetUnderline(id, true);
+        if (fontStyle & 0x08)
+            sci->styleSetVisible(id, true);
+        if (fontStyle & 0x10)
+            sci->styleSetCase(id, true);
+        if (fontStyle & 0x20)
+            sci->styleSetEOLFilled(id, true);
+        if (fontStyle & 0x40)
+            sci->styleSetHotSpot(id, true);
+        if (fontStyle & 0x80)
+            sci->styleSetChangeable(id, true);
+        QString fontSize = styleElem.attribute("font_size");
+        if (!fontSize.isEmpty())
+            sci->styleSetSize(id, fontSize.toInt());
+
+        //qDebug() << "style: " << themePath
+        //         << "," << id << "," << foreColor << "," << backColor
+        //         << "," << fontName << "," << fontStyle << "," << fontSize;
+    }
 }
