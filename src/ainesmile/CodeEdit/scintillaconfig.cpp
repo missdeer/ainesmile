@@ -211,19 +211,13 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
 
     QDomElement docElem = doc.documentElement();
 
-    bool zeroStyle = false;
     for(QDomElement styleElem = docElem.firstChildElement("style");
         !styleElem.isNull();
         styleElem = styleElem.nextSiblingElement("style"))
     {
         int id = styleElem.attribute("style_id").toInt();
         if (id == 0)
-        {
-            if (!zeroStyle)
-                zeroStyle = true;
-            else
                 continue;
-        }
         QString foreColor = styleElem.attribute("fg_color");
         if (!foreColor.isEmpty())
         {
