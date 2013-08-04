@@ -43,22 +43,22 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setHotspotActiveUnderline(true);
     sci->setHotspotSingleLine(false);
     sci->setControlCharSymbol(0);
-    sci->setMarginLeft(3);
-    sci->setMarginRight(3);
+    sci->setMarginLeft(4);
+    sci->setMarginRight(4);
     sci->setMarginTypeN(0, SC_MARGIN_NUMBER);
     sci->setMarginWidthN(0, 24);
     sci->setMarginMaskN(0, 0);
     sci->setMarginSensitiveN(0, false);
     sci->setMarginTypeN(1, SC_MARGIN_SYMBOL);
-    sci->setMarginWidthN(1, 14);
+    sci->setMarginWidthN(1, 16);
     sci->setMarginMaskN(1, 33554431); //~SC_MASK_FOLDERS or 0x1FFFFFF or 33554431
     sci->setMarginSensitiveN(1, true);
     sci->setMarginTypeN(2, SC_MARGIN_SYMBOL);
-    sci->setMarginWidthN(2, 14);
+    sci->setMarginWidthN(2, 16);
     sci->setMarginMaskN(2, SC_MASK_FOLDERS);// 0xFE000000 or -33554432
     sci->setMarginSensitiveN(2, true);
 
-    sci->setFoldMarginColour(true, 0xCDCDCD);
+    sci->setFoldMarginColour(true, 0xE9E9E9);
     sci->setFoldMarginHiColour(true, 0xFFFFFF);
 
     sci->setTabWidth(4);
@@ -132,7 +132,9 @@ void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
     sci->markerSetFore(SC_MARKNUM_FOLDERMIDTAIL, 0xFFFFFF);
     sci->markerSetBack(SC_MARKNUM_FOLDERMIDTAIL, 0x808080);
     sci->setProperty( "fold", "1");
-    sci->setProperty( "fold.compact", "1");
+    sci->setProperty( "fold.flags", "16");
+    sci->setProperty( "fold.symbols", "1");
+    sci->setProperty( "fold.compact", "0");
     sci->setProperty( "fold.at.else", "1");
     sci->setProperty( "fold.preprocessor", "1");
     sci->setProperty( "fold.view", "1");

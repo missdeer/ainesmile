@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QtCore>
 #include <QFile>
 #include <QVBoxLayout>
 #include <QFileInfo>
@@ -74,6 +75,13 @@ void CodeEditPage::openFile(const QString &filePath)
         emit filePathChanged(m_filePath);
         m_sc.initEditorStyle(m_sciControlMaster, filePath);
         m_sc.initEditorStyle(m_sciControlSlave, filePath);
+        m_sciControlMaster->colourise(0, -1);
+        m_sciControlSlave->colourise(0, -1);
+        int lineCount = m_sciControlMaster->lineCount();
+        for(int i = 0; i < lineCount; i++)
+        {
+            qDebug() << i << " folder level:" << m_sciControlMaster->foldLevel(i);
+        }
     }
 }
 
@@ -201,9 +209,9 @@ void CodeEditPage::modified(int type, int position, int length, int linesAdded, 
 void CodeEditPage::linesAdded(int linesAdded)
 {
     ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
-    int line_count = sci->send(SCI_GETLINECOUNT);
-    int left = sci->send(SCI_GETMARGINLEFT) + 2;
-    int right = sci->send(SCI_GETMARGINRIGHT) + 2;
+    int line_count = sci->lineCount();
+    int left = sci->marginLeft() + 2;
+    int right = sci->marginRight() + 2;
     std::string line = boost::lexical_cast<std::string>(line_count);
     int width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
     sci->setMarginWidthN(0, width);
