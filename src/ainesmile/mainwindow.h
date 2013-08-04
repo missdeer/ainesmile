@@ -23,7 +23,8 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event);
-
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 private:
     void setActionShortcuts();
     void updateUI(CodeEditPage* page);

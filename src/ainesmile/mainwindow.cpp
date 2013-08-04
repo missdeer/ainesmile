@@ -48,6 +48,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_aboutToQuit = false;
 }
 
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasFormat("text/plain"))
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    event->mimeData()->formats();
+    event->mimeData()->text();
+
+    event->acceptProposedAction();
+}
+
 void MainWindow::setActionShortcuts()
 {
     ui->actionHelpContent->setShortcut(QKeySequence::HelpContents);
