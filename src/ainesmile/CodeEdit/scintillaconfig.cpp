@@ -51,11 +51,11 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setMarginSensitiveN(0, false);
     sci->setMarginTypeN(1, SC_MARGIN_SYMBOL);
     sci->setMarginWidthN(1, 14);
-    sci->setMarginMaskN(1, 33554431);
+    sci->setMarginMaskN(1, 33554431); //~SC_MASK_FOLDERS or 0x1FFFFFF or 33554431
     sci->setMarginSensitiveN(1, true);
     sci->setMarginTypeN(2, SC_MARGIN_SYMBOL);
     sci->setMarginWidthN(2, 14);
-    sci->setMarginMaskN(2, SC_MASK_FOLDERS);// -33554432)
+    sci->setMarginMaskN(2, SC_MASK_FOLDERS);// 0xFE000000 or -33554432
     sci->setMarginSensitiveN(2, true);
 
     sci->setFoldMarginColour(true, 0xCDCDCD);
@@ -99,6 +99,10 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setFontQuality(SC_EFF_QUALITY_LCD_OPTIMIZED);
 
     //sci:SetEncoding( cfg:GetString("config/encoding") )
+    Config* config = Config::instance();
+    Q_ASSERT(config);
+    QString themePath = config->getThemePath();
+    applyThemeStyle(sci, themePath + "/global_style.xml");
 }
 
 void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
@@ -140,29 +144,24 @@ void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
 
 void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filename)
 {
-    //qDebug() << "init editor style by filename: " << filename;
     Config* config = Config::instance();
     Q_ASSERT(config);
 
     QString lang = config->matchPatternLanguage(filename);
-    //qDebug() << "language: " << lang;
     sci->setLexerLanguage(lang.toStdString().c_str());
 
     QString themePath = config->getThemePath();
-    //qDebug() << "theme path: " << themePath;
     applyThemeStyle(sci, themePath + "/global_style.xml");
     themePath.append("/");
     themePath.append(lang);
     themePath.append(".xml");
     applyThemeStyle(sci, themePath);
-    //qDebug() << "theme file: " << themePath;
 
     QString langPath = config->getLanguageDirPath();
     langPath.append("/");
     langPath.append(lang);
     langPath.append(".xml");
     applyLanguageStyle(sci, langPath);
-    //qDebug() << "language file: " << langPath;
 }
 
 void ScintillaConfig::applyLanguageStyle(ScintillaEdit *sci, const QString &configPath)

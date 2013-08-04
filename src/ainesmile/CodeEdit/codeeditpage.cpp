@@ -52,8 +52,14 @@ void CodeEditPage::init()
     connect(m_sciControlSlave, SIGNAL(updateUi()), this, SLOT(updateUI()));
     connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
             this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
+    connect(m_sciControlSlave, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
+            this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
     connect(m_sciControlMaster, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
     connect(m_sciControlSlave, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
+    connect(m_sciControlMaster, SIGNAL(marginClicked(int,int,int)), this, SLOT(marginClicked(int,int,int)));
+    connect(m_sciControlSlave, SIGNAL(marginClicked(int,int,int)), this, SLOT(marginClicked(int,int,int)));
+    connect(m_sciControlMaster, SIGNAL(dwellEnd(int,int)), this, SLOT(dwellEnd(int,int)));
+    connect(m_sciControlSlave, SIGNAL(dwellEnd(int,int)), this, SLOT(dwellEnd(int,int)));
 }
 
 void CodeEditPage::openFile(const QString &filePath)
@@ -201,6 +207,46 @@ void CodeEditPage::linesAdded(int linesAdded)
     std::string line = boost::lexical_cast<std::string>(line_count);
     int width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
     sci->setMarginWidthN(0, width);
+}
+
+void CodeEditPage::marginClicked(int position, int modifiers, int margin)
+{
+    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
+    if (sci->marginTypeN(margin) == SC_MARGIN_SYMBOL)
+    {
+        int line = sci->lineFromPosition(position);
+        int maskN = sci->marginMaskN(margin);
+        if (maskN == SC_MASK_FOLDERS)
+        {
+            int foldLevel = sci->foldLevel(line);
+            if (foldLevel & SC_FOLDLEVELHEADERFLAG)
+            {
+                sci->toggleFold(line);
+            }
+        }
+        else if (maskN == ~SC_MASK_FOLDERS) // breakpoint margin operations
+        {
+            if(sci->markerGet(line))
+            {
+                sci->markerDelete(line, 1);
+                // remove breakpoint
+            }
+            else
+            {
+                sci->markerAdd(line, 1);
+                // add breakpoint
+            }
+        }
+    }
+}
+
+void CodeEditPage::dwellEnd(int x, int y)
+{
+    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
+    if (sci->autoCActive())
+    {
+        sci->autoCCancel();
+    }
 }
 
 void CodeEditPage::undo()

@@ -50,6 +50,8 @@ public slots:
     void modified(int type, int position, int length, int linesAdded,
                   const QByteArray &text, int line, int foldNow, int foldPrev);    
     void linesAdded(int linesAdded);
+    void marginClicked(int position, int modifiers, int margin);
+    void dwellEnd(int x, int y);
 
     void undo();
     void redo();
