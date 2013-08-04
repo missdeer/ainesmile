@@ -151,7 +151,6 @@ void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filenam
 
     QString lang = config->matchPatternLanguage(filename);
     sci->setLexerLanguage(lang.toStdString().c_str());
-    qDebug() << "lexer: " << lang;
 
     QString themePath = config->getThemePath();
     applyThemeStyle(sci, themePath + "/global_style.xml");
@@ -194,7 +193,6 @@ void ScintillaConfig::applyLanguageStyle(ScintillaEdit *sci, const QString &conf
         QString name = keywordElem.attribute("name");
         QString keyword = keywordElem.text();
         sci->setKeyWords(keywordSet++, keyword.toStdString().c_str());
-        //qDebug() << "set keywords: " << keywordSet -1 << keyword;
         keywordElem = keywordElem.nextSiblingElement("keyword");
     }
 
@@ -259,9 +257,5 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
         QString fontSize = styleElem.attribute("font_size");
         if (!fontSize.isEmpty())
             sci->styleSetSize(id, fontSize.toInt());
-
-        //qDebug() << "style: " << themePath
-        //         << "," << id << "," << foreColor << "," << backColor
-        //         << "," << fontName << "," << fontStyle << "," << fontSize;
     }
 }

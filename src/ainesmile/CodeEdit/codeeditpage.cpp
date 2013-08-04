@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QtCore>
 #include <QFile>
 #include <QVBoxLayout>
 #include <QFileInfo>
@@ -77,11 +76,6 @@ void CodeEditPage::openFile(const QString &filePath)
         m_sc.initEditorStyle(m_sciControlSlave, filePath);
         m_sciControlMaster->colourise(0, -1);
         m_sciControlSlave->colourise(0, -1);
-        int lineCount = m_sciControlMaster->lineCount();
-        for(int i = 0; i < lineCount; i++)
-        {
-            qDebug() << i << " folder level:" << m_sciControlMaster->foldLevel(i);
-        }
     }
 }
 
