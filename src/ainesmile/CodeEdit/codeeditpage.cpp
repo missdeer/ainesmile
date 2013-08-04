@@ -18,8 +18,8 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     m_sciControlSlave(new ScintillaEdit(this))
   //  ,m_webView(new QWebView(this))
 {
-    sptr_t docPtr = m_sciControlMaster->send(SCI_GETDOCPOINTER);
-    m_sciControlSlave->send(SCI_SETDOCPOINTER, 0, docPtr);
+    int docPtr = m_sciControlMaster->docPointer();
+    m_sciControlSlave->setDocPointer(docPtr);
 
     //webView->load(QUrl("http://www.dfordsoft.com"));
     m_splitter->addWidget(m_sciControlSlave);
@@ -69,8 +69,8 @@ void CodeEditPage::openFile(const QString &filePath)
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         m_filePath = filePath;
-        m_sciControlMaster->send(SCI_SETTEXT, 0, (sptr_t)file.readAll().data());
-        m_sciControlMaster->send(SCI_EMPTYUNDOBUFFER, 0, 0);
+        m_sciControlMaster->setText(file.readAll().data());
+        m_sciControlMaster->emptyUndoBuffer();;
         file.close();
         emit filePathChanged(m_filePath);
         m_sc.initEditorStyle(m_sciControlMaster, filePath);
@@ -101,13 +101,9 @@ void CodeEditPage::saveFile(const QString &filePath)
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qint64 len = m_sciControlMaster->send(SCI_GETTEXTLENGTH);
-        char * szText = new char[len + 1];
-        m_sciControlMaster->send(SCI_GETTEXT, len + 1, (sptr_t)szText);
-        m_sciControlMaster->send(SCI_SETSAVEPOINT);
-        qint64 size = file.write(szText, len);
+        int len = m_sciControlMaster->textLength();
+        qint64 size = file.write(m_sciControlMaster->getText(len));
         file.close();
-        delete[] szText;
 
         if (size != len)
         {
