@@ -107,7 +107,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 
 void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
 {
-    sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED);
+    sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED );
 
     sci->markerDefine(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS);
     sci->markerDefine(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS);
@@ -151,6 +151,7 @@ void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filenam
 
     QString lang = config->matchPatternLanguage(filename);
     sci->setLexerLanguage(lang.toStdString().c_str());
+    qDebug() << "lexer: " << lang;
 
     QString themePath = config->getThemePath();
     applyThemeStyle(sci, themePath + "/global_style.xml");
@@ -164,6 +165,8 @@ void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filenam
     langPath.append(lang);
     langPath.append(".xml");
     applyLanguageStyle(sci, langPath);
+
+    initFolderStyle(sci);
 }
 
 void ScintillaConfig::applyLanguageStyle(ScintillaEdit *sci, const QString &configPath)
