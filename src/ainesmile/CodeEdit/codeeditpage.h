@@ -48,7 +48,8 @@ signals:
 public slots:
     void updateUI();
     void modified(int type, int position, int length, int linesAdded,
-                  const QByteArray &text, int line, int foldNow, int foldPrev);
+                  const QByteArray &text, int line, int foldNow, int foldPrev);    
+    void linesAdded(int linesAdded);
 
     void undo();
     void redo();

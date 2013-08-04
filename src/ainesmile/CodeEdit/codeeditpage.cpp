@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QClipboard>
+#include <boost/lexical_cast.hpp>
 #include "ScintillaEdit.h"
 #include "gotolinedialog.h"
 #include "codeeditpage.h"
@@ -51,6 +52,8 @@ void CodeEditPage::init()
     connect(m_sciControlSlave, SIGNAL(updateUi()), this, SLOT(updateUI()));
     connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
             this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
+    connect(m_sciControlMaster, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
+    connect(m_sciControlSlave, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
 }
 
 void CodeEditPage::openFile(const QString &filePath)
@@ -187,6 +190,17 @@ void CodeEditPage::updateUI()
 void CodeEditPage::modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev)
 {
     emit modifiedNotification();
+}
+
+void CodeEditPage::linesAdded(int linesAdded)
+{
+    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
+    int line_count = sci->send(SCI_GETLINECOUNT);
+    int left = sci->send(SCI_GETMARGINLEFT) + 2;
+    int right = sci->send(SCI_GETMARGINRIGHT) + 2;
+    std::string line = boost::lexical_cast<std::string>(line_count);
+    int width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
+    sci->setMarginWidthN(0, width);
 }
 
 void CodeEditPage::undo()
