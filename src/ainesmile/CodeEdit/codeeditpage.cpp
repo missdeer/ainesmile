@@ -18,7 +18,9 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
   //  ,m_webView(new QWebView(this))
 {
     int docPtr = m_sciControlMaster->docPointer();
+#if !defined(Q_OS_MAC)
     m_sciControlSlave->setDocPointer(docPtr);
+#endif
 
     //webView->load(QUrl("http://www.dfordsoft.com"));
     m_splitter->addWidget(m_sciControlSlave);

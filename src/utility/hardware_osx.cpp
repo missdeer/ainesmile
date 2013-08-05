@@ -31,7 +31,7 @@ namespace relay_utility {
 
         if (NULL == matchingDict)
         {
-            LOG(ERROR) << "IOServiceMatching returned a NULL dictionary.";
+            //LOG(ERROR) << "IOServiceMatching returned a NULL dictionary.";
         }
         else
         {
@@ -61,7 +61,7 @@ namespace relay_utility {
 
             if (NULL == propertyMatchDict)
             {
-                LOG(ERROR) << "CFDictionaryCreateMutable returned a NULL dictionary.";
+                //LOG(ERROR) << "CFDictionaryCreateMutable returned a NULL dictionary.";
             }
             else
             {
@@ -83,7 +83,7 @@ namespace relay_utility {
         kernResult = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, matchingServices);    
         if (KERN_SUCCESS != kernResult)
         {
-            LOG(ERROR) << "IOServiceGetMatchingServices returned " << kernResult;
+            //LOG(ERROR) << "IOServiceGetMatchingServices returned " << kernResult;
         }
 
         return kernResult;
@@ -123,7 +123,7 @@ namespace relay_utility {
 
             if (KERN_SUCCESS != kernResult)
             {
-                LOG(ERROR) << "IORegistryEntryGetParentEntry returned " << kernResult;
+                //LOG(ERROR) << "IORegistryEntryGetParentEntry returned " << kernResult;
             }
             else
             {
@@ -161,7 +161,7 @@ namespace relay_utility {
 
         if (KERN_SUCCESS != kernResult) 
         {
-            LOG(ERROR) << "FindEthernetInterfaces returned" << kernResult;
+            //LOG(ERROR) << "FindEthernetInterfaces returned" << kernResult;
         }
         else 
         {
@@ -169,7 +169,7 @@ namespace relay_utility {
 
             if (KERN_SUCCESS != kernResult) 
             {
-                LOG(ERROR) << "GetMACAddress returned " << kernResult;
+                //LOG(ERROR) << "GetMACAddress returned " << kernResult;
             }
             else 
             {
