@@ -73,3 +73,14 @@ INSTALLS = target \
     desktop \
     icon
 }
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../utility/release/ -lutility
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../utility/debug/ -lutility
+else:unix: LIBS += -L$$OUT_PWD/../utility/ -lutility
+
+INCLUDEPATH += $$PWD/../utility
+DEPENDPATH += $$PWD/../utility
+
+#win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../utility/release/utility.lib
+#else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../utility/debug/utility.lib
+#else:unix: PRE_TARGETDEPS += $$OUT_PWD/../utility/libutility.a
