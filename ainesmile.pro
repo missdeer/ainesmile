@@ -6,5 +6,5 @@ CONFIG += ordered
 SUBDIRS += \
     3rdparty/scintilla/qt/ScintillaEditBase \
     3rdparty/scintilla/qt/ScintillaEdit \
-    src/ainesmile \
-    src/utility
+    src/utility \
+    src/ainesmile 

@@ -1,6 +1,6 @@
 
-project(notepadpp_to_boost_property_tree)
-cmake_minimum_required(VERSION 2.8)
+project(configure_generator)
+cmake_minimum_required(VERSION 2.6)
 
 if(WIN32)
   set(EXT ".exe")

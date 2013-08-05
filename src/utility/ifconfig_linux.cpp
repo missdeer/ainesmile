@@ -43,7 +43,7 @@ namespace relay_utility {
             if (!ioctl (fd, SIOCGIFCONF, (char *) &ifc))
             {
                 int intrface = ifc.ifc_len / sizeof (struct ifreq);
-                LOG(INFO) << "interface num is interface = " << intrface;
+                //LOG(INFO) << "interface num is interface = " << intrface;
 
                 // read /etc/resolv.conf for DNS info
                 std::string dns1, dns2;
@@ -96,7 +96,7 @@ namespace relay_utility {
                     }
                     else
                     {
-                        LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
+                        //LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
                         continue;
                     }
                     /* this section can't get Hardware Address,I don't know whether the reason is module driver*/
@@ -115,7 +115,7 @@ namespace relay_utility {
                     }
                     else
                     {
-                        LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
+                        //LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
                         continue;
                     }
 
@@ -126,7 +126,7 @@ namespace relay_utility {
                     }
                     else
                     {
-                        LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
+                        //LOG(ERROR) << "cpm: ioctl device " << buf[intrface].ifr_name;
                         continue;
                     }
 
@@ -140,7 +140,7 @@ namespace relay_utility {
                     }
                     else
                     {
-                        LOG(ERROR)<<"[ Kayvan :NETLINK]:Get gateway message error !"; 
+                        //LOG(ERROR)<<"[ Kayvan :NETLINK]:Get gateway message error !"; 
                     }
             
                     ifs.push_back(if_cfg);
@@ -148,12 +148,12 @@ namespace relay_utility {
             }
             else
             {
-                LOG(ERROR) <<  "cpm: ioctl";
+                //LOG(ERROR) <<  "cpm: ioctl";
             }
         }
         else
         {
-            LOG(ERROR) << "cpm: socket";
+            //LOG(ERROR) << "cpm: socket";
         }
 
         close(fd);
@@ -167,14 +167,14 @@ namespace relay_utility {
             int read_len = 0;
             if ((read_len = recv(sock_fd, buf_ptr, BUFSIZE - msg_len, 0)) < 0)   
             {   
-                LOG(ERROR)<<"[ Kayvan :NETLINK]:SOCK read  error!";   
+                //LOG(ERROR)<<"[ Kayvan :NETLINK]:SOCK read  error!";   
                 return -1;   
             }   
 
             nl_header = (struct nlmsghdr *)buf_ptr;   
             if ((NLMSG_OK(nl_header, read_len)) == 0 || (nl_header->nlmsg_type == NLMSG_ERROR))   
             {   
-                LOG(ERROR)<<"[ Kayvan :NETLINK]:Error in recieved packet";   
+                //LOG(ERROR)<<"[ Kayvan :NETLINK]:Error in recieved packet";   
                 return -1;   
             }          
             if (nl_header->nlmsg_type == NLMSG_DONE)    
@@ -245,7 +245,7 @@ namespace relay_utility {
         unsigned int msg_seque = 0;    
         if ((sock = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE)) < 0)   
         {   
-            LOG(ERROR)<<"[ Kayvan :NETLINK]:Socket create error !";   
+            //LOG(ERROR)<<"[ Kayvan :NETLINK]:Socket create error !";   
             return -1;   
         }       
         memset(msg_buf, 0, BUFSIZE);       
@@ -258,13 +258,13 @@ namespace relay_utility {
         netlink_msge->nlmsg_pid = getpid();                           // PID of process sending the request.   
         if (send(sock, netlink_msge, netlink_msge->nlmsg_len, 0) < 0)
         {   
-            LOG(ERROR)<<"[ Kayvan :NETLINK]:Write To Socket Failed…";   
+            //LOG(ERROR)<<"[ Kayvan :NETLINK]:Write To Socket Failed…";   
             return -1;   
         }   
 
         if ((len = read_netlink_sock(sock, msg_buf, msg_seque, getpid())) < 0) 
         {   
-            LOG(ERROR)<<"[ Kayvan :NETLINK]:Read From Socket Failed…";   
+            //LOG(ERROR)<<"[ Kayvan :NETLINK]:Read From Socket Failed…";   
             return -1;   
         }   
         rt_info = (struct route_info *)malloc(sizeof(struct route_info));   
@@ -286,7 +286,7 @@ namespace relay_utility {
         FILE * fp = fopen(config_path.c_str(),"r+");
         if (fp == NULL)
         {
-            LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< config_path << "FAILD ! \n";
+            //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< config_path << "FAILD ! \n";
             return false;
         }
         char sum_buf[1024] = {0}; 
@@ -334,7 +334,7 @@ namespace relay_utility {
         fpnw = fopen(config_path.c_str(),"w");
         if (fpnw == NULL)
         {
-            LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< config_path << "FAILD ! \n";
+            //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< config_path << "FAILD ! \n";
             return false;
         }
         fseek(fpnw,0,SEEK_SET);
@@ -362,7 +362,7 @@ namespace relay_utility {
             FILE * network_fp = fopen(network_path.c_str(),"w+");
             if (network_fp == NULL)
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< network_path << "  FAILD !";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< network_path << "  FAILD !";
                 return false;
             }
             std::string host_name   = "#HOSTNAME=localhost.localdomain";
@@ -382,7 +382,7 @@ namespace relay_utility {
             std::string config_boot_data = "none";
             if (!ifconfig_file(dev_name, config_boot, config_boot_data))
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig BOOTPROTO failed!"; 
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig BOOTPROTO failed!"; 
                 return false;
             }
             if (ifs.ip_.length() >= 7 && ifs.ip_.length() <= 15)
@@ -390,13 +390,13 @@ namespace relay_utility {
                 std::string config_IP_data = ifs.ip_;
                 if (!ifconfig_file(dev_name, config_IP, config_IP_data))
                 {
-                    LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig IP failed !\n";
+                    //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig IP failed !\n";
                     return false;
                 }
             }
             else
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: IP !\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: IP !\n";
                 return false;
             }
             
@@ -405,13 +405,13 @@ namespace relay_utility {
                 std::string config_mask_data = ifs.submask_;
                 if (!ifconfig_file(dev_name, config_mask, config_mask_data))
                 {
-                    LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig NETMASK failed!\n";
+                    //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig NETMASK failed!\n";
                     return false;
                 }
             }
             else
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: NETMASK !\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: NETMASK !\n";
                 return false;
             }
             
@@ -421,13 +421,13 @@ namespace relay_utility {
                 std::string config_gateway_data = ifs.gateway_;
                 if (!ifconfig_file(dev_name, config_gateway, config_gateway_data))
                 {
-                    LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig GATEWAY failed!\n";
+                    //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig GATEWAY failed!\n";
                     return false;
                 }
             }
             else
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: GATEWAY !\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: GATEWAY !\n";
                 return false;
             }
         }
@@ -437,7 +437,7 @@ namespace relay_utility {
             FILE * network_fp = fopen(network_path.c_str(),"w+");
             if (network_fp == NULL)
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< network_path << "FAILD \n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:OPEN CONFIG FILE: "<< network_path << "FAILD \n";
                 return false;
             }
             std::string host_name   = "HOSTNAME=localhost.localdomain";
@@ -448,7 +448,7 @@ namespace relay_utility {
             std::string config_boot_data = "dhcp";
             if (!ifconfig_file(dev_name, config_boot, config_boot_data))
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig boot protocol failed!\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig boot protocol failed!\n";
                 return false;
             }
         }
@@ -458,7 +458,7 @@ namespace relay_utility {
             std::string config_peerdns_data = "yes";
             if (!ifconfig_file(dev_name, config_peerdns, config_peerdns_data))
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig PEERDNS failed!\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig PEERDNS failed!\n";
                 return false;
             }
             if (ifs.primary_dns_.length() >= 7 && ifs.primary_dns_.length()<= 15)
@@ -466,13 +466,13 @@ namespace relay_utility {
                 std::string config_dns1_data = ifs.primary_dns_;
                 if (!ifconfig_file(dev_name, config_dns1, config_dns1_data))
                 {
-                    LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig DNS1 failed!\n";
+                    //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig DNS1 failed!\n";
                     return false;
                 }
             }
             else
             {
-                LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: DNS1 !\n";
+                //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:wrong:: DNS1 !\n";
                 return false;
             }
             if (ifs.second_dns_.length() >= 7 && ifs.second_dns_.length()<= 15)
@@ -480,7 +480,7 @@ namespace relay_utility {
                 std::string config_dns2_data = ifs.second_dns_;
                 if (!ifconfig_file(dev_name, config_dns2, config_dns2_data))
                 {
-                    LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig DNS2 failed!\n";
+                    //LOG(ERROR)<<"[ Kayvan :IFCONFIG]:ifconfig DNS2 failed!\n";
                     return false;
                 }
             }
