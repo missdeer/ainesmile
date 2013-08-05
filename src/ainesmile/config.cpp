@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QtXml>
 #include <QRegExp>
+#include <QMessageBox>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "config.h"
@@ -17,6 +18,11 @@ Config* Config::instance_ = NULL;
 boost::property_tree::ptree& Config::pt()
 {
     return pt_;
+}
+
+Config::Config()
+{
+    boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
 }
 
 void Config::sync()
@@ -41,7 +47,6 @@ QString Config::getConfigDirPath()
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #endif
-    configPath.append("/ainesmile");
 #else
     // get config path
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -84,7 +89,7 @@ QString Config::getConfigPath()
 
 QString Config::getThemePath()
 {
-    std::string currentTheme = pt_.get<std::string>("theme");
+    std::string currentTheme = pt_.get<std::string>("theme", "Default");
     QString themePath = getConfigDirPath();
     themePath.append("/themes");
     QDir dir(themePath);
@@ -210,11 +215,6 @@ QString Config::matchPatternLanguage(const QString &filename)
         langElem = langElem.nextSiblingElement("language");
     }
     return "";
-}
-
-Config::Config()
-{
-    boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
 }
 
 bool Config::matchPattern(const QString &filename, const QString &pattern)

@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QMimeData>
 #include "codeeditpage.h"
 #include "aboutdialog.h"
 #include "mainwindow.h"
