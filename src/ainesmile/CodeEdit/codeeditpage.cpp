@@ -13,16 +13,10 @@
 CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent),
     m_splitter(new QSplitter( Qt::Vertical, this)),
-    m_sciControlMaster(new ScintillaEdit(this)),
-    m_sciControlSlave(new ScintillaEdit(this))
-  //  ,m_webView(new QWebView(this))
+    m_sciControlMaster(new ScintillaEdit(m_splitter)),
+    m_sciControlSlave(new ScintillaEdit(m_splitter))
+  //  ,m_webView(new QWebView(m_splitter))
 {
-    int docPtr = m_sciControlMaster->docPointer();
-#if !defined(Q_OS_MAC)
-    m_sciControlSlave->setDocPointer(docPtr);
-#endif
-
-    //webView->load(QUrl("http://www.dfordsoft.com"));
     m_splitter->addWidget(m_sciControlSlave);
     m_splitter->addWidget(m_sciControlMaster);
  //   m_splitter->addWidget(m_webView);
@@ -38,6 +32,9 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     setLayout(m_mainLayout);
 
     init();
+
+    m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
+    //webView->load(QUrl("http://www.dfordsoft.com"));
 }
 
 void CodeEditPage::init()
