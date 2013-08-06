@@ -14,7 +14,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     if (fileDate.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QByteArray d = fileDate.readAll();
-        date = d.data();
+        date = QString::fromUtf8(d);
         date = date.replace("\n", " ");
         fileDate.close();
     }
@@ -24,11 +24,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
     if (fileRevision.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QByteArray r = fileRevision.readAll();
-        revision = r.data();
+        revision = QString::fromUtf8(r);
         fileRevision.close();
     }
 
-    ui->labelBuildInfo->setText(tr("Build at ") + date + "\n" + tr("Rev ") + revision);
+    ui->labelBuildInfo->setText(tr("Build at ") + date + tr("\nRev ") + revision);
 }
 
 AboutDialog::~AboutDialog()
