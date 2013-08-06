@@ -16,6 +16,7 @@ TEMPLATE = app
 include(../../Boost.pri)
 
 INCLUDEPATH += CodeEdit \
+    Dialogs \
     ../../3rdparty/rapidxml-1.13 \
     ../../3rdparty/scintilla/qt/ScintillaEditBase \
     ../../3rdparty/scintilla/qt/ScintillaEdit \
@@ -31,21 +32,21 @@ SOURCES += main.cpp\
     CodeEdit/scintillaconfig.cpp \
     mainwindow.cpp \
     tabwidget.cpp \
-    aboutdialog.cpp \
-    gotolinedialog.cpp \
+    Dialogs/aboutdialog.cpp \
+    Dialogs/gotolinedialog.cpp \
     config.cpp
 
 HEADERS  += mainwindow.h \
     CodeEdit/codeeditpage.h \
     CodeEdit/scintillaconfig.h \
     tabwidget.h \
-    aboutdialog.h \
-    gotolinedialog.h \
+    Dialogs/aboutdialog.h \
+    Dialogs/gotolinedialog.h \
     config.h
 
 FORMS    += mainwindow.ui \
-    aboutdialog.ui \
-    gotolinedialog.ui
+    Dialogs/aboutdialog.ui \
+    Dialogs/gotolinedialog.ui
 
 OTHER_FILES += \
     ainesmile.rc
