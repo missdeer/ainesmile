@@ -1,7 +1,7 @@
-#ifndef _RELAY_UTILITY_GLOBAL_HPP_
-#define _RELAY_UTILITY_GLOBAL_HPP_
+#ifndef _UTILITY_GLOBAL_HPP_
+#define _UTILITY_GLOBAL_HPP_
 
-namespace relay_utility {
+namespace utility {
     struct if_config
     {
         bool dhcp_enabled_;
@@ -21,6 +21,6 @@ namespace relay_utility {
         LT_TRIAL = 0,
         LT_FULL,
     };
-} // namespace relay_utility
+} // namespace utility
 
-#endif // _RELAY_UTILITY_GLOBAL_HPP_
+#endif // _UTILITY_GLOBAL_HPP_

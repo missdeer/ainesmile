@@ -1,5 +1,5 @@
-#ifndef _RELAY_LAUNCH_PROCESS_WIN_HPP_
-#define _RELAY_LAUNCH_PROCESS_WIN_HPP_
+#ifndef _UTILITY_PROCESS_WIN_HPP_
+#define _UTILITY_PROCESS_WIN_HPP_
 
 #if defined(WIN32)
 
@@ -8,7 +8,7 @@
 #include <boost/thread.hpp>
 #include <boost/algorithm/string.hpp>
 
-namespace relay_utility {
+namespace utility {
     class process_win
     {
     public:
@@ -56,7 +56,7 @@ namespace relay_utility {
         void do_attach();
         bool wait_for_process();
     };
-} // namespace relay_utility
+} // namespace utility
 #endif
 
 #endif

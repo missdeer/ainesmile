@@ -1,5 +1,5 @@
-#ifndef _RELAY_UTILITY_IFCONFIG_HPP_
-#define _RELAY_UTILITY_IFCONFIG_HPP_
+#ifndef _UTILITY_IFCONFIG_HPP_
+#define _UTILITY_IFCONFIG_HPP_
 
 #include <boost/shared_ptr.hpp>
 #include "utility_global.hpp"
@@ -13,7 +13,7 @@
 #include "ifconfig_unsupported.hpp"
 #endif
 
-namespace relay_utility {
+namespace utility {
 #if defined(WIN32)
     typedef ifconfig_win32 ifconfig;
 #elif defined(__APPLE__)
@@ -25,7 +25,7 @@ namespace relay_utility {
 #endif
 
     typedef boost::shared_ptr<ifconfig> ifconfig_ptr;
-} // namespace relay_utility
+} // namespace utility
 
 
 #endif

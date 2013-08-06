@@ -20,14 +20,6 @@ SOURCES += \
     hardware_osx.cpp \
     hardware_unsupported.cpp \
     hardware_win32.cpp \
-    ifconfig.cpp \
-    ifconfig_linux.cpp \
-    ifconfig_osx.cpp \
-    ifconfig_unsupported.cpp \
-    ifconfig_win32.cpp \
-    process.cpp \
-    process_unix.cpp \
-    process_win.cpp \
     socket_util.cpp \
     stdafx.cpp \
     util.cpp
@@ -38,14 +30,6 @@ HEADERS += \
     hardware_osx.hpp \
     hardware_unsupported.hpp \
     hardware_win32.hpp \
-    ifconfig.hpp \
-    ifconfig_linux.hpp \
-    ifconfig_osx.hpp \
-    ifconfig_unsupported.hpp \
-    ifconfig_win32.hpp \
-    process.hpp \
-    process_unix.hpp \
-    process_win.hpp \
     resource.h \
     socket_util.hpp \
     stdafx.h \
@@ -53,6 +37,7 @@ HEADERS += \
     util.hpp \
     utility_global.hpp \
     datatype.hpp
+
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

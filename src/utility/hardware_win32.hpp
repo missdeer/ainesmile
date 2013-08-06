@@ -15,7 +15,7 @@
 #define PCI_CARD_IDENTITY   "\\\\?\\PCI"
 #define MAC_ADDRESS_LENGTH  6
 
-namespace relay_utility {
+namespace utility {
     class hardware_win32
     {
     public:
@@ -129,7 +129,7 @@ namespace relay_utility {
         static BOOL do_identify( HANDLE hPhysicalDriveIOCTL, PSENDCMDINPARAMS pSCIP, PSENDCMDOUTPARAMS pSCOP, BYTE bIDCmd, BYTE bDriveNum, PDWORD lpcbBytesReturned );
         static BOOL winnt_HD_serial_number_as_scsi_read( BYTE* dwSerial, UINT* puSerialLen, UINT uMaxSerialLen );
     };
-} // namespace relay_utility
+} // namespace utility
 #endif
 
 #endif

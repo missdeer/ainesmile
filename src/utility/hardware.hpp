@@ -1,5 +1,5 @@
-#ifndef _RELAY_PEERSERVICE_HARDWARE_HPP_
-#define _RELAY_PEERSERVICE_HARDWARE_HPP_
+#ifndef _PEERSERVICE_HARDWARE_HPP_
+#define _PEERSERVICE_HARDWARE_HPP_
 
 #include "utility_global.hpp"
 #include <boost/shared_ptr.hpp>
@@ -13,7 +13,7 @@
 #include "hardware_unsupported.hpp"
 #endif
 
-namespace relay_utility {
+namespace utility {
 #if defined(WIN32)
     typedef hardware_win32 hardware_info;
 #elif defined(__APPLE__)
@@ -24,7 +24,7 @@ namespace relay_utility {
     typedef hardware_unsupported hardware_info;
 #endif
     typedef boost::shared_ptr<hardware_info> hardware_info_ptr;
-} // namespace relay_utility
+} // namespace utility
 
 #endif 
 

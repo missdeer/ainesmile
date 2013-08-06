@@ -2,7 +2,7 @@
 #define _UTILITY_HARDWARE_OSX_HPP_
 
 #if defined(__APPLE__)
-namespace relay_utility {
+namespace utility {
     class hardware_osx
     {
     public:
@@ -14,7 +14,7 @@ namespace relay_utility {
         static int get_root_path_id(std::string& sRootID);
         static int get_CPU_core_count();
     };
-} // namespace relay_utility
+} // namespace utility
 
 #endif
 

@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <boost/filesystem.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -7,7 +6,7 @@
 #include "hardware.hpp"
 #include "util.hpp"
 
-namespace relay_utility {
+namespace utility {
     uint64 utilities::get_local_peer_id(const std::string& additional_info)
     {
         std::string cpuinfo, hdinfo, macaddinfo, partitioninfo;
@@ -102,25 +101,6 @@ namespace relay_utility {
         return c;
     }
 
-    void utilities::get_application_directory( char* app_dir )
-    {
-        char app_path[260] = {0};
-#if defined(WIN32)
-        GetModuleFileNameA(NULL, app_path, sizeof(app_path)/sizeof(app_path[0]));
-        char * p = strrchr(app_path, '\\');
-#elif defined(__APPLE__)
-        uint32_t buf_size = sizeof(app_path);
-        _NSGetExecutablePath(app_path, &buf_size);
-        char * p = strrchr(app_path, '/');
-#elif defined(__linux__)
-        readlink("/proc/self/exe" , app_path , sizeof(app_path));
-        char * p = strrchr(app_path, '/');
-#else
-#endif
-        p++; *p = 0;
-        strcpy(app_dir, app_path);
-    }
-
     void utilities::get_computer_name( char* computer_name )
     {
         char name[256] = {0};
@@ -150,112 +130,6 @@ namespace relay_utility {
         return ss.str();
     }
 
-    void utilities::get_home_directory( char* home_dir )
-    {
-#if defined(WIN32)
-        char home[MAX_PATH] = {0};
-        if (SHGetSpecialFolderPathA(NULL, home, CSIDL_PERSONAL, FALSE))
-        {
-            strcpy(home_dir, home);
-        }
-#else
-        char * home = getenv("HOME");
-        if (!home)
-        {
-            struct passwd *pw = getpwuid(getuid());
-            if (pw)
-                   home = pw->pw_dir;
-        }
-        strcpy(home_dir, home);
-#endif
-    }
-
-    void utilities::get_temp_directory( char* temp_dir )
-    {
-#if defined(WIN32)
-        GetTempPathA(MAX_PATH,temp_dir); 
-        if (temp_dir[strlen(temp_dir) - 1] != '\\')
-            strcat(temp_dir, "\\");
-#else
-        strcpy(temp_dir, "/tmp/");
-#endif
-    }
-
-    license_type utilities::get_license()
-    {
-        FILE *fp;
-        char app_dir[256] = {0};
-        get_application_directory(app_dir);
-        std::string license_file = app_dir;
-        license_file.append("/relay.lic");
-        if ((fp = fopen(license_file.c_str(), "r")) != NULL)
-        {
-            // check the content of the license file
-            char line[1024] = {0};
-            fgets(line, sizeof(line)/sizeof(line[0]), fp);
-            if (strcmp(line, "TVU Networks Relay Server Full Featured License.") == 0)
-            {
-                fclose(fp);
-                return LT_FULL;
-            }
-            
-            fclose(fp);
-        }
-
-        char home_dir[256] = {0};
-        get_home_directory(home_dir);
-        license_file = home_dir;
-        license_file.append("/.relay/relay.lic");
-        if ((fp = fopen(license_file.c_str(), "r")) != NULL)
-        {
-            // check the content of the license file
-            char line[1024] = {0};
-            fgets(line, sizeof(line)/sizeof(line[0]), fp);
-            if (strcmp(line, "TVU Networks Relay Server Full Featured License.") == 0)
-            {
-                fclose(fp);
-                return LT_FULL;
-            }
-            fclose(fp);
-        }
-        return LT_TRIAL;
-    }
-
-    void utilities::get_config_file( char* config_file, const char* file_name )
-    {
-        char config_path[260] = {0};
-        get_home_directory(config_path);
-        strcat(config_path, "/.relay");
-        boost::filesystem::path relay_config_dir(config_path);
-        if (!boost::filesystem::exists(relay_config_dir))
-        {
-            // create the directory
-            boost::filesystem::create_directory(relay_config_dir);
-        }
-        strcat(config_path, "/");
-        strcat(config_path, file_name);
-        boost::filesystem::path relay_config_file(config_path);
-        if (!boost::filesystem::exists(relay_config_file))
-        {
-            // copy from application installed directory
-            char source_path[260] = {0};
-            get_application_directory(source_path);
-            strcat(source_path, file_name);
-            boost::filesystem::path relay_config_source_file(source_path);
-            if (!boost::filesystem::exists(relay_config_source_file))
-            {
-                // create a new file
-                std::ofstream ofs(source_path, std::ios_base::out | std::ios_base::trunc);
-                if (ofs.is_open())
-                {
-                    ofs.close();
-                }
-            }
-            boost::filesystem::copy_file(relay_config_source_file, relay_config_file);
-        }
-        strcpy(config_file, config_path);
-    }
-
     void utilities::bin_to_hex( const unsigned char* bufin, int len, std::string& strout )
     {
         strout = "";
@@ -274,4 +148,4 @@ namespace relay_utility {
         }
     }
 
-} // namespace relay_utility
+} // namespace utility

@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <boost/lexical_cast.hpp>
 
-namespace relay_utility {
+namespace utility {
     process_unix::process_unix(void)
         : auto_restart_(true)
         , auto_start_(true)
@@ -248,5 +248,5 @@ namespace relay_utility {
     {
         terminated_id_connection_ = terminated_id_.connect(f);
     }
-} // namespace relay_utility
+} // namespace utility
 #endif

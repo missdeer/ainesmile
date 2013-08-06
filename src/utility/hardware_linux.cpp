@@ -26,7 +26,7 @@
 #include "util.hpp"
 #include "hardware_linux.hpp"
 
-namespace relay_utility {
+namespace utility {
     int    __getMacAddressUnix(unsigned char pAddr[6])
     {
         struct ifconf ifc;
@@ -117,7 +117,7 @@ namespace relay_utility {
         ret = __getMacAddressUnix(tmpMacAddressBin);
         if (ret != -1)
         {
-            relay_utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
+            utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
         }
         return ret;
     }
@@ -203,6 +203,6 @@ namespace relay_utility {
     {
         return sysconf(_SC_NPROCESSORS_ONLN);
     }
-} // namespace relay_utility
+} // namespace utility
 
 #endif

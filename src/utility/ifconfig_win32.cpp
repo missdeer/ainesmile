@@ -7,7 +7,7 @@
 #pragma comment(lib,"Iphlpapi.lib") 
 #include "ifconfig_win32.hpp"
 
-namespace relay_utility {
+namespace utility {
     ifconfig_win32::ifconfig_win32(void)
     {
     }
@@ -91,6 +91,6 @@ namespace relay_utility {
         return true;
     }
 
-} // namespace relay_utility
+} // namespace utility
 
 #endif

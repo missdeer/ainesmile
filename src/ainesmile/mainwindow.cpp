@@ -9,6 +9,9 @@
 #include <QMimeData>
 #include "codeeditpage.h"
 #include "aboutdialog.h"
+#include "registerdialog.h"
+#include "preferencedialog.h"
+#include "findreplacedialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -696,7 +699,9 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionFindInFiles_triggered()
 {
-
+    FindReplaceDialog dlg(this);
+    dlg.setModal(false);
+    dlg.show();
 }
 
 void MainWindow::on_actionSearchResultsWindow_triggered()
@@ -716,7 +721,8 @@ void MainWindow::on_actionPreviousSearchResult_triggered()
 
 void MainWindow::on_actionRegistration_triggered()
 {
-
+    RegisterDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::on_actionSelectExtensionItem_triggered()
@@ -771,7 +777,8 @@ void MainWindow::on_actionShowWrapSymbol_triggered()
 
 void MainWindow::on_actionPreferences_triggered()
 {
-
+    PreferenceDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::on_actionExternalTools_triggered()

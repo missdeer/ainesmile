@@ -1,5 +1,5 @@
-#ifndef _RELAY_UTILITIY_IFCONFIG_LINUX_HPP_
-#define _RELAY_UTILITIY_IFCONFIG_LINUX_HPP_
+#ifndef _UTILITIY_IFCONFIG_LINUX_HPP_
+#define _UTILITIY_IFCONFIG_LINUX_HPP_
 
 #if defined(__linux__)
 #include <sys/socket.h>
@@ -7,7 +7,7 @@
 #include "utility_global.hpp" 
 
 struct route_info;
-namespace relay_utility { 
+namespace utility { 
     class ifconfig_linux
     {
     public:
@@ -21,7 +21,7 @@ namespace relay_utility {
         int  get_gateway(char *gate_way);
         bool ifconfig_file(const std::string& devname,const std::string& conf_name,const std::string& config_buff);
     };
-} // namespace relay_utility
+} // namespace utility
 
 #endif
 

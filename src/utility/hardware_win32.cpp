@@ -7,7 +7,7 @@
 #include "util.hpp"
 #include "hardware_win32.hpp"
 
-namespace relay_utility {
+namespace utility {
 
 #define GETADDRESS_RETRY_TIME 3
 
@@ -103,7 +103,7 @@ namespace relay_utility {
         ret =  __getEnableMacAddressWin32(tmpMacAddressBin);
         if (ret != -1)
         {
-            relay_utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
+            utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
         }
         return ret;
     }
@@ -513,7 +513,7 @@ namespace relay_utility {
         return bInfoLoaded;
     }
 
-} // namespace relay_utility
+} // namespace utility
 
 #endif
 

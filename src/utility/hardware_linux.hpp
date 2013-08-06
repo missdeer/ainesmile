@@ -2,7 +2,7 @@
 #define _UTILITY_HARDWARE_LINUX_HPP_
 
 #if defined(__linux__)
-namespace relay_utility {
+namespace utility {
     class hardware_linux
     {
     public:
@@ -15,7 +15,7 @@ namespace relay_utility {
         static int get_root_path_id(std::string& sRootID);
         static int get_CPU_core_count();
     };
-} // namespace relay_utility
+} // namespace utility
 
 #endif
 

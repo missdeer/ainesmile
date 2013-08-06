@@ -2,7 +2,7 @@
 #include "process_win.hpp"
 
 #if defined(WIN32)
-namespace relay_utility {
+namespace utility {
     process_win::process_win(void)
         : auto_restart_(true)
         , started_(false)
@@ -185,5 +185,5 @@ namespace relay_utility {
 
         return false;
     }
-} // namespace relay_utility
+} // namespace utility
 #endif

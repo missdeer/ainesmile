@@ -1,10 +1,10 @@
-#ifndef _RELAY_UTILITIY_IFCONFIG_OSX_HPP_
-#define _RELAY_UTILITIY_IFCONFIG_OSX_HPP_
+#ifndef _UTILITIY_IFCONFIG_OSX_HPP_
+#define _UTILITIY_IFCONFIG_OSX_HPP_
 
 #if defined(__APPLE__)
 #include "utility_global.hpp"
 
-namespace relay_utility {
+namespace utility {
     class ifconfig_osx
     {
     public:
@@ -14,7 +14,7 @@ namespace relay_utility {
         bool set_ifconfig(const if_config& ifs);
     };
 
-} // namespace relay_utility
+} // namespace utility
 #endif
 
 #endif

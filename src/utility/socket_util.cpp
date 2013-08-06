@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "socket_util.hpp"
 
-namespace relay_utility {
+namespace utility {
     int socket_util::readable( socket_t sockfd, int sec, int usec )
     {
 
@@ -36,4 +36,4 @@ namespace relay_utility {
         fcntl(fd, F_SETFL, (non_block ? (fl | O_NONBLOCK ) : ( fl & ~O_NONBLOCK)));
 #endif
     }
-} // namespace relay_utility
+} // namespace utility

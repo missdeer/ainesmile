@@ -2,7 +2,7 @@
 #if defined(__APPLE__)
 #include "ifconfig_osx.hpp"
 
-namespace relay_utility {
+namespace utility {
     ifconfig_osx::ifconfig_osx(void)
     {
     }
@@ -21,6 +21,6 @@ namespace relay_utility {
         return true;
     }
 
-} // namespace relay_utility
+} // namespace utility
 
 #endif

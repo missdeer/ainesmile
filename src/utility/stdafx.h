@@ -1,5 +1,5 @@
-#ifndef _RELAY_UTILITY_HPP_
-#define _RELAY_UTILITY_HPP_
+#ifndef _UTILITY_HPP_
+#define _UTILITY_HPP_
 
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN

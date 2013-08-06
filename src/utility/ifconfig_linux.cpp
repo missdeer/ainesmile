@@ -22,7 +22,7 @@ struct route_info
     u_int gate_way;   
     char if_name[IF_NAMESIZE];   
 };  
-namespace relay_utility {
+namespace utility {
     ifconfig_linux::ifconfig_linux(void)
     {
     }
@@ -488,6 +488,6 @@ namespace relay_utility {
         return true;
     }
 
-} // namespace relay_utility
+} // namespace utility
 
 #endif

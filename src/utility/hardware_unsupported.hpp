@@ -3,7 +3,7 @@
 
 #if !defined(WIN32) && !defined(__APPLE__) && !defined(__linux__)
 
-namespace relay_utility {
+namespace utility {
     class hardware_unsupported
     {
     public:
@@ -16,7 +16,7 @@ namespace relay_utility {
         static int get_root_path_id(std::string& sRootID){ return 0;}
         static int get_CPU_core_count(){ return 0;}
     };
-} // namespace relay_utility
+} // namespace utility
 
 #endif
 #endif

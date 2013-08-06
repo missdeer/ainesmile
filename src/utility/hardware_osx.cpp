@@ -12,7 +12,7 @@
 #include "util.hpp"
 #include "hardware_osx.hpp"
 
-namespace relay_utility {
+namespace utility {
     static kern_return_t FindEthernetInterfaces(io_iterator_t *matchingServices)
     {
         kern_return_t           kernResult; 
@@ -208,7 +208,7 @@ namespace relay_utility {
         ret = __getMacAddressOSX(tmpMacAddressBin);
         if (ret != -1)
         {
-            relay_utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
+            utility::utilities::bin_to_hex(tmpMacAddressBin, MAC_ADDRESS_LENGTH, sMacAddr);
         }
         return ret;
 
@@ -306,5 +306,5 @@ namespace relay_utility {
         }
         return count;
     }
-} // namespace relay_utility
+} // namespace utility
 #endif
