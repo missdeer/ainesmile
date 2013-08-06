@@ -17,6 +17,12 @@
    <iconset resource="ainesmile.qrc">
     <normaloff>:/rc/ainesmile.png</normaloff>:/rc/ainesmile.png</iconset>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::VerticalTabs</set>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
@@ -49,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1266,6 +1272,9 @@
    </property>
   </action>
   <action name="actionAlwaysOnTop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Always on &amp;Top</string>
    </property>

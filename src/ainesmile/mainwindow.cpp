@@ -1,3 +1,5 @@
+
+#include <windows.h>
 #include <QFileDialog>
 #include <QMdiSubWindow>
 #include <QDesktopServices>
@@ -585,17 +587,60 @@ void MainWindow::on_actionAinesmileProductPage_triggered()
 
 void MainWindow::on_actionSaveAll_triggered()
 {
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+        QString filePath = page->getFilePath();
+        bool resetTabText = false;
+        if (!QFile::exists(filePath))
+        {
+            QFileDialog::Options options;
+            QString selectedFilter;
+            filePath = QFileDialog::getSaveFileName(this,
+                                         tr("ainesmile Save File To"),
+                                         tr(""),
+                                         tr("All Files (*);;Text Files (*.txt)"),
+                                         &selectedFilter,
+                                         options);
+            if (!filePath.isEmpty())
+                resetTabText = true;
+        }
 
+        if (!filePath.isEmpty())
+            page->saveFile(filePath);
+
+        if (resetTabText)
+        {
+            int index = ui->tabWidget->currentIndex();
+            ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
+            ui->tabWidget->setTabToolTip(index, filePath);
+        }
+    }
 }
 
 void MainWindow::on_actionCloseAll_triggered()
 {
-
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        closeRequested(index);
+    }
 }
 
 void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 {
-
+    int currentIndex = ui->tabWidget->currentIndex();
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index > currentIndex; index--)
+    {
+        closeRequested(index);
+    }
+    while (ui->tabWidget->count() > 1)
+    {
+        closeRequested(0);
+    }
 }
 
 void MainWindow::on_actionOpenAllRecentFiles_triggered()
@@ -610,17 +655,43 @@ void MainWindow::on_actionEmptyRecentFilesList_triggered()
 
 void MainWindow::on_actionAlwaysOnTop_triggered()
 {
-
+#if defined(Q_OS_WIN)
+    if (ui->actionAlwaysOnTop->isChecked())
+    {
+        ::SetWindowPos((HWND)winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+    else
+    {
+        ::SetWindowPos((HWND)winId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+#else
+    Qt::WindowFlags flags = this->windowFlags();
+    if (ui->actionAlwaysOnTop->isChecked())
+    {
+        setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+        show();
+    }
+    else
+    {
+        setWindowFlags(flags ^ (Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint));
+        show();
+    }
+#endif
 }
 
 void MainWindow::on_actionCloseAllDocuments_triggered()
 {
-
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        closeRequested(index);
+    }
 }
 
 void MainWindow::on_actionClose_triggered()
 {
-
+    int currentIndex = ui->tabWidget->currentIndex();
+    closeRequested(currentIndex);
 }
 
 void MainWindow::on_actionFindInFiles_triggered()
