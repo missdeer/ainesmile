@@ -1,5 +1,6 @@
-
+#if defined(Q_OS_WIN)
 #include <windows.h>
+#endif
 #include <QFileDialog>
 #include <QMdiSubWindow>
 #include <QDesktopServices>

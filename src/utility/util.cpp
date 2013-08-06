@@ -11,7 +11,7 @@ namespace utility {
     {
         std::string cpuinfo, hdinfo, macaddinfo, partitioninfo;
         uint64 pid;
-#if !defined(__APPLE__)
+#if defined(WIN32)
         hardware_info::get_CPU_id(cpuinfo);
 #endif
         hardware_info::get_HDD_id(hdinfo);
