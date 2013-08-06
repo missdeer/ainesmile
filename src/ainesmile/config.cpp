@@ -81,6 +81,24 @@ QString Config::getConfigPath()
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/.ainesmilerc");
+        if (!QFile(configFile).exists())
+        {
+            QDir dir(appDirPath);
+            dir.cdUp();
+            dir.cdUp();
+#if defined(Q_OS_WIN)
+            dir.cdUp();
+#endif
+#if defined(Q_OS_MAC)
+            dir.cdUp();
+            dir.cdUp();
+#endif
+            dir.cd("resource");
+            configFile = configDir.absolutePath();
+            configFile.append("/.ainesmilerc");
+            Q_ASSERT(QFile::exists(configFile));
+        }
+
         file.copy(configFile, configPath);
     }
 
@@ -111,7 +129,26 @@ QString Config::getThemePath()
         configDir.cd("Resource");
 #endif
         configDir.cd("themes");
+
         QString themeDirPath = configDir.absolutePath();
+
+        if (!QDir(themeDirPath).exists())
+        {
+            QDir dir(appDirPath);
+            dir.cdUp();
+            dir.cdUp();
+#if defined(Q_OS_WIN)
+            dir.cdUp();
+#endif
+#if defined(Q_OS_MAC)
+            dir.cdUp();
+            dir.cdUp();
+#endif
+            dir.cd("resource");
+            themeDirPath = dir.absolutePath();
+            Q_ASSERT(dir.exists());
+        }
+
         themeDirPath.append("/");
         themeDirPath.append(currentTheme.c_str());
         themeDirPath.append(".asTheme");
@@ -150,6 +187,22 @@ QString Config::getLanguageMapPath()
         configDir.cd("Resource");
 #endif
         QString configFile = configDir.absolutePath();
+        if (!QDir(configFile).exists())
+        {
+            QDir dir(appDirPath);
+            dir.cdUp();
+            dir.cdUp();
+#if defined(Q_OS_WIN)
+            dir.cdUp();
+#endif
+#if defined(Q_OS_MAC)
+            dir.cdUp();
+            dir.cdUp();
+#endif
+            dir.cd("resource");
+            configFile = dir.absolutePath();
+            Q_ASSERT(dir.exists());
+        }
         configFile.append("/langmap.xml");
         file.copy(configFile, configPath);
     }
