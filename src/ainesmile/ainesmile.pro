@@ -78,16 +78,20 @@ DEPENDPATH += $$PWD/../utility
 #else:unix: PRE_TARGETDEPS += $$OUT_PWD/../utility/libutility.a
 
 win32: {
-LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit3 -lIphlpapi
+INCLUDEPATH += $$(PORTED)\include
+LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3 -L"$$(PORTED)\lib" -lIphlpapi -lssl.dll -lcrypto.dll
 }
 unix: !macx: {
-LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
+LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit -lssl -lcrypto
 }
 
 # Mac OS X icon
 macx: {
 QT += opengl
-LIBS += -F ../../3rdparty/scintilla/bin -framework ScintillaEdit -framework CoreFoundation -framework IOKit
+LIBS += -F ../../3rdparty/scintilla/bin -framework ScintillaEdit \
+    -framework CoreFoundation \
+    -framework IOKit \
+    -lssl -lcrypto
 ICON = rc/ainesmile.icns
 icon.files += rc/ainesmile.png
 INSTALLS = target \
