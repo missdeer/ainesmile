@@ -15,6 +15,7 @@
         <file>rc/image/searchreplace.png</file>
         <file>rc/image/undo.png</file>
         <file>rc/ainesmile.png</file>
+        <file>public.pem</file>
         <file>DATE</file>
         <file>REVISION</file>
     </qresource>
