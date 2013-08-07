@@ -34,12 +34,22 @@ RegisterDialog::~RegisterDialog()
 void RegisterDialog::on_buttonBox_accepted()
 {
     std::string licenseCode = ui->edtLicenseCode->toPlainText().toStdString();
-    FILE* fp = fopen("/public.pem", "r");
-    Q_ASSERT(fp);
-    RSA* rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
-    if (rsa)
+    QString username = ui->edtUsername->toPlainText();
+    QString pinCode = ui->edtPinCode->toPlainText();
+    QFile file(":/public.pem");
+
+    FILE* fp = fopen(":/public.pem", "r");
+    if (fp)
     {
-        unsigned char sz[2048] = {0};
-        RSA_public_decrypt(licenseCode.size(), (const unsigned char *)licenseCode.c_str(), sz, rsa, 0);
+        RSA* rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
+        if (rsa)
+        {
+            int len = RSA_size(rsa);
+            unsigned char *sz = (unsigned char*)calloc(len, sizeof(unsigned char));
+            memset(sz, 0, len);
+            RSA_public_decrypt(licenseCode.size(), (const unsigned char *)licenseCode.c_str(), sz, rsa, RSA_PKCS1_OAEP_PADDING);
+
+        }
+        fclose(fp);
     }
 }
