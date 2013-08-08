@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     Dialogs/gotolinedialog.cpp \
     Dialogs/findreplacedialog.cpp \
     Dialogs/registerdialog.cpp \
-    Dialogs/preferencedialog.cpp
+    Dialogs/preferencedialog.cpp \
+    stupidcheck.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     Dialogs/gotolinedialog.h \
     Dialogs/findreplacedialog.h \
     Dialogs/registerdialog.h \
-    Dialogs/preferencedialog.h
+    Dialogs/preferencedialog.h \
+    stupidcheck.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
