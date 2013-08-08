@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 #endif
 #include <QLineEdit>
+#include <QMessageBox>
 #include <cstdio>
 #include <iomanip>
 #include <sstream>
@@ -60,13 +61,31 @@ void RegisterDialog::on_buttonBox_accepted()
         RSA* rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
         if (rsa)
         {
-            int len = RSA_size(rsa);
+            int len = RSA_size(rsa) + 1;
             unsigned char *sz = (unsigned char*)calloc(len, sizeof(unsigned char));
             memset(sz, 0, len);
             RSA_public_decrypt(licenseCode.size(), (const unsigned char *)licenseCode.c_str(), sz, rsa, RSA_PKCS1_OAEP_PADDING);
-            ui->edtUsername->text();
-            ui->edtPinCode->text();
+            QString username = ui->edtUsername->text();
+            QString pinCode = ui->edtPinCode->text();
+            QString original;
+            for (int i = 0; i < (username.size() > pinCode.size() ? username.size() : pinCode.size()); i++)
+            {
+                if (i < username.size())
+                    original.append(username.at(i));
+                if (i < pinCode.size())
+                    original.append(pinCode.at(i));
+            }
+            if (original == (const char*)sz)
+            {
+                // it's ok
+            }
+            else
+            {
+                // it's wrong
+            }
         }
         fclose(fp);
     }
+
+    QMessageBox::information(this, tr("Notice"), tr("Please restart ainesmile to verify the license."));
 }
