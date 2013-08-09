@@ -15,8 +15,10 @@
         <file>rc/image/searchreplace.png</file>
         <file>rc/image/undo.png</file>
         <file>rc/ainesmile.png</file>
-        <file>public.pem</file>
         <file>DATE</file>
         <file>REVISION</file>
+        <file>public-standard.pem</file>
+        <file>public-deluxe.pem</file>
+        <file>public-professional.pem</file>
     </qresource>
 </RCC>
