@@ -4,11 +4,13 @@
 #include <QStandardPaths>
 #endif
 #include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QMessageBox>
 #include <cstdio>
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include "config.h"
 #include "stupidcheck.h"
 #include "registerdialog.h"
 #include "ui_registerdialog.h"
@@ -22,6 +24,12 @@ RegisterDialog::RegisterDialog(QWidget *parent) :
 
     StupidCheck sc;
     ui->edtPinCode->setText(sc.getPinCode());
+
+    Config* cfg = Config::instance();
+    QString username, licenseCode;
+    cfg->loadLicenseInfo(username, licenseCode);
+    ui->edtUsername->setText(username);
+    ui->edtLicenseCode->setPlainText(licenseCode);
 }
 
 RegisterDialog::~RegisterDialog()

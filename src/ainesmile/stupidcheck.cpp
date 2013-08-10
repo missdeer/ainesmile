@@ -16,6 +16,7 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include "util.hpp"
+#include "config.h"
 #include "stupidcheck.h"
 
 StupidCheck::StupidCheck()
@@ -24,10 +25,11 @@ StupidCheck::StupidCheck()
 
 void StupidCheck::save(const QString &username, const QString &licenseCode)
 {
-
+    Config* cfg = Config::instance();
+    cfg->saveLicenseInfo(username, licenseCode);
 }
 
-QString StupidCheck::getPinCode()
+QString StupidCheck::getPinCode() const
 {
     uint64 peerId = utility::utilities::get_local_peer_id();
     Q_ASSERT(peerId);
@@ -37,9 +39,24 @@ QString StupidCheck::getPinCode()
     return QString::fromStdString(ss.str());
 }
 
-bool StupidCheck::isValid()
+bool StupidCheck::isStandard() const
 {
-    QFile resFile(":/public.pem");
+    return isValid(":/public-standard.pem");
+}
+
+bool StupidCheck::isProfessional() const
+{
+    return isValid(":/public-professional.pem");
+}
+
+bool StupidCheck::isDeluxe() const
+{
+    return isValid(":/public-deluxe.pem");
+}
+
+bool StupidCheck::isValid(const QString& publicPEM) const
+{
+    QFile resFile(publicPEM);
     resFile.open(QFile::ReadOnly | QFile::Text);
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QString tempPath = QDesktopServices::storageLocation(QDesktopServices::TempLocation);
@@ -62,10 +79,11 @@ bool StupidCheck::isValid()
             int len = RSA_size(rsa) + 1;
             unsigned char *sz = (unsigned char*)calloc(len, sizeof(unsigned char));
             memset(sz, 0, len);
-            std::string licenseCode;
-            RSA_public_decrypt(licenseCode.size(), (const unsigned char *)licenseCode.c_str(), sz, rsa, RSA_PKCS1_OAEP_PADDING);
+            QString pinCode = getPinCode();
             QString username;
-            QString pinCode;
+            QString licenseCode;
+            Config::instance()->loadLicenseInfo(username, licenseCode);
+            RSA_public_decrypt(licenseCode.size(), (const unsigned char *)licenseCode.toStdString().c_str(), sz, rsa, RSA_PKCS1_OAEP_PADDING);
             QString original;
             for (int i = 0; i < (username.size() > pinCode.size() ? username.size() : pinCode.size()); i++)
             {
@@ -87,4 +105,5 @@ bool StupidCheck::isValid()
         }
         fclose(fp);
     }
+    QFile(tempPath).remove();
 }

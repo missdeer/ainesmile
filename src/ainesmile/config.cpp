@@ -270,6 +270,27 @@ QString Config::matchPatternLanguage(const QString &filename)
     return "";
 }
 
+void Config::saveLicenseInfo(const QString &username, const QString &licenseCode)
+{
+    boost::property_tree::ptree pt;
+    pt.put("license/username", username.toStdString());
+    pt.put("license/code", licenseCode.toStdString());
+    QString licensePath = getConfigDirPath() + "/ainesmile.lic";
+    boost::property_tree::write_json(licensePath.toStdString(), pt);
+}
+
+void Config::loadLicenseInfo(QString &username, QString &licenseCode)
+{
+    QString licensePath = getConfigDirPath() + "/ainesmile.lic";
+    if (QFile::exists(licensePath))
+    {
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(licensePath.toStdString(), pt);
+        username = pt.get<std::string>("license/username", "").c_str();
+        licenseCode = pt.get<std::string>("license/code", "").c_str();
+    }
+}
+
 bool Config::matchPattern(const QString &filename, const QString &pattern)
 {
 #if defined(Q_OS_WIN)
