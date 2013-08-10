@@ -39,8 +39,16 @@ RegisterDialog::~RegisterDialog()
 
 void RegisterDialog::on_buttonBox_accepted()
 {
-    StupidCheck sc;
-    sc.save(ui->edtUsername->text(), ui->edtLicenseCode->toPlainText());
+    if(ui->edtUsername->text().isEmpty() || ui->edtLicenseCode->toPlainText().isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input username and license code."));
+        reject();
+    }
+    else
+    {
+        StupidCheck sc;
+        sc.save(ui->edtUsername->text(), ui->edtLicenseCode->toPlainText());
 
-    QMessageBox::information(this, tr("Notice"), tr("Please restart ainesmile to verify the license."));
+        QMessageBox::information(this, tr("Notice"), tr("Please restart ainesmile to verify the license."));
+    }
 }

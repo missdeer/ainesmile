@@ -19,6 +19,7 @@ public:
     bool isStandard() const;
     bool isProfessional() const;
     bool isDeluxe() const;
+    bool isExpired() const;
 };
 
 #endif // STUPIDCHECK_H

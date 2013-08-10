@@ -73,6 +73,11 @@ bool StupidCheck::isDeluxe() const
     return isValid(":/public-deluxe.pem");
 }
 
+bool StupidCheck::isExpired() const
+{
+    return true;
+}
+
 bool StupidCheck::isValid(const QString& publicPEM) const
 {
     QFile resFile(publicPEM);

@@ -13,7 +13,6 @@
 #include "registerdialog.h"
 #include "preferencedialog.h"
 #include "findreplacedialog.h"
-#include "stupidcheck.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -28,24 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setActionShortcuts();
     setAcceptDrops(true);
-
-    StupidCheck sc;
-    if (sc.isStandard())
-    {
-        setWindowTitle(tr("ainesmile - Standard Edition"));
-    }
-    else if (sc.isProfessional())
-    {
-        setWindowTitle(tr("ainesmile - Professional Edition"));
-    }
-    else if (sc.isDeluxe())
-    {
-        setWindowTitle(tr("ainesmile - Deluxe Edition"));
-    }
-    else
-    {
-        setWindowTitle(tr("aiensmile - Unregister"));
-    }
 }
 
 MainWindow::~MainWindow()

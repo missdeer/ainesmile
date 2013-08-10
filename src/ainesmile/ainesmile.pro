@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     Dialogs/findreplacedialog.cpp \
     Dialogs/registerdialog.cpp \
     Dialogs/preferencedialog.cpp \
-    stupidcheck.cpp
+    stupidcheck.cpp \
+    Dialogs/nagdialog.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
@@ -50,14 +51,16 @@ HEADERS  += mainwindow.h \
     Dialogs/findreplacedialog.h \
     Dialogs/registerdialog.h \
     Dialogs/preferencedialog.h \
-    stupidcheck.h
+    stupidcheck.h \
+    Dialogs/nagdialog.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
     Dialogs/gotolinedialog.ui \
     Dialogs/findreplacedialog.ui \
     Dialogs/registerdialog.ui \
-    Dialogs/preferencedialog.ui
+    Dialogs/preferencedialog.ui \
+    Dialogs/nagdialog.ui
 
 OTHER_FILES += \
     ainesmile.rc
