@@ -30,4 +30,5 @@ endif(MSVC)
 add_executable (npp2ainesmile npp2ainesmile.cpp )
 add_executable (npp2langmap   npp2langmap.cpp )
 add_executable (gen_cfg gen_cfg.cpp)
-
+add_executable (keygen keygen.cpp)
+target_link_libraries (keygen ssl crypto)
