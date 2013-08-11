@@ -119,6 +119,8 @@ private slots:
 
     void on_actionNewProject_triggered();
 
+    void on_actionEmptyRecentProjectsList_triggered();
+
 private:
     Ui::MainWindow *ui;
     bool m_aboutToQuit;

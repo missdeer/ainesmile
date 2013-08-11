@@ -811,3 +811,8 @@ void MainWindow::on_actionNewProject_triggered()
 {
 
 }
+
+void MainWindow::on_actionEmptyRecentProjectsList_triggered()
+{
+
+}

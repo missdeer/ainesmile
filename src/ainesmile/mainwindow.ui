@@ -80,6 +80,23 @@
      <addaction name="actionOpenAllRecentFiles"/>
      <addaction name="actionEmptyRecentFilesList"/>
     </widget>
+    <widget class="QMenu" name="menuRecentProjects">
+     <property name="title">
+      <string>Recent Projects</string>
+     </property>
+     <addaction name="actionRecentProject1"/>
+     <addaction name="actionRecentProject2"/>
+     <addaction name="actionRecentProject3"/>
+     <addaction name="actionRecentProject4"/>
+     <addaction name="actionRecentProject5"/>
+     <addaction name="actionRecentProject6"/>
+     <addaction name="actionRecentProject7"/>
+     <addaction name="actionRecentProject8"/>
+     <addaction name="actionRecentProject9"/>
+     <addaction name="actionRecentProject10"/>
+     <addaction name="separator"/>
+     <addaction name="actionEmptyRecentProjectsList"/>
+    </widget>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
     <addaction name="actionReloadFromDisk"/>
@@ -94,6 +111,7 @@
     <addaction name="actionPrintNow"/>
     <addaction name="separator"/>
     <addaction name="menuRecentFiles"/>
+    <addaction name="menuRecentProjects"/>
     <addaction name="separator"/>
     <addaction name="actionExitApp"/>
    </widget>
@@ -1587,6 +1605,61 @@
   <action name="actionRecentFile10">
    <property name="text">
     <string>Recent File10</string>
+   </property>
+  </action>
+  <action name="actionRecentProject1">
+   <property name="text">
+    <string>Recent Project1</string>
+   </property>
+  </action>
+  <action name="actionRecentProject2">
+   <property name="text">
+    <string>Recent Project2</string>
+   </property>
+  </action>
+  <action name="actionRecentProject3">
+   <property name="text">
+    <string>Recent Project3</string>
+   </property>
+  </action>
+  <action name="actionRecentProject4">
+   <property name="text">
+    <string>Recent Project4</string>
+   </property>
+  </action>
+  <action name="actionRecentProject5">
+   <property name="text">
+    <string>Recent Project5</string>
+   </property>
+  </action>
+  <action name="actionRecentProject6">
+   <property name="text">
+    <string>Recent Project6</string>
+   </property>
+  </action>
+  <action name="actionRecentProject7">
+   <property name="text">
+    <string>Recent Project7</string>
+   </property>
+  </action>
+  <action name="actionRecentProject8">
+   <property name="text">
+    <string>Recent Project8</string>
+   </property>
+  </action>
+  <action name="actionRecentProject9">
+   <property name="text">
+    <string>Recent Project9</string>
+   </property>
+  </action>
+  <action name="actionRecentProject10">
+   <property name="text">
+    <string>Recent Project10</string>
+   </property>
+  </action>
+  <action name="actionEmptyRecentProjectsList">
+   <property name="text">
+    <string>Empty Recent Projects List</string>
    </property>
   </action>
  </widget>
