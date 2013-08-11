@@ -55,13 +55,31 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuRecentFiles">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <addaction name="actionRecentFile1"/>
+     <addaction name="actionRecentFile2"/>
+     <addaction name="actionRecentFile3"/>
+     <addaction name="actionRecentFile4"/>
+     <addaction name="actionRecentFile5"/>
+     <addaction name="actionRecentFile6"/>
+     <addaction name="actionRecentFile7"/>
+     <addaction name="actionRecentFile8"/>
+     <addaction name="actionRecentFile9"/>
+     <addaction name="actionRecentFile10"/>
+     <addaction name="separator"/>
+     <addaction name="actionOpenAllRecentFiles"/>
+     <addaction name="actionEmptyRecentFilesList"/>
+    </widget>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
     <addaction name="actionReloadFromDisk"/>
@@ -75,9 +93,7 @@
     <addaction name="actionPrint"/>
     <addaction name="actionPrintNow"/>
     <addaction name="separator"/>
-    <addaction name="actionRecentFiles"/>
-    <addaction name="actionOpenAllRecentFiles"/>
-    <addaction name="actionEmptyRecentFilesList"/>
+    <addaction name="menuRecentFiles"/>
     <addaction name="separator"/>
     <addaction name="actionExitApp"/>
    </widget>
@@ -577,11 +593,6 @@
   <action name="actionEmptyRecentFilesList">
    <property name="text">
     <string>Empty Recent Files List</string>
-   </property>
-  </action>
-  <action name="actionRecentFiles">
-   <property name="text">
-    <string>Recent Files</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -1526,6 +1537,56 @@
   <action name="actionNewProject">
    <property name="text">
     <string>&amp;New Project...</string>
+   </property>
+  </action>
+  <action name="actionRecentFile1">
+   <property name="text">
+    <string>Recent File1</string>
+   </property>
+  </action>
+  <action name="actionRecentFile2">
+   <property name="text">
+    <string>Recent File2</string>
+   </property>
+  </action>
+  <action name="actionRecentFile3">
+   <property name="text">
+    <string>Recent File3</string>
+   </property>
+  </action>
+  <action name="actionRecentFile4">
+   <property name="text">
+    <string>Recent File4</string>
+   </property>
+  </action>
+  <action name="actionRecentFile5">
+   <property name="text">
+    <string>Recent File5</string>
+   </property>
+  </action>
+  <action name="actionRecentFile6">
+   <property name="text">
+    <string>Recent File6</string>
+   </property>
+  </action>
+  <action name="actionRecentFile7">
+   <property name="text">
+    <string>Recent File7</string>
+   </property>
+  </action>
+  <action name="actionRecentFile8">
+   <property name="text">
+    <string>Recent File8</string>
+   </property>
+  </action>
+  <action name="actionRecentFile9">
+   <property name="text">
+    <string>Recent File9</string>
+   </property>
+  </action>
+  <action name="actionRecentFile10">
+   <property name="text">
+    <string>Recent File10</string>
    </property>
   </action>
  </widget>
