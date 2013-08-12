@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     Dialogs/registerdialog.cpp \
     Dialogs/preferencedialog.cpp \
     stupidcheck.cpp \
-    Dialogs/nagdialog.cpp
+    Dialogs/nagdialog.cpp \
+    CodeEdit/recentfiles.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     Dialogs/registerdialog.h \
     Dialogs/preferencedialog.h \
     stupidcheck.h \
-    Dialogs/nagdialog.h
+    Dialogs/nagdialog.h \
+    CodeEdit/recentfiles.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \

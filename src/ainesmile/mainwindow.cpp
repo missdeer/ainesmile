@@ -358,6 +358,8 @@ void MainWindow::openFiles(const QStringList &files)
                 updateUI(codeeditpage);
                 codeeditpage->openFile(file);
                 ui->tabWidget->setTabToolTip(index, file);
+                // log into recent file list
+                rf_.addFile(file);
             }
         }
     }
@@ -427,6 +429,7 @@ void MainWindow::closeRequested(int index)
                 return; // don't close this tab
 
             page->saveFile(filePath);
+            rf_.addFile(filePath);
         }
     }
 
@@ -558,6 +561,8 @@ void MainWindow::on_actionSaveAs_triggered()
         int index = ui->tabWidget->currentIndex();
         ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
         ui->tabWidget->setTabToolTip(index, filePath);
+
+        rf_.addFile(filePath);
     }
 }
 

@@ -16,6 +16,7 @@ public:
     static Config* instance();
     boost::property_tree::ptree& pt();
     void sync();
+    QString getDataDirPath();
     QString getConfigDirPath();
     QString getConfigPath();
     QString getThemePath();

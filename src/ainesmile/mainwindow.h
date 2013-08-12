@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStringList>
+#include "recentfiles.h"
 
 namespace Ui {
 class MainWindow;
@@ -124,6 +125,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     bool m_aboutToQuit;
+    RecentFiles rf_;
 };
 
 #endif // MAINWINDOW_H

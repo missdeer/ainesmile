@@ -30,6 +30,22 @@ void Config::sync()
     boost::property_tree::write_json(getConfigPath().toStdString(), pt_);
 }
 
+QString Config::getDataDirPath()
+{
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    QString configPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#else
+    QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+    QDir dir(configPath);
+    if (!dir.exists())
+    {
+        dir.mkpath(configPath);
+    }
+
+    return configPath;
+}
+
 QString Config::getConfigDirPath()
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
