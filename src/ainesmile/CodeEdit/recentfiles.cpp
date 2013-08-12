@@ -26,11 +26,16 @@ RecentFiles::RecentFiles()
     {
         boost::property_tree::ptree pt;
         boost::property_tree::read_json(filePath.toStdString(), pt);
+        try {
         BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
                       pt.get_child("ainesmile.recentfiles"))
         {
             QString file(v.second.data().c_str());
             files_.append(file);
+        }
+        }
+        catch(boost::property_tree::ptree_bad_path&)
+        {
         }
     }
 }
