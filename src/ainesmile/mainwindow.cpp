@@ -20,6 +20,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    recentFileSignalMapper_(new QSignalMapper(this)),
+    recentProjectSignalMapper_(new QSignalMapper(this)),
     aboutToQuit_(false)
 {
     ui->setupUi(this);
@@ -124,9 +126,13 @@ void MainWindow::setRecentFiles()
                              << ui->actionRecentProject9
                              << ui->actionRecentProject10;
 
+    updateRecentFilesMenuItems();
+}
+
+void MainWindow::updateRecentFilesMenuItems()
+{
     QStringList recentFiles = rf_.recentFiles();
     int index=0;
-    recentFileSignalMapper_ = new QSignalMapper(this);
     for (QStringList::ConstIterator it = recentFiles.constBegin();
          recentFiles.constEnd() != it && index < 10;
          ++it, ++index)
@@ -147,7 +153,6 @@ void MainWindow::setRecentFiles()
 
     QStringList recentProjects = rf_.recentProjects();
     index=0;
-    recentProjectSignalMapper_ = new QSignalMapper(this);
     for (QStringList::ConstIterator it = recentProjects.constBegin();
          recentProjects.constEnd() != it && index < 10;
          ++it, ++index)

@@ -29,6 +29,7 @@ protected:
 private:
     void setActionShortcuts();
     void setRecentFiles();
+    void updateRecentFilesMenuItems();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
 
