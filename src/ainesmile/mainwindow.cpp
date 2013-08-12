@@ -135,7 +135,7 @@ void MainWindow::setRecentFiles()
         QFile file(*it);
         action->setText(file.fileName());
         connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
-        recentFileSignalMapper_->setMapping(action, index);
+        recentFileSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
             this, SLOT(recentFileTriggered(const QString&)));
@@ -156,7 +156,7 @@ void MainWindow::setRecentFiles()
         QFile file(*it);
         action->setText(file.fileName());
         connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
-        recentProjectSignalMapper_->setMapping(action, index);
+        recentProjectSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
             this, SLOT(recentProjectTriggered(const QString&)));
