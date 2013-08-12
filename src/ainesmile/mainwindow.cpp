@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QMimeData>
+#include <QStringList>
 #include "codeeditpage.h"
 #include "aboutdialog.h"
 #include "registerdialog.h"
@@ -19,13 +20,14 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_aboutToQuit(false)
+    aboutToQuit_(false)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentPageChanged(int)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeRequested(int)));
 
     setActionShortcuts();
+    setRecentFiles();
     setAcceptDrops(true);
 }
 
@@ -36,7 +38,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    m_aboutToQuit = true;
+    aboutToQuit_ = true;
     // query all pages can close
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
@@ -52,7 +54,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     {
         event->accept();
     }
-    m_aboutToQuit = false;
+    aboutToQuit_ = false;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -97,6 +99,72 @@ void MainWindow::setActionShortcuts()
 //    ui->actionFindPrevious->setShortcut(QKeySequence::FindPrevious);
     ui->actionReplace->setShortcut(QKeySequence::Replace);
     ui->actionSelectAll->setShortcut(QKeySequence::SelectAll);
+}
+
+void MainWindow::setRecentFiles()
+{
+    recentFileActions_ << ui->actionRecentFile1
+                          << ui->actionRecentFile2
+                          << ui->actionRecentFile3
+                          << ui->actionRecentFile4
+                          << ui->actionRecentFile5
+                          << ui->actionRecentFile6
+                          << ui->actionRecentFile7
+                          << ui->actionRecentFile8
+                          << ui->actionRecentFile9
+                          << ui->actionRecentFile10;
+    recentProjectActions_ << ui->actionRecentProject1
+                             << ui->actionRecentProject2
+                             << ui->actionRecentProject3
+                             << ui->actionRecentProject4
+                             << ui->actionRecentProject5
+                             << ui->actionRecentProject6
+                             << ui->actionRecentProject7
+                             << ui->actionRecentProject8
+                             << ui->actionRecentProject9
+                             << ui->actionRecentProject10;
+
+    QStringList recentFiles = rf_.recentFiles();
+    int index=0;
+    recentFileSignalMapper_ = new QSignalMapper(this);
+    for (QStringList::ConstIterator it = recentFiles.constBegin();
+         recentFiles.constEnd() != it && index < 10;
+         ++it, ++index)
+    {
+        QAction* action = recentFileActions_.at(index);
+        QFile file(*it);
+        action->setText(file.fileName());
+        connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
+        recentFileSignalMapper_->setMapping(action, index);
+    }
+    connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
+            this, SIGNAL(recentFileTriggered(const QString&)));
+    for (int i = index; i < 10; i++)
+    {
+        QAction* action = recentFileActions_.at(i);
+        action->setVisible(false);
+    }
+
+    QStringList recentProjects = rf_.recentProjects();
+    index=0;
+    recentProjectSignalMapper_ = new QSignalMapper(this);
+    for (QStringList::ConstIterator it = recentProjects.constBegin();
+         recentProjects.constEnd() != it && index < 10;
+         ++it, ++index)
+    {
+        QAction* action = recentProjectActions_.at(index);
+        QFile file(*it);
+        action->setText(file.fileName());
+        connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
+        recentProjectSignalMapper_->setMapping(action, index);
+    }
+    connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
+            this, SIGNAL(recentProjectTriggered(const QString&)));
+    for (int i = index; i < 10; i++)
+    {
+        QAction* action = recentProjectActions_.at(i);
+        action->setVisible(false);
+    }
 }
 
 void MainWindow::updateUI(CodeEditPage* page)
@@ -388,7 +456,7 @@ void MainWindow::currentPageChanged(int index)
 {
     if (index == -1)
     {
-        if (!m_aboutToQuit)
+        if (!aboutToQuit_)
             newDocument();
     }
     else
@@ -471,6 +539,52 @@ void MainWindow::redoAvailableChanged()
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     ui->actionRedo->setEnabled(page->canRedo());
+}
+
+void MainWindow::recentFileTriggered(const QString & file)
+{
+    // open the file
+    int index = 0;
+    if (QFile::exists(file))
+    {
+        // check if the file has been opened already
+        bool bExists = false;
+        int count = ui->tabWidget->count();
+        for (int i = 0; i< count; i++)
+        {
+            CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
+            Q_ASSERT(page);
+            const QString& pageFileName = page->getFilePath();
+            if (!pageFileName.isEmpty())
+            {
+                QFileInfo fileInfo(file);
+                QFileInfo pageFileInfo(pageFileName);
+                if (pageFileInfo == fileInfo)
+                {
+                    bExists = true;
+                    break;
+                }
+            }
+        }
+
+        if (!bExists)
+        {
+            // create an edit page, open the file
+            CodeEditPage* codeeditpage = new CodeEditPage(this);
+            index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+            connectSignals(codeeditpage);
+            updateUI(codeeditpage);
+            codeeditpage->openFile(file);
+            ui->tabWidget->setTabToolTip(index, file);
+        }
+    }
+
+    ui->tabWidget->setCurrentIndex(index);
+}
+
+void MainWindow::recentProjectTriggered(const QString & project)
+{
+
 }
 
 void MainWindow::on_actionNewFile_triggered()

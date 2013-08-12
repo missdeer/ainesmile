@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStringList>
+#include <QSignalMapper>
 #include "recentfiles.h"
 
 namespace Ui {
@@ -28,6 +28,7 @@ protected:
     void dropEvent(QDropEvent *event);
 private:
     void setActionShortcuts();
+    void setRecentFiles();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
 
@@ -39,6 +40,8 @@ private slots:
     void pasteAvailableChanged();
     void undoAvailableChanged();
     void redoAvailableChanged();
+    void recentFileTriggered(const QString & file);
+    void recentProjectTriggered(const QString & project);
 
     void on_actionNewFile_triggered();
 
@@ -124,8 +127,12 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    bool m_aboutToQuit;
+    QSignalMapper* recentFileSignalMapper_;
+    QSignalMapper* recentProjectSignalMapper_;
+    QList<QAction*> recentFileActions_;
+    QList<QAction*> recentProjectActions_;
     RecentFiles rf_;
+    bool aboutToQuit_;
 };
 
 #endif // MAINWINDOW_H

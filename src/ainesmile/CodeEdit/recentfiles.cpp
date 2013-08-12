@@ -1,7 +1,5 @@
 #include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <QString>
-#include <QList>
 #include <QFile>
 #include "config.h"
 #include "recentfiles.h"
@@ -36,7 +34,7 @@ void RecentFiles::addFile(const QString &file)
     emit addRecentFile(file);
 }
 
-QList<QString>& RecentFiles::recentFiles()
+QStringList& RecentFiles::recentFiles()
 {
     return files_;
 }
@@ -49,7 +47,7 @@ void RecentFiles::addProject(const QString &project)
     emit addRecentProject(project);
 }
 
-QList<QString> &RecentFiles::recentProjects()
+QStringList &RecentFiles::recentProjects()
 {
     return projects_;
 }

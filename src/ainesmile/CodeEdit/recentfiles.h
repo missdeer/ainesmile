@@ -2,6 +2,7 @@
 #define RECENTFILES_H
 
 #include <QObject>
+#include <QStringList>
 #include <boost/property_tree/ptree.hpp>
 
 class RecentFiles : public QObject
@@ -11,15 +12,15 @@ signals:
     void addRecentFile(const QString& file);
     void addRecentProject(const QString& project);
 private:
-    QList<QString> files_;
-    QList<QString> projects_;
+    QStringList files_;
+    QStringList projects_;
 public:
     RecentFiles();
     ~RecentFiles();
     void addFile(const QString& file);
-    QList<QString>& recentFiles();
+    QStringList& recentFiles();
     void addProject(const QString& project);
-    QList<QString>& recentProjects();
+    QStringList& recentProjects();
     void sync();
 };
 
