@@ -2,6 +2,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <QString>
 #include <QList>
+#include <QFile>
 #include "config.h"
 #include "recentfiles.h"
 
@@ -9,13 +10,16 @@ RecentFiles::RecentFiles()
 {
     QString filePath = Config::instance()->getDataDirPath();
     filePath.append("/recent");
-    boost::property_tree::ptree pt;
-    boost::property_tree::read_json(filePath.toStdString(), pt);
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-            pt.get_child("ainesmile.recentfiles"))
+    if (QFile::exists(filePath))
     {
-        QString file(v.second.data().c_str());
-        files_.append(file);
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(filePath.toStdString(), pt);
+        BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
+                      pt.get_child("ainesmile.recentfiles"))
+        {
+            QString file(v.second.data().c_str());
+            files_.append(file);
+        }
     }
 }
 
