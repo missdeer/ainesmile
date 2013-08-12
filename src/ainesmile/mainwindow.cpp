@@ -126,11 +126,23 @@ void MainWindow::setRecentFiles()
                              << ui->actionRecentProject9
                              << ui->actionRecentProject10;
 
+    Q_FOREACH(QAction* action, recentFileActions_)
+    {
+        connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
+    }
+
+    Q_FOREACH(QAction* action, recentProjectActions_)
+    {
+        connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
+    }
     updateRecentFilesMenuItems();
 }
 
 void MainWindow::updateRecentFilesMenuItems()
 {
+    Q_ASSERT(recentFileSignalMapper_);
+    Q_ASSERT(recentProjectSignalMapper_);
+
     QStringList recentFiles = rf_.recentFiles();
     int index=0;
     for (QStringList::ConstIterator it = recentFiles.constBegin();
@@ -140,7 +152,8 @@ void MainWindow::updateRecentFilesMenuItems()
         QAction* action = recentFileActions_.at(index);
         QFile file(*it);
         action->setText(file.fileName());
-        connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
+        action->setVisible(true);
+        recentFileSignalMapper_->removeMappings(action);
         recentFileSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
@@ -160,7 +173,8 @@ void MainWindow::updateRecentFilesMenuItems()
         QAction* action = recentProjectActions_.at(index);
         QFile file(*it);
         action->setText(file.fileName());
-        connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
+        action->setVisible(true);
+        recentProjectSignalMapper_->removeMappings(action);
         recentProjectSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
@@ -432,7 +446,8 @@ void MainWindow::openFiles(const QStringList &files)
                 codeeditpage->openFile(file);
                 ui->tabWidget->setTabToolTip(index, file);
                 // log into recent file list
-                rf_.addFile(file);
+                if (rf_.addFile(file))
+                    updateRecentFilesMenuItems();
             }
         }
     }
@@ -502,7 +517,8 @@ void MainWindow::closeRequested(int index)
                 return; // don't close this tab
 
             page->saveFile(filePath);
-            rf_.addFile(filePath);
+            if (rf_.addFile(filePath))
+                updateRecentFilesMenuItems();
         }
     }
 
@@ -549,7 +565,6 @@ void MainWindow::redoAvailableChanged()
 void MainWindow::recentFileTriggered(const QString & file)
 {
     // open the file
-    int index = 0;
     if (QFile::exists(file))
     {
         // check if the file has been opened already
@@ -567,6 +582,7 @@ void MainWindow::recentFileTriggered(const QString & file)
                 if (pageFileInfo == fileInfo)
                 {
                     bExists = true;
+                    ui->tabWidget->setCurrentIndex(i);
                     break;
                 }
             }
@@ -576,15 +592,14 @@ void MainWindow::recentFileTriggered(const QString & file)
         {
             // create an edit page, open the file
             CodeEditPage* codeeditpage = new CodeEditPage(this);
-            index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+            int index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
             connectSignals(codeeditpage);
             updateUI(codeeditpage);
             codeeditpage->openFile(file);
             ui->tabWidget->setTabToolTip(index, file);
+            ui->tabWidget->setCurrentIndex(index);
         }
     }
-
-    ui->tabWidget->setCurrentIndex(index);
 }
 
 void MainWindow::recentProjectTriggered(const QString & project)
@@ -681,7 +696,8 @@ void MainWindow::on_actionSaveAs_triggered()
         ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
         ui->tabWidget->setTabToolTip(index, filePath);
 
-        rf_.addFile(filePath);
+        if (rf_.addFile(filePath))
+            updateRecentFilesMenuItems();
     }
 }
 

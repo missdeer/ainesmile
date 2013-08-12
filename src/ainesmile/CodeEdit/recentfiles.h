@@ -14,12 +14,13 @@ signals:
 private:
     QStringList files_;
     QStringList projects_;
+    bool exists(const QStringList& container, const QString& file);
 public:
     RecentFiles();
     ~RecentFiles();
-    void addFile(const QString& file);
+    bool addFile(const QString& file);
     QStringList& recentFiles();
-    void addProject(const QString& project);
+    bool addProject(const QString& project);
     QStringList& recentProjects();
     void sync();
 };

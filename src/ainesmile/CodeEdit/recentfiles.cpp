@@ -1,8 +1,22 @@
 #include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <QFile>
+#include <QFileInfo>
 #include "config.h"
 #include "recentfiles.h"
+
+bool RecentFiles::exists(const QStringList &container, const QString &file)
+{
+    QFileInfo fileInfo(file);
+    Q_FOREACH( const QString& f, container)
+    {
+        QFileInfo fi(f);
+        if (fi == fileInfo)
+            return true;
+    }
+
+    return false;
+}
 
 RecentFiles::RecentFiles()
 {
@@ -26,12 +40,18 @@ RecentFiles::~RecentFiles()
     sync();
 }
 
-void RecentFiles::addFile(const QString &file)
+bool RecentFiles::addFile(const QString &file)
 {
-    files_.append(file);
-    while(files_.size() > 10)
-        files_.removeFirst();
-    emit addRecentFile(file);
+    if (!exists(files_, file))
+    {
+        files_.append(file);
+        while(files_.size() > 10)
+            files_.removeFirst();
+        emit addRecentFile(file);
+        return true;
+    }
+
+    return false;
 }
 
 QStringList& RecentFiles::recentFiles()
@@ -39,12 +59,17 @@ QStringList& RecentFiles::recentFiles()
     return files_;
 }
 
-void RecentFiles::addProject(const QString &project)
+bool RecentFiles::addProject(const QString &project)
 {
-    projects_.append(project);
-    while(projects_.size() > 10)
-        projects_.removeFirst();
-    emit addRecentProject(project);
+    if (!exists(projects_, project))
+    {
+        projects_.append(project);
+        while(projects_.size() > 10)
+            projects_.removeFirst();
+        emit addRecentProject(project);
+        return true;
+    }
+    return false;
 }
 
 QStringList &RecentFiles::recentProjects()
