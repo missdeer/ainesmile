@@ -53,7 +53,9 @@ QString Config::getConfigDirPath()
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
 #endif
+#if !defined(Q_OS_WIN)
     configPath.append("/ainesmile");
+#endif
     QDir dir(configPath);
     if (!dir.exists())
     {
