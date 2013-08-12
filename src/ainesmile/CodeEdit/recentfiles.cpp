@@ -54,6 +54,11 @@ bool RecentFiles::addFile(const QString &file)
     return false;
 }
 
+void RecentFiles::clearFiles()
+{
+    files_.clear();
+}
+
 QStringList& RecentFiles::recentFiles()
 {
     return files_;
@@ -70,6 +75,11 @@ bool RecentFiles::addProject(const QString &project)
         return true;
     }
     return false;
+}
+
+void RecentFiles::clearProjects()
+{
+    projects_.clear();
 }
 
 QStringList &RecentFiles::recentProjects()

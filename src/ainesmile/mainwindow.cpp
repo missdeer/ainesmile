@@ -789,12 +789,20 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 
 void MainWindow::on_actionOpenAllRecentFiles_triggered()
 {
-
+    QStringList& files = rf_.recentFiles();
+    Q_FOREACH(const QString& file, files)
+    {
+        recentFileTriggered(file);
+    }
 }
 
 void MainWindow::on_actionEmptyRecentFilesList_triggered()
 {
-
+    rf_.clearFiles();
+    Q_FOREACH(QAction* action, recentFileActions_)
+    {
+        action->setVisible(false);
+    }
 }
 
 void MainWindow::on_actionAlwaysOnTop_triggered()
@@ -954,5 +962,9 @@ void MainWindow::on_actionNewProject_triggered()
 
 void MainWindow::on_actionEmptyRecentProjectsList_triggered()
 {
-
+    rf_.clearProjects();
+    Q_FOREACH(QAction* action, recentProjectActions_)
+    {
+        action->setVisible(false);
+    }
 }

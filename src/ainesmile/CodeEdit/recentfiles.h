@@ -19,8 +19,10 @@ public:
     RecentFiles();
     ~RecentFiles();
     bool addFile(const QString& file);
+    void clearFiles();
     QStringList& recentFiles();
     bool addProject(const QString& project);
+    void clearProjects();
     QStringList& recentProjects();
     void sync();
 };
