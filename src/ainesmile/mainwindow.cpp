@@ -138,7 +138,7 @@ void MainWindow::setRecentFiles()
         recentFileSignalMapper_->setMapping(action, index);
     }
     connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SIGNAL(recentFileTriggered(const QString&)));
+            this, SLOT(recentFileTriggered(const QString&)));
     for (int i = index; i < 10; i++)
     {
         QAction* action = recentFileActions_.at(i);
@@ -159,7 +159,7 @@ void MainWindow::setRecentFiles()
         recentProjectSignalMapper_->setMapping(action, index);
     }
     connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SIGNAL(recentProjectTriggered(const QString&)));
+            this, SLOT(recentProjectTriggered(const QString&)));
     for (int i = index; i < 10; i++)
     {
         QAction* action = recentProjectActions_.at(i);
