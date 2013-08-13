@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
 #if defined(Q_OS_MAC)
     ui->actionAlwaysOnTop->setVisible(false);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    ui->actionExitApp->setVisible(false);
+#endif
 #endif
 }
 
