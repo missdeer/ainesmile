@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setActionShortcuts();
     setRecentFiles();
     setAcceptDrops(true);
+#if defined(Q_OS_MAC)
+    ui->actionAlwaysOnTop->setVisible(false);
+#endif
 }
 
 MainWindow::~MainWindow()
