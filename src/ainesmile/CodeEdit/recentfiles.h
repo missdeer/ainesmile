@@ -14,6 +14,7 @@ signals:
 private:
     QStringList files_;
     QStringList projects_;
+    void init();
     bool exists(const QStringList& container, const QString& file);
 public:
     RecentFiles();

@@ -5,39 +5,10 @@
 #include "config.h"
 #include "recentfiles.h"
 
-bool RecentFiles::exists(const QStringList &container, const QString &file)
-{
-    QFileInfo fileInfo(file);
-    Q_FOREACH( const QString& f, container)
-    {
-        QFileInfo fi(f);
-        if (fi == fileInfo)
-            return true;
-    }
-
-    return false;
-}
 
 RecentFiles::RecentFiles()
 {
-    QString filePath = Config::instance()->getDataDirPath();
-    filePath.append("/recent");
-    if (QFile::exists(filePath))
-    {
-        boost::property_tree::ptree pt;
-        boost::property_tree::read_json(filePath.toStdString(), pt);
-        try {
-        BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-                      pt.get_child("ainesmile.recentfiles"))
-        {
-            QString file(v.second.data().c_str());
-            files_.append(file);
-        }
-        }
-        catch(boost::property_tree::ptree_bad_path&)
-        {
-        }
-    }
+    init();
 }
 
 RecentFiles::~RecentFiles()
@@ -97,11 +68,59 @@ void RecentFiles::sync()
     QString filePath = Config::instance()->getDataDirPath();
     filePath.append("/recent");
     boost::property_tree::ptree pt;
-    for (QList<QString>::const_iterator it = files_.constBegin();
+    for (QStringList::const_iterator it = files_.constBegin();
          files_.constEnd() != it;
          ++it)
     {
         pt.add("ainesmile.recentfiles.file", it->toStdString());
     }
+    for (QStringList::const_iterator it = projects_.constBegin();
+         projects_.constEnd() != it;
+         ++it)
+    {
+        pt.add("ainesmile.recentprojects.project", it->toStdString());
+    }
     boost::property_tree::write_json(filePath.toStdString(), pt);
+}
+
+bool RecentFiles::exists(const QStringList &container, const QString &file)
+{
+    QFileInfo fileInfo(file);
+    Q_FOREACH( const QString& f, container)
+    {
+        QFileInfo fi(f);
+        if (fi == fileInfo)
+            return true;
+    }
+
+    return false;
+}
+
+void RecentFiles::init()
+{
+    QString filePath = Config::instance()->getDataDirPath();
+    filePath.append("/recent");
+    if (QFile::exists(filePath))
+    {
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(filePath.toStdString(), pt);
+        try
+        {
+            BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
+                          pt.get_child("ainesmile.recentfiles"))
+            {
+                QString file(v.second.data().c_str());
+                files_.append(file);
+            }
+            BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
+                          pt.get_child("ainesmile.recentprojects"))
+            {
+                QString file(v.second.data().c_str());
+                projects_.append(file);
+            }
+        }
+        catch(boost::property_tree::ptree_bad_path&)
+        {
+        }
+    }
 }
