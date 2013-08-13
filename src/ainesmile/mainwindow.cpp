@@ -524,6 +524,17 @@ void MainWindow::closeRequested(int index)
                 updateRecentFilesMenuItems();
         }
     }
+    else
+    {
+        if (ui->tabWidget->count() == 1
+                && !page->isModified()
+                && !aboutToQuit_
+                && page->getFilePath().isEmpty())
+        {
+            // the only unmodified page, just skip this action
+            return;
+        }
+    }
 
     ui->tabWidget->removeTab(index);
     page->deleteLater();
