@@ -163,6 +163,26 @@ void CodeEditPage::applyEditorStyles()
     m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
 }
 
+void CodeEditPage::setShowWhiteSpaceAndTAB(bool enabled)
+{
+
+}
+
+void CodeEditPage::setShowEndOfLine(bool enabled)
+{
+
+}
+
+void CodeEditPage::setShowIndentGuide(bool enabled)
+{
+
+}
+
+void CodeEditPage::setShowWrapSymbol(bool enabled)
+{
+
+}
+
 void CodeEditPage::updateUI()
 {
     if (m_lastCopyAvailable != canCopy())

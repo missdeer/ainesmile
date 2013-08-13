@@ -9,6 +9,7 @@
 #include <QCloseEvent>
 #include <QMimeData>
 #include <QStringList>
+#include "config.h"
 #include "codeeditpage.h"
 #include "aboutdialog.h"
 #include "registerdialog.h"
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setActionShortcuts();
     setRecentFiles();
+    setMenuItemChecked();
     setAcceptDrops(true);
 #if defined(Q_OS_MAC)
     ui->actionAlwaysOnTop->setVisible(false);
@@ -142,6 +144,19 @@ void MainWindow::setRecentFiles()
         connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
     }
     updateRecentFilesMenuItems();
+}
+
+void MainWindow::setMenuItemChecked()
+{
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    bool enabled = pt.get<bool>("show.end_of_line", true);
+    ui->actionShowEndOfLine->setChecked(enabled);
+    enabled = pt.get<bool>("show.indent_guide", true);
+    ui->actionShowIndentGuide->setChecked(enabled);
+    enabled = pt.get<bool>("show.white_space_and_tab", true);
+    ui->actionShowWhiteSpaceAndTAB->setChecked(enabled);
+    enabled = pt.get<bool>("show.wrap_symbol", true);
+    ui->actionShowWrapSymbol->setChecked(enabled);
 }
 
 void MainWindow::updateRecentFilesMenuItems()
@@ -918,12 +933,34 @@ void MainWindow::on_actionReloadExtensions_triggered()
 
 void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 {
+    bool enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    pt.put("show.white_space_and_tab", enabled);
 
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowWhiteSpaceAndTAB(enabled);
+    }
 }
 
 void MainWindow::on_actionShowEndOfLine_triggered()
 {
+    bool enabled = ui->actionShowEndOfLine->isChecked();
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    pt.put("show.end_of_line", enabled);
 
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowEndOfLine(enabled);
+    }
 }
 
 void MainWindow::on_actionShowAllCharacters_triggered()
@@ -933,12 +970,34 @@ void MainWindow::on_actionShowAllCharacters_triggered()
 
 void MainWindow::on_actionShowIndentGuide_triggered()
 {
+    bool enabled = ui->actionShowIndentGuide->isChecked();
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    pt.put("show.indent_guide", enabled);
 
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowIndentGuide(enabled);
+    }
 }
 
 void MainWindow::on_actionShowWrapSymbol_triggered()
 {
+    bool enabled = ui->actionShowWrapSymbol->isChecked();
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    pt.put("show.wrap_symbol", enabled);
 
+    int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowWrapSymbol(enabled);
+    }
 }
 
 void MainWindow::on_actionPreferences_triggered()

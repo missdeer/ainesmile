@@ -91,6 +91,10 @@ int main(int argc, char *argv[])
     pt.put("zoom", 1);
     pt.put("mousedwelltime", 2500);
 
+    pt.put("show.indent_guide", false);
+    pt.put("show.end_of_line", false);
+    pt.put("show.white_space_and_tab", false);
+    pt.put("show.wrap_symbol", false);
 
     pt.put("theme", "Default");
 

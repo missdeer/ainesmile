@@ -38,6 +38,10 @@ public:
     bool isModified();
     void grabFocus();
     void applyEditorStyles();
+    void setShowWhiteSpaceAndTAB(bool enabled);
+    void setShowEndOfLine(bool enabled);
+    void setShowIndentGuide(bool enabled);
+    void setShowWrapSymbol(bool enabled);
 signals:
     void copyAvailableChanged();
     void pasteAvailableChanged();
