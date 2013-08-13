@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -99,7 +99,6 @@
     </widget>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
-    <addaction name="actionReloadFromDisk"/>
     <addaction name="actionSaveFile"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSaveAll"/>
