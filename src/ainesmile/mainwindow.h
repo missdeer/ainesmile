@@ -21,12 +21,13 @@ public:
     
     void openFiles(const QStringList& files);
     void newDocument();
-
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 private:
+
+    void hideFeatures();
     void setActionShortcuts();
     void setRecentFiles();
     void setMenuItemChecked();

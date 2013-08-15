@@ -10,6 +10,7 @@
 #include <QMimeData>
 #include <QStringList>
 #include "config.h"
+#include "stupidcheck.h"
 #include "codeeditpage.h"
 #include "aboutdialog.h"
 #include "registerdialog.h"
@@ -33,12 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setRecentFiles();
     setMenuItemChecked();
     setAcceptDrops(true);
-#if defined(Q_OS_MAC)
-    ui->actionAlwaysOnTop->setVisible(false);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    ui->actionExitApp->setVisible(false);
-#endif
-#endif
+    hideFeatures();
 }
 
 MainWindow::~MainWindow()
@@ -1035,5 +1031,34 @@ void MainWindow::on_actionEmptyRecentProjectsList_triggered()
     Q_FOREACH(QAction* action, recentProjectActions_)
     {
         action->setVisible(false);
+    }
+}
+
+void MainWindow::hideFeatures()
+{
+#if defined(Q_OS_MAC)
+    ui->actionAlwaysOnTop->setVisible(false);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    ui->actionExitApp->setVisible(false);
+#endif
+#endif
+
+    StupidCheck sc;
+    if (!sc.isDeluxe())
+    {
+        // hide the deluxe features
+    }
+
+    if (sc.isStandard())
+    {
+        // hide the professional features
+        ui->menuPlugins->setVisible(false);
+        ui->actionPluginManager->setVisible(false);
+        ui->actionPlugins->setVisible(false);
+        ui->actionShowExtensionEditor->setVisible(false);
+        ui->actionEditCommands->setVisible(false);
+        ui->actionEditSnippets->setVisible(false);
+        ui->actionReloadExtensions->setVisible(false);
+        ui->actionSelectExtensionItem->setVisible(false);
     }
 }
