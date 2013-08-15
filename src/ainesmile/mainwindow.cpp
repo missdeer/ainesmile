@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    Config::instance()->sync();
     delete ui;
 }
 
