@@ -238,8 +238,6 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionUndo, SIGNAL(triggered()), page, SLOT(undo()));
     disconnect(ui->actionRedo, SIGNAL(triggered()), 0, 0);
     connect(ui->actionRedo, SIGNAL(triggered()), page, SLOT(redo()));
-    disconnect(ui->actionReloadFromDisk, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionReloadFromDisk, SIGNAL(triggered()), page, SLOT(reloadFromDisk()));
     disconnect(ui->actionPrint, SIGNAL(triggered()), 0, 0);
     connect(ui->actionPrint, SIGNAL(triggered()), page, SLOT(print()));
     disconnect(ui->actionPrintNow, SIGNAL(triggered()), 0, 0);
@@ -961,11 +959,6 @@ void MainWindow::on_actionShowEndOfLine_triggered()
 
         page->setShowEndOfLine(enabled);
     }
-}
-
-void MainWindow::on_actionShowAllCharacters_triggered()
-{
-
 }
 
 void MainWindow::on_actionShowIndentGuide_triggered()

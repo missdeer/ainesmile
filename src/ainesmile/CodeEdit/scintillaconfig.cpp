@@ -11,6 +11,8 @@ ScintillaConfig::ScintillaConfig()
 
 void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 {
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+
     sci->styleResetDefault();
     sci->styleClearAll();
     sci->clearDocumentStyle();
@@ -23,8 +25,15 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setWhitespaceFore(true, 0x808080);
     sci->setWhitespaceBack(true, 0xFFFFFF);
     sci->setMouseDownCaptures(true);
+#if defined(Q_OS_WIN)
+    sci->setEOLMode(SC_EOL_CRLF);
+#elif defined(Q_OS_MAC)
+    sci->setEOLMode(SC_EOL_CR);
+#else
     sci->setEOLMode(SC_EOL_LF);
-    sci->setViewEOL(false);
+#endif
+    sci->setViewEOL(pt.get<bool>("show.end_of_line", false));
+    sci->setViewWS(pt.get<bool>("show.white_space_and_tab", false) ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
     sci->setStyleBits(5);
     sci->setCaretFore(0x0000FF);
     sci->setCaretLineVisible(true);
@@ -67,7 +76,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setIndent(4);
     sci->setTabIndents(false);
     sci->setBackSpaceUnIndents(false);
-    sci->setIndentationGuides(0);
+    sci->setIndentationGuides(pt.get<bool>("show.indent_guide", false) ? SC_IV_REAL : SC_IV_NONE);
     sci->setHighlightGuide(1);
     sci->setPrintMagnification(1);
     sci->setPrintColourMode(0);
@@ -76,7 +85,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     initFolderStyle( sci );
 
     sci->setWrapMode(SC_WRAP_NONE);
-    sci->setWrapVisualFlags(SC_WRAPVISUALFLAG_NONE);
+    sci->setWrapVisualFlags(pt.get<bool>("show.wrap_symbol", true) ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
     sci->setWrapVisualFlagsLocation(SC_WRAPVISUALFLAGLOC_DEFAULT);
     sci->setWrapStartIndent(0);
 

@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -365,7 +365,6 @@
      </property>
      <addaction name="actionShowWhiteSpaceAndTAB"/>
      <addaction name="actionShowEndOfLine"/>
-     <addaction name="actionShowAllCharacters"/>
      <addaction name="separator"/>
      <addaction name="actionShowIndentGuide"/>
      <addaction name="actionShowWrapSymbol"/>
@@ -551,11 +550,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="actionReloadFromDisk">
-   <property name="text">
-    <string>Reload from Disk</string>
    </property>
   </action>
   <action name="actionSaveAll">
@@ -1471,11 +1465,6 @@
    </property>
    <property name="text">
     <string>Show End of Line</string>
-   </property>
-  </action>
-  <action name="actionShowAllCharacters">
-   <property name="text">
-    <string>Show All Characters</string>
    </property>
   </action>
   <action name="actionShowIndentGuide">

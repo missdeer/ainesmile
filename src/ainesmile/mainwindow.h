@@ -105,8 +105,6 @@ private slots:
 
     void on_actionShowEndOfLine_triggered();
 
-    void on_actionShowAllCharacters_triggered();
-
     void on_actionShowIndentGuide_triggered();
 
     void on_actionShowWrapSymbol_triggered();

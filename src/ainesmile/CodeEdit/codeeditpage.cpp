@@ -165,22 +165,26 @@ void CodeEditPage::applyEditorStyles()
 
 void CodeEditPage::setShowWhiteSpaceAndTAB(bool enabled)
 {
-
+    m_sciControlMaster->setViewWS(enabled ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
+    m_sciControlSlave->setViewWS(enabled ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
 }
 
 void CodeEditPage::setShowEndOfLine(bool enabled)
 {
-
+    m_sciControlMaster->setViewEOL(enabled);
+    m_sciControlSlave->setViewEOL(enabled);
 }
 
 void CodeEditPage::setShowIndentGuide(bool enabled)
 {
-
+    m_sciControlMaster->setIndentationGuides(enabled? SC_IV_REAL : SC_IV_NONE);
+    m_sciControlSlave->setIndentationGuides(enabled? SC_IV_REAL : SC_IV_NONE);
 }
 
 void CodeEditPage::setShowWrapSymbol(bool enabled)
 {
-
+    m_sciControlMaster->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
+    m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
 void CodeEditPage::updateUI()
