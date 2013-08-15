@@ -403,7 +403,7 @@
     <addaction name="actionTextDirectionRTL"/>
     <addaction name="actionTextDirectionLTR"/>
    </widget>
-   <widget class="QMenu" name="menuEn_coding">
+   <widget class="QMenu" name="menuEncoding">
     <property name="title">
      <string>En&amp;coding</string>
     </property>
@@ -455,7 +455,7 @@
    <addaction name="menuEdit"/>
    <addaction name="menuSearch"/>
    <addaction name="menuView"/>
-   <addaction name="menuEn_coding"/>
+   <addaction name="menuEncoding"/>
    <addaction name="menuProject"/>
    <addaction name="menuTool"/>
    <addaction name="menuExtension"/>
