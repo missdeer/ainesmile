@@ -14,7 +14,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
     if (fileDate.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QByteArray d = fileDate.readAll();
+#if defined(Q_OS_MAC)
         date = QString::fromUtf8(d);
+#else
+        date = QString::fromLatin1(d);
+#endif
         date = date.replace("\n", " ");
         fileDate.close();
     }
@@ -24,7 +28,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
     if (fileRevision.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QByteArray r = fileRevision.readAll();
+#if defined(Q_OS_MAC)
         revision = QString::fromUtf8(r);
+#else
+        revision = QString::fromLatin1(r);
+#endif
         fileRevision.close();
     }
 
