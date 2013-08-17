@@ -17,7 +17,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 #if defined(Q_OS_MAC)
         date = QString::fromUtf8(d);
 #else
-        date = QString::fromLatin1(d);
+        date = QString::fromLocal8Bit(d);
 #endif
         date = date.replace("\n", " ");
         fileDate.close();
@@ -31,7 +31,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 #if defined(Q_OS_MAC)
         revision = QString::fromUtf8(r);
 #else
-        revision = QString::fromLatin1(r);
+        revision = QString::fromLocal8Bit(r);
 #endif
         fileRevision.close();
     }
