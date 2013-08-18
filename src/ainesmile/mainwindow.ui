@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -396,12 +396,6 @@
     <addaction name="actionUnCollapseLevel"/>
     <addaction name="separator"/>
     <addaction name="actionSummary"/>
-    <addaction name="separator"/>
-    <addaction name="actionSynchronizeVerticalScrolling"/>
-    <addaction name="actionSynchronizeHorizontalScrolling"/>
-    <addaction name="separator"/>
-    <addaction name="actionTextDirectionRTL"/>
-    <addaction name="actionTextDirectionLTR"/>
    </widget>
    <widget class="QMenu" name="menuEncoding">
     <property name="title">

@@ -393,10 +393,6 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionCollapseLevel, SIGNAL(triggered()), page, SLOT(collapseLevel()));
     disconnect(ui->actionUnCollapseLevel, SIGNAL(triggered()), 0, 0);
     connect(ui->actionUnCollapseLevel, SIGNAL(triggered()), page, SLOT(uncollapseLevel()));
-    disconnect(ui->actionTextDirectionRTL, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTextDirectionRTL, SIGNAL(triggered()), page, SLOT(textDirectionRTL()));
-    disconnect(ui->actionTextDirectionLTR, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTextDirectionLTR, SIGNAL(triggered()), page, SLOT(textDirectionLTR()));
     disconnect(ui->actionEncodeInANSI, SIGNAL(triggered()), 0, 0);
     connect(ui->actionEncodeInANSI, SIGNAL(triggered()), page, SLOT(encodeInANSI()));
     disconnect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);

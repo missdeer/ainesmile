@@ -142,8 +142,6 @@ public slots:
     void uncollapseCurrentLevel();
     void collapseLevel();
     void uncollapseLevel();
-    void textDirectionRTL();
-    void textDirectionLTR();
     void encodeInANSI();
     void encodeInUTF8WithoutBOM();
     void encodeInUTF8();

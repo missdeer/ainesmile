@@ -742,16 +742,6 @@ void CodeEditPage::uncollapseLevel()
 
 }
 
-void CodeEditPage::textDirectionRTL()
-{
-
-}
-
-void CodeEditPage::textDirectionLTR()
-{
-
-}
-
 void CodeEditPage::encodeInANSI()
 {
 
