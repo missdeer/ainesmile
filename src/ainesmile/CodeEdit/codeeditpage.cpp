@@ -310,11 +310,6 @@ void CodeEditPage::paste()
         m_sciControlSlave->paste();
 }
 
-void CodeEditPage::reloadFromDisk()
-{
-
-}
-
 void CodeEditPage::print()
 {
 
@@ -402,12 +397,20 @@ void CodeEditPage::decreaseLineIndent()
 
 void CodeEditPage::upperCase()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    QByteArray upperText = sci->getSelText().toUpper();
+    sci->replaceSel(upperText.data());
+    sci->endUndoAction();
 }
 
 void CodeEditPage::lowerCase()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    QByteArray lowerText = sci->getSelText().toLower();
+    sci->replaceSel(lowerText.data());
+    sci->endUndoAction();
 }
 
 void CodeEditPage::duplicateCurrentLine()

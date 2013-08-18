@@ -23,6 +23,15 @@ private:
     ScintillaConfig m_sc;
 
     void init();
+    ScintillaEdit* getFocusView()
+    {
+        ScintillaEdit* sci = NULL;
+        if (m_sciControlMaster->focus())
+            sci = m_sciControlMaster;
+        else
+            sci = m_sciControlSlave;
+        return sci;
+    }
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
@@ -62,7 +71,6 @@ public slots:
     void copy();
     void cut();
     void paste();
-    void reloadFromDisk();
     void print();
     void printNow();
     void deleteCurrent();
