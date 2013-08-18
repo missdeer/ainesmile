@@ -23,15 +23,8 @@ private:
     ScintillaConfig m_sc;
 
     void init();
-    ScintillaEdit* getFocusView()
-    {
-        ScintillaEdit* sci = NULL;
-        if (m_sciControlMaster->focus())
-            sci = m_sciControlMaster;
-        else
-            sci = m_sciControlSlave;
-        return sci;
-    }
+    ScintillaEdit* getFocusView();
+
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 

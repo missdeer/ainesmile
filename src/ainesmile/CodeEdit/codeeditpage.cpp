@@ -61,6 +61,16 @@ void CodeEditPage::init()
     connect(m_sciControlSlave, SIGNAL(dwellEnd(int,int)), this, SLOT(dwellEnd(int,int)));
 }
 
+ScintillaEdit *CodeEditPage::getFocusView()
+{
+    ScintillaEdit* sci = NULL;
+    if (m_sciControlMaster->focus())
+        sci = m_sciControlMaster;
+    else
+        sci = m_sciControlSlave;
+    return sci;
+}
+
 void CodeEditPage::openFile(const QString &filePath)
 {
     QFile file(filePath);
