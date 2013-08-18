@@ -118,18 +118,14 @@ bool CodeEditPage::canClose()
 
 bool CodeEditPage::canCut()
 {
-    if (m_sciControlMaster->focus())
-        return !m_sciControlMaster->selectionEmpty();
-    else
-        return !m_sciControlSlave->selectionEmpty();
+    ScintillaEdit* sci = getFocusView();
+    return !sci->selectionEmpty();
 }
 
 bool CodeEditPage::canCopy()
 {
-    if (m_sciControlMaster->focus())
-        return !m_sciControlMaster->selectionEmpty();
-    else
-        return !m_sciControlSlave->selectionEmpty();
+    ScintillaEdit* sci = getFocusView();
+    return !sci->selectionEmpty();
 }
 
 bool CodeEditPage::canPaste()
@@ -272,42 +268,32 @@ void CodeEditPage::dwellEnd(int x, int y)
 
 void CodeEditPage::undo()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->undo();
-    else
-        m_sciControlSlave->undo();
+    ScintillaEdit* sci = getFocusView();
+    sci->undo();
 }
 
 void CodeEditPage::redo()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->redo();
-    else
-        m_sciControlSlave->redo();
+    ScintillaEdit* sci = getFocusView();
+    sci->redo();
 }
 
 void CodeEditPage::copy()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->copy();
-    else
-        m_sciControlSlave->copy();
+    ScintillaEdit* sci = getFocusView();
+    sci->copy();
 }
 
 void CodeEditPage::cut()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->cut();
-    else
-        m_sciControlSlave->cut();
+    ScintillaEdit* sci = getFocusView();
+    sci->cut();
 }
 
 void CodeEditPage::paste()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->paste();
-    else
-        m_sciControlSlave->paste();
+    ScintillaEdit* sci = getFocusView();
+    sci->paste();
 }
 
 void CodeEditPage::print()
@@ -322,15 +308,14 @@ void CodeEditPage::printNow()
 
 void CodeEditPage::deleteCurrent()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->deleteBack();
 }
 
 void CodeEditPage::selectAll()
 {
-    if (m_sciControlMaster->focus())
-        m_sciControlMaster->selectAll();
-    else
-        m_sciControlSlave->selectAll();
+    ScintillaEdit* sci = getFocusView();
+    sci->selectAll();
 }
 
 void CodeEditPage::columnMode()
@@ -387,12 +372,14 @@ void CodeEditPage::currentDirectoryPathToClipboard()
 
 void CodeEditPage::increaseLineIndent()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->tab();
 }
 
 void CodeEditPage::decreaseLineIndent()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->backTab();
 }
 
 void CodeEditPage::upperCase()
@@ -415,27 +402,44 @@ void CodeEditPage::lowerCase()
 
 void CodeEditPage::duplicateCurrentLine()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->lineDuplicate();
+    sci->endUndoAction();
 }
 
 void CodeEditPage::splitLines()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->targetFromSelection();
+    sci->linesSplit(0);
+    sci->endUndoAction();
 }
 
 void CodeEditPage::joinLines()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->targetFromSelection();
+    sci->linesJoin();
+    sci->endUndoAction();
 }
 
 void CodeEditPage::moveUpCurrentLine()
-{
-
+{    
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->lineUp();
+    sci->endUndoAction();
 }
 
 void CodeEditPage::moveDownCurrentLine()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->lineDown();
+    sci->endUndoAction();
 }
 
 void CodeEditPage::toggleBlockComment()
@@ -601,10 +605,8 @@ void CodeEditPage::gotoLine()
     GotoLineDialog dlg(this);
     if (dlg.exec())
     {
-        if (m_sciControlMaster->focus())
-            m_sciControlMaster->gotoLine(dlg.line);
-        else
-            m_sciControlSlave->gotoLine(dlg.line);
+        ScintillaEdit* sci = getFocusView();
+        sci->gotoLine(dlg.line);
     }
 }
 
