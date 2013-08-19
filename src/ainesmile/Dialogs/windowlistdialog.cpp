@@ -7,7 +7,7 @@ WindowListDialog::WindowListDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setFixedSize( size() );
-    connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(on_tableItemSelection_changed()));
+    connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onTableItemSelectionChanged()));
 }
 
 WindowListDialog::~WindowListDialog()
@@ -29,7 +29,7 @@ void WindowListDialog::setFileList(const QStringList &fileList)
     }
 }
 
-void WindowListDialog::on_tableItemSelection_changed()
+void WindowListDialog::onTableItemSelectionChanged()
 {
 
 }

@@ -22,7 +22,7 @@ signals:
     void saveTab(QStringList filePaths);
     
 private slots:
-    void on_tableItemSelection_changed();
+    void onTableItemSelectionChanged();
 
     void on_btnOK_clicked();
 
