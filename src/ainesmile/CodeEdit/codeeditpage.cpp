@@ -506,23 +506,57 @@ void CodeEditPage::eolMacFormat()
 }
 
 void CodeEditPage::trimTrailingSpace()
-{
-
+{    
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    QByteArray lineText = sci->getLine(line);
+    while(lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
+        lineText.remove(lineText.length() - 1, 1);
+    sci->setTargetStart(sci->positionFromLine(line));
+    sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
+    sci->replaceTarget(lineText.length(), lineText.data());
+    sci->endUndoAction();
 }
 
 void CodeEditPage::trimLeadingSpace()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    QByteArray lineText = sci->getLine(line);
+    while(lineText.at(0) == ' ' || lineText.at(0) == '\t')
+        lineText.remove(0, 1);
+    sci->setTargetStart(sci->positionFromLine(line));
+    sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
+    sci->replaceTarget(lineText.length(), lineText.data());
+    sci->endUndoAction();
 }
 
 void CodeEditPage::trimLeadingAndTrailingSpace()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    QByteArray lineText = sci->getLine(line);
+    while(lineText.at(0) == ' ' || lineText.at(0) == '\t')
+        lineText.remove(0, 1);
+    while(lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
+        lineText.remove(lineText.length() - 1, 1);
+    sci->setTargetStart(sci->positionFromLine(line));
+    sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
+    sci->replaceTarget(lineText.length(), lineText.data());
+    sci->endUndoAction();
 }
 
 void CodeEditPage::eolToSpace()
 {
-
+    ScintillaEdit* sci = getFocusView();
+    sci->beginUndoAction();
+    sci->setTargetStart(0);
+    sci->setTargetEnd(sci->textLength());
+    sci->linesJoin();
+    sci->endUndoAction();
 }
 
 void CodeEditPage::removeUnnecessaryBlankAndEOL()
