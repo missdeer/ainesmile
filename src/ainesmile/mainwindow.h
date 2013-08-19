@@ -36,18 +36,18 @@ private:
     void connectSignals(CodeEditPage* page);
 
 private slots:
-    void on_currentPage_changed(int index);
-    void on_close_requested(int index);
-    void on_currentDocument_changed();
-    void on_copyAvailable_changed();
-    void on_pasteAvailable_changed();
-    void on_undoAvailable_changed();
-    void on_redoAvailable_changed();
-    void on_recentFile_triggered(const QString & file);
-    void on_recentProject_triggered(const QString & project);
-    void on_activateTab_clicked(QString file);
-    void on_closeTab_clicked(QStringList fileList);
-    void on_saveTab_clicked(QStringList fileList);
+    void onCurrentPageChanged(int index);
+    void onCloseRequested(int index);
+    void onCurrentDocumentChanged();
+    void onCopyAvailableChanged();
+    void onPasteAvailableChanged();
+    void onUndoAvailableChanged();
+    void onRedoAvailableChanged();
+    void onRecentFileTriggered(const QString & file);
+    void onRecentProjectTriggered(const QString & project);
+    void onActivateTabClicked(QString file);
+    void onCloseTabClicked(QStringList fileList);
+    void onSaveTabClicked(QStringList fileList);
 
     void on_actionNewFile_triggered();
 
