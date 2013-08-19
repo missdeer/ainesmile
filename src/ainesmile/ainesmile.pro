@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     Dialogs/preferencedialog.cpp \
     stupidcheck.cpp \
     Dialogs/nagdialog.cpp \
-    CodeEdit/recentfiles.cpp
+    CodeEdit/recentfiles.cpp \
+    Dialogs/summarydialog.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     Dialogs/preferencedialog.h \
     stupidcheck.h \
     Dialogs/nagdialog.h \
-    CodeEdit/recentfiles.h
+    CodeEdit/recentfiles.h \
+    Dialogs/summarydialog.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
@@ -62,7 +64,8 @@ FORMS    += mainwindow.ui \
     Dialogs/findreplacedialog.ui \
     Dialogs/registerdialog.ui \
     Dialogs/preferencedialog.ui \
-    Dialogs/nagdialog.ui
+    Dialogs/nagdialog.ui \
+    Dialogs/summarydialog.ui
 
 OTHER_FILES += \
     ainesmile.rc
