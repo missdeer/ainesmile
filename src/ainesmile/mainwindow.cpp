@@ -16,6 +16,7 @@
 #include "registerdialog.h"
 #include "preferencedialog.h"
 #include "findreplacedialog.h"
+#include "windowlistdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -1004,7 +1005,8 @@ void MainWindow::on_actionPluginManager_triggered()
 
 void MainWindow::on_actionWindowsList_triggered()
 {
-
+    WindowListDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::on_actionOpenProject_triggered()

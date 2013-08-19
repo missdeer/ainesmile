@@ -6,6 +6,7 @@ SummaryDialog::SummaryDialog(QWidget *parent) :
     ui(new Ui::SummaryDialog)
 {
     ui->setupUi(this);
+    setFixedSize( size() );
 }
 
 SummaryDialog::~SummaryDialog()
