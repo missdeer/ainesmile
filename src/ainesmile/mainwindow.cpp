@@ -1022,6 +1022,15 @@ void MainWindow::on_actionWindowsList_triggered()
 {
     WindowListDialog dlg(this);
     QStringList fileList;
+    for (int i = 0; i < ui->tabWidget->count(); i++)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
+        Q_ASSERT(page);
+        if (!page->getFilePath().isEmpty())
+            fileList << page->getFilePath();
+        else
+            fileList << ui->tabWidget->tabText(i);
+    }
     dlg.setFileList(fileList);
     connect(&dlg, SIGNAL(activateTab(QString)), this, SLOT(onActivateTabClicked(QString)));
     connect(&dlg, SIGNAL(closeTab(QStringList)), this, SLOT(onCloseTabClicked(QStringList)));
