@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSignalMapper>
+#include <QList>
 #include "recentfiles.h"
 
 namespace Ui {
@@ -45,9 +46,9 @@ private slots:
     void onRedoAvailableChanged();
     void onRecentFileTriggered(const QString & file);
     void onRecentProjectTriggered(const QString & project);
-    void onActivateTabClicked(QString file);
-    void onCloseTabClicked(QStringList fileList);
-    void onSaveTabClicked(QStringList fileList);
+    void onActivateTabClicked(int index);
+    void onCloseTabClicked(const QList<int> & fileList);
+    void onSaveTabClicked(const QList<int> & fileList);
 
     void on_actionNewFile_triggered();
 

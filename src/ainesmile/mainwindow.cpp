@@ -631,19 +631,61 @@ void MainWindow::onRecentProjectTriggered(const QString & project)
 
 }
 
-void MainWindow::onActivateTabClicked(QString file)
+void MainWindow::onActivateTabClicked(int index)
 {
-
+    Q_ASSERT(index < ui->tabWidget->count());
+    ui->tabWidget->setCurrentIndex(index);
 }
 
-void MainWindow::onCloseTabClicked(QStringList fileList)
+void MainWindow::onCloseTabClicked(const QList<int>& fileList)
 {
-
+    for (int i = fileList.size() -1; i >= 0; i--)
+    {
+        int index = fileList.at(i);
+        ui->tabWidget->setCurrentIndex(index);
+        onCloseRequested(index);
+    }
 }
 
-void MainWindow::onSaveTabClicked(QStringList fileList)
+void MainWindow::onSaveTabClicked(const QList<int>& fileList)
 {
+    for (int i = fileList.size() -1; i >= 0; i--)
+    {
+        int index = fileList.at(i);
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+        QString filePath = page->getFilePath();
 
+        // do save
+        bool resetTabText = false;
+        if (!QFile::exists(filePath))
+        {
+            QFileDialog::Options options;
+            QString selectedFilter;
+            filePath = QFileDialog::getSaveFileName(this,
+                                                    tr("ainesmile Save File To"),
+                                                    tr(""),
+                                                    tr("All Files (*);;Text Files (*.txt)"),
+                                                    &selectedFilter,
+                                                    options);
+            if (!filePath.isEmpty())
+                resetTabText = true;
+        }
+
+        if (!filePath.isEmpty())
+        {
+            page->saveFile(filePath);
+
+            if (rf_.addFile(filePath))
+                updateRecentFilesMenuItems();
+        }
+
+        if (resetTabText)
+        {
+            ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
+            ui->tabWidget->setTabToolTip(index, filePath);
+        }
+    }
 }
 
 void MainWindow::on_actionNewFile_triggered()
@@ -1032,9 +1074,9 @@ void MainWindow::on_actionWindowsList_triggered()
             fileList << ui->tabWidget->tabText(i);
     }
     dlg.setFileList(fileList);
-    connect(&dlg, SIGNAL(activateTab(QString)), this, SLOT(onActivateTabClicked(QString)));
-    connect(&dlg, SIGNAL(closeTab(QStringList)), this, SLOT(onCloseTabClicked(QStringList)));
-    connect(&dlg, SIGNAL(saveTab(QStringList)), this, SLOT(onSaveTabClicked(QStringList)));
+    connect(&dlg, SIGNAL(activateTab(int)), this, SLOT(onActivateTabClicked(int)));
+    connect(&dlg, SIGNAL(closeTab(const QList<int> &)), this, SLOT(onCloseTabClicked(const QList<int> &)));
+    connect(&dlg, SIGNAL(saveTab(const QList<int> &)), this, SLOT(onSaveTabClicked(const QList<int> &)));
     dlg.exec();
 }
 

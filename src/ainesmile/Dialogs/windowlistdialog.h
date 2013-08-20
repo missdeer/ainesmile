@@ -2,6 +2,7 @@
 #define WINDOWLISTDIALOG_H
 
 #include <QDialog>
+#include <QList>
 
 namespace Ui {
 class WindowListDialog;
@@ -17,9 +18,9 @@ public:
     void setFileList(const QStringList& fileList);
 
 signals:
-    void activateTab(QString filePath);
-    void closeTab(QStringList filePaths);
-    void saveTab(QStringList filePaths);
+    void activateTab(int index);
+    void closeTab(const QList<int>& indexes);
+    void saveTab(const QList<int>& indexes);
     
 private slots:
     void onTableItemSelectionChanged();

@@ -85,16 +85,18 @@ void WindowListDialog::on_btnActivate_clicked()
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
     Q_FOREACH(QTableWidgetItem *item, selected)
     {
+        emit activateTab(item->row());
         break;
     }
 }
 
 void WindowListDialog::on_btnSave_clicked()
 {
-    QStringList list;
+    QList<int> list;
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
     Q_FOREACH(QTableWidgetItem *item, selected)
     {
+        list << item->row();
     }
 
     if (!list.isEmpty())
@@ -103,10 +105,11 @@ void WindowListDialog::on_btnSave_clicked()
 
 void WindowListDialog::on_btnCloseWindow_clicked()
 {
-    QStringList list;
+    QList<int> list;
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
     Q_FOREACH(QTableWidgetItem *item, selected)
     {
+        list << item->row();
     }
 
     if (!list.isEmpty())
