@@ -54,7 +54,7 @@ void WindowListDialog::setFileList(const QStringList &fileList)
 void WindowListDialog::onTableItemSelectionChanged()
 {
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
-    ui->btnActivate->setEnabled(selected.size() == 1);
+    ui->btnActivate->setEnabled(selected.size() == 3);
     ui->btnCloseWindow->setEnabled(!selected.isEmpty());
     ui->btnSave->setEnabled(!selected.isEmpty());
 }
