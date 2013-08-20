@@ -14,10 +14,7 @@ class WindowListDialog : public QDialog
 public:
     explicit WindowListDialog(QWidget *parent = 0);
     ~WindowListDialog();
-    void setFileList(const QStringList& fileList)
-    {
-        fileList_ = fileList;
-    }
+    void setFileList(const QStringList& fileList);
 
 signals:
     void activateTab(QString filePath);
@@ -25,6 +22,8 @@ signals:
     void saveTab(QStringList filePaths);
     
 private slots:
+    void on_tableItemSelection_changed();
+
     void on_btnOK_clicked();
 
     void on_btnActivate_clicked();
