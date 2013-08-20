@@ -9,6 +9,7 @@ WindowListDialog::WindowListDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setFixedSize( size() );
+    ui->btnSortTab->setVisible(false);
     connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onTableItemSelectionChanged()));
 }
 
