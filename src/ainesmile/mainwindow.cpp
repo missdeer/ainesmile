@@ -28,8 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     aboutToQuit_(false)
 {
     ui->setupUi(this);
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentPageChanged(int)));
-    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeRequested(int)));
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(on_currentPage_changed(int)));
+    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_close_requested(int)));
 
     setActionShortcuts();
     setRecentFiles();
@@ -51,7 +51,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        closeRequested(index);
+        on_close_requested(index);
     }
 
     if (ui->tabWidget->count() != 0)
@@ -176,7 +176,7 @@ void MainWindow::updateRecentFilesMenuItems()
         recentFileSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SLOT(recentFileTriggered(const QString&)));
+            this, SLOT(on_recentFile_triggered(const QString&)));
     for (int i = index; i < 10; i++)
     {
         QAction* action = recentFileActions_.at(i);
@@ -197,7 +197,7 @@ void MainWindow::updateRecentFilesMenuItems()
         recentProjectSignalMapper_->setMapping(action, file.fileName());
     }
     connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SLOT(recentProjectTriggered(const QString&)));
+            this, SLOT(on_recentProject_triggered(const QString&)));
     for (int i = index; i < 10; i++)
     {
         QAction* action = recentProjectActions_.at(i);
@@ -216,16 +216,16 @@ void MainWindow::updateUI(CodeEditPage* page)
 
 void MainWindow::connectSignals(CodeEditPage *page)
 {
-    disconnect(this, SLOT(currentDocumentChanged()));
-    connect(page, SIGNAL(modifiedNotification()), this, SLOT(currentDocumentChanged()));
-    disconnect(this, SLOT(copyAvailableChanged()));
-    connect(page, SIGNAL(copyAvailableChanged()), this, SLOT(copyAvailableChanged()));
-    disconnect(this, SLOT(pasteAvailableChanged()));
-    connect(page, SIGNAL(pasteAvailableChanged()), this, SLOT(pasteAvailableChanged()));
-    disconnect(this, SLOT(undoAvailableChanged()));
-    connect(page, SIGNAL(undoAvailableChanged()), this, SLOT(undoAvailableChanged()));
-    disconnect(this, SLOT(redoAvailableChanged()));
-    connect(page, SIGNAL(redoAvailableChanged()), this, SLOT(redoAvailableChanged()));
+    disconnect(this, SLOT(on_currentDocument_changed()));
+    connect(page, SIGNAL(modifiedNotification()), this, SLOT(on_currentDocument_changed()));
+    disconnect(this, SLOT(on_copyAvailable_changed()));
+    connect(page, SIGNAL(on_copyAvailable_changed()), this, SLOT(on_copyAvailable_changed()));
+    disconnect(this, SLOT(on_pasteAvailable_changed()));
+    connect(page, SIGNAL(on_pasteAvailable_changed()), this, SLOT(on_pasteAvailable_changed()));
+    disconnect(this, SLOT(on_undoAvailable_changed()));
+    connect(page, SIGNAL(on_undoAvailable_changed()), this, SLOT(on_undoAvailable_changed()));
+    disconnect(this, SLOT(on_redoAvailable_changed()));
+    connect(page, SIGNAL(on_redoAvailable_changed()), this, SLOT(on_redoAvailable_changed()));
     disconnect(ui->actionCut, SIGNAL(triggered()), 0, 0);
     connect(ui->actionCut, SIGNAL(triggered()), page, SLOT(cut()));
     disconnect(ui->actionCopy, SIGNAL(triggered()), 0, 0);
@@ -485,7 +485,7 @@ void MainWindow::newDocument()
 }
 
 
-void MainWindow::currentPageChanged(int index)
+void MainWindow::on_currentPage_changed(int index)
 {
     if (index == -1)
     {
@@ -502,7 +502,7 @@ void MainWindow::currentPageChanged(int index)
     }
 }
 
-void MainWindow::closeRequested(int index)
+void MainWindow::on_close_requested(int index)
 {
     CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
     Q_ASSERT(page);
@@ -550,14 +550,14 @@ void MainWindow::closeRequested(int index)
     page->deleteLater();
 }
 
-void MainWindow::currentDocumentChanged()
+void MainWindow::on_currentDocument_changed()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     Q_UNUSED(page);
 }
 
-void MainWindow::copyAvailableChanged()
+void MainWindow::on_copyAvailable_changed()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
@@ -565,28 +565,28 @@ void MainWindow::copyAvailableChanged()
     ui->actionCut->setEnabled(page->canCut());
 }
 
-void MainWindow::pasteAvailableChanged()
+void MainWindow::on_pasteAvailable_changed()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     ui->actionPaste->setEnabled(page->canPaste());
 }
 
-void MainWindow::undoAvailableChanged()
+void MainWindow::on_undoAvailable_changed()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     ui->actionUndo->setEnabled(page->canUndo());
 }
 
-void MainWindow::redoAvailableChanged()
+void MainWindow::on_redoAvailable_changed()
 {
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
-void MainWindow::recentFileTriggered(const QString & file)
+void MainWindow::on_recentFile_triggered(const QString & file)
 {
     // open the file
     if (QFile::exists(file))
@@ -626,7 +626,22 @@ void MainWindow::recentFileTriggered(const QString & file)
     }
 }
 
-void MainWindow::recentProjectTriggered(const QString & project)
+void MainWindow::on_recentProject_triggered(const QString & project)
+{
+
+}
+
+void MainWindow::on_activateTab_clicked(QString file)
+{
+
+}
+
+void MainWindow::on_closeTab_clicked(QStringList fileList)
+{
+
+}
+
+void MainWindow::on_saveTab_clicked(QStringList fileList)
 {
 
 }
@@ -793,7 +808,7 @@ void MainWindow::on_actionCloseAll_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        closeRequested(index);
+        on_close_requested(index);
     }
 }
 
@@ -803,11 +818,11 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index > currentIndex; index--)
     {
-        closeRequested(index);
+        on_close_requested(index);
     }
     while (ui->tabWidget->count() > 1)
     {
-        closeRequested(0);
+        on_close_requested(0);
     }
 }
 
@@ -816,7 +831,7 @@ void MainWindow::on_actionOpenAllRecentFiles_triggered()
     QStringList& files = rf_.recentFiles();
     Q_FOREACH(const QString& file, files)
     {
-        recentFileTriggered(file);
+        on_recentFile_triggered(file);
     }
 }
 
@@ -860,14 +875,14 @@ void MainWindow::on_actionCloseAllDocuments_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        closeRequested(index);
+        on_close_requested(index);
     }
 }
 
 void MainWindow::on_actionClose_triggered()
 {
     int currentIndex = ui->tabWidget->currentIndex();
-    closeRequested(currentIndex);
+    on_close_requested(currentIndex);
 }
 
 void MainWindow::on_actionFindInFiles_triggered()
@@ -1006,6 +1021,11 @@ void MainWindow::on_actionPluginManager_triggered()
 void MainWindow::on_actionWindowsList_triggered()
 {
     WindowListDialog dlg(this);
+    QStringList fileList;
+    dlg.setFileList(fileList);
+    connect(&dlg, SIGNAL(activateTab(QString)), this, SLOT(on_activateTab_clicked(QString)));
+    connect(&dlg, SIGNAL(closeTab(QStringList)), this, SLOT(on_closeTab_clicked(QStringList)));
+    connect(&dlg, SIGNAL(saveTab(QStringList)), this, SLOT(on_saveTab_clicked(QStringList)));
     dlg.exec();
 }
 
