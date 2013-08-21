@@ -15,7 +15,6 @@
 #include "aboutdialog.h"
 #include "registerdialog.h"
 #include "preferencedialog.h"
-#include "findreplacedialog.h"
 #include "windowlistdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -23,6 +22,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    findReplaceDialog_(NULL),
     recentFileSignalMapper_(new QSignalMapper(this)),
     recentProjectSignalMapper_(new QSignalMapper(this)),
     aboutToQuit_(false)
@@ -934,9 +934,13 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionFindInFiles_triggered()
 {
-    FindReplaceDialog dlg(this);
-    dlg.setModal(false);
-    dlg.show();
+    if (!findReplaceDialog_)
+    {
+        findReplaceDialog_ = new FindReplaceDialog(this);
+    }
+    findReplaceDialog_->show();
+    findReplaceDialog_->raise();
+    findReplaceDialog_->activateWindow();
 }
 
 void MainWindow::on_actionSearchResultsWindow_triggered()

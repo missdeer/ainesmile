@@ -5,6 +5,7 @@
 #include <QSignalMapper>
 #include <QList>
 #include "recentfiles.h"
+#include "findreplacedialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -132,6 +133,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    FindReplaceDialog* findReplaceDialog_;
     QSignalMapper* recentFileSignalMapper_;
     QSignalMapper* recentProjectSignalMapper_;
     QList<QAction*> recentFileActions_;

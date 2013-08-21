@@ -17,6 +17,9 @@
    <iconset resource="../ainesmile.qrc">
     <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
