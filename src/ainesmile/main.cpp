@@ -1,4 +1,8 @@
-#include <QApplication>
+
+#include "qtsingleapplication.h"
+//#include <QApplication>
+#include <QNetworkProxy>
+#include <QThreadPool>
 #include <QStringList>
 #include "stupidcheck.h"
 #include "nagdialog.h"
@@ -6,9 +10,41 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+#ifdef Q_OS_MAC
+    // increase the number of file that can be opened in Qt Creator.
+    struct rlimit rl;
+    getrlimit(RLIMIT_NOFILE, &rl);
+
+    rl.rlim_cur = qMin((rlim_t)OPEN_MAX, rl.rlim_max);
+    setrlimit(RLIMIT_NOFILE, &rl);
+#endif
+
+    SharedTools::QtSingleApplication a(QLatin1String("ainesmile"), argc, argv);
+
+    const int threadCount = QThreadPool::globalInstance()->maxThreadCount();
+    QThreadPool::globalInstance()->setMaxThreadCount(qMax(4, 2 * threadCount));
 
     Q_INIT_RESOURCE( ainesmile );
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+
+    // Make sure we honor the system's proxy settings
+#if defined(Q_OS_UNIX)
+    QUrl proxyUrl(QString::fromLatin1(qgetenv("http_proxy")));
+    if (proxyUrl.isValid()) {
+        QNetworkProxy proxy(QNetworkProxy::HttpProxy, proxyUrl.host(),
+                            proxyUrl.port(), proxyUrl.userName(), proxyUrl.password());
+        QNetworkProxy::setApplicationProxy(proxy);
+# if defined(Q_OS_MAC) // unix and mac
+    } else {
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+# endif
+    }
+#else // windows
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+#endif
 
     MainWindow w;
     w.showMaximized();
@@ -48,5 +84,6 @@ int main(int argc, char *argv[])
         dlg.exec();
     }
 
+    QObject::connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
     return a.exec();
 }
