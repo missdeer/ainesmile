@@ -14,6 +14,7 @@ TARGET = ainesmile
 TEMPLATE = app
 
 include(../../Boost.pri)
+include(../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
 
 INCLUDEPATH += CodeEdit \
     Dialogs \
@@ -71,7 +72,9 @@ FORMS    += mainwindow.ui \
     Dialogs/windowlistdialog.ui
 
 OTHER_FILES += \
-    ainesmile.rc
+    ainesmile.rc \
+    ../../3rdparty/qtsingleapplication/qtsingleapplication.pri \
+    ../../3rdparty/qtsingleapplication/qtsinglecoreapplication.pri
 
 RESOURCES += \
     ainesmile.qrc
