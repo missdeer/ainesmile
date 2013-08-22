@@ -38,13 +38,44 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="TabWidget" name="tabWidget" native="true">
-      <property name="documentMode" stdset="0">
-       <bool>true</bool>
-      </property>
-      <property name="tabsClosable" stdset="0">
-       <bool>true</bool>
-      </property>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QSplitter" name="splitterMain">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="TabWidget" name="tabWidget" native="true">
+          <property name="documentMode" stdset="0">
+           <bool>true</bool>
+          </property>
+          <property name="tabsClosable" stdset="0">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="TabWidget" name="tabWidgetSlave" native="true">
+          <property name="documentMode" stdset="0">
+           <bool>true</bool>
+          </property>
+          <property name="tabsClosable" stdset="0">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -55,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

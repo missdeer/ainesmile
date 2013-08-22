@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionExitApp->setMenuRole(QAction::QuitRole);
 #endif
 #endif
+    ui->tabWidgetSlave->hide();
 }
 
 MainWindow::~MainWindow()
