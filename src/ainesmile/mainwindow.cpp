@@ -101,14 +101,14 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 TabWidget *MainWindow::getFocusTabWidget()
 {
-    for (int i = 0; i < ui->tabWidget->count(); i++)
+    for (int i = 0; i < ui->tabWidgetSlave->count(); i++)
     {
         CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
         Q_ASSERT(page);
         if (page->focus())
-            return ui->tabWidget;
+            return ui->tabWidgetSlave;
     }
-    return ui->tabWidgetSlave;
+    return ui->tabWidget;
 }
 
 void MainWindow::setActionShortcuts()
@@ -552,19 +552,19 @@ void MainWindow::openFiles(const QStringList &files)
     int index = 0;
     foreach(const QString& file, files)
     {
-        if (QFile::exists(file))
+        QFileInfo fileInfo(file);
+        if (QFile::exists(fileInfo.absoluteFilePath()))
         {
             // check if the file has been opened already
             bool bExists = false;
-            int count = tabWidget->count();
+            int count = ui->tabWidget->count();
             for (int i = 0; i< count; i++)
             {
-                CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(i));
+                CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
                 Q_ASSERT(page);
                 const QString& pageFileName = page->getFilePath();
                 if (!pageFileName.isEmpty())
                 {
-                    QFileInfo fileInfo(file);
                     QFileInfo pageFileInfo(pageFileName);
                     if (pageFileInfo == fileInfo)
                     {
@@ -573,18 +573,37 @@ void MainWindow::openFiles(const QStringList &files)
                     }
                 }
             }
+            if (!bExists)
+            {
+                count = ui->tabWidgetSlave->count();
+                for (int i = 0; i< count; i++)
+                {
+                    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
+                    Q_ASSERT(page);
+                    const QString& pageFileName = page->getFilePath();
+                    if (!pageFileName.isEmpty())
+                    {
+                        QFileInfo pageFileInfo(pageFileName);
+                        if (pageFileInfo == fileInfo)
+                        {
+                            bExists = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (!bExists)
             {
                 // create an edit page, open the file
                 CodeEditPage* codeeditpage = new CodeEditPage(this);
-                index = tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+                index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
                 connectSignals(codeeditpage);
                 updateUI(codeeditpage);
-                codeeditpage->openFile(file);
-                tabWidget->setTabToolTip(index, file);
+                codeeditpage->openFile(fileInfo.absoluteFilePath());
+                tabWidget->setTabToolTip(index, fileInfo.absoluteFilePath());
                 // log into recent file list
-                if (rf_.addFile(file))
+                if (rf_.addFile(fileInfo.absoluteFilePath()))
                     updateRecentFilesMenuItems();
             }
         }
@@ -696,17 +715,39 @@ void MainWindow::onRecentFileTriggered(const QString & file)
                 }
             }
         }
+        if (!bExists)
+        {
+            count = ui->tabWidgetSlave->count();
+            for (int i = 0; i< count; i++)
+            {
+                CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
+                Q_ASSERT(page);
+                const QString& pageFileName = page->getFilePath();
+                if (!pageFileName.isEmpty())
+                {
+                    QFileInfo fileInfo(file);
+                    QFileInfo pageFileInfo(pageFileName);
+                    if (pageFileInfo == fileInfo)
+                    {
+                        bExists = true;
+                        ui->tabWidgetSlave->setCurrentIndex(i);
+                        break;
+                    }
+                }
+            }
+        }
 
         if (!bExists)
         {
             // create an edit page, open the file
+            TabWidget* tabWidget = getFocusTabWidget();
             CodeEditPage* codeeditpage = new CodeEditPage(this);
-            int index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+            int index = tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
             connectSignals(codeeditpage);
             updateUI(codeeditpage);
             codeeditpage->openFile(file);
-            ui->tabWidget->setTabToolTip(index, file);
-            ui->tabWidget->setCurrentIndex(index);
+            tabWidget->setTabToolTip(index, file);
+            tabWidget->setCurrentIndex(index);
         }
     }
 }
@@ -781,15 +822,15 @@ void MainWindow::on_actionNewFile_triggered()
 void MainWindow::on_actionToggleFullScreenMode_triggered()
 {
     static bool isMaximized = false;
-    isMaximized = this->isMaximized();
-    if (this->isFullScreen()) {
+    isMaximized = isMaximized();
+    if (isFullScreen()) {
         if (isMaximized)
-            this->showMaximized();
+            showMaximized();
         else
-            this->showNormal();
+            showNormal();
     }
     else
-        this->showFullScreen();
+        showFullScreen();
 }
 
 void MainWindow::on_actionOpenFile_triggered()
@@ -835,9 +876,10 @@ void MainWindow::on_actionSaveFile_triggered()
 
     if (resetTabText)
     {
-        int index = ui->tabWidget->currentIndex();
-        ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-        ui->tabWidget->setTabToolTip(index, filePath);
+        TabWidget* tabWidget = getFocusTabWidget();
+        int index = tabWidget->currentIndex();
+        tabWidget->setTabText(index, QFileInfo(filePath).fileName());
+        tabWidget->setTabToolTip(index, filePath);
     }
 }
 
@@ -858,9 +900,10 @@ void MainWindow::on_actionSaveAs_triggered()
     {
         page->saveFile(filePath);
 
-        int index = ui->tabWidget->currentIndex();
-        ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-        ui->tabWidget->setTabToolTip(index, filePath);
+        TabWidget* tabWidget = getFocusTabWidget();
+        int index = tabWidget->currentIndex();
+        tabWidget->setTabText(index, QFileInfo(filePath).fileName());
+        tabWidget->setTabToolTip(index, filePath);
 
         if (rf_.addFile(filePath))
             updateRecentFilesMenuItems();
