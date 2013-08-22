@@ -39,6 +39,7 @@ public:
     bool canRedo();
     bool isModified();
     void grabFocus();
+    bool focus();
     void applyEditorStyles();
     void setShowWhiteSpaceAndTAB(bool enabled);
     void setShowEndOfLine(bool enabled);

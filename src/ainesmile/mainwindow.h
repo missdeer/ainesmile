@@ -38,6 +38,7 @@ private:
     void updateRecentFilesMenuItems();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
+    void doCloseRequested(TabWidget* tabWidget, int index);
 
 private slots:
     void onExchangeTab();

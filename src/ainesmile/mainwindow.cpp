@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 #endif
     ui->tabWidgetSlave->hide();
+    ui->tabWidget->setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -64,10 +65,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        onCloseRequested(index);
+        doCloseRequested(ui->tabWidget, index);
     }
 
-    if (ui->tabWidget->count() != 0)
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        doCloseRequested(ui->tabWidgetSlave, index);
+    }
+
+    if (ui->tabWidget->count() + ui->tabWidgetSlave->count() != 0)
     {
         event->ignore();
     }
@@ -96,9 +103,12 @@ TabWidget *MainWindow::getFocusTabWidget()
 {
     for (int i = 0; i < ui->tabWidget->count(); i++)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
         Q_ASSERT(page);
+        if (page->focus())
+            return ui->tabWidget;
     }
+    return ui->tabWidgetSlave;
 }
 
 void MainWindow::setActionShortcuts()
@@ -444,129 +454,8 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
 }
 
-void MainWindow::onExchangeTab()
+void MainWindow::doCloseRequested(TabWidget *tabWidget, int index)
 {
-    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
-    QWidget* currentWidget = tabWidget->currentWidget();
-    int currentIndex = tabWidget->currentIndex();
-    QString currentText = tabWidget->tabText(currentIndex);
-    QString currentTabTooltip = tabWidget->tabToolTip(currentIndex);
-    tabWidget->removeTab(currentIndex);
-    TabWidget* targetTabWidget = ui->tabWidgetSlave;
-    if (tabWidget == ui->tabWidgetSlave)
-    {
-        targetTabWidget = ui->tabWidget;
-    }
-    if (targetTabWidget->isHidden())
-    {
-        targetTabWidget->setHidden(false);
-        QList<int> sizes;
-        sizes << ui->widget->width()/2
-                 << ui->widget->width() /2;
-        ui->splitterMain->setSizes(sizes);
-    }
-    int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
-    targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
-
-    if (tabWidget->count() == 0)
-    {
-        tabWidget->hide();
-    }
-}
-
-void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
-{
-    Q_UNUSED(socket);
-    // split the message
-    QStringList files = message.split('\n');
-    openFiles(files);
-    raise();
-    activateWindow();
-}
-
-void MainWindow::openFiles(const QStringList &files)
-{
-    int index = 0;
-    foreach(const QString& file, files)
-    {
-        if (QFile::exists(file))
-        {
-            // check if the file has been opened already
-            bool bExists = false;
-            int count = ui->tabWidget->count();
-            for (int i = 0; i< count; i++)
-            {
-                CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
-                Q_ASSERT(page);
-                const QString& pageFileName = page->getFilePath();
-                if (!pageFileName.isEmpty())
-                {
-                    QFileInfo fileInfo(file);
-                    QFileInfo pageFileInfo(pageFileName);
-                    if (pageFileInfo == fileInfo)
-                    {
-                        bExists = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!bExists)
-            {
-                // create an edit page, open the file
-                CodeEditPage* codeeditpage = new CodeEditPage(this);
-                index = ui->tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
-                connectSignals(codeeditpage);
-                updateUI(codeeditpage);
-                codeeditpage->openFile(file);
-                ui->tabWidget->setTabToolTip(index, file);
-                // log into recent file list
-                if (rf_.addFile(file))
-                    updateRecentFilesMenuItems();
-            }
-        }
-    }
-
-    if (!files.isEmpty())
-        ui->tabWidget->setCurrentIndex(index);
-}
-
-void MainWindow::newDocument()
-{
-    static int count = 1;
-    CodeEditPage* codeeditpage = new CodeEditPage(this);
-    QString title = QString(tr("Untitled%1")).arg(count);
-    int index = ui->tabWidget->addTab(codeeditpage, QIcon(), title);
-    ui->tabWidget->setCurrentIndex(index);
-    count++;
-    connectSignals(codeeditpage);
-    updateUI(codeeditpage);
-    ui->tabWidget->setFocus();
-    codeeditpage->setFocus();
-    codeeditpage->grabFocus();
-}
-
-
-void MainWindow::onCurrentPageChanged(int index)
-{
-    if (index == -1)
-    {
-        if (!aboutToQuit_)
-            newDocument();
-    }
-    else
-    {
-        // update action UI
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-        updateUI(page);
-        connectSignals(page);
-    }
-}
-
-void MainWindow::onCloseRequested(int index)
-{
-    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
     CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(index));
     Q_ASSERT(page);
     if (!page->canClose())
@@ -611,6 +500,139 @@ void MainWindow::onCloseRequested(int index)
 
     tabWidget->removeTab(index);
     page->deleteLater();
+    if (tabWidget->count() == 0)
+    {
+        tabWidget->hide();
+    }
+}
+
+void MainWindow::onExchangeTab()
+{
+    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+    QWidget* currentWidget = tabWidget->currentWidget();
+    int currentIndex = tabWidget->currentIndex();
+    QString currentText = tabWidget->tabText(currentIndex);
+    QString currentTabTooltip = tabWidget->tabToolTip(currentIndex);
+    tabWidget->removeTab(currentIndex);
+    TabWidget* targetTabWidget = ui->tabWidgetSlave;
+    if (tabWidget == ui->tabWidgetSlave)
+    {
+        targetTabWidget = ui->tabWidget;
+    }
+    if (targetTabWidget->isHidden())
+    {
+        targetTabWidget->setHidden(false);
+        QList<int> sizes;
+        sizes << ui->widget->width()/2
+                 << ui->widget->width() /2;
+        ui->splitterMain->setSizes(sizes);
+    }
+    int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
+    targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
+
+    if (tabWidget->count() == 0)
+    {
+        tabWidget->hide();
+    }
+}
+
+void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
+{
+    Q_UNUSED(socket);
+    // split the message
+    QStringList files = message.split('\n');
+    openFiles(files);
+    raise();
+    activateWindow();
+}
+
+void MainWindow::openFiles(const QStringList &files)
+{
+    TabWidget* tabWidget = getFocusTabWidget();
+    int index = 0;
+    foreach(const QString& file, files)
+    {
+        if (QFile::exists(file))
+        {
+            // check if the file has been opened already
+            bool bExists = false;
+            int count = tabWidget->count();
+            for (int i = 0; i< count; i++)
+            {
+                CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(i));
+                Q_ASSERT(page);
+                const QString& pageFileName = page->getFilePath();
+                if (!pageFileName.isEmpty())
+                {
+                    QFileInfo fileInfo(file);
+                    QFileInfo pageFileInfo(pageFileName);
+                    if (pageFileInfo == fileInfo)
+                    {
+                        bExists = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!bExists)
+            {
+                // create an edit page, open the file
+                CodeEditPage* codeeditpage = new CodeEditPage(this);
+                index = tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+                connectSignals(codeeditpage);
+                updateUI(codeeditpage);
+                codeeditpage->openFile(file);
+                tabWidget->setTabToolTip(index, file);
+                // log into recent file list
+                if (rf_.addFile(file))
+                    updateRecentFilesMenuItems();
+            }
+        }
+    }
+
+    if (!files.isEmpty())
+        tabWidget->setCurrentIndex(index);
+}
+
+void MainWindow::newDocument()
+{
+    static int count = 1;
+    CodeEditPage* codeeditpage = new CodeEditPage(this);
+    QString title = QString(tr("Untitled%1")).arg(count);
+    TabWidget* tabWidget = getFocusTabWidget();
+    int index = tabWidget->addTab(codeeditpage, QIcon(), title);
+    tabWidget->setCurrentIndex(index);
+    count++;
+    connectSignals(codeeditpage);
+    updateUI(codeeditpage);
+    tabWidget->setFocus();
+    codeeditpage->setFocus();
+    codeeditpage->grabFocus();
+}
+
+
+void MainWindow::onCurrentPageChanged(int index)
+{
+    if (index == -1)
+    {
+        if (!aboutToQuit_)
+            newDocument();
+    }
+    else
+    {
+        // update action UI
+        TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(index));
+        Q_ASSERT(page);
+        updateUI(page);
+        connectSignals(page);
+    }
+}
+
+void MainWindow::onCloseRequested(int index)
+{
+    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+    doCloseRequested(tabWidget, index);
 }
 
 void MainWindow::onCurrentDocumentChanged()
@@ -659,7 +681,7 @@ void MainWindow::onRecentFileTriggered(const QString & file)
         int count = ui->tabWidget->count();
         for (int i = 0; i< count; i++)
         {
-            CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
+            CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
             Q_ASSERT(page);
             const QString& pageFileName = page->getFilePath();
             if (!pageFileName.isEmpty())
@@ -696,18 +718,18 @@ void MainWindow::onRecentProjectTriggered(const QString & project)
 
 void MainWindow::onActivateTabClicked(int index)
 {
-    Q_ASSERT(index < ui->tabWidget->count());
-    ui->tabWidget->setCurrentIndex(index);
+//    Q_ASSERT(index < ui->tabWidget->count());
+//    ui->tabWidget->setCurrentIndex(index);
 }
 
 void MainWindow::onCloseTabClicked(const QList<int>& fileList)
 {
-    for (int i = fileList.size() -1; i >= 0; i--)
-    {
-        int index = fileList.at(i);
-        ui->tabWidget->setCurrentIndex(index);
-        onCloseRequested(index);
-    }
+//    for (int i = fileList.size() -1; i >= 0; i--)
+//    {
+//        int index = fileList.at(i);
+//        ui->tabWidget->setCurrentIndex(index);
+//        onCloseRequested(index);
+//    }
 }
 
 void MainWindow::onSaveTabClicked(const QList<int>& fileList)
@@ -715,7 +737,7 @@ void MainWindow::onSaveTabClicked(const QList<int>& fileList)
     for (int i = fileList.size() -1; i >= 0; i--)
     {
         int index = fileList.at(i);
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
         Q_ASSERT(page);
         QString filePath = page->getFilePath();
 
@@ -790,7 +812,7 @@ void MainWindow::on_actionExitApp_triggered()
 
 void MainWindow::on_actionSaveFile_triggered()
 {
-    CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
     Q_ASSERT(page);
     QString filePath = page->getFilePath();
     bool resetTabText = false;
@@ -821,7 +843,7 @@ void MainWindow::on_actionSaveFile_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-    CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
     Q_ASSERT(page);
 
     QFileDialog::Options options;
@@ -878,7 +900,7 @@ void MainWindow::on_actionSaveAll_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
         Q_ASSERT(page);
         QString filePath = page->getFilePath();
         bool resetTabText = false;
@@ -913,7 +935,13 @@ void MainWindow::on_actionCloseAll_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        onCloseRequested(index);
+        doCloseRequested(ui->tabWidget, index);
+    }
+
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        doCloseRequested(ui->tabWidgetSlave, index);
     }
 }
 
@@ -923,11 +951,11 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index > currentIndex; index--)
     {
-        onCloseRequested(index);
+        doCloseRequested(ui->tabWidget, index);
     }
     while (ui->tabWidget->count() > 1)
     {
-        onCloseRequested(0);
+        doCloseRequested(ui->tabWidget, 0);
     }
 }
 
@@ -978,6 +1006,11 @@ void MainWindow::on_actionAlwaysOnTop_triggered()
 void MainWindow::on_actionCloseAllDocuments_triggered()
 {
     int count = ui->tabWidget->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        onCloseRequested(index);
+    }
+    count = ui->tabWidgetSlave->count();
     for (int index = count -1; index >=0; index--)
     {
         onCloseRequested(index);
@@ -1056,7 +1089,15 @@ void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowWhiteSpaceAndTAB(enabled);
+    }
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
         Q_ASSERT(page);
 
         page->setShowWhiteSpaceAndTAB(enabled);
@@ -1072,7 +1113,15 @@ void MainWindow::on_actionShowEndOfLine_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowEndOfLine(enabled);
+    }
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
         Q_ASSERT(page);
 
         page->setShowEndOfLine(enabled);
@@ -1088,7 +1137,15 @@ void MainWindow::on_actionShowIndentGuide_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowIndentGuide(enabled);
+    }
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
         Q_ASSERT(page);
 
         page->setShowIndentGuide(enabled);
@@ -1104,7 +1161,15 @@ void MainWindow::on_actionShowWrapSymbol_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+        Q_ASSERT(page);
+
+        page->setShowWrapSymbol(enabled);
+    }
+    count = ui->tabWidgetSlave->count();
+    for (int index = count -1; index >=0; index--)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
         Q_ASSERT(page);
 
         page->setShowWrapSymbol(enabled);
@@ -1133,12 +1198,21 @@ void MainWindow::on_actionWindowsList_triggered()
     QStringList fileList;
     for (int i = 0; i < ui->tabWidget->count(); i++)
     {
-        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(i));
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
         Q_ASSERT(page);
         if (!page->getFilePath().isEmpty())
             fileList << page->getFilePath();
         else
             fileList << ui->tabWidget->tabText(i);
+    }
+    for (int i = 0; i < ui->tabWidgetSlave->count(); i++)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
+        Q_ASSERT(page);
+        if (!page->getFilePath().isEmpty())
+            fileList << page->getFilePath();
+        else
+            fileList << ui->tabWidgetSlave->tabText(i);
     }
     dlg.setFileList(fileList);
     connect(&dlg, SIGNAL(activateTab(int)), this, SLOT(onActivateTabClicked(int)));

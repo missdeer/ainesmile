@@ -163,6 +163,11 @@ void CodeEditPage::grabFocus()
     m_sciControlMaster->grabFocus();
 }
 
+bool CodeEditPage::focus()
+{
+    return (m_sciControlMaster->focus() || m_sciControlSlave->focus());
+}
+
 void CodeEditPage::applyEditorStyles()
 {
     m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
