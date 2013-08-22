@@ -145,6 +145,7 @@ private:
     QList<QAction*> recentProjectActions_;
     RecentFiles rf_;
     bool aboutToQuit_;
+    bool exchanging_;
 };
 
 #endif // MAINWINDOW_H

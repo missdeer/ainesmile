@@ -25,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     findReplaceDialog_(NULL),
     recentFileSignalMapper_(new QSignalMapper(this)),
     recentProjectSignalMapper_(new QSignalMapper(this)),
-    aboutToQuit_(false)
+    aboutToQuit_(false),
+    exchanging_(false)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
@@ -513,27 +514,20 @@ void MainWindow::onExchangeTab()
     int currentIndex = tabWidget->currentIndex();
     QString currentText = tabWidget->tabText(currentIndex);
     QString currentTabTooltip = tabWidget->tabToolTip(currentIndex);
+    exchanging_ = true;
     tabWidget->removeTab(currentIndex);
     TabWidget* targetTabWidget = ui->tabWidgetSlave;
     if (tabWidget == ui->tabWidgetSlave)
-    {
         targetTabWidget = ui->tabWidget;
-    }
     if (targetTabWidget->isHidden())
-    {
         targetTabWidget->setHidden(false);
-        QList<int> sizes;
-        sizes << ui->widget->width()/2
-                 << ui->widget->width() /2;
-        ui->splitterMain->setSizes(sizes);
-    }
     int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
     targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
 
     if (tabWidget->count() == 0)
-    {
         tabWidget->hide();
-    }
+
+    exchanging_ = false;
 }
 
 void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
@@ -549,6 +543,8 @@ void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
 void MainWindow::openFiles(const QStringList &files)
 {
     TabWidget* tabWidget = getFocusTabWidget();
+    if (tabWidget->isHidden())
+        tabWidget->setHidden(false);
     int index = 0;
     foreach(const QString& file, files)
     {
@@ -619,6 +615,8 @@ void MainWindow::newDocument()
     CodeEditPage* codeeditpage = new CodeEditPage(this);
     QString title = QString(tr("Untitled%1")).arg(count);
     TabWidget* tabWidget = getFocusTabWidget();
+    if (tabWidget->isHidden())
+        tabWidget->setHidden(false);
     int index = tabWidget->addTab(codeeditpage, QIcon(), title);
     tabWidget->setCurrentIndex(index);
     count++;
@@ -632,9 +630,9 @@ void MainWindow::newDocument()
 
 void MainWindow::onCurrentPageChanged(int index)
 {
-    if (index == -1)
-    {
-        if (!aboutToQuit_)
+    if (index == -1 )
+    {        
+        if (!aboutToQuit_ && !exchanging_ && (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 0))
             newDocument();
     }
     else
@@ -693,7 +691,8 @@ void MainWindow::onRedoAvailableChanged()
 void MainWindow::onRecentFileTriggered(const QString & file)
 {
     // open the file
-    if (QFile::exists(file))
+    QFileInfo fileInfo(file);
+    if (QFile::exists(fileInfo.absoluteFilePath()))
     {
         // check if the file has been opened already
         bool bExists = false;
@@ -705,7 +704,6 @@ void MainWindow::onRecentFileTriggered(const QString & file)
             const QString& pageFileName = page->getFilePath();
             if (!pageFileName.isEmpty())
             {
-                QFileInfo fileInfo(file);
                 QFileInfo pageFileInfo(pageFileName);
                 if (pageFileInfo == fileInfo)
                 {
@@ -725,7 +723,6 @@ void MainWindow::onRecentFileTriggered(const QString & file)
                 const QString& pageFileName = page->getFilePath();
                 if (!pageFileName.isEmpty())
                 {
-                    QFileInfo fileInfo(file);
                     QFileInfo pageFileInfo(pageFileName);
                     if (pageFileInfo == fileInfo)
                     {
@@ -742,11 +739,11 @@ void MainWindow::onRecentFileTriggered(const QString & file)
             // create an edit page, open the file
             TabWidget* tabWidget = getFocusTabWidget();
             CodeEditPage* codeeditpage = new CodeEditPage(this);
-            int index = tabWidget->addTab(codeeditpage, QIcon(),QFileInfo(file).fileName());
+            int index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
             connectSignals(codeeditpage);
             updateUI(codeeditpage);
-            codeeditpage->openFile(file);
-            tabWidget->setTabToolTip(index, file);
+            codeeditpage->openFile(fileInfo.absoluteFilePath());
+            tabWidget->setTabToolTip(index, fileInfo.absoluteFilePath());
             tabWidget->setCurrentIndex(index);
         }
     }
@@ -1051,19 +1048,20 @@ void MainWindow::on_actionCloseAllDocuments_triggered()
     int count = ui->tabWidget->count();
     for (int index = count -1; index >=0; index--)
     {
-        onCloseRequested(index);
+        doCloseRequested(ui->tabWidget, index);
     }
     count = ui->tabWidgetSlave->count();
     for (int index = count -1; index >=0; index--)
     {
-        onCloseRequested(index);
+        doCloseRequested(ui->tabWidgetSlave, index);
     }
 }
 
 void MainWindow::on_actionClose_triggered()
 {
-    int currentIndex = ui->tabWidget->currentIndex();
-    onCloseRequested(currentIndex);
+    TabWidget* tabWidget = getFocusTabWidget();
+    int currentIndex = tabWidget->currentIndex();
+    doCloseRequested(tabWidget, currentIndex);
 }
 
 void MainWindow::on_actionFindInFiles_triggered()
