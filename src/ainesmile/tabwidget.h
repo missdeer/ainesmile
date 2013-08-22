@@ -2,6 +2,7 @@
 #define TABWIDGET_H
 
 #include <QTabWidget>
+#include <QMouseEvent>
 
 class TabWidget : public QTabWidget
 {
@@ -9,6 +10,7 @@ class TabWidget : public QTabWidget
 public:
     explicit TabWidget(QWidget *parent = 0);
     
+    void mousePressEvent(QMouseEvent * event);
 signals:
     
 public slots:
