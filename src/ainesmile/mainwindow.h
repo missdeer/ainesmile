@@ -38,6 +38,7 @@ private:
     void connectSignals(CodeEditPage* page);
 
 private slots:
+    void onIPCMessageReceived(const QString &message, QObject *socket);
     void onCurrentPageChanged(int index);
     void onCloseRequested(int index);
     void onCurrentDocumentChanged();

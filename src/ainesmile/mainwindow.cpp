@@ -431,6 +431,16 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
 }
 
+void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
+{
+    Q_UNUSED(socket);
+    // split the message
+    QStringList files = message.split('\n');
+    openFiles(files);
+    raise();
+    activateWindow();
+}
+
 void MainWindow::openFiles(const QStringList &files)
 {
     int index = 0;

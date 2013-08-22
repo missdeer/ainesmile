@@ -21,6 +21,21 @@ int main(int argc, char *argv[])
 
     SharedTools::QtSingleApplication a(QLatin1String("ainesmile"), argc, argv);
 
+    if (a.isRunning())
+    {
+        if (argc >= 2)
+        {
+            QString files;
+            for(int i = 1; i < argc; i++)
+            {
+                files.append(argv[i]);
+                files.append("\n");
+            }
+            a.sendMessage(files);
+        }
+        return 0;
+    }
+
     const int threadCount = QThreadPool::globalInstance()->maxThreadCount();
     QThreadPool::globalInstance()->setMaxThreadCount(qMax(4, 2 * threadCount));
 
@@ -84,6 +99,7 @@ int main(int argc, char *argv[])
         dlg.exec();
     }
 
+    QObject::connect(&a, SIGNAL(messageReceived(QString,QObject*)), &w, SLOT(onIPCMessageReceived(QString,QObject*)));
     QObject::connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
     return a.exec();
 }
