@@ -36,10 +36,13 @@ MainWindow::MainWindow(QWidget *parent) :
     setMenuItemChecked();
     setAcceptDrops(true);
     hideFeatures();
-#if defined(Q_OS_MAC) && QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if defined(Q_OS_MAC)
+    ui->actionRegistration->setMenuRole(QAction::ApplicationSpecificRole);
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     ui->actionAboutApp->setMenuRole(QAction::AboutRole);
     ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
     ui->actionExitApp->setMenuRole(QAction::QuitRole);
+#endif
 #endif
 }
 
