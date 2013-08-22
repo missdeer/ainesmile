@@ -30,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
+    connect(ui->tabWidget, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
+    connect(ui->tabWidgetSlave, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
+    connect(ui->tabWidgetSlave, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
+    connect(ui->tabWidgetSlave, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
 
     setActionShortcuts();
     setRecentFiles();
@@ -86,6 +90,15 @@ void MainWindow::dropEvent(QDropEvent *event)
     event->mimeData()->text();
 
     event->acceptProposedAction();
+}
+
+TabWidget *MainWindow::getFocusTabWidget()
+{
+    for (int i = 0; i < ui->tabWidget->count(); i++)
+    {
+        CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
+        Q_ASSERT(page);
+    }
 }
 
 void MainWindow::setActionShortcuts()
@@ -431,6 +444,36 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
 }
 
+void MainWindow::onExchangeTab()
+{
+    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+    QWidget* currentWidget = tabWidget->currentWidget();
+    int currentIndex = tabWidget->currentIndex();
+    QString currentText = tabWidget->tabText(currentIndex);
+    QString currentTabTooltip = tabWidget->tabToolTip(currentIndex);
+    tabWidget->removeTab(currentIndex);
+    TabWidget* targetTabWidget = ui->tabWidgetSlave;
+    if (tabWidget == ui->tabWidgetSlave)
+    {
+        targetTabWidget = ui->tabWidget;
+    }
+    if (targetTabWidget->isHidden())
+    {
+        targetTabWidget->setHidden(false);
+        QList<int> sizes;
+        sizes << ui->widget->width()/2
+                 << ui->widget->width() /2;
+        ui->splitterMain->setSizes(sizes);
+    }
+    int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
+    targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
+
+    if (tabWidget->count() == 0)
+    {
+        tabWidget->hide();
+    }
+}
+
 void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
 {
     Q_UNUSED(socket);
@@ -523,7 +566,8 @@ void MainWindow::onCurrentPageChanged(int index)
 
 void MainWindow::onCloseRequested(int index)
 {
-    CodeEditPage* page = dynamic_cast<CodeEditPage*>(ui->tabWidget->widget(index));
+    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(index));
     Q_ASSERT(page);
     if (!page->canClose())
     {
@@ -555,7 +599,7 @@ void MainWindow::onCloseRequested(int index)
     }
     else
     {
-        if (ui->tabWidget->count() == 1
+        if (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 1
                 && !page->isModified()
                 && !aboutToQuit_
                 && page->getFilePath().isEmpty())
@@ -565,7 +609,7 @@ void MainWindow::onCloseRequested(int index)
         }
     }
 
-    ui->tabWidget->removeTab(index);
+    tabWidget->removeTab(index);
     page->deleteLater();
 }
 

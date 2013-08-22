@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSignalMapper>
 #include <QList>
+#include "tabwidget.h"
 #include "recentfiles.h"
 #include "findreplacedialog.h"
 
@@ -29,6 +30,7 @@ protected:
     void dropEvent(QDropEvent *event);
 private:
 
+    TabWidget *getFocusTabWidget();
     void hideFeatures();
     void setActionShortcuts();
     void setRecentFiles();
@@ -38,6 +40,7 @@ private:
     void connectSignals(CodeEditPage* page);
 
 private slots:
+    void onExchangeTab();
     void onIPCMessageReceived(const QString &message, QObject *socket);
     void onCurrentPageChanged(int index);
     void onCloseRequested(int index);

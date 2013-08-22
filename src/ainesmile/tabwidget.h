@@ -3,6 +3,7 @@
 
 #include <QTabWidget>
 #include <QMouseEvent>
+#include <QMenu>
 
 class TabWidget : public QTabWidget
 {
@@ -12,9 +13,11 @@ public:
     
     void mousePressEvent(QMouseEvent * event);
 signals:
-    
+    void exchangeTab();
 public slots:
     
+private:
+    QMenu* contentMenu_;
 };
 
 #endif // TABWIDGET_H
