@@ -822,7 +822,7 @@ void MainWindow::on_actionNewFile_triggered()
 void MainWindow::on_actionToggleFullScreenMode_triggered()
 {
     static bool isMaximized = false;
-    isMaximized = isMaximized();
+    isMaximized = this->isMaximized();
     if (isFullScreen()) {
         if (isMaximized)
             showMaximized();
