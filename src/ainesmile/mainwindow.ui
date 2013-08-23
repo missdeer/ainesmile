@@ -58,6 +58,9 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="TabWidget" name="tabWidget" native="true">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
           <property name="documentMode" stdset="0">
            <bool>true</bool>
           </property>
@@ -66,6 +69,9 @@
           </property>
          </widget>
          <widget class="TabWidget" name="tabWidgetSlave" native="true">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
           <property name="documentMode" stdset="0">
            <bool>true</bool>
           </property>
@@ -86,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
