@@ -4,6 +4,7 @@
 #include <QWidget>
 //#include <QWebView>
 #include <QSplitter>
+#include <QFocusEvent>
 #include "scintillaconfig.h"
 
 class CodeEditPage : public QWidget
@@ -46,6 +47,8 @@ public:
     void setShowEndOfLine(bool enabled);
     void setShowIndentGuide(bool enabled);
     void setShowWrapSymbol(bool enabled);
+
+    void focusInEvent(QFocusEvent * event);
 signals:
     void focusIn();
     void copyAvailableChanged();
