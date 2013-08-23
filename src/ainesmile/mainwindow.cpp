@@ -49,6 +49,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionExitApp->setMenuRole(QAction::QuitRole);
 #endif
 #endif
+    QList<int> sizes;
+    sizes << ui->widget->width()/2 << ui->widget->width()/2;
+    ui->splitterMain->setSizes(sizes);
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 }
