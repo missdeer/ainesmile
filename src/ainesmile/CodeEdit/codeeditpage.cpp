@@ -214,18 +214,20 @@ void CodeEditPage::focusInEvent(QFocusEvent *event)
 
 void CodeEditPage::updateUI()
 {
-//    if (m_sciControlMaster->focus() || m_sciControlSlave->focus())
-//    {
-//        if (!focusIn_)
-//        {
-//            focusIn_ = true;
-//            emit focusIn();
-//        }
-//    }
-//    else
-//    {
-//        focusIn_ = false;
-//    }
+    if (!focusIn_
+            && (m_sciControlMaster->focus()
+            || m_sciControlSlave->focus()
+            || QApplication::focusWidget() == m_sciControlMaster
+            || QApplication::focusWidget() == m_sciControlSlave
+            || QApplication::focusWidget() == this))
+    {
+        focusIn_ = true;
+        emit focusIn();
+    }
+    else
+    {
+        focusIn_ = false;
+    }
     if (m_lastCopyAvailable != canCopy())
     {
         m_lastCopyAvailable = !m_lastCopyAvailable;
