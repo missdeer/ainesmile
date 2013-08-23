@@ -533,6 +533,7 @@ void MainWindow::onExchangeTab()
         targetTabWidget->setHidden(false);
     int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
     targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
+    targetTabWidget->setCurrentIndex(targetIndex);
 
     if (tabWidget->count() == 0)
         tabWidget->hide();
