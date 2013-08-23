@@ -507,6 +507,13 @@ void MainWindow::doCloseRequested(TabWidget *tabWidget, int index)
     }
 }
 
+void MainWindow::onCodeEditPageFocusIn()
+{
+    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    connectSignals(page);
+    updateUI(page);
+}
+
 void MainWindow::onExchangeTab()
 {
     TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
@@ -593,6 +600,7 @@ void MainWindow::openFiles(const QStringList &files)
             {
                 // create an edit page, open the file
                 CodeEditPage* codeeditpage = new CodeEditPage(this);
+                connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
                 index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
                 connectSignals(codeeditpage);
                 updateUI(codeeditpage);
@@ -613,6 +621,7 @@ void MainWindow::newDocument()
 {
     static int count = 1;
     CodeEditPage* codeeditpage = new CodeEditPage(this);
+    connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
     QString title = QString(tr("Untitled%1")).arg(count);
     TabWidget* tabWidget = getFocusTabWidget();
     if (tabWidget->isHidden())
@@ -739,6 +748,7 @@ void MainWindow::onRecentFileTriggered(const QString & file)
             // create an edit page, open the file
             TabWidget* tabWidget = getFocusTabWidget();
             CodeEditPage* codeeditpage = new CodeEditPage(this);
+            connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
             int index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
             connectSignals(codeeditpage);
             updateUI(codeeditpage);

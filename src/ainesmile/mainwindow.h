@@ -41,6 +41,7 @@ private:
     void doCloseRequested(TabWidget* tabWidget, int index);
 
 private slots:
+    void onCodeEditPageFocusIn();
     void onExchangeTab();
     void onIPCMessageReceived(const QString &message, QObject *socket);
     void onCurrentPageChanged(int index);

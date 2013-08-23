@@ -14,6 +14,7 @@ private:
     bool m_lastPasteAvailable;
     bool m_lastRedoAvailable;
     bool m_lastUndoAvailable;
+    bool focusIn_;
     QSplitter* m_splitter;
     ScintillaEdit* m_sciControlMaster;
     ScintillaEdit* m_sciControlSlave;
@@ -46,6 +47,7 @@ public:
     void setShowIndentGuide(bool enabled);
     void setShowWrapSymbol(bool enabled);
 signals:
+    void focusIn();
     void copyAvailableChanged();
     void pasteAvailableChanged();
     void redoAvailableChanged();

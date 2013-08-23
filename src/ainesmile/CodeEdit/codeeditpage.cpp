@@ -200,6 +200,18 @@ void CodeEditPage::setShowWrapSymbol(bool enabled)
 
 void CodeEditPage::updateUI()
 {
+    if (m_sciControlMaster->focus() || m_sciControlSlave->focus())
+    {
+        if (!focusIn_)
+        {
+            focusIn_ = true;
+            emit focusIn();
+        }
+    }
+    else
+    {
+        focusIn_ = false;
+    }
     if (m_lastCopyAvailable != canCopy())
     {
         m_lastCopyAvailable = !m_lastCopyAvailable;
