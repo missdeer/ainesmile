@@ -105,13 +105,8 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 TabWidget *MainWindow::getFocusTabWidget()
 {
-    for (int i = 0; i < ui->tabWidgetSlave->count(); i++)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
-        Q_ASSERT(page);
-        if (page->focus())
-            return ui->tabWidgetSlave;
-    }
+    if (ui->tabWidgetSlave->focus())
+        return ui->tabWidgetSlave;
     return ui->tabWidget;
 }
 
@@ -534,6 +529,10 @@ void MainWindow::onExchangeTab()
     int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
     targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
     targetTabWidget->setCurrentIndex(targetIndex);
+    targetTabWidget->setFocus();
+    CodeEditPage* codeeditpage = qobject_cast<CodeEditPage*>(currentWidget);
+    codeeditpage->setFocus();
+    codeeditpage->grabFocus();
 
     if (tabWidget->count() == 0)
         tabWidget->hide();
@@ -554,8 +553,6 @@ void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
 void MainWindow::openFiles(const QStringList &files)
 {
     TabWidget* tabWidget = getFocusTabWidget();
-    if (tabWidget->isHidden())
-        tabWidget->setHidden(false);
     int index = 0;
     foreach(const QString& file, files)
     {
@@ -563,56 +560,10 @@ void MainWindow::openFiles(const QStringList &files)
         if (QFile::exists(fileInfo.absoluteFilePath()))
         {
             // check if the file has been opened already
-            bool bExists = false;
-            int count = ui->tabWidget->count();
-            for (int i = 0; i< count; i++)
-            {
-                CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
-                Q_ASSERT(page);
-                const QString& pageFileName = page->getFilePath();
-                if (!pageFileName.isEmpty())
-                {
-                    QFileInfo pageFileInfo(pageFileName);
-                    if (pageFileInfo == fileInfo)
-                    {
-                        bExists = true;
-                        break;
-                    }
-                }
-            }
-            if (!bExists)
-            {
-                count = ui->tabWidgetSlave->count();
-                for (int i = 0; i< count; i++)
-                {
-                    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
-                    Q_ASSERT(page);
-                    const QString& pageFileName = page->getFilePath();
-                    if (!pageFileName.isEmpty())
-                    {
-                        QFileInfo pageFileInfo(pageFileName);
-                        if (pageFileInfo == fileInfo)
-                        {
-                            bExists = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!bExists)
+            if (!ui->tabWidget->fileExists(fileInfo) && !ui->tabWidgetSlave->fileExists(fileInfo))
             {
                 // create an edit page, open the file
-                CodeEditPage* codeeditpage = new CodeEditPage(this);
-                connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
-                index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
-                connectSignals(codeeditpage);
-                updateUI(codeeditpage);
-                codeeditpage->openFile(fileInfo.absoluteFilePath());
-                tabWidget->setTabToolTip(index, fileInfo.absoluteFilePath());
-                // log into recent file list
-                if (rf_.addFile(fileInfo.absoluteFilePath()))
-                    updateRecentFilesMenuItems();
+                index = tabWidget->openFile(fileInfo.absoluteFilePath());
             }
         }
     }
@@ -624,20 +575,9 @@ void MainWindow::openFiles(const QStringList &files)
 void MainWindow::newDocument()
 {
     static int count = 1;
-    CodeEditPage* codeeditpage = new CodeEditPage(this);
-    connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
     QString title = QString(tr("Untitled%1")).arg(count);
     TabWidget* tabWidget = getFocusTabWidget();
-    if (tabWidget->isHidden())
-        tabWidget->setHidden(false);
-    int index = tabWidget->addTab(codeeditpage, QIcon(), title);
-    tabWidget->setCurrentIndex(index);
-    count++;
-    connectSignals(codeeditpage);
-    updateUI(codeeditpage);
-    tabWidget->setFocus();
-    codeeditpage->setFocus();
-    codeeditpage->grabFocus();
+    tabWidget->newDocument(title);
 }
 
 
@@ -708,57 +648,11 @@ void MainWindow::onRecentFileTriggered(const QString & file)
     if (QFile::exists(fileInfo.absoluteFilePath()))
     {
         // check if the file has been opened already
-        bool bExists = false;
-        int count = ui->tabWidget->count();
-        for (int i = 0; i< count; i++)
-        {
-            CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
-            Q_ASSERT(page);
-            const QString& pageFileName = page->getFilePath();
-            if (!pageFileName.isEmpty())
-            {
-                QFileInfo pageFileInfo(pageFileName);
-                if (pageFileInfo == fileInfo)
-                {
-                    bExists = true;
-                    ui->tabWidget->setCurrentIndex(i);
-                    break;
-                }
-            }
-        }
-        if (!bExists)
-        {
-            count = ui->tabWidgetSlave->count();
-            for (int i = 0; i< count; i++)
-            {
-                CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
-                Q_ASSERT(page);
-                const QString& pageFileName = page->getFilePath();
-                if (!pageFileName.isEmpty())
-                {
-                    QFileInfo pageFileInfo(pageFileName);
-                    if (pageFileInfo == fileInfo)
-                    {
-                        bExists = true;
-                        ui->tabWidgetSlave->setCurrentIndex(i);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!bExists)
+        if (!ui->tabWidget->fileExists(fileInfo) && !ui->tabWidgetSlave->fileExists(fileInfo))
         {
             // create an edit page, open the file
             TabWidget* tabWidget = getFocusTabWidget();
-            CodeEditPage* codeeditpage = new CodeEditPage(this);
-            connect(codeeditpage, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
-            int index = tabWidget->addTab(codeeditpage, QIcon(), fileInfo.fileName());
-            connectSignals(codeeditpage);
-            updateUI(codeeditpage);
-            codeeditpage->openFile(fileInfo.absoluteFilePath());
-            tabWidget->setTabToolTip(index, fileInfo.absoluteFilePath());
-            tabWidget->setCurrentIndex(index);
+            tabWidget->openFile(fileInfo.absoluteFilePath());
         }
     }
 }
