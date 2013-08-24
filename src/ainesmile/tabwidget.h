@@ -22,6 +22,7 @@ public:
     bool fileExists(const QString& filePath);
     bool fileExists(const QFileInfo& fileInfo);
     int openFile(const QString& filePath);
+    void openFiles(const QStringList& files);
     int newDocument(const QString& title);
     void saveCurrentFile();
     void saveAsCurrentFile();

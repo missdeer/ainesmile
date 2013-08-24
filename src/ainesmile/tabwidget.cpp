@@ -156,6 +156,27 @@ int TabWidget::openFile(const QString &filePath)
     return index;
 }
 
+void TabWidget::openFiles(const QStringList &files)
+{
+    int index = 0;
+    foreach(const QString& file, files)
+    {
+        QFileInfo fileInfo(file);
+        if (QFile::exists(fileInfo.absoluteFilePath()))
+        {
+            // check if the file has been opened already
+            if (!fileExists(fileInfo) && !theOtherSide_->fileExists(fileInfo))
+            {
+                // create an edit page, open the file
+                index = openFile(fileInfo.absoluteFilePath());
+            }
+        }
+    }
+
+    if (!files.isEmpty())
+        setCurrentIndex(index);
+}
+
 int TabWidget::newDocument(const QString& title)
 {
     CodeEditPage* codeeditpage = new CodeEditPage(this);

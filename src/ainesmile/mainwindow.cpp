@@ -509,23 +509,7 @@ void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
 void MainWindow::openFiles(const QStringList &files)
 {
     TabWidget* tabWidget = getFocusTabWidget();
-    int index = 0;
-    foreach(const QString& file, files)
-    {
-        QFileInfo fileInfo(file);
-        if (QFile::exists(fileInfo.absoluteFilePath()))
-        {
-            // check if the file has been opened already
-            if (!ui->tabWidget->fileExists(fileInfo) && !ui->tabWidgetSlave->fileExists(fileInfo))
-            {
-                // create an edit page, open the file
-                index = tabWidget->openFile(fileInfo.absoluteFilePath());
-            }
-        }
-    }
-
-    if (!files.isEmpty())
-        tabWidget->setCurrentIndex(index);
+    tabWidget->openFiles(files);
 }
 
 void MainWindow::newDocument()
@@ -620,18 +604,27 @@ void MainWindow::onRecentProjectTriggered(const QString & project)
 
 void MainWindow::onActivateTabClicked(int index)
 {
-//    Q_ASSERT(index < ui->tabWidget->count());
-//    ui->tabWidget->setCurrentIndex(index);
+    if (index >= ui->tabWidget->count())
+        ui->tabWidgetSlave->setCurrentIndex(index - ui->tabWidget->count());
+    else
+        ui->tabWidget->setCurrentIndex(index);
 }
 
 void MainWindow::onCloseTabClicked(const QList<int>& fileList)
 {
-//    for (int i = fileList.size() -1; i >= 0; i--)
-//    {
-//        int index = fileList.at(i);
-//        ui->tabWidget->setCurrentIndex(index);
-//        onCloseRequested(index);
-//    }
+    for (int i = fileList.size() -1; i >= 0; i--)
+    {
+        int index = fileList.at(i);
+        if (index >= ui->tabWidget->count())
+        {
+            index -= ui->tabWidget->count();
+            ui->tabWidgetSlave->doCloseRequested(index);
+        }
+        else
+        {
+            ui->tabWidget->doCloseRequested(index);
+        }
+    }
 }
 
 void MainWindow::onSaveTabClicked(const QList<int>& fileList)
@@ -639,38 +632,16 @@ void MainWindow::onSaveTabClicked(const QList<int>& fileList)
     for (int i = fileList.size() -1; i >= 0; i--)
     {
         int index = fileList.at(i);
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-        QString filePath = page->getFilePath();
-
-        // do save
-        bool resetTabText = false;
-        if (!QFile::exists(filePath))
+        if (index >= ui->tabWidget->count())
         {
-            QFileDialog::Options options;
-            QString selectedFilter;
-            filePath = QFileDialog::getSaveFileName(this,
-                                                    tr("ainesmile Save File To"),
-                                                    tr(""),
-                                                    tr("All Files (*);;Text Files (*.txt)"),
-                                                    &selectedFilter,
-                                                    options);
-            if (!filePath.isEmpty())
-                resetTabText = true;
+            index -= ui->tabWidget->count();
+            ui->tabWidgetSlave->setCurrentIndex(index);
+            ui->tabWidgetSlave->saveCurrentFile();
         }
-
-        if (!filePath.isEmpty())
+        else
         {
-            page->saveFile(filePath);
-
-            if (rf_.addFile(filePath))
-                onUpdateRecentFilesMenuItems();
-        }
-
-        if (resetTabText)
-        {
-            ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-            ui->tabWidget->setTabToolTip(index, filePath);
+            ui->tabWidget->setCurrentIndex(index);
+            ui->tabWidget->saveCurrentFile();
         }
     }
 }
