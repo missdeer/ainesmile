@@ -1,8 +1,8 @@
 #if defined(WIN32)
 #include <Windows.h>
 #endif
+#include <QtCore>
 #include <QFileDialog>
-#include <QMdiSubWindow>
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -32,9 +32,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
     connect(ui->tabWidget, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
+    connect(ui->tabWidget, SIGNAL(updateRecentFiles()), this, SLOT(onUpdateRecentFilesMenuItems()));
+    connect(ui->tabWidget, SIGNAL(codeEditPageCreated(CodeEditPage*)), this, SLOT(onCodeEditPageCreated(CodeEditPage*)));
     connect(ui->tabWidgetSlave, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
     connect(ui->tabWidgetSlave, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
     connect(ui->tabWidgetSlave, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
+    connect(ui->tabWidgetSlave, SIGNAL(updateRecentFiles()), this, SLOT(onUpdateRecentFilesMenuItems()));
+    connect(ui->tabWidgetSlave, SIGNAL(codeEditPageCreated(CodeEditPage*)), this, SLOT(onCodeEditPageCreated(CodeEditPage*)));
+    ui->tabWidget->setTheOtherSide(ui->tabWidgetSlave);
+    ui->tabWidget->setRecentFiles(&rf_);
+    ui->tabWidgetSlave->setTheOtherSide(ui->tabWidget);
+    ui->tabWidgetSlave->setRecentFiles(&rf_);
 
     setActionShortcuts();
     setRecentFiles();
@@ -65,18 +73,11 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     aboutToQuit_ = true;
-    // query all pages can close
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidget, index);
-    }
+    ui->tabWidget->setAboutToQuit(aboutToQuit_);
+    ui->tabWidgetSlave->setAboutToQuit(aboutToQuit_);
 
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidgetSlave, index);
-    }
+    ui->tabWidget->closeAll();
+    ui->tabWidgetSlave->closeAll();
 
     if (ui->tabWidget->count() + ui->tabWidgetSlave->count() != 0)
     {
@@ -87,6 +88,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->accept();
     }
     aboutToQuit_ = false;
+    ui->tabWidget->setAboutToQuit(aboutToQuit_);
+    ui->tabWidgetSlave->setAboutToQuit(aboutToQuit_);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -172,7 +175,7 @@ void MainWindow::setRecentFiles()
     {
         connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
     }
-    updateRecentFilesMenuItems();
+    onUpdateRecentFilesMenuItems();
 }
 
 void MainWindow::setMenuItemChecked()
@@ -188,7 +191,7 @@ void MainWindow::setMenuItemChecked()
     ui->actionShowWrapSymbol->setChecked(enabled);
 }
 
-void MainWindow::updateRecentFilesMenuItems()
+void MainWindow::onUpdateRecentFilesMenuItems()
 {
     Q_ASSERT(recentFileSignalMapper_);
     Q_ASSERT(recentProjectSignalMapper_);
@@ -453,56 +456,9 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
 }
 
-void MainWindow::doCloseRequested(TabWidget *tabWidget, int index)
+void MainWindow::onCodeEditPageCreated(CodeEditPage *page)
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(index));
-    Q_ASSERT(page);
-    if (!page->canClose())
-    {
-        if (QMessageBox::question(this, tr("Confirm"),
-                                  tr("This document is not saved, save it now?"),
-                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-        {
-            // save to file
-            QString filePath = page->getFilePath();
-            if (!QFile::exists(filePath))
-            {
-                QFileDialog::Options options;
-                QString selectedFilter;
-                filePath = QFileDialog::getSaveFileName(this,
-                                                        tr("ainesmile Save File To"),
-                                                        tr(""),
-                                                        tr("All Files (*);;Text Files (*.txt)"),
-                                                        &selectedFilter,
-                                                        options);
-            }
-
-            if (filePath.isEmpty())
-                return; // don't close this tab
-
-            page->saveFile(filePath);
-            if (rf_.addFile(filePath))
-                updateRecentFilesMenuItems();
-        }
-    }
-    else
-    {
-        if (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 1
-                && !page->isModified()
-                && !aboutToQuit_
-                && page->getFilePath().isEmpty())
-        {
-            // the only unmodified page, just skip this action
-            return;
-        }
-    }
-
-    tabWidget->removeTab(index);
-    page->deleteLater();
-    if (tabWidget->count() == 0)
-    {
-        tabWidget->hide();
-    }
+    connect(page, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
 }
 
 void MainWindow::onCodeEditPageFocusIn()
@@ -575,7 +531,7 @@ void MainWindow::openFiles(const QStringList &files)
 void MainWindow::newDocument()
 {
     static int count = 1;
-    QString title = QString(tr("Untitled%1")).arg(count);
+    QString title = QString(tr("Untitled%1")).arg(count++);
     TabWidget* tabWidget = getFocusTabWidget();
     tabWidget->newDocument(title);
 }
@@ -602,7 +558,7 @@ void MainWindow::onCurrentPageChanged(int index)
 void MainWindow::onCloseRequested(int index)
 {
     TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
-    doCloseRequested(tabWidget, index);
+    tabWidget->doCloseRequested(index);
 }
 
 void MainWindow::onCurrentDocumentChanged()
@@ -708,7 +664,7 @@ void MainWindow::onSaveTabClicked(const QList<int>& fileList)
             page->saveFile(filePath);
 
             if (rf_.addFile(filePath))
-                updateRecentFilesMenuItems();
+                onUpdateRecentFilesMenuItems();
         }
 
         if (resetTabText)
@@ -758,73 +714,19 @@ void MainWindow::on_actionExitApp_triggered()
 
 void MainWindow::on_actionSaveFile_triggered()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
-    Q_ASSERT(page);
-    QString filePath = page->getFilePath();
-    bool resetTabText = false;
-    if (!QFile::exists(filePath))
-    {
-        QFileDialog::Options options;
-        QString selectedFilter;
-        filePath = QFileDialog::getSaveFileName(this,
-                                     tr("ainesmile Save File To"),
-                                     tr(""),
-                                     tr("All Files (*);;Text Files (*.txt)"),
-                                     &selectedFilter,
-                                     options);
-        if (!filePath.isEmpty())
-            resetTabText = true;
-    }
-
-    if (!filePath.isEmpty())
-        page->saveFile(filePath);
-
-    if (resetTabText)
-    {
-        TabWidget* tabWidget = getFocusTabWidget();
-        int index = tabWidget->currentIndex();
-        tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-        tabWidget->setTabToolTip(index, filePath);
-    }
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->saveCurrentFile();
 }
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->currentWidget());
-    Q_ASSERT(page);
-
-    QFileDialog::Options options;
-    QString selectedFilter;
-    QString filePath = QFileDialog::getSaveFileName(this,
-                                            tr("ainesmile Save File To"),
-                                            tr(""),
-                                            tr("All Files (*);;Text Files (*.txt)"),
-                                            &selectedFilter,
-                                            options);
-    if (!filePath.isEmpty())
-    {
-        page->saveFile(filePath);
-
-        TabWidget* tabWidget = getFocusTabWidget();
-        int index = tabWidget->currentIndex();
-        tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-        tabWidget->setTabToolTip(index, filePath);
-
-        if (rf_.addFile(filePath))
-            updateRecentFilesMenuItems();
-    }
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->saveAsCurrentFile();
 }
 
 void MainWindow::on_actionHelpContent_triggered()
 {
-    QDir dir = QApplication::applicationDirPath();
-#if defined(Q_WS_MAC)
-    dir.cdUp();
-    dir.cd("Docs");
-#endif
-    QString helpFilePath = dir.absolutePath();
-    helpFilePath.append("/manual.pdf");
-    QDesktopServices::openUrl(QUrl("file://" + helpFilePath));
+    QDesktopServices::openUrl(QUrl("https://bitbucket.org/missdeer/ainesmile/wiki/Home"));
 }
 
 void MainWindow::on_actionAboutApp_triggered()
@@ -845,65 +747,28 @@ void MainWindow::on_actionAinesmileProductPage_triggered()
 
 void MainWindow::on_actionSaveAll_triggered()
 {
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-        QString filePath = page->getFilePath();
-        bool resetTabText = false;
-        if (!QFile::exists(filePath))
-        {
-            QFileDialog::Options options;
-            QString selectedFilter;
-            filePath = QFileDialog::getSaveFileName(this,
-                                         tr("ainesmile Save File To"),
-                                         tr(""),
-                                         tr("All Files (*);;Text Files (*.txt)"),
-                                         &selectedFilter,
-                                         options);
-            if (!filePath.isEmpty())
-                resetTabText = true;
-        }
-
-        if (!filePath.isEmpty())
-            page->saveFile(filePath);
-
-        if (resetTabText)
-        {
-            int index = ui->tabWidget->currentIndex();
-            ui->tabWidget->setTabText(index, QFileInfo(filePath).fileName());
-            ui->tabWidget->setTabToolTip(index, filePath);
-        }
-    }
+    ui->tabWidget->saveAll();
+    ui->tabWidgetSlave->saveAll();
 }
 
 void MainWindow::on_actionCloseAll_triggered()
 {
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidget, index);
-    }
-
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidgetSlave, index);
-    }
+    ui->tabWidget->closeAll();
+    ui->tabWidgetSlave->closeAll();
 }
 
 void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 {
-    int currentIndex = ui->tabWidget->currentIndex();
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index > currentIndex; index--)
+    TabWidget* tabWidget = getFocusTabWidget();
+    if (ui->tabWidget == tabWidget)
     {
-        doCloseRequested(ui->tabWidget, index);
+        ui->tabWidget->closeAllButActive();
+        ui->tabWidgetSlave->closeAll();
     }
-    while (ui->tabWidget->count() > 1)
+    else
     {
-        doCloseRequested(ui->tabWidget, 0);
+        ui->tabWidgetSlave->closeAllButActive();
+        ui->tabWidget->closeAll();
     }
 }
 
@@ -953,23 +818,15 @@ void MainWindow::on_actionAlwaysOnTop_triggered()
 
 void MainWindow::on_actionCloseAllDocuments_triggered()
 {
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidget, index);
-    }
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        doCloseRequested(ui->tabWidgetSlave, index);
-    }
+    ui->tabWidget->closeAll();
+    ui->tabWidgetSlave->closeAll();
 }
 
 void MainWindow::on_actionClose_triggered()
 {
     TabWidget* tabWidget = getFocusTabWidget();
     int currentIndex = tabWidget->currentIndex();
-    doCloseRequested(tabWidget, currentIndex);
+    tabWidget->doCloseRequested(currentIndex);
 }
 
 void MainWindow::on_actionFindInFiles_triggered()
@@ -1035,22 +892,8 @@ void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
     boost::property_tree::ptree& pt = Config::instance()->pt();
     pt.put("show.white_space_and_tab", enabled);
 
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowWhiteSpaceAndTAB(enabled);
-    }
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowWhiteSpaceAndTAB(enabled);
-    }
+    ui->tabWidget->setShowWhiteSpaceAndTAB(enabled);
+    ui->tabWidgetSlave->setShowWhiteSpaceAndTAB(enabled);
 }
 
 void MainWindow::on_actionShowEndOfLine_triggered()
@@ -1059,22 +902,8 @@ void MainWindow::on_actionShowEndOfLine_triggered()
     boost::property_tree::ptree& pt = Config::instance()->pt();
     pt.put("show.end_of_line", enabled);
 
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowEndOfLine(enabled);
-    }
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowEndOfLine(enabled);
-    }
+    ui->tabWidget->setShowEndOfLine(enabled);
+    ui->tabWidgetSlave->setShowEndOfLine(enabled);
 }
 
 void MainWindow::on_actionShowIndentGuide_triggered()
@@ -1083,22 +912,8 @@ void MainWindow::on_actionShowIndentGuide_triggered()
     boost::property_tree::ptree& pt = Config::instance()->pt();
     pt.put("show.indent_guide", enabled);
 
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowIndentGuide(enabled);
-    }
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowIndentGuide(enabled);
-    }
+    ui->tabWidget->setShowIndentGuide(enabled);
+    ui->tabWidgetSlave->setShowIndentGuide(enabled);
 }
 
 void MainWindow::on_actionShowWrapSymbol_triggered()
@@ -1107,22 +922,8 @@ void MainWindow::on_actionShowWrapSymbol_triggered()
     boost::property_tree::ptree& pt = Config::instance()->pt();
     pt.put("show.wrap_symbol", enabled);
 
-    int count = ui->tabWidget->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowWrapSymbol(enabled);
-    }
-    count = ui->tabWidgetSlave->count();
-    for (int index = count -1; index >=0; index--)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(index));
-        Q_ASSERT(page);
-
-        page->setShowWrapSymbol(enabled);
-    }
+    ui->tabWidget->setShowWrapSymbol(enabled);
+    ui->tabWidgetSlave->setShowWrapSymbol(enabled);
 }
 
 void MainWindow::on_actionPreferences_triggered()
@@ -1143,26 +944,10 @@ void MainWindow::on_actionPluginManager_triggered()
 
 void MainWindow::on_actionWindowsList_triggered()
 {
-    WindowListDialog dlg(this);
     QStringList fileList;
-    for (int i = 0; i < ui->tabWidget->count(); i++)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidget->widget(i));
-        Q_ASSERT(page);
-        if (!page->getFilePath().isEmpty())
-            fileList << page->getFilePath();
-        else
-            fileList << ui->tabWidget->tabText(i);
-    }
-    for (int i = 0; i < ui->tabWidgetSlave->count(); i++)
-    {
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(ui->tabWidgetSlave->widget(i));
-        Q_ASSERT(page);
-        if (!page->getFilePath().isEmpty())
-            fileList << page->getFilePath();
-        else
-            fileList << ui->tabWidgetSlave->tabText(i);
-    }
+    ui->tabWidget->getFileList(fileList);
+    ui->tabWidgetSlave->getFileList(fileList);
+    WindowListDialog dlg(this);
     dlg.setFileList(fileList);
     connect(&dlg, SIGNAL(activateTab(int)), this, SLOT(onActivateTabClicked(int)));
     connect(&dlg, SIGNAL(closeTab(const QList<int> &)), this, SLOT(onCloseTabClicked(const QList<int> &)));

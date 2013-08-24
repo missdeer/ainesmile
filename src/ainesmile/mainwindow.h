@@ -35,12 +35,13 @@ private:
     void setActionShortcuts();
     void setRecentFiles();
     void setMenuItemChecked();
-    void updateRecentFilesMenuItems();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
     void doCloseRequested(TabWidget* tabWidget, int index);
 
 private slots:
+    void onCodeEditPageCreated(CodeEditPage* page);
+    void onUpdateRecentFilesMenuItems();
     void onCodeEditPageFocusIn();
     void onExchangeTab();
     void onIPCMessageReceived(const QString &message, QObject *socket);

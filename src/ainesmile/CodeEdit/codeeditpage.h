@@ -48,7 +48,7 @@ public:
     void setShowIndentGuide(bool enabled);
     void setShowWrapSymbol(bool enabled);
 
-    void focusInEvent(QFocusEvent * event);
+//    void focusInEvent(QFocusEvent * event);
 signals:
     void focusIn();
     void copyAvailableChanged();

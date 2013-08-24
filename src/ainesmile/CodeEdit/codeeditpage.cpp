@@ -1,4 +1,6 @@
+#include <QtCore>
 #include <QApplication>
+#include <QDateTime>
 #include <QFile>
 #include <QVBoxLayout>
 #include <QFileInfo>
@@ -198,19 +200,20 @@ void CodeEditPage::setShowWrapSymbol(bool enabled)
     m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
-void CodeEditPage::focusInEvent(QFocusEvent *event)
-{
-    if (event->gotFocus())
-    {
-        focusIn_ = true;
-        emit focusIn();
-    }
-    if (event->lostFocus())
-    {
-        focusIn_ = false;
-    }
-    event->ignore();
-}
+//void CodeEditPage::focusInEvent(QFocusEvent *event)
+//{
+//    qDebug() << __FUNCTION__;
+//    if (event->gotFocus())
+//    {
+//        focusIn_ = true;
+//        emit focusIn();
+//    }
+//    if (event->lostFocus())
+//    {
+//        focusIn_ = false;
+//    }
+//    event->ignore();
+//}
 
 void CodeEditPage::updateUI()
 {
