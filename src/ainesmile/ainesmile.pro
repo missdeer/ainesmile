@@ -16,6 +16,12 @@ TEMPLATE = app
 include(../../Boost.pri)
 include(../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
 
+
+PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)
+
+macx:INSTALLER_NAME = "ainesmile-$${QTCREATOR_VERSION}"
+else:INSTALLER_NAME = "ainesmile-$${PATTERN}"
+
 INCLUDEPATH += CodeEdit \
     Dialogs \
     ../../3rdparty/rapidxml-1.13 \
@@ -103,6 +109,15 @@ LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
 
 # Mac OS X icon
 macx: {
+    # this should be very temporary:
+    MENU_NIB = $$(MENU_NIB_FILE)
+    isEmpty(MENU_NIB): MENU_NIB = "FATAT_SET_MENU_NIB_FILE_ENV"
+    copy_menu_nib_installer.commands = cp -R \"$$MENU_NIB\" \"$${INSTALLER_NAME}.app/Contents/Resources\"
+
+    codesign_installer.commands = codesign -s \"$(SIGNING_IDENTITY)\" $(SIGNING_FLAGS) \"$${INSTALLER_NAME}.app\"
+    dmg_installer.commands = hdiutil create -srcfolder "$${INSTALLER_NAME}.app" -volname \"Qt Creator\" -format UDBZ "ainesmile-$${PATTERN}-installer.dmg" -ov -scrub -stretch 2g
+    QMAKE_EXTRA_TARGETS += codesign_installer dmg_installer copy_menu_nib_installer
+
 QT += opengl
 LIBS += -F ../../3rdparty/scintilla/bin -framework ScintillaEdit \
     -framework CoreFoundation \

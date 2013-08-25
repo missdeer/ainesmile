@@ -1,12 +1,19 @@
-
 #include "qtsingleapplication.h"
-//#include <QApplication>
 #include <QNetworkProxy>
 #include <QThreadPool>
 #include <QStringList>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include "config.h"
 #include "stupidcheck.h"
 #include "nagdialog.h"
 #include "mainwindow.h"
+
+#ifdef Q_OS_MAC
+#  define SHARE_PATH "/../Resources"
+#else
+#  define SHARE_PATH "/../share/ainesmile"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -35,6 +42,55 @@ int main(int argc, char *argv[])
         }
         return 0;
     }
+
+    QTranslator translator;
+    QTranslator qtTranslator;
+    QStringList uiLanguages;
+// uiLanguages crashes on Windows with 4.8.0 release builds
+#if (QT_VERSION >= 0x040801) || (QT_VERSION >= 0x040800 && !defined(Q_OS_WIN))
+    uiLanguages = QLocale::system().uiLanguages();
+#else
+    uiLanguages << QLocale::system().name();
+#endif
+    boost::property_tree::ptree& pt = Config::instance()->pt();
+    QString overrideLanguage(pt.get<std::string>("General/OverrideLanguage", "").c_str());
+    if (!overrideLanguage.isEmpty())
+        uiLanguages.prepend(overrideLanguage);
+    const QString &ainesmileTrPath = QCoreApplication::applicationDirPath()
+            + QLatin1String(SHARE_PATH "/translations");
+    foreach (QString locale, uiLanguages)
+    {
+#if (QT_VERSION >= 0x050000)
+        locale = QLocale(locale).name();
+#else
+        locale.replace(QLatin1Char('-'), QLatin1Char('_')); // work around QTBUG-25973
+#endif
+        if (translator.load(QLatin1String("ainesmile_") + locale, ainesmileTrPath))
+        {
+            const QString &qtTrPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+            const QString &qtTrFile = QLatin1String("qt_") + locale;
+            // Binary installer puts Qt tr files into aiensmileTrPath
+            if (qtTranslator.load(qtTrFile, qtTrPath) || qtTranslator.load(qtTrFile, ainesmileTrPath))
+            {
+                a.installTranslator(&translator);
+                a.installTranslator(&qtTranslator);
+                a.setProperty("ainesmile_locale", locale);
+                break;
+            }
+            translator.load(QString()); // unload()
+        }
+        else if (locale == QLatin1String("C") /* overrideLanguage == "English" */)
+        {
+            // use built-in
+            break;
+        }
+        else if (locale.startsWith(QLatin1String("en")) /* "English" is built-in */)
+        {
+            // use built-in
+            break;
+        }
+    }
+
 
     const int threadCount = QThreadPool::globalInstance()->maxThreadCount();
     QThreadPool::globalInstance()->setMaxThreadCount(qMax(4, 2 * threadCount));
