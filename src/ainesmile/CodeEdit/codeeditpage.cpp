@@ -103,17 +103,25 @@ void CodeEditPage::saveFile(const QString &filePath)
         m_sc.initEditorStyle(m_sciControlSlave, filePath);
     }
 
-    QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (m_sciControlMaster->modify() || saveFileInfo != fileInfo)
     {
-        int len = m_sciControlMaster->textLength();
-        qint64 size = file.write(m_sciControlMaster->getText(len));
-        file.close();
-
-        if (size != len)
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
-            QMessageBox::warning(this, tr("Saving file failed:"),
-                                 tr("Not all data is saved to file."));
+            int len = m_sciControlMaster->textLength();
+            qint64 size = file.write(m_sciControlMaster->getText(len));
+            file.close();
+
+            if (size != len)
+            {
+                QMessageBox::warning(this, tr("Saving file failed:"),
+                                     tr("Not all data is saved to file."));
+            }
+            else
+            {
+                m_sciControlMaster->setSavePoint();
+                m_sciControlSlave->setSavePoint();
+            }
         }
     }
 }
