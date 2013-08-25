@@ -16,6 +16,20 @@ RecentFiles::~RecentFiles()
     sync();
 }
 
+void RecentFiles::replaceFile(const QString &originalFile, const QString &newFile)
+{
+    QFileInfo fileInfo(originalFile);
+    for (QStringList::Iterator it = files_.begin(); files_.end() != it; ++it)
+    {
+        QFileInfo fi(*it);
+        if (fi == fileInfo)
+        {
+            *it = newFile;
+            break;
+        }
+    }
+}
+
 bool RecentFiles::addFile(const QString &file)
 {
     if (!exists(files_, file))

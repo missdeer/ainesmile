@@ -221,14 +221,15 @@ void TabWidget::saveAsCurrentFile()
                                             options);
     if (!filePath.isEmpty())
     {
+        QString originalFilePath = page->getFilePath();
         page->saveFile(filePath);
 
         int index = currentIndex();
         setTabText(index, QFileInfo(filePath).fileName());
         setTabToolTip(index, filePath);
 
-        if (rf_->addFile(filePath))
-            emit updateRecentFiles();
+        rf_->replaceFile(originalFilePath, filePath);
+        emit updateRecentFiles();
     }
 }
 

@@ -19,6 +19,7 @@ private:
 public:
     RecentFiles();
     ~RecentFiles();
+    void replaceFile(const QString& originalFile, const QString& newFile);
     bool addFile(const QString& file);
     void clearFiles();
     QStringList& recentFiles();
