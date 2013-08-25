@@ -34,6 +34,7 @@ public:
     void setShowIndentGuide(bool enabled);
     void setShowWrapSymbol(bool enabled);
     void getFileList(QStringList& fileList);
+    int findTabIndex(QWidget* widget);
 protected:
     void mousePressEvent(QMouseEvent * event);
 signals:

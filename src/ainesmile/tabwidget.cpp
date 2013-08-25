@@ -196,29 +196,13 @@ void TabWidget::saveCurrentFile()
     CodeEditPage* page = qobject_cast<CodeEditPage*>(currentWidget());
     Q_ASSERT(page);
     QString filePath = page->getFilePath();
-    bool resetTabText = false;
-    if (!QFile::exists(filePath))
+    if (filePath.isEmpty())
     {
-        QFileDialog::Options options;
-        QString selectedFilter;
-        filePath = QFileDialog::getSaveFileName(this,
-                                     tr("ainesmile Save File To"),
-                                     tr(""),
-                                     tr("All Files (*);;Text Files (*.txt)"),
-                                     &selectedFilter,
-                                     options);
-        if (!filePath.isEmpty())
-            resetTabText = true;
+        saveAsCurrentFile();
     }
-
-    if (!filePath.isEmpty())
-        page->saveFile(filePath);
-
-    if (resetTabText)
+    else
     {
-        int index = currentIndex();
-        setTabText(index, QFileInfo(filePath).fileName());
-        setTabToolTip(index, filePath);
+        page->saveFile(filePath);
     }
 }
 
@@ -357,4 +341,16 @@ void TabWidget::getFileList(QStringList &fileList)
         else
             fileList << tabText(i);
     }
+}
+
+int TabWidget::findTabIndex(QWidget *w)
+{
+    for (int i = 0; i < count(); i++)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(widget(i));
+        Q_ASSERT(page);
+        if (page == w)
+            return i;
+    }
+    return -1;
 }

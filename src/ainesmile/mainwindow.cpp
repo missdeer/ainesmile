@@ -241,6 +241,7 @@ void MainWindow::onUpdateRecentFilesMenuItems()
 
 void MainWindow::updateUI(CodeEditPage* page)
 {
+    ui->actionSaveFile->setEnabled(page->isModified());
     ui->actionCut->setEnabled(page->canCut());
     ui->actionCopy->setEnabled(page->canCopy());
     ui->actionPaste->setEnabled(page->canPaste());
@@ -550,6 +551,32 @@ void MainWindow::onCurrentDocumentChanged()
     CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
     Q_ASSERT(page);
     Q_UNUSED(page);
+    ui->actionSaveFile->setEnabled(page->isModified());
+    // change the tab title
+    TabWidget* targetTabWidget = ui->tabWidget;
+    int index = targetTabWidget->findTabIndex(page);
+    if (index == -1)
+    {
+        targetTabWidget = ui->tabWidgetSlave;
+        index = targetTabWidget->findTabIndex(page);
+    }
+
+    if (index >= 0)
+    {
+        QString text = targetTabWidget->tabText(index);
+        if (page->isModified())
+        {
+            if (text.at(0) != QChar('*'))
+            {
+                targetTabWidget->setTabText(index, "*" + text);
+            }
+        }
+        else if (text.at(0) == QChar('*'))
+        {
+            text.remove(0, 1);
+            targetTabWidget->setTabText(index, text);
+        }
+    }
 }
 
 void MainWindow::onCopyAvailableChanged()

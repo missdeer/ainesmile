@@ -94,7 +94,7 @@ void CodeEditPage::saveFile(const QString &filePath)
 {
     QFileInfo saveFileInfo(filePath);
     QFileInfo fileInfo(m_filePath);
-    if (saveFileInfo != fileInfo)
+    if (m_filePath.isEmpty() || saveFileInfo != fileInfo)
     {
         m_filePath = filePath;
         emit filePathChanged(m_filePath);
@@ -103,7 +103,7 @@ void CodeEditPage::saveFile(const QString &filePath)
         m_sc.initEditorStyle(m_sciControlSlave, filePath);
     }
 
-    if (m_sciControlMaster->modify() || saveFileInfo != fileInfo)
+    if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
     {
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -121,6 +121,7 @@ void CodeEditPage::saveFile(const QString &filePath)
             {
                 m_sciControlMaster->setSavePoint();
                 m_sciControlSlave->setSavePoint();
+                emit modifiedNotification();
             }
         }
     }
