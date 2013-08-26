@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -414,10 +414,17 @@
      <addaction name="actionZoomOut"/>
      <addaction name="actionRestoreDefaultZoom"/>
     </widget>
+    <widget class="QMenu" name="menuDockWindows">
+     <property name="title">
+      <string>Dock Windows</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="actionAlwaysOnTop"/>
     <addaction name="actionToggleFullScreenMode"/>
     <addaction name="actionPostIt"/>
     <addaction name="separator"/>
+    <addaction name="menuDockWindows"/>
     <addaction name="menuShowSymbol"/>
     <addaction name="menuZoom"/>
     <addaction name="actionWordWrap"/>

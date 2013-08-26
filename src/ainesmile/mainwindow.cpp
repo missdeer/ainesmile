@@ -218,7 +218,8 @@ void MainWindow::initDockPanes()
                "buy more items, or should we return the excess to you?");
     dock->setWidget(findReplaceList);
     addDockWidget(Qt::BottomDockWidgetArea, dock);
-    ui->menuView->addAction(dock->toggleViewAction());
+    ui->menuDockWindows->addAction(dock->toggleViewAction());
+    dock->close();
 
     dock = new QDockWidget(tr("Find Result"), this);
     QListWidget* findResultList = new QListWidget(dock);
@@ -242,7 +243,8 @@ void MainWindow::initDockPanes()
                               "buy more items, or should we return the excess to you?");
     dock->setWidget(findResultList);
     addDockWidget(Qt::BottomDockWidgetArea, dock);
-    ui->menuView->addAction(dock->toggleViewAction());
+    ui->menuDockWindows->addAction(dock->toggleViewAction());
+    dock->close();
 
     dock = new QDockWidget(tr("Project"), this);
     QListWidget* projectList = new QListWidget(dock);
@@ -255,7 +257,8 @@ void MainWindow::initDockPanes()
             << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
     dock->setWidget(projectList);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
-    ui->menuView->addAction(dock->toggleViewAction());
+    ui->menuDockWindows->addAction(dock->toggleViewAction());
+    dock->close();
 }
 
 void MainWindow::onUpdateRecentFilesMenuItems()
