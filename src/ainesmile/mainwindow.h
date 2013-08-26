@@ -35,9 +35,9 @@ private:
     void setActionShortcuts();
     void setRecentFiles();
     void setMenuItemChecked();
+    void initDockPanes();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
-    void doCloseRequested(TabWidget* tabWidget, int index);
 
 private slots:
     void onCodeEditPageCreated(CodeEditPage* page);
