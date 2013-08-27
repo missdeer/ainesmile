@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QListWidget>
 #include <QDockWidget>
+#include <QSettings>
 #include "config.h"
 #include "stupidcheck.h"
 #include "codeeditpage.h"
@@ -65,6 +66,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitterMain->setSizes(sizes);
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
+
+    QSettings settings("dfordsoft.com", "ainesmile");
+    if (settings.contains("geometry"))
+        restoreGeometry(settings.value("geometry").toByteArray());
+    if (settings.contains("windowState"))
+    {
+        restoreState(settings.value("windowState").toByteArray());
+        restoreDockWidget(dockFindReplace_);
+        restoreDockWidget(dockFindResult_);
+        restoreDockWidget(dockProject_);
+        if (settings.contains("dockFindReplace/visible"))
+            dockFindReplace_->setVisible(settings.value("dockFindReplace/visible").toBool());
+        if (settings.contains("dockFindResult/visible"))
+            dockFindResult_->setVisible(settings.value("dockFindResult/visible").toBool());
+        if (settings.contains("dockProject/visible"))
+            dockProject_->setVisible(settings.value("dockProject/visible").toBool());
+    }
 }
 
 MainWindow::~MainWindow()
@@ -88,11 +106,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
+        QSettings settings("dfordsoft.com", "ainesmile");
+        settings.setValue("geometry", saveGeometry());
+        settings.setValue("windowState", saveState());
+        settings.setValue("dockProject/visible", dockProject_->isVisible());
+        settings.setValue("dockFindReplace/visible", dockFindReplace_->isVisible());
+        settings.setValue("dockFindResult/visible", dockFindResult_->isVisible());
+        settings.sync();
         event->accept();
     }
     aboutToQuit_ = false;
     ui->tabWidget->setAboutToQuit(aboutToQuit_);
     ui->tabWidgetSlave->setAboutToQuit(aboutToQuit_);
+
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -196,8 +223,8 @@ void MainWindow::setMenuItemChecked()
 
 void MainWindow::initDockPanes()
 {
-    QDockWidget *dock = new QDockWidget(tr("Find/Replace"), this);
-    QListWidget* findReplaceList = new QListWidget(dock);
+    dockFindReplace_ = new QDockWidget(tr("Find/Replace"), this);
+    QListWidget* findReplaceList = new QListWidget(dockFindReplace_);
     findReplaceList->addItems(QStringList()
             << "Thank you for your payment which we have received today."
             << "Your order has been dispatched and should be with you "
@@ -216,13 +243,13 @@ void MainWindow::initDockPanes()
                "the complete amount has been received."
             << "You made an overpayment (more than $5). Do you wish to "
                "buy more items, or should we return the excess to you?");
-    dock->setWidget(findReplaceList);
-    addDockWidget(Qt::BottomDockWidgetArea, dock);
-    ui->menuDockWindows->addAction(dock->toggleViewAction());
-    dock->close();
+    dockFindReplace_->setWidget(findReplaceList);
+    addDockWidget(Qt::BottomDockWidgetArea, dockFindReplace_);
+    ui->menuDockWindows->addAction(dockFindReplace_->toggleViewAction());
+    //dockFindReplace_->close();
 
-    dock = new QDockWidget(tr("Find Result"), this);
-    QListWidget* findResultList = new QListWidget(dock);
+    dockFindResult_ = new QDockWidget(tr("Find Result"), this);
+    QListWidget* findResultList = new QListWidget(dockFindResult_);
     findResultList->addItems(QStringList()
                               << "Thank you for your payment which we have received today."
                               << "Your order has been dispatched and should be with you "
@@ -241,13 +268,14 @@ void MainWindow::initDockPanes()
                               "the complete amount has been received."
                               << "You made an overpayment (more than $5). Do you wish to "
                               "buy more items, or should we return the excess to you?");
-    dock->setWidget(findResultList);
-    addDockWidget(Qt::BottomDockWidgetArea, dock);
-    ui->menuDockWindows->addAction(dock->toggleViewAction());
-    dock->close();
+    dockFindResult_->setWidget(findResultList);
+    addDockWidget(Qt::BottomDockWidgetArea, dockFindResult_);
+    ui->menuDockWindows->addAction(dockFindResult_->toggleViewAction());
+    //dockFindResult_->close();
+    tabifyDockWidget(dockFindReplace_, dockFindResult_);
 
-    dock = new QDockWidget(tr("Project"), this);
-    QListWidget* projectList = new QListWidget(dock);
+    dockProject_ = new QDockWidget(tr("Project"), this);
+    QListWidget* projectList = new QListWidget(dockProject_);
     projectList->addItems(QStringList()
             << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
             << "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
@@ -255,10 +283,10 @@ void MainWindow::initDockPanes()
             << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
             << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
             << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
-    dock->setWidget(projectList);
-    addDockWidget(Qt::LeftDockWidgetArea, dock);
-    ui->menuDockWindows->addAction(dock->toggleViewAction());
-    dock->close();
+    dockProject_->setWidget(projectList);
+    addDockWidget(Qt::LeftDockWidgetArea, dockProject_);
+    ui->menuDockWindows->addAction(dockProject_->toggleViewAction());
+    //dockProject_->close();
 }
 
 void MainWindow::onUpdateRecentFilesMenuItems()

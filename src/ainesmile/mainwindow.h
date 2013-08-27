@@ -141,6 +141,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     FindReplaceDialog* findReplaceDialog_;
+    QDockWidget *dockFindReplace_;
+    QDockWidget *dockFindResult_;
+    QDockWidget *dockProject_;
     QSignalMapper* recentFileSignalMapper_;
     QSignalMapper* recentProjectSignalMapper_;
     QList<QAction*> recentFileActions_;

@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 #endif
 
     MainWindow w;
-    w.showMaximized();
+    w.show();
 
     if (argc >= 2)
     {
