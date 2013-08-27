@@ -37,6 +37,7 @@ QString Config::getDataDirPath()
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #endif
+    configPath.append("/dfordsoft.com");
     QDir dir(configPath);
     if (!dir.exists())
     {
@@ -54,7 +55,7 @@ QString Config::getConfigDirPath()
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
 #endif
 #if !defined(Q_OS_WIN)
-    configPath.append("/ainesmile");
+    configPath.append("/dfordsoft.com/ainesmile");
 #endif
     QDir dir(configPath);
     if (!dir.exists())

@@ -76,12 +76,6 @@ MainWindow::MainWindow(QWidget *parent) :
         restoreDockWidget(dockFindReplace_);
         restoreDockWidget(dockFindResult_);
         restoreDockWidget(dockProject_);
-        if (settings.contains("dockFindReplace/visible"))
-            dockFindReplace_->setVisible(settings.value("dockFindReplace/visible").toBool());
-        if (settings.contains("dockFindResult/visible"))
-            dockFindResult_->setVisible(settings.value("dockFindResult/visible").toBool());
-        if (settings.contains("dockProject/visible"))
-            dockProject_->setVisible(settings.value("dockProject/visible").toBool());
     }
 }
 
@@ -224,6 +218,7 @@ void MainWindow::setMenuItemChecked()
 void MainWindow::initDockPanes()
 {
     dockFindReplace_ = new QDockWidget(tr("Find/Replace"), this);
+    dockFindReplace_->setObjectName(QString::fromLatin1("dockFindReplace"));
     QListWidget* findReplaceList = new QListWidget(dockFindReplace_);
     findReplaceList->addItems(QStringList()
             << "Thank you for your payment which we have received today."
@@ -249,6 +244,7 @@ void MainWindow::initDockPanes()
     //dockFindReplace_->close();
 
     dockFindResult_ = new QDockWidget(tr("Find Result"), this);
+    dockFindResult_->setObjectName(QString::fromLatin1("dockFindResult"));
     QListWidget* findResultList = new QListWidget(dockFindResult_);
     findResultList->addItems(QStringList()
                               << "Thank you for your payment which we have received today."
@@ -275,6 +271,7 @@ void MainWindow::initDockPanes()
     tabifyDockWidget(dockFindReplace_, dockFindResult_);
 
     dockProject_ = new QDockWidget(tr("Project"), this);
+    dockProject_->setObjectName(QString::fromLatin1("dockProject"));
     QListWidget* projectList = new QListWidget(dockProject_);
     projectList->addItems(QStringList()
             << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
