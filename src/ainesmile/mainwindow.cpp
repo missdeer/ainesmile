@@ -103,9 +103,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         QSettings settings("dfordsoft.com", "ainesmile");
         settings.setValue("geometry", saveGeometry());
         settings.setValue("windowState", saveState());
-        settings.setValue("dockProject/visible", dockProject_->isVisible());
-        settings.setValue("dockFindReplace/visible", dockFindReplace_->isVisible());
-        settings.setValue("dockFindResult/visible", dockFindResult_->isVisible());
         settings.sync();
         event->accept();
     }
