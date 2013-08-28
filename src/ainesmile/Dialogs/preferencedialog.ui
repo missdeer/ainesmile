@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -46,6 +46,26 @@
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
        <string>Style</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_6">
+      <attribute name="title">
+       <string>New Document/Default Directory</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_7">
+      <attribute name="title">
+       <string>File Association</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_8">
+      <attribute name="title">
+       <string>Backup/Auto Completion</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_9">
+      <attribute name="title">
+       <string>Language</string>
       </attribute>
      </widget>
     </widget>
