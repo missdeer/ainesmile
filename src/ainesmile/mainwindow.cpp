@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
+    ui->menuToolBar->addAction(ui->standardToolBar->toggleViewAction());
+
     QSettings settings("dfordsoft.com", "ainesmile");
     if (settings.contains("geometry"))
         restoreGeometry(settings.value("geometry").toByteArray());
@@ -774,7 +776,8 @@ void MainWindow::on_actionToggleFullScreenMode_triggered()
 {
     static bool isMaximized = false;
     isMaximized = this->isMaximized();
-    if (isFullScreen()) {
+    if (isFullScreen())
+    {
         if (isMaximized)
             showMaximized();
         else
@@ -832,7 +835,7 @@ void MainWindow::on_actionDForDSoftwareHome_triggered()
 
 void MainWindow::on_actionAinesmileProductPage_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile/"));
+    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile.htm"));
 }
 
 void MainWindow::on_actionSaveAll_triggered()

@@ -420,11 +420,18 @@
      </property>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="menuToolBar">
+     <property name="title">
+      <string>Tool Bar</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="actionAlwaysOnTop"/>
     <addaction name="actionToggleFullScreenMode"/>
     <addaction name="actionPostIt"/>
     <addaction name="separator"/>
     <addaction name="menuDockWindows"/>
+    <addaction name="menuToolBar"/>
     <addaction name="menuShowSymbol"/>
     <addaction name="menuZoom"/>
     <addaction name="actionWordWrap"/>
@@ -501,7 +508,7 @@
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="standardToolBar">
    <property name="windowTitle">
     <string>Standard</string>
    </property>
@@ -1342,6 +1349,9 @@
   <action name="actionToggleFullScreenMode">
    <property name="text">
     <string>Toggle Full Screen Mode</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+Return</string>
    </property>
   </action>
   <action name="actionPostIt">
