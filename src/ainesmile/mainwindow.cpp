@@ -25,7 +25,6 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    findReplaceDialog_(NULL),
     recentFileSignalMapper_(new QSignalMapper(this)),
     recentProjectSignalMapper_(new QSignalMapper(this)),
     aboutToQuit_(false),
@@ -855,13 +854,8 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionFindInFiles_triggered()
 {
-    if (!findReplaceDialog_)
-    {
-        findReplaceDialog_ = new FindReplaceDialog(this);
-    }
-    findReplaceDialog_->show();
-    findReplaceDialog_->raise();
-    findReplaceDialog_->activateWindow();
+    if (!ui->dockFindReplace->isVisible())
+        ui->dockFindReplace->setVisible(true);
 }
 
 void MainWindow::on_actionSearchResultsWindow_triggered()

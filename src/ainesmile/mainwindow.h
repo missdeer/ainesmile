@@ -6,7 +6,6 @@
 #include <QList>
 #include "tabwidget.h"
 #include "recentfiles.h"
-#include "findreplacedialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -139,7 +138,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    FindReplaceDialog* findReplaceDialog_;
     QDockWidget *dockFindReplace_;
     QDockWidget *dockFindResult_;
     QDockWidget *dockProject_;

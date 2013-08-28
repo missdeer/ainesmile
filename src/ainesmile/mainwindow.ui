@@ -634,7 +634,31 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox"/>
+            <widget class="QComboBox" name="comboBox">
+             <property name="currentText">
+              <string>Current Document</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>Current Document</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>All Opened Documents</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Current Project</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Custom Filter</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox">

@@ -42,7 +42,6 @@ SOURCES += main.cpp\
     CodeEdit/scintillaconfig.cpp \
     Dialogs/aboutdialog.cpp \
     Dialogs/gotolinedialog.cpp \
-    Dialogs/findreplacedialog.cpp \
     Dialogs/registerdialog.cpp \
     Dialogs/preferencedialog.cpp \
     stupidcheck.cpp \
@@ -58,7 +57,6 @@ HEADERS  += mainwindow.h \
     CodeEdit/scintillaconfig.h \
     Dialogs/aboutdialog.h \
     Dialogs/gotolinedialog.h \
-    Dialogs/findreplacedialog.h \
     Dialogs/registerdialog.h \
     Dialogs/preferencedialog.h \
     stupidcheck.h \
@@ -70,7 +68,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
     Dialogs/gotolinedialog.ui \
-    Dialogs/findreplacedialog.ui \
     Dialogs/registerdialog.ui \
     Dialogs/preferencedialog.ui \
     Dialogs/nagdialog.ui \
