@@ -35,7 +35,6 @@ private:
     void setActionShortcuts();
     void setRecentFiles();
     void setMenuItemChecked();
-    void initDockPanes();
     void updateUI(CodeEditPage* page);
     void connectSignals(CodeEditPage* page);
 
