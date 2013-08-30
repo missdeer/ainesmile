@@ -20,5 +20,16 @@
         <file>public-standard.pem</file>
         <file>public-deluxe.pem</file>
         <file>public-professional.pem</file>
+        <file>rc/image/config/category_backup.png</file>
+        <file>rc/image/config/category_document.png</file>
+        <file>rc/image/config/category_editing.png</file>
+        <file>rc/image/config/category_fileassociation.png</file>
+        <file>rc/image/config/category_general.png</file>
+        <file>rc/image/config/category_help.png</file>
+        <file>rc/image/config/category_language.png</file>
+        <file>rc/image/config/category_misc.png</file>
+        <file>rc/image/config/category_print.png</file>
+        <file>rc/image/config/category_style.png</file>
+        <file>rc/image/config/category_vcs.png</file>
     </qresource>
 </RCC>
