@@ -383,8 +383,6 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionCutBinaryContent, SIGNAL(triggered()), page, SLOT(cutBinaryContent()));
     disconnect(ui->actionPasteBinaryContent, SIGNAL(triggered()), 0, 0);
     connect(ui->actionPasteBinaryContent, SIGNAL(triggered()), page, SLOT(pasteBinaryContent()));
-    disconnect(ui->actionFind, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFind, SIGNAL(triggered()), page, SLOT(find()));
     disconnect(ui->actionFindNext, SIGNAL(triggered()), 0, 0);
     connect(ui->actionFindNext, SIGNAL(triggered()), page, SLOT(findNext()));
     disconnect(ui->actionFindPrevious, SIGNAL(triggered()), 0, 0);
@@ -397,8 +395,6 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionFindVolatieNext, SIGNAL(triggered()), page, SLOT(findVolatieNext()));
     disconnect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), 0, 0);
     connect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), page, SLOT(findVolatiePrevious()));
-    disconnect(ui->actionReplace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionReplace, SIGNAL(triggered()), page, SLOT(replace()));
     disconnect(ui->actionIncrementalSearch, SIGNAL(triggered()), 0, 0);
     connect(ui->actionIncrementalSearch, SIGNAL(triggered()), page, SLOT(incrementalSearch()));
     disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
@@ -858,9 +854,22 @@ void MainWindow::on_actionFindInFiles_triggered()
         ui->dockFindReplace->setVisible(true);
 }
 
+void MainWindow::on_actionFind_triggered()
+{
+    if (!ui->dockFindReplace->isVisible())
+        ui->dockFindReplace->setVisible(true);
+}
+
+void MainWindow::on_actionReplace_triggered()
+{
+    if (!ui->dockFindReplace->isVisible())
+        ui->dockFindReplace->setVisible(true);
+}
+
 void MainWindow::on_actionSearchResultsWindow_triggered()
 {
-
+    if (!ui->dockFindResult->isVisible())
+        ui->dockFindResult->setVisible(true);
 }
 
 void MainWindow::on_actionNextSearchResult_triggered()
@@ -1022,3 +1031,5 @@ void MainWindow::hideFeatures()
         ui->actionSelectExtensionItem->setVisible(false);
     }
 }
+
+

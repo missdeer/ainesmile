@@ -136,6 +136,10 @@ private slots:
 
     void on_actionEmptyRecentProjectsList_triggered();
 
+    void on_actionFind_triggered();
+
+    void on_actionReplace_triggered();
+
 private:
     Ui::MainWindow *ui;
     QDockWidget *dockFindReplace_;

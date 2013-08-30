@@ -644,11 +644,6 @@ void CodeEditPage::pasteBinaryContent()
 
 }
 
-void CodeEditPage::find()
-{
-
-}
-
 void CodeEditPage::findNext()
 {
 
@@ -675,11 +670,6 @@ void CodeEditPage::findVolatieNext()
 }
 
 void CodeEditPage::findVolatiePrevious()
-{
-
-}
-
-void CodeEditPage::replace()
 {
 
 }

@@ -114,14 +114,12 @@ public slots:
     void copyBinaryContent();
     void cutBinaryContent();
     void pasteBinaryContent();
-    void find();
     void findNext();
     void findPrevious();
     void selectAndFindNext();
     void selectAndFindPrevious();
     void findVolatieNext();
     void findVolatiePrevious();
-    void replace();
     void incrementalSearch();
     void gotoLine();
     void gotoMatchingBrace();
