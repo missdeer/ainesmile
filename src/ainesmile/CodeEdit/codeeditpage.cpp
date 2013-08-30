@@ -106,10 +106,10 @@ void CodeEditPage::saveFile(const QString &filePath)
     if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
     {
         QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+        if (file.open(QIODevice::WriteOnly))
         {
-            int len = m_sciControlMaster->textLength();
-            qint64 size = file.write(m_sciControlMaster->getText(len));
+            sptr_t len = m_sciControlMaster->textLength();
+            qint64 size = file.write(m_sciControlMaster->getText(len + 1));
             file.close();
 
             if (size != len)
