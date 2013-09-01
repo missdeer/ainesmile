@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     Dialogs/nagdialog.cpp \
     CodeEdit/recentfiles.cpp \
     Dialogs/summarydialog.cpp \
-    Dialogs/windowlistdialog.cpp
+    Dialogs/windowlistdialog.cpp \
+    Dialogs/selectedlistview.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
@@ -63,7 +64,8 @@ HEADERS  += mainwindow.h \
     Dialogs/nagdialog.h \
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
-    Dialogs/windowlistdialog.h
+    Dialogs/windowlistdialog.h \
+    Dialogs/selectedlistview.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
@@ -128,3 +130,9 @@ INSTALLS = target \
 }
 
 LIBS +=  -lssl -lcrypto
+
+
+CODECFORTR      = UTF-8
+CODECFORSRC     = UTF-8
+TRANSLATIONS    = translations/ainesmile_en_US.ts \
+                  translations/ainesmile_zh_CN.ts
