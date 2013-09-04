@@ -3,7 +3,7 @@
 #include "ui_gotolinedialog.h"
 
 GotoLineDialog::GotoLineDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     line(0),
     ui(new Ui::GotoLineDialog)
 {

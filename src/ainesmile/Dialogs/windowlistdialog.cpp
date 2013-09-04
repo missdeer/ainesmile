@@ -4,7 +4,7 @@
 #include "ui_windowlistdialog.h"
 
 WindowListDialog::WindowListDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::WindowListDialog)
 {
     ui->setupUi(this);

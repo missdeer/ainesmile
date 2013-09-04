@@ -10,7 +10,7 @@
 #include "ui_nagdialog.h"
 
 NagDialog::NagDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::NagDialog)
 {
     ui->setupUi(this);

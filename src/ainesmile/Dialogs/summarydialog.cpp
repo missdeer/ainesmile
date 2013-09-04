@@ -2,7 +2,7 @@
 #include "ui_summarydialog.h"
 
 SummaryDialog::SummaryDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::SummaryDialog)
 {
     ui->setupUi(this);

@@ -2,7 +2,7 @@
 #include "ui_preferencedialog.h"
 
 PreferenceDialog::PreferenceDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::PreferenceDialog)
 {
     ui->setupUi(this);

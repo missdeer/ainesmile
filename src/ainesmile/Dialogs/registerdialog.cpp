@@ -16,7 +16,7 @@
 #include "ui_registerdialog.h"
 
 RegisterDialog::RegisterDialog(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::RegisterDialog)
 {
     ui->setupUi(this);
