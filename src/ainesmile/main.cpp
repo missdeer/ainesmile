@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QUrl>
 #include "config.h"
 #include "stupidcheck.h"
 #include "nagdialog.h"

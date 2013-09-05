@@ -49,12 +49,12 @@ QString Config::getDataDirPath()
 QString Config::getConfigDirPath()
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QString configPath = QDesktopServices::storageLocation(QDesktopServices::ConfigLocation);
+    QString configPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-#endif
 #if !defined(Q_OS_WIN)
     configPath.append("/dfordsoft.com/ainesmile");
+#endif
 #endif
     QDir dir(configPath);
     if (!dir.exists())

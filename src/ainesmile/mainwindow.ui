@@ -635,9 +635,6 @@
            </item>
            <item>
             <widget class="QComboBox" name="comboBox">
-             <property name="currentText">
-              <string>Current Document</string>
-             </property>
              <item>
               <property name="text">
                <string>Current Document</string>
