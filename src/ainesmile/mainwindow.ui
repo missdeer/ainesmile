@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -599,42 +599,42 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>876</width>
-          <height>274</height>
+          <width>746</width>
+          <height>305</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="labelFind">
              <property name="text">
-              <string>Find:</string>
+              <string>Find what:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit"/>
+            <widget class="QLineEdit" name="edtFind"/>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="labelReplace">
              <property name="text">
-              <string>Replace:</string>
+              <string>Replace with:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_2"/>
+            <widget class="QLineEdit" name="edtReplace"/>
            </item>
            <item>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="labelScope">
              <property name="text">
-              <string>Scope:</string>
+              <string>Look in:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox">
+            <widget class="QComboBox" name="cbScope">
              <item>
               <property name="text">
                <string>Current Document</string>
@@ -664,30 +664,30 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
-               <widget class="QCheckBox" name="checkBox_4">
+               <widget class="QCheckBox" name="cbMatchCase">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Match case</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox_3">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Match whole word</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox_2">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Search up</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox">
                 <property name="text">
-                 <string>CheckBox</string>
+                 <string>Search hidden text</string>
                 </property>
                </widget>
               </item>
@@ -699,16 +699,23 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btnFind">
              <property name="text">
-              <string>PushButton</string>
+              <string>Find</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_2">
              <property name="text">
-              <string>PushButton</string>
+              <string>Replace</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>Replace All</string>
              </property>
             </widget>
            </item>
