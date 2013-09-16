@@ -52,9 +52,9 @@ QString Config::getConfigDirPath()
     QString configPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 #else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+#endif
 #if !defined(Q_OS_WIN)
     configPath.append("/dfordsoft.com/ainesmile");
-#endif
 #endif
     QDir dir(configPath);
     if (!dir.exists())
@@ -77,7 +77,7 @@ QString Config::getConfigPath()
         QDir configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resource");
+        configDir.cd("Resources");
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/.ainesmilerc");
@@ -102,6 +102,7 @@ QString Config::getConfigPath()
         file.copy(configFile, configPath);
     }
 
+    qDebug() << "config path: " << configPath;
     return configPath;
 }
 
@@ -126,7 +127,7 @@ QString Config::getThemePath()
         QDir configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resource");
+        configDir.cd("Resources");
 #endif
 
         QString themeDirPath;
@@ -173,6 +174,7 @@ QString Config::getThemePath()
             QFile::copy(src, dst);
         }
     }
+    qDebug() << "theme path: " << themePath;
     return themePath;
 }
 
@@ -188,7 +190,7 @@ QString Config::getLanguageMapPath()
         QDir configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resource");
+        configDir.cd("Resources");
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/langmap.xml");
@@ -205,13 +207,15 @@ QString Config::getLanguageMapPath()
             dir.cdUp();
 #endif
             dir.cd("resource");
-            configFile = dir.absolutePath();
             Q_ASSERT(dir.exists());
+            configFile = dir.absolutePath();
+            configFile.append("/langmap.xml");
+            Q_ASSERT(QFile::exists(configFile));
         }
-        configFile.append("/langmap.xml");
+        qDebug() << "copy langmap from " << configFile << " to " << configPath;
         file.copy(configFile, configPath);
     }
-
+    qDebug() << "langmap: " << configPath;
     return configPath;
 }
 
@@ -226,7 +230,7 @@ QString Config::getLanguageDirPath()
         QDir configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resource");
+        configDir.cd("Resources");
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/language");
@@ -257,6 +261,7 @@ QString Config::getLanguageDirPath()
             QFile::copy(src, dst);
         }
     }
+    qDebug() << "langDir: " << langDirPath;
     return langDirPath;
 }
 
