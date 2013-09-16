@@ -707,8 +707,8 @@ Note:               Feel free to modify this style and re-release it. This style
     </LexerStyles>
     <GlobalStyles>
         <!-- Attention : Don't modify the name of styleID="0" -->
-        <WidgetStyle name="Global override" styleID="0" fgColor="FFFFFF" bgColor="000000" fontName="Courier New" fontStyle="0" fontSize="9" />
-        <WidgetStyle name="Default Style" styleID="32" fgColor="FFFFFF" bgColor="000000" fontName="Courier New" fontStyle="0" fontSize="9" />
+        <WidgetStyle name="Global override" styleID="0" fgColor="FFFFFF" bgColor="000000" fontName="Microsoft YaHei" fontStyle="0" fontSize="9" />
+        <WidgetStyle name="Default Style" styleID="32" fgColor="FFFFFF" bgColor="000000" fontName="Microsoft YaHei" fontStyle="0" fontSize="9" />
         <WidgetStyle name="Indent guideline style" styleID="37" fgColor="C0C0C0" bgColor="000000" fontName="" fontStyle="0" fontSize="" />
         <WidgetStyle name="Brace highlight style" styleID="34" fgColor="00FF00" bgColor="000000" fontName="" fontStyle="1" fontSize="" />
         <WidgetStyle name="Bad brace colour" styleID="35" fgColor="FF0000" bgColor="000000" fontName="" fontStyle="1" fontSize="" />
