@@ -146,6 +146,13 @@ QString Config::getThemePath()
 #endif
             dir.cd("resource");
             themeDirPath = dir.absolutePath();
+#if defined(Q_OS_LINUX)
+    themeDirPath.append("/themes/Linux");
+#elif defined(Q_OS_MAC)
+    themeDirPath.append("/themes/MacOSX");
+#else
+    themeDirPath.append("/themes/Windows");
+#endif
             Q_ASSERT(dir.exists());
         }
 
