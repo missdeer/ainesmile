@@ -1,1 +1,0 @@
-for %%i IN (*.xml) do ..\..\tool\npp2ainesmile.exe "%%i"
