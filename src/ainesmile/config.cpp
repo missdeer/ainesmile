@@ -119,7 +119,7 @@ QString Config::getThemePath()
     themePath.append(currentTheme.c_str());
     themePath.append(".asTheme");
     QDir themeDir(themePath);
-    if (!themeDir.exists())
+    if (!themeDir.exists() || themeDir.entryList(QDir::Files).isEmpty())
     {
         // try to copy from application installed directory
         QString appDirPath = QApplication::applicationDirPath();
@@ -128,38 +128,35 @@ QString Config::getThemePath()
         configDir.cdUp();
         configDir.cd("Resource");
 #endif
-        configDir.cd("themes");
 
-        QString themeDirPath = configDir.absolutePath();
-
-        if (!QDir(themeDirPath).exists())
+        QString themeDirPath;
+        if (!configDir.cd("themes") || configDir.entryList(QDir::Files).isEmpty())
         {
             QDir dir(appDirPath);
             dir.cdUp();
             dir.cdUp();
-#if defined(Q_OS_WIN)
-            dir.cdUp();
-#endif
-#if defined(Q_OS_MAC)
-            dir.cdUp();
-            dir.cdUp();
-#endif
-            dir.cd("resource");
-            themeDirPath = dir.absolutePath();
 #if defined(Q_OS_LINUX)
-    themeDirPath.append("/themes/Linux");
+            dir.cd("resource/Linux/themes");
 #elif defined(Q_OS_MAC)
-    themeDirPath.append("/themes/MacOSX");
+            dir.cdUp();
+            dir.cdUp();
+            dir.cd("resource/MacOSX/themes");
 #else
-    themeDirPath.append("/themes/Windows");
+            dir.cdUp();
+            dir.cd("resource/Windows/themes");
 #endif
+            themeDirPath = dir.absolutePath();
             Q_ASSERT(dir.exists());
+        }
+        else
+        {
+            themeDirPath = configDir.absolutePath();
         }
 
         themeDirPath.append("/");
         themeDirPath.append(currentTheme.c_str());
         themeDirPath.append(".asTheme");
-        if (!QDir(themeDirPath).exists())
+        if (!QDir(themeDirPath).exists() || QDir(themeDirPath).entryList(QDir::Files).isEmpty())
         {
             // if there's no theme that has this name, use the default theme
             themeDirPath = configDir.absolutePath();
@@ -194,7 +191,8 @@ QString Config::getLanguageMapPath()
         configDir.cd("Resource");
 #endif
         QString configFile = configDir.absolutePath();
-        if (!QDir(configFile).exists())
+        configFile.append("/langmap.xml");
+        if (!QFile::exists(configFile))
         {
             QDir dir(appDirPath);
             dir.cdUp();
@@ -221,7 +219,7 @@ QString Config::getLanguageDirPath()
 {
     QString langDirPath = getConfigDirPath() + "/language";
     QDir langDir(langDirPath);
-    if (!langDir.exists())
+    if (!langDir.exists() || langDir.entryList(QDir::Files).isEmpty())
     {
         // copy from installed directory
         QString appDirPath = QApplication::applicationDirPath();
@@ -232,6 +230,22 @@ QString Config::getLanguageDirPath()
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/language");
+        QDir langDirOrig(configFile);
+        if (!langDirOrig.exists() || langDirOrig.entryList(QDir::Files).isEmpty())
+        {
+            QDir dir(appDirPath);
+            dir.cdUp();
+            dir.cdUp();
+#if defined(Q_OS_WIN)
+            dir.cdUp();
+#endif
+#if defined(Q_OS_MAC)
+            dir.cdUp();
+            dir.cdUp();
+#endif
+            dir.cd("resource/language");
+            configFile = dir.absolutePath();
+        }
         // copy all files from configFile to langDirPath
         langDir.mkpath(langDirPath);
         QStringList files = QDir(configFile).entryList(QDir::Files);
