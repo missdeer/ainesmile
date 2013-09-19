@@ -22,6 +22,8 @@ PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)
 macx:INSTALLER_NAME = "ainesmile-$${QTCREATOR_VERSION}"
 else:INSTALLER_NAME = "ainesmile-$${PATTERN}"
 
+PRECOMPILED_HEADER = pch.h
+
 INCLUDEPATH += CodeEdit \
     Dialogs \
     ../../3rdparty/rapidxml-1.13 \
@@ -65,7 +67,8 @@ HEADERS  += mainwindow.h \
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
     Dialogs/windowlistdialog.h \
-    Dialogs/selectedlistview.h
+    Dialogs/selectedlistview.h \
+    pch.h
 
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
