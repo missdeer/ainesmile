@@ -12,7 +12,7 @@
 #include <QtXml>
 #include <QtNetwork>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <QtWidget>
+#include <QtWidgets>
 #endif
 
 #endif // PCH_H
