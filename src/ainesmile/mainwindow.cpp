@@ -1033,3 +1033,13 @@ void MainWindow::hideFeatures()
 }
 
 
+
+void MainWindow::on_actionOrderViaPaypal_triggered()
+{
+    QDesktopServices::openUrl(QUrl::fromUserInput("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=7XFLGCUD5QETW&lc=C2&item_name=ainesmile%20License&amount=49%2e95&currency_code=USD&button_subtype=services&bn=PP%2dBuyNowBF%3abtn_buynowCC_LG%2egif%3aNonHosted"));
+}
+
+void MainWindow::on_actionOrderViaAlipay_triggered()
+{
+    QDesktopServices::openUrl(QUrl::fromUserInput("http://item.taobao.com/item.htm?id=35596827125"));
+}

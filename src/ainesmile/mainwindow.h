@@ -140,6 +140,10 @@ private slots:
 
     void on_actionReplace_triggered();
 
+    void on_actionOrderViaPaypal_triggered();
+
+    void on_actionOrderViaAlipay_triggered();
+
 private:
     Ui::MainWindow *ui;
     QDockWidget *dockFindReplace_;

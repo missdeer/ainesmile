@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -159,6 +159,8 @@
     <addaction name="separator"/>
     <addaction name="actionDForDSoftwareHome"/>
     <addaction name="actionAinesmileProductPage"/>
+    <addaction name="actionOrderViaPaypal"/>
+    <addaction name="actionOrderViaAlipay"/>
     <addaction name="separator"/>
     <addaction name="actionRegistration"/>
     <addaction name="actionAboutApp"/>
@@ -599,8 +601,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>746</width>
-          <height>305</height>
+          <width>624</width>
+          <height>274</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1931,6 +1933,16 @@
   <action name="actionEmptyRecentProjectsList">
    <property name="text">
     <string>Empty Recent Projects List</string>
+   </property>
+  </action>
+  <action name="actionOrderViaPaypal">
+   <property name="text">
+    <string>Order via Paypal...</string>
+   </property>
+  </action>
+  <action name="actionOrderViaAlipay">
+   <property name="text">
+    <string>Order via Taobao...</string>
    </property>
   </action>
  </widget>
