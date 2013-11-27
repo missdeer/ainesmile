@@ -1,7 +1,7 @@
 cd 3rdparty\scintilla\qt\ScintillaEdit\
 python WidgetGen.py
 cd ..\..\..\..
-hg log -l 1 | head -n 1 | gawk '{print $2}' > src\ainesmile\REVISION
+git log -n 1 | head -n 1 | gawk '{print $2}' > src\ainesmile\REVISION
 date /T > src\ainesmile\DATE
 time /T >> src\ainesmile\DATE
 qmake -r CONFIG+=release
