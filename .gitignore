@@ -3,3 +3,9 @@ moc_*.cpp
 ui_*.h
 qrc_*.cpp
 *.a
+*.exe
+*.dll
+Makefile.Release
+Makefile.Debug
+DATE
+REVISION
