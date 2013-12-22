@@ -9,3 +9,7 @@ Makefile.Release
 Makefile.Debug
 DATE
 REVISION
+Makefile
+ScintillaEdit.h
+ScintillaEdit.cpp
+*.pyc
