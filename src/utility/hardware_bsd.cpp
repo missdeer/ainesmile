@@ -1,9 +1,10 @@
 #include "stdafx.h"
 
-#if defined(__FREEBSD__) || defined(__OPENBSD__) || defined(__NETBSD__) 
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) 
+
+#include "hardware_bsd.hpp"
 
 namespace utility {
-#include "hardware_bsd.hpp"
 
     hardware_bsd::hardware_bsd(void)
     {
@@ -13,19 +14,19 @@ namespace utility {
     {
     }
 
-    int hardware_linux::get_HDD_id( std::string& sHDDID )
+    int hardware_bsd::get_HDD_id( std::string& sHDDID )
     {
         int fd;
         return 0;
     }
 
-    int hardware_linux::get_Mac_address( std::string& sMacAddr )
+    int hardware_bsd::get_Mac_address( std::string& sMacAddr )
     {
         int ret = 0;
         return ret;
     }
 
-    int hardware_linux::get_CPU_id( std::string& sCPUID )
+    int hardware_bsd::get_CPU_id( std::string& sCPUID )
     {
         char szTmp[40] = {0};
         char szTmp2[40] = {0};
@@ -59,7 +60,7 @@ namespace utility {
         return 0;
     }
 
-    int hardware_linux::get_root_path_id( std::string& sRootID )
+    int hardware_bsd::get_root_path_id( std::string& sRootID )
     {
         char serialNumber[NAME_MAX] = "f98c4a27-215e-44bd-ba86-4a8df2869714";
         std::stringstream ss;
@@ -69,7 +70,7 @@ namespace utility {
         return 0;
     }
 
-    int hardware_linux::get_CPU_core_count()
+    int hardware_bsd::get_CPU_core_count()
     {
         return 0;
     }

@@ -1,7 +1,7 @@
 #ifndef _UTILITY_HARDWARE_UNSUPPORTED_HPP_
 #define _UTILITY_HARDWARE_UNSUPPORTED_HPP_
 
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(__linux__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__linux__) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
 
 namespace utility {
     class hardware_unsupported

@@ -9,7 +9,7 @@
 #include "hardware_osx.hpp"
 #elif defined(__linux__)
 #include "hardware_linux.hpp"
-#elif defined(__FREEBSD__) || defined(__OPENBSD__) || defined(__NETBSD__) 
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) 
 #include "hardware_bsd.hpp"
 #else
 #include "hardware_unsupported.hpp"
@@ -22,7 +22,7 @@ namespace utility {
     typedef hardware_osx hardware_info;
 #elif defined(__linux__)
     typedef hardware_linux hardware_info;
-#elif defined(__FREEBSD__) || defined(__OPENBSD__) || defined(__NETBSD__) 
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) 
     typedef hardware_bsd hardware_info;
 #else
     typedef hardware_unsupported hardware_info;

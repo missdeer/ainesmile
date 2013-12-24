@@ -31,7 +31,7 @@
     #include <netinet/tcp.h>
     #include <netdb.h>
     #include <fcntl.h>
-    #include <alloca.h>
+//    #include <alloca.h>
     #include <string.h>
 #endif
 #include <map>

@@ -1,7 +1,7 @@
 #ifndef _UTILITY_HARDWARE_BSD_HPP_
 #define _UTILITY_HARDWARE_BSD_HPP_
 
-#if defined(__FREEBSD__) || defined(__OPENBSD__) || defined(__NETBSD__) 
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) 
 
 namespace utility {
     class hardware_bsd
