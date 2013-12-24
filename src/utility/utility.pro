@@ -20,6 +20,7 @@ SOURCES += \
     hardware_osx.cpp \
     hardware_unsupported.cpp \
     hardware_win32.cpp \
+    hardware_bsd.cpp \
     socket_util.cpp \
     stdafx.cpp \
     util.cpp
@@ -30,6 +31,7 @@ HEADERS += \
     hardware_osx.hpp \
     hardware_unsupported.hpp \
     hardware_win32.hpp \
+    hardware_bsd.hpp \
     resource.h \
     socket_util.hpp \
     stdafx.h \
@@ -51,3 +53,4 @@ OTHER_FILES += \
     utility.rc
 
 RC_FILE = utility.rc
+
