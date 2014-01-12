@@ -761,7 +761,7 @@ void MainWindow::on_actionDForDSoftwareHome_triggered()
 
 void MainWindow::on_actionAinesmileProductPage_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile.htm"));
+    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile/"));
 }
 
 void MainWindow::on_actionSaveAll_triggered()
