@@ -1030,6 +1030,8 @@ void MainWindow::hideFeatures()
         ui->actionReloadExtensions->setVisible(false);
         ui->actionSelectExtensionItem->setVisible(false);
     }
+
+    // hide un-implemented menu items
 }
 
 

@@ -4,10 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml network
+QT       += core gui xml network webkit
 
 greaterThan(QT_MAJOR_VERSION, 4): {
-    QT += widgets
+    QT += widgets webkitwidgets
 }
 
 TARGET = ainesmile

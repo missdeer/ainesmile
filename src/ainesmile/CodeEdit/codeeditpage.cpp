@@ -14,23 +14,31 @@
 
 CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent),
-    m_splitter(new QSplitter( Qt::Vertical, this)),
-    m_sciControlMaster(new ScintillaEdit(m_splitter)),
-    m_sciControlSlave(new ScintillaEdit(m_splitter))
-  //  ,m_webView(new QWebView(m_splitter))
+    m_horizontalMainSplitter(new QSplitter( Qt::Horizontal, this)),
+    m_editorPane(new QWidget(m_horizontalMainSplitter)),
+    m_webView(new QWebView(m_horizontalMainSplitter)),
+    m_verticalEditorSplitter(new QSplitter( Qt::Vertical, m_editorPane)),
+    m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
+    m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter))
 {
-    m_splitter->addWidget(m_sciControlSlave);
-    m_splitter->addWidget(m_sciControlMaster);
- //   m_splitter->addWidget(m_webView);
+    m_horizontalMainSplitter->addWidget(m_editorPane);
+    m_horizontalMainSplitter->addWidget(m_webView);
+
+    m_verticalEditorSplitter->addWidget(m_sciControlSlave);
+    m_verticalEditorSplitter->addWidget(m_sciControlMaster);
 
     QList<int> sizes;
     sizes << 0 << 0x7FFFF;//<< 0;
-    m_splitter->setSizes(sizes);
+    m_verticalEditorSplitter->setSizes(sizes);
+
+    sizes.clear();
+    sizes << 0x7FFFF << 0;
+    m_horizontalMainSplitter->setSizes(sizes);
 
     QVBoxLayout* m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);
     m_mainLayout->setMargin(0);
-    m_mainLayout->addWidget(m_splitter);
+    m_mainLayout->addWidget(m_horizontalMainSplitter);
     setLayout(m_mainLayout);
 
     init();
