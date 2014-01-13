@@ -52,5 +52,5 @@ unix:!symbian {
 OTHER_FILES += \
     utility.rc
 
-RC_FILE = utility.rc
+# RC_FILE = utility.rc
 
