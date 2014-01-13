@@ -90,6 +90,8 @@ RESOURCES += \
 # Windows icons
 RC_FILE = ainesmile.rc
 
+LIBS +=  -lssl -lcrypto
+
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../utility/release/ -lutility
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../utility/debug/ -lutility
 else:unix: LIBS += -L$$OUT_PWD/../utility/ -lutility
@@ -103,7 +105,11 @@ DEPENDPATH += $$PWD/../utility
 
 win32: {
 INCLUDEPATH += $$(PORTED)\include
-LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3 -L..\..\3rdparty\winopenssl_1_0_0j\lib -llibeay32 -lssleay32 -L"$$(PORTED)\lib" -lIphlpapi
+LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi
+msvc: {
+LIBS -= -lssl -lcrypto 
+LIBS += -L..\..\3rdparty\winopenssl_1_0_0j\lib -llibeay32 -lssleay32
+}
 }
 unix: !macx: {
 LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
@@ -130,10 +136,6 @@ icon.files += rc/ainesmile.png
 INSTALLS = target \
     desktop \
     icon
-}
-
-unix: {
-LIBS +=  -lssl -lcrypto
 }
 
 CODECFORTR      = UTF-8
