@@ -103,7 +103,7 @@ DEPENDPATH += $$PWD/../utility
 
 win32: {
 INCLUDEPATH += $$(PORTED)\include
-LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3 -L"$$(PORTED)\lib" -lIphlpapi
+LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3 -L..\..\3rdparty\winopenssl_1_0_0j\lib -llibeay32 -lssleay32 -L"$$(PORTED)\lib" -lIphlpapi
 }
 unix: !macx: {
 LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
@@ -132,8 +132,9 @@ INSTALLS = target \
     icon
 }
 
+unix: {
 LIBS +=  -lssl -lcrypto
-
+}
 
 CODECFORTR      = UTF-8
 CODECFORSRC     = UTF-8

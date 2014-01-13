@@ -29,8 +29,8 @@ typedef unsigned short uint16;
 typedef unsigned int uint32;
 #include <assert.h>
 #ifdef _WIN32
-#include <WinSock2.h>
 #include <windows.h>
+//#include <WinSock2.h>
 typedef ULONGLONG uint64;
 #else
 #include <stdlib.h>
