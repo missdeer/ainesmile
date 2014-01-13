@@ -125,9 +125,11 @@ std::string StupidCheck::base64_encode(const std::string &bindata) const
     using std::string;
     using std::numeric_limits;
 
+#ifndef  __INTEL_COMPILER
     if (bindata.size() > (numeric_limits<string::size_type>::max() / 4u) * 3u) {
         throw std::length_error("Converting too large a string to base64.");
     }
+#endif
 
     const std::size_t binlen = bindata.size();
     // Use = signs so the end is properly padded.
