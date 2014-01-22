@@ -1,6 +1,3 @@
-#if defined(WIN32)
-#include <Windows.h>
-#endif
 #include <QtCore>
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -12,6 +9,9 @@
 #include <QListWidget>
 #include <QDockWidget>
 #include <QSettings>
+#if defined(Q_OS_WIN)
+#include <Windows.h>
+#endif
 #include "config.h"
 #include "stupidcheck.h"
 #include "codeeditpage.h"
@@ -1045,3 +1045,4 @@ void MainWindow::on_actionOrderViaAlipay_triggered()
 {
     QDesktopServices::openUrl(QUrl::fromUserInput("http://item.taobao.com/item.htm?id=35596827125"));
 }
+

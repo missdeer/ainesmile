@@ -105,10 +105,10 @@ DEPENDPATH += $$PWD/../utility
 
 win32: {
 INCLUDEPATH += $$(PORTED)\include
-LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi
-msvc: {
+LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi -luser32
+!gcc: {
 LIBS -= -lssl -lcrypto 
-LIBS += -L..\..\3rdparty\winopenssl_1_0_0j\lib -llibeay32 -lssleay32
+LIBS += -L..\..\3rdparty\winopenssl_1_0_0j\lib -lssleay32 -llibeay32 
 }
 }
 unix: !macx: {
