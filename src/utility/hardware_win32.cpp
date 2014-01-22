@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#if defined(WIN32)
+#if ((defined(WIN32) || defined(_WIN32) || defined(__WIN32__)) || defined(_WIN32) || defined(__WIN32__))
 #include <cstdio>
 #include <devguid.h>
 #include <regstr.h>

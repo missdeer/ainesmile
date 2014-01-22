@@ -28,7 +28,7 @@ namespace utility {
 
     void socket_util::set_non_block( socket_t fd, bool non_block )
     {
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
         unsigned long NonBlock =(non_block ? 1 : 0);
         ioctlsocket(fd, FIONBIO, &NonBlock);
 #else

@@ -1,7 +1,7 @@
 #ifndef _UTILITY_HARDWARE_WIN32_HPP_
 #define _UTILITY_HARDWARE_WIN32_HPP_
 
-#ifdef WIN32
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
     //Get HardDisk ID
 #define FILE_DEVICE_SCSI              0x0000001b
 #define IOCTL_SCSI_MINIPORT_IDENTIFY ( ( FILE_DEVICE_SCSI << 16 ) + 0x0501 )

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "process_unix.hpp"
 
-#if !defined(WIN32)
+#if !(defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <dirent.h>

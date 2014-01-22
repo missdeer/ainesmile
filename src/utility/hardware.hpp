@@ -3,7 +3,7 @@
 
 #include "utility_global.hpp"
 #include <boost/shared_ptr.hpp>
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 #include "hardware_win32.hpp"
 #elif defined(__APPLE__)
 #include "hardware_osx.hpp"
@@ -16,7 +16,7 @@
 #endif
 
 namespace utility {
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
     typedef hardware_win32 hardware_info;
 #elif defined(__APPLE__)
     typedef hardware_osx hardware_info;

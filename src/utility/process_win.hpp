@@ -1,7 +1,7 @@
 #ifndef _UTILITY_PROCESS_WIN_HPP_
 #define _UTILITY_PROCESS_WIN_HPP_
 
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 
 #include <boost/function.hpp>
 #include <boost/signals2.hpp>

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "process_win.hpp"
 
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 namespace utility {
     process_win::process_win(void)
         : auto_restart_(true)

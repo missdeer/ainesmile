@@ -11,7 +11,7 @@ namespace utility {
     {
         std::string cpuinfo, hdinfo, macaddinfo, partitioninfo;
         uint64 pid;
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
         hardware_info::get_CPU_id(cpuinfo);
 #endif
         hardware_info::get_HDD_id(hdinfo);
@@ -105,7 +105,7 @@ namespace utility {
     {
         char name[256] = {0};
         unsigned long length = sizeof(name)/sizeof(name[0]);
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
         if (GetComputerNameA(name, &length))
         {
             strcpy(computer_name, name);
@@ -139,7 +139,7 @@ namespace utility {
         for (int i = 0; i < len; i++)
         {
             char hexascii[4] = {0};
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
             _snprintf(hexascii, sizeof(hexascii), "%02x", bufin[i]);
 #else
             snprintf(hexascii, sizeof(hexascii), "%02x", bufin[i]);

@@ -1,7 +1,7 @@
 #ifndef _UTILITIY_IFCONFIG_WIN32_HPP_
 #define _UTILITIY_IFCONFIG_WIN32_HPP_
 
-#if defined(WIN32)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 #include "utility_global.hpp"
 
 namespace utility {
