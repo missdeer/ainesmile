@@ -14,21 +14,20 @@
 
 CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent),
-    m_horizontalMainSplitter(new QSplitter( Qt::Horizontal, this)),
-    m_editorPane(new QWidget(m_horizontalMainSplitter)),
-    m_webView(new QWebView(m_horizontalMainSplitter)),
-    m_verticalEditorSplitter(new QSplitter( Qt::Vertical, m_editorPane)),
+    m_horizontalMainSplitter(new QSplitter( Qt::Horizontal, parent)),
+    m_webView(new QWebView(parent)),
+    m_verticalEditorSplitter(new QSplitter( Qt::Vertical, parent)),
     m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
     m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter))
 {
-    m_horizontalMainSplitter->addWidget(m_editorPane);
+    m_horizontalMainSplitter->addWidget(m_verticalEditorSplitter);
     m_horizontalMainSplitter->addWidget(m_webView);
 
     m_verticalEditorSplitter->addWidget(m_sciControlSlave);
     m_verticalEditorSplitter->addWidget(m_sciControlMaster);
 
     QList<int> sizes;
-    sizes << 0 << 0x7FFFF;//<< 0;
+    sizes << 0 << 0x7FFFF;// << 0;
     m_verticalEditorSplitter->setSizes(sizes);
 
     sizes.clear();
@@ -44,7 +43,7 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     init();
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
-    //webView->load(QUrl("http://www.dfordsoft.com"));
+    //m_webView->load(QUrl("http://www.dfordsoft.com"));
 }
 
 void CodeEditPage::init()
