@@ -43,7 +43,7 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     init();
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
-    //m_webView->load(QUrl("http://www.dfordsoft.com"));
+    m_webView->load(QUrl("qrc:/rc/index.html"));
 }
 
 void CodeEditPage::init()

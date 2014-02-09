@@ -31,5 +31,6 @@
         <file>rc/image/config/category_print.png</file>
         <file>rc/image/config/category_style.png</file>
         <file>rc/image/config/category_vcs.png</file>
+        <file>rc/index.html</file>
     </qresource>
 </RCC>
