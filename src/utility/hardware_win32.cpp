@@ -114,6 +114,8 @@ namespace utility {
         char szTmp2[40] = {0};
         unsigned long s1 = 0,s2=0;
 #ifdef _MSC_VER
+#if defined(_WIN64)
+#else
         _asm
         {       
             mov     eax,2       
@@ -127,6 +129,7 @@ namespace utility {
                 mov     s1,edx       
                 mov     s2,eax       
         }
+#endif
 #else
         __asm__
             __volatile__
@@ -141,6 +144,8 @@ namespace utility {
         _snprintf(szTmp, sizeof(szTmp), "%08X%08X", s1, s2);       
         sCPUID = szTmp;   
 #ifdef _MSC_VER
+#if defined(_WIN64)
+#else
         _asm
         {       
             mov     eax,03h      
@@ -150,6 +155,7 @@ namespace utility {
                 mov     s1,edx       
                 mov     s2,ecx       
         }       
+#endif
 #else
         __asm__
             __volatile__
