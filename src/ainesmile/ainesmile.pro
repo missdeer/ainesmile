@@ -108,7 +108,12 @@ INCLUDEPATH += $$(PORTED)\include
 LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi -luser32
 !gcc: {
 LIBS -= -lssl -lcrypto 
-LIBS += -L..\..\3rdparty\winopenssl_1_0_0j\lib -lssleay32 -llibeay32 
+contains(QMAKE_HOST.arch, x86_64):{
+LIBS += -L..\..\3rdparty\winopenssl_1_0_1f_x64\lib -lssleay32 -llibeay32 
+}
+else : {
+LIBS += -L..\..\3rdparty\winopenssl_1_0_1f_x86\lib -lssleay32 -llibeay32 
+}
 }
 }
 unix: !macx: {
