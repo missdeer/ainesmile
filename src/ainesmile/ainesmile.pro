@@ -46,7 +46,6 @@ SOURCES += main.cpp\
     Dialogs/gotolinedialog.cpp \
     Dialogs/registerdialog.cpp \
     Dialogs/preferencedialog.cpp \
-    stupidcheck.cpp \
     Dialogs/nagdialog.cpp \
     CodeEdit/recentfiles.cpp \
     Dialogs/summarydialog.cpp \
@@ -62,7 +61,6 @@ HEADERS  += mainwindow.h \
     Dialogs/gotolinedialog.h \
     Dialogs/registerdialog.h \
     Dialogs/preferencedialog.h \
-    stupidcheck.h \
     Dialogs/nagdialog.h \
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
@@ -105,14 +103,14 @@ DEPENDPATH += $$PWD/../utility
 
 win32: {
 INCLUDEPATH += $$(PORTED)\include
-LIBS += -L..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi -luser32
+LIBS += -L$$PWD\..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi -luser32
 !gcc: {
 LIBS -= -lssl -lcrypto 
-LIBS += -L..\..\3rdparty\winopenssl_1_0_0j\lib -lssleay32 -llibeay32 
+LIBS += -L$$PWD\..\..\3rdparty\winopenssl_1_0_0j\lib -lssleay32 -llibeay32
 }
 }
 unix: !macx: {
-LIBS += -L ../../3rdparty/scintilla/bin -lScintillaEdit
+LIBS += -L $$PWD/../../3rdparty/scintilla/bin -lScintillaEdit
 }
 
 # Mac OS X icon
@@ -127,7 +125,7 @@ macx: {
     QMAKE_EXTRA_TARGETS += codesign_installer dmg_installer copy_menu_nib_installer
 
 QT += opengl
-LIBS += -F ../../3rdparty/scintilla/bin -framework ScintillaEdit \
+LIBS += -F $$PWD/../../3rdparty/scintilla/bin -framework ScintillaEdit \
     -framework CoreFoundation \
     -framework IOKit
 

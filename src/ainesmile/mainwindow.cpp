@@ -13,7 +13,6 @@
 #include <Windows.h>
 #endif
 #include "config.h"
-#include "stupidcheck.h"
 #include "codeeditpage.h"
 #include "aboutdialog.h"
 #include "registerdialog.h"
@@ -1012,24 +1011,24 @@ void MainWindow::hideFeatures()
     ui->actionAlwaysOnTop->setVisible(false);
 #endif
 
-    StupidCheck sc;
-    if (!sc.isDeluxe())
-    {
-        // hide the deluxe features
-    }
+//    StupidCheck sc;
+//    if (!sc.isDeluxe())
+//    {
+//        // hide the deluxe features
+//    }
 
-    if (sc.isStandard())
-    {
-        // hide the professional features
-        ui->menuPlugins->setVisible(false);
-        ui->actionPluginManager->setVisible(false);
-        ui->actionPlugins->setVisible(false);
-        ui->actionShowExtensionEditor->setVisible(false);
-        ui->actionEditCommands->setVisible(false);
-        ui->actionEditSnippets->setVisible(false);
-        ui->actionReloadExtensions->setVisible(false);
-        ui->actionSelectExtensionItem->setVisible(false);
-    }
+//    if (sc.isStandard())
+//    {
+//        // hide the professional features
+//        ui->menuPlugins->setVisible(false);
+//        ui->actionPluginManager->setVisible(false);
+//        ui->actionPlugins->setVisible(false);
+//        ui->actionShowExtensionEditor->setVisible(false);
+//        ui->actionEditCommands->setVisible(false);
+//        ui->actionEditSnippets->setVisible(false);
+//        ui->actionReloadExtensions->setVisible(false);
+//        ui->actionSelectExtensionItem->setVisible(false);
+//    }
 
     // hide un-implemented menu items
 }

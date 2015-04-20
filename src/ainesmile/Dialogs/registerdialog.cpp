@@ -11,7 +11,6 @@
 #include <sstream>
 #include <string>
 #include "config.h"
-#include "stupidcheck.h"
 #include "registerdialog.h"
 #include "ui_registerdialog.h"
 
@@ -22,8 +21,8 @@ RegisterDialog::RegisterDialog(QWidget *parent) :
     ui->setupUi(this);
     setFixedSize( size() );
 
-    StupidCheck sc;
-    ui->edtPinCode->setText(sc.getPinCode());
+//    StupidCheck sc;
+//    ui->edtPinCode->setText(sc.getPinCode());
 
     Config* cfg = Config::instance();
     QString username, licenseCode;
@@ -46,8 +45,8 @@ void RegisterDialog::on_buttonBox_accepted()
     }
     else
     {
-        StupidCheck sc;
-        sc.save(ui->edtUsername->text(), ui->edtLicenseCode->toPlainText());
+//        StupidCheck sc;
+//        sc.save(ui->edtUsername->text(), ui->edtLicenseCode->toPlainText());
 
         QMessageBox::information(this, tr("Notice"), tr("Please restart ainesmile to verify the license."));
     }

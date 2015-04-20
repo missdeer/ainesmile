@@ -6,7 +6,6 @@
 #include <QLibraryInfo>
 #include <QUrl>
 #include "config.h"
-#include "stupidcheck.h"
 #include "nagdialog.h"
 #include "mainwindow.h"
 
@@ -136,25 +135,25 @@ int main(int argc, char *argv[])
     }
 
 
-    StupidCheck sc;
-    if (sc.isStandard())
-    {
-        w.setWindowTitle(QObject::tr("ainesmile - Standard Edition"));
-    }
-    else if (sc.isProfessional())
-    {
-        w.setWindowTitle(QObject::tr("ainesmile - Professional Edition"));
-    }
-    else if (sc.isDeluxe())
-    {
-        w.setWindowTitle(QObject::tr("ainesmile - Deluxe Edition"));
-    }
-    else
-    {
-        w.setWindowTitle(QObject::tr("aiensmile - Unregister"));
-        NagDialog dlg(&w);
-        dlg.exec();
-    }
+//    StupidCheck sc;
+//    if (sc.isStandard())
+//    {
+//        w.setWindowTitle(QObject::tr("ainesmile - Standard Edition"));
+//    }
+//    else if (sc.isProfessional())
+//    {
+//        w.setWindowTitle(QObject::tr("ainesmile - Professional Edition"));
+//    }
+//    else if (sc.isDeluxe())
+//    {
+//        w.setWindowTitle(QObject::tr("ainesmile - Deluxe Edition"));
+//    }
+//    else
+//    {
+//        w.setWindowTitle(QObject::tr("aiensmile - Unregister"));
+//        NagDialog dlg(&w);
+//        dlg.exec();
+//    }
 
     QObject::connect(&a, SIGNAL(messageReceived(QString,QObject*)), &w, SLOT(onIPCMessageReceived(QString,QObject*)));
     QObject::connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
