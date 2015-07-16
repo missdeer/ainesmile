@@ -1,4 +1,4 @@
-greaterThan(QT_MAJOR_VERSION, 4): cache()
+cache()
 TEMPLATE = subdirs
 
 CONFIG += ordered
@@ -26,9 +26,9 @@ defineTest(minQtVersion) {
     }
     return(false)
 }
-!minQtVersion(4, 8, 0) {
+!minQtVersion(5, 0, 0) {
     message("Cannot build ainesmile with Qt version $${QT_VERSION}.")
-    error("Use at least Qt 4.8.0.")
+    error("Use at least Qt 5.0.0.")
 }
 
 AINESMILE_VERSION = 1.0.0

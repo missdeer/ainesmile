@@ -13,10 +13,8 @@
 #include <Windows.h>
 #endif
 #include "config.h"
-#include "stupidcheck.h"
 #include "codeeditpage.h"
 #include "aboutdialog.h"
-#include "registerdialog.h"
 #include "preferencedialog.h"
 #include "windowlistdialog.h"
 #include "mainwindow.h"
@@ -52,12 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     hideFeatures();
 #if defined(Q_OS_MAC)
-    ui->actionRegistration->setMenuRole(QAction::ApplicationSpecificRole);
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     ui->actionAboutApp->setMenuRole(QAction::AboutRole);
     ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
     ui->actionExitApp->setMenuRole(QAction::QuitRole);
-#endif
 #endif
     QList<int> sizes;
     sizes << ui->widget->width()/2 << ui->widget->width()/2;
@@ -884,8 +879,7 @@ void MainWindow::on_actionPreviousSearchResult_triggered()
 
 void MainWindow::on_actionRegistration_triggered()
 {
-    RegisterDialog dlg(this);
-    dlg.exec();
+
 }
 
 void MainWindow::on_actionSelectExtensionItem_triggered()
@@ -1011,27 +1005,6 @@ void MainWindow::hideFeatures()
 #if defined(Q_OS_MAC)
     ui->actionAlwaysOnTop->setVisible(false);
 #endif
-
-    StupidCheck sc;
-    if (!sc.isDeluxe())
-    {
-        // hide the deluxe features
-    }
-
-    if (sc.isStandard())
-    {
-        // hide the professional features
-        ui->menuPlugins->setVisible(false);
-        ui->actionPluginManager->setVisible(false);
-        ui->actionPlugins->setVisible(false);
-        ui->actionShowExtensionEditor->setVisible(false);
-        ui->actionEditCommands->setVisible(false);
-        ui->actionEditSnippets->setVisible(false);
-        ui->actionReloadExtensions->setVisible(false);
-        ui->actionSelectExtensionItem->setVisible(false);
-    }
-
-    // hide un-implemented menu items
 }
 
 

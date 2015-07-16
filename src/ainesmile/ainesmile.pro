@@ -4,11 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml network webkit
-
-greaterThan(QT_MAJOR_VERSION, 4): {
-    QT += widgets webkitwidgets
-}
+QT       += core gui xml network widgets webkitwidgets webkit
 
 TARGET = ainesmile
 TEMPLATE = app
@@ -44,10 +40,7 @@ SOURCES += main.cpp\
     CodeEdit/scintillaconfig.cpp \
     Dialogs/aboutdialog.cpp \
     Dialogs/gotolinedialog.cpp \
-    Dialogs/registerdialog.cpp \
     Dialogs/preferencedialog.cpp \
-    stupidcheck.cpp \
-    Dialogs/nagdialog.cpp \
     CodeEdit/recentfiles.cpp \
     Dialogs/summarydialog.cpp \
     Dialogs/windowlistdialog.cpp \
@@ -60,10 +53,7 @@ HEADERS  += mainwindow.h \
     CodeEdit/scintillaconfig.h \
     Dialogs/aboutdialog.h \
     Dialogs/gotolinedialog.h \
-    Dialogs/registerdialog.h \
     Dialogs/preferencedialog.h \
-    stupidcheck.h \
-    Dialogs/nagdialog.h \
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
     Dialogs/windowlistdialog.h \
@@ -73,9 +63,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     Dialogs/aboutdialog.ui \
     Dialogs/gotolinedialog.ui \
-    Dialogs/registerdialog.ui \
     Dialogs/preferencedialog.ui \
-    Dialogs/nagdialog.ui \
     Dialogs/summarydialog.ui \
     Dialogs/windowlistdialog.ui
 
