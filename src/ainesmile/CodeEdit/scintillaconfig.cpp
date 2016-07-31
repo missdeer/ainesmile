@@ -97,7 +97,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 
     sci->usePopUp(false);
     //sci->send(SCI_SETUSEPALETTE, 1, 0);
-    sci->setBufferedDraw(true);
+    sci->setBufferedDraw(false);
     sci->setTwoPhaseDraw(true);
     sci->setCodePage(SC_CP_UTF8);
     sci->setWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
