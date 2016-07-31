@@ -258,7 +258,7 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
 #elif defined(Q_OS_WIN)
             sci->styleSetFont(id, "Consolas");
 #else
-            sci->styleSetFont(id, "Droidsans");
+            sci->styleSetFont(id, "Droid Sans Mono");
 #endif
 
         uint fontStyle = styleElem.attribute("font_style").toUInt();
@@ -278,10 +278,8 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
             sci->styleSetHotSpot(id, true);
         if (fontStyle & 0x80)
             sci->styleSetChangeable(id, true);
-        QString fontSize = styleElem.attribute("font_size");
-        if (!fontSize.isEmpty())
-            sci->styleSetSize(id, std::max(12, fontSize.toInt()));
-        else
-            sci->styleSetSize(id, 12);
+
+        int fontSize = styleElem.attribute("font_size").toInt();
+        sci->styleSetSize(id, std::max(12, fontSize));
     }
 }
