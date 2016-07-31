@@ -43,10 +43,6 @@ SOURCES += main.cpp\
     Dialogs/aboutdialog.cpp \
     Dialogs/gotolinedialog.cpp \
     Dialogs/preferencedialog.cpp \
-<<<<<<< HEAD
-=======
-    Dialogs/nagdialog.cpp \
->>>>>>> abeb4c8b57706b01169305395535a2ce1b6c223e
     CodeEdit/recentfiles.cpp \
     Dialogs/summarydialog.cpp \
     Dialogs/windowlistdialog.cpp \
@@ -60,10 +56,6 @@ HEADERS  += mainwindow.h \
     Dialogs/aboutdialog.h \
     Dialogs/gotolinedialog.h \
     Dialogs/preferencedialog.h \
-<<<<<<< HEAD
-=======
-    Dialogs/nagdialog.h \
->>>>>>> abeb4c8b57706b01169305395535a2ce1b6c223e
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
     Dialogs/windowlistdialog.h \
@@ -105,17 +97,8 @@ win32: {
 INCLUDEPATH += $$(PORTED)\include
 LIBS += -L$$PWD\..\..\3rdparty\scintilla\bin -lScintillaEdit3  -L"$$(PORTED)\lib" -lIphlpapi -luser32
 !gcc: {
-LIBS -= -lssl -lcrypto 
-<<<<<<< HEAD
-contains(QMAKE_HOST.arch, x86_64):{
-LIBS += -L..\..\3rdparty\winopenssl_1_0_1f_x64\lib -lssleay32 -llibeay32 
-}
-else : {
-LIBS += -L..\..\3rdparty\winopenssl_1_0_1f_x86\lib -lssleay32 -llibeay32 
-}
-=======
+LIBS -= -lssl -lcrypto
 LIBS += -L$$PWD\..\..\3rdparty\winopenssl_1_0_0j\lib -lssleay32 -llibeay32
->>>>>>> abeb4c8b57706b01169305395535a2ce1b6c223e
 }
 }
 unix: !macx: {
