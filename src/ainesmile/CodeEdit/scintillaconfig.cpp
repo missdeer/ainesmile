@@ -98,7 +98,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->usePopUp(false);
     //sci->send(SCI_SETUSEPALETTE, 1, 0);
     sci->setBufferedDraw(false);
-    sci->setTwoPhaseDraw(true);
+    sci->setPhasesDraw(SC_PHASES_TWO);
     sci->setCodePage(SC_CP_UTF8);
     sci->setWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
     sci->setZoom(1);
@@ -223,13 +223,18 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
 
     QDomElement docElem = doc.documentElement();
 
+    bool zeroId = false;
     for(QDomElement styleElem = docElem.firstChildElement("style");
         !styleElem.isNull();
         styleElem = styleElem.nextSiblingElement("style"))
     {
         int id = styleElem.attribute("style_id").toInt();
         if (id == 0)
+        {
+            if (zeroId)
                 continue;
+            zeroId = true;
+        }
         QString foreColor = styleElem.attribute("fg_color");
         if (!foreColor.isEmpty())
         {
@@ -247,6 +252,15 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
         QString fontName = styleElem.attribute("font_name");
         if (!fontName.isEmpty())
             sci->styleSetFont(id, fontName.toStdString().c_str());
+        else
+#if defined(Q_OS_MAC)
+            sci->styleSetFont(id, "Monaco");
+#elif defined(Q_OS_WIN)
+            sci->styleSetFont(id, "Consolas");
+#else
+            sci->styleSetFont(id, "Droidsans");
+#endif
+
         uint fontStyle = styleElem.attribute("font_style").toUInt();
         if (fontStyle & 0x01)
             sci->styleSetBold(id, true);
@@ -266,6 +280,8 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
             sci->styleSetChangeable(id, true);
         QString fontSize = styleElem.attribute("font_size");
         if (!fontSize.isEmpty())
-            sci->styleSetSize(id, fontSize.toInt());
+            sci->styleSetSize(id, std::max(12, fontSize.toInt()));
+        else
+            sci->styleSetSize(id, 12);
     }
 }
