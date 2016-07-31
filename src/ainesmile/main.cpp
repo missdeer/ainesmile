@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 #endif
 
     SharedTools::QtSingleApplication a(QLatin1String("ainesmile"), argc, argv);
-
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     if (a.isRunning())
     {
         if (argc >= 2)

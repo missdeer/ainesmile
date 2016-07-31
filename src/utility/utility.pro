@@ -8,7 +8,7 @@ QT       -= core gui
 
 TARGET = utility
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++11
 
 VERSION = 1.0.0
 

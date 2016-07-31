@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml network widgets webkitwidgets webkit
+QT       += core gui xml network widgets webenginewidgets
+
+CONFIG += c++11
 
 TARGET = ainesmile
 TEMPLATE = app

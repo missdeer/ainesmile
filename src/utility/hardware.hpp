@@ -2,7 +2,6 @@
 #define _PEERSERVICE_HARDWARE_HPP_
 
 #include "utility_global.hpp"
-#include <boost/shared_ptr.hpp>
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 #include "hardware_win32.hpp"
 #elif defined(__APPLE__)
@@ -27,7 +26,7 @@ namespace utility {
 #else
     typedef hardware_unsupported hardware_info;
 #endif
-    typedef boost::shared_ptr<hardware_info> hardware_info_ptr;
+    typedef std::shared_ptr<hardware_info> hardware_info_ptr;
 } // namespace utility
 
 #endif 

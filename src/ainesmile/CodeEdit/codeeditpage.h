@@ -2,7 +2,7 @@
 #define CODEEDITPAGE_H
 
 #include <QWidget>
-#include <QWebView>
+#include <QWebEngineView>
 #include <QSplitter>
 #include <QFocusEvent>
 #include "scintillaconfig.h"
@@ -18,7 +18,7 @@ private:
     bool focusIn_;
     QSplitter* m_horizontalMainSplitter;
     QWidget* m_editorPane;
-    QWebView* m_webView;
+    QWebEngineView* m_webView;
     QSplitter* m_verticalEditorSplitter;
     ScintillaEdit* m_sciControlMaster;
     ScintillaEdit* m_sciControlSlave;

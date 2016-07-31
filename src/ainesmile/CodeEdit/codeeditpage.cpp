@@ -15,7 +15,7 @@
 CodeEditPage::CodeEditPage(QWidget *parent) :
     QWidget(parent),
     m_horizontalMainSplitter(new QSplitter( Qt::Horizontal, parent)),
-    m_webView(new QWebView(parent)),
+    m_webView(new QWebEngineView(parent)),
     m_verticalEditorSplitter(new QSplitter( Qt::Vertical, parent)),
     m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
     m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter))
@@ -122,7 +122,7 @@ void CodeEditPage::saveFile(const QString &filePath)
             if (size != len)
             {
                 QMessageBox::warning(this, tr("Saving file failed:"),
-                                     tr("Not all data is saved to file."));
+                                     tr("Not all data is saved to file."), QMessageBox::Ok);
             }
             else
             {
