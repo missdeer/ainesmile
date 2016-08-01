@@ -46,11 +46,7 @@ int main(int argc, char *argv[])
     QTranslator qtTranslator;
     QStringList uiLanguages;
 // uiLanguages crashes on Windows with 4.8.0 release builds
-#if (QT_VERSION >= 0x040801) || (QT_VERSION >= 0x040800 && !defined(Q_OS_WIN))
     uiLanguages = QLocale::system().uiLanguages();
-#else
-    uiLanguages << QLocale::system().name();
-#endif
     boost::property_tree::ptree& pt = Config::instance()->pt();
     QString overrideLanguage(pt.get<std::string>("General/OverrideLanguage", "").c_str());
     if (!overrideLanguage.isEmpty())
@@ -59,11 +55,7 @@ int main(int argc, char *argv[])
             + QLatin1String(SHARE_PATH "/translations");
     foreach (QString locale, uiLanguages)
     {
-#if (QT_VERSION >= 0x050000)
         locale = QLocale(locale).name();
-#else
-        locale.replace(QLatin1Char('-'), QLatin1Char('_')); // work around QTBUG-25973
-#endif
         if (translator.load(QLatin1String("ainesmile_") + locale, ainesmileTrPath))
         {
             const QString &qtTrPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);

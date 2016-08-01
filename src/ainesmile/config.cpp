@@ -1,9 +1,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QDesktopServices>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QStandardPaths>
-#endif
 #include <QFileInfo>
 #include <QtXml>
 #include <QRegExp>
@@ -32,11 +30,8 @@ void Config::sync()
 
 QString Config::getDataDirPath()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QString configPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
+
     QDir dir(configPath);
     if (!dir.exists())
     {
@@ -48,11 +43,8 @@ QString Config::getDataDirPath()
 
 QString Config::getConfigDirPath()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QString configPath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-#endif
+
 #if !defined(Q_OS_WIN)
     configPath.append("/dfordsoft.com/ainesmile");
 #endif
