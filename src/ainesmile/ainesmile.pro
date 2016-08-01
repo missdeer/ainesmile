@@ -24,7 +24,6 @@ PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += CodeEdit \
     Dialogs \
-    ../../3rdparty/rapidxml-1.13 \
     ../../3rdparty/scintilla/qt/ScintillaEditBase \
     ../../3rdparty/scintilla/qt/ScintillaEdit \
     ../../3rdparty/scintilla/include \
