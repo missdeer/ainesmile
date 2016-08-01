@@ -16,15 +16,9 @@ RecentFiles::~RecentFiles()
 void RecentFiles::replaceFile(const QString &originalFile, const QString &newFile)
 {
     QFileInfo fileInfo(originalFile);
-    for (QStringList::Iterator it = files_.begin(); files_.end() != it; ++it)
-    {
-        QFileInfo fi(*it);
-        if (fi == fileInfo)
-        {
-            *it = newFile;
-            break;
-        }
-    }
+    auto it = std::find_if(files_.begin(), files_.end(), [&](const QString& f){ return QFileInfo(f) == fileInfo;});
+    if (files_.end() != it)
+        *it = newFile;
 }
 
 bool RecentFiles::addFile(const QString &file)
@@ -79,18 +73,12 @@ void RecentFiles::sync()
     QString filePath = Config::instance()->getDataDirPath();
     filePath.append("/recent");
     boost::property_tree::ptree pt;
-    for (QStringList::const_iterator it = files_.constBegin();
-         files_.constEnd() != it;
-         ++it)
-    {
-        pt.add("ainesmile.recentfiles.file", it->toStdString());
-    }
-    for (QStringList::const_iterator it = projects_.constBegin();
-         projects_.constEnd() != it;
-         ++it)
-    {
-        pt.add("ainesmile.recentprojects.project", it->toStdString());
-    }
+
+    std::for_each(files_.begin(), files_.end(),
+                  [&](const QString& f) { pt.add("ainesmile.recentfiles.project", f.toStdString());});
+
+    std::for_each(projects_.begin(), projects_.end(),
+                  [&](const QString& f) { pt.add("ainesmile.recentprojects.project", f.toStdString());});
     boost::property_tree::write_json(filePath.toStdString(), pt);
 }
 

@@ -149,13 +149,8 @@ QString Config::getThemePath()
         // do copy
         themeDir.mkpath(themePath);
         QStringList files = QDir(themeDirPath).entryList(QDir::Files);
-        QStringList::const_iterator constIterator;
-        for (constIterator = files.constBegin(); constIterator != files.constEnd(); ++constIterator)
-        {
-            QString src = themeDirPath + "/" + *constIterator;
-            QString dst = themePath + "/" + *constIterator;
-            QFile::copy(src, dst);
-        }
+        std::for_each(files.begin(), files.end(),
+                      [&](const QString& f) {QFile::copy(themeDirPath + "/" + f, themePath + "/" + f);});
     }
     qDebug() << "theme path: " << themePath;
     return themePath;
@@ -236,13 +231,8 @@ QString Config::getLanguageDirPath()
         // copy all files from configFile to langDirPath
         langDir.mkpath(langDirPath);
         QStringList files = QDir(configFile).entryList(QDir::Files);
-        QStringList::const_iterator constIterator;
-        for (constIterator = files.constBegin(); constIterator != files.constEnd(); ++constIterator)
-        {
-            QString src = configFile + "/" + *constIterator;
-            QString dst = langDirPath + "/" + *constIterator;
-            QFile::copy(src, dst);
-        }
+        std::for_each(files.begin(), files.end(),
+                      [&](const QString& f) {QFile::copy(configFile + "/" + f, langDirPath + "/" + f);});
     }
     qDebug() << "langDir: " << langDirPath;
     return langDirPath;
