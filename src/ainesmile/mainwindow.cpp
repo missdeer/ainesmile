@@ -49,21 +49,20 @@ MainWindow::MainWindow(QWidget *parent) :
     setMenuItemChecked();
     setAcceptDrops(true);
     hideFeatures();
-#if defined(Q_OS_MAC)
-    ui->actionAboutApp->setMenuRole(QAction::AboutRole);
-    ui->actionPreferences->setMenuRole(QAction::PreferencesRole);
-    ui->actionExitApp->setMenuRole(QAction::QuitRole);
-#endif
+
     QList<int> sizes;
     sizes << ui->widget->width()/2 << ui->widget->width()/2;
     ui->splitterMain->setSizes(sizes);
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
+    ui->dockProject->close();
+    ui->dockFindReplace->close();
+    ui->dockFindResult->close();
+
     ui->menuDockWindows->addAction(ui->dockProject->toggleViewAction());
     ui->menuDockWindows->addAction(ui->dockFindReplace->toggleViewAction());
     ui->menuDockWindows->addAction(ui->dockFindResult->toggleViewAction());
-    ui->menuToolBar->addAction(ui->standardToolBar->toggleViewAction());
 
     QSettings settings("dfordsoft.com", "ainesmile");
     if (settings.contains("geometry"))
