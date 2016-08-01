@@ -1,20 +1,6 @@
-#include <QtCore>
-#include <QFileDialog>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QMessageBox>
-#include <QCloseEvent>
-#include <QMimeData>
-#include <QStringList>
-#include <QListWidget>
-#include <QDockWidget>
-#include <QSettings>
-#if defined(Q_OS_WIN)
-#include <Windows.h>
-#endif
+#include "stdafx.h"
 #include "config.h"
 #include "codeeditpage.h"
-#include "aboutdialog.h"
 #include "preferencedialog.h"
 #include "windowlistdialog.h"
 #include "mainwindow.h"
@@ -744,8 +730,36 @@ void MainWindow::on_actionHelpContent_triggered()
 
 void MainWindow::on_actionAboutApp_triggered()
 {
-    AboutDialog dlg(this);
-    dlg.exec();
+    QString date;
+    QFile fileDate(":/DATE");
+    if (fileDate.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QByteArray d = fileDate.readAll();
+#if defined(Q_OS_MAC)
+        date = QString::fromUtf8(d);
+#else
+        date = QString::fromLocal8Bit(d);
+#endif
+        date = date.replace("\n", " ");
+        fileDate.close();
+    }
+
+    QString revision;
+    QFile fileRevision(":/REVISION");
+    if (fileRevision.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QByteArray r = fileRevision.readAll();
+#if defined(Q_OS_MAC)
+        revision = QString::fromUtf8(r);
+#else
+        revision = QString::fromLocal8Bit(r);
+#endif
+        fileRevision.close();
+    }
+
+    QString text = QString(tr("Build at %1\nRevision: %2\nThe best cross platform program source code editor and browser!")).arg(date).arg(revision);
+
+    QMessageBox::about(this, tr("About ainesmile"), text);
 }
 
 void MainWindow::on_actionDForDSoftwareHome_triggered()

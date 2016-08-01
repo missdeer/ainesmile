@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summarydialog.h"
 #include "ui_summarydialog.h"
 

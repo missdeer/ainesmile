@@ -1,7 +1,4 @@
-#include <QTabBar>
-#include <QMessageBox>
-#include <QFile>
-#include <QFileDialog>
+#include "stdafx.h"
 #include "tabwidget.h"
 
 TabWidget::TabWidget(QWidget *parent) :

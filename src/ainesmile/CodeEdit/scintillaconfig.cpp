@@ -1,6 +1,4 @@
-#include <QtXml>
-#include <QFile>
-#include <QMessageBox>
+#include "stdafx.h"
 #include "ScintillaEdit.h"
 #include "scintillaconfig.h"
 #include "config.h"

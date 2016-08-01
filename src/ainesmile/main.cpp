@@ -1,10 +1,5 @@
+#include "stdafx.h"
 #include "qtsingleapplication.h"
-#include <QNetworkProxy>
-#include <QThreadPool>
-#include <QStringList>
-#include <QTranslator>
-#include <QLibraryInfo>
-#include <QUrl>
 #include "config.h"
 #include "mainwindow.h"
 

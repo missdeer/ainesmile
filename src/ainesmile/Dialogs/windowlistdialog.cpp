@@ -1,5 +1,4 @@
-#include <QFile>
-#include <QFileInfo>
+#include "stdafx.h"
 #include "windowlistdialog.h"
 #include "ui_windowlistdialog.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "selectedlistview.h"
 
 SelectedListView::SelectedListView(QWidget *parent) :

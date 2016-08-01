@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "preferencedialog.h"
 #include "ui_preferencedialog.h"
 

@@ -1,7 +1,4 @@
-#include <boost/foreach.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <QFile>
-#include <QFileInfo>
+#include "stdafx.h"
 #include "config.h"
 #include "recentfiles.h"
 

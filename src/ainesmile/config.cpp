@@ -1,13 +1,4 @@
-#include <QApplication>
-#include <QDir>
-#include <QDesktopServices>
-#include <QStandardPaths>
-#include <QFileInfo>
-#include <QtXml>
-#include <QRegExp>
-#include <QMessageBox>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include "stdafx.h"
 #include "config.h"
 
 Config* Config::instance_ = NULL;

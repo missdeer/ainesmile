@@ -1,4 +1,4 @@
-#include <QIntValidator>
+#include "stdafx.h"
 #include "gotolinedialog.h"
 #include "ui_gotolinedialog.h"
 

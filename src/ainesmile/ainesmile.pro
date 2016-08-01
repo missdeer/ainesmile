@@ -6,7 +6,7 @@
 
 QT       += core gui xml network widgets webenginewidgets
 
-CONFIG += c++11
+CONFIG += c++11 precompile_header
 
 TARGET = ainesmile
 TEMPLATE = app
@@ -20,7 +20,7 @@ PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)
 macx:INSTALLER_NAME = "ainesmile-$${QTCREATOR_VERSION}"
 else:INSTALLER_NAME = "ainesmile-$${PATTERN}"
 
-PRECOMPILED_HEADER = pch.h
+PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += CodeEdit \
     Dialogs \
@@ -40,7 +40,6 @@ SOURCES += main.cpp\
     config.cpp \
     CodeEdit/codeeditpage.cpp \
     CodeEdit/scintillaconfig.cpp \
-    Dialogs/aboutdialog.cpp \
     Dialogs/gotolinedialog.cpp \
     Dialogs/preferencedialog.cpp \
     CodeEdit/recentfiles.cpp \
@@ -53,17 +52,15 @@ HEADERS  += mainwindow.h \
     config.h \
     CodeEdit/codeeditpage.h \
     CodeEdit/scintillaconfig.h \
-    Dialogs/aboutdialog.h \
     Dialogs/gotolinedialog.h \
     Dialogs/preferencedialog.h \
     CodeEdit/recentfiles.h \
     Dialogs/summarydialog.h \
     Dialogs/windowlistdialog.h \
     Dialogs/selectedlistview.h \
-    pch.h
+    stdafx.h
 
 FORMS    += mainwindow.ui \
-    Dialogs/aboutdialog.ui \
     Dialogs/gotolinedialog.ui \
     Dialogs/preferencedialog.ui \
     Dialogs/summarydialog.ui \

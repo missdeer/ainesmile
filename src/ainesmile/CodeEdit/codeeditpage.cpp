@@ -1,12 +1,4 @@
-#include <QtCore>
-#include <QApplication>
-#include <QDateTime>
-#include <QFile>
-#include <QVBoxLayout>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QClipboard>
-#include <boost/lexical_cast.hpp>
+#include "stdafx.h"
 #include "ScintillaEdit.h"
 #include "gotolinedialog.h"
 #include "codeeditpage.h"
