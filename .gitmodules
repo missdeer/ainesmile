@@ -1,6 +1,0 @@
-[submodule "3rdparty/libuv"]
-	path = 3rdparty/libuv
-	url = https://github.com/joyent/libuv.git
-[submodule "3rdparty/cryptopp"]
-	path = 3rdparty/cryptopp
-	url = https://github.com/Rogiel/cryptopp.git
