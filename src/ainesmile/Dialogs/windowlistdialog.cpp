@@ -83,11 +83,8 @@ void WindowListDialog::on_btnOK_clicked()
 void WindowListDialog::on_btnActivate_clicked()
 {
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
-    Q_FOREACH(QTableWidgetItem *item, selected)
-    {
-        emit activateTab(item->row());
-        break;
-    }
+    if (!selected.isEmpty())
+        emit activateTab(selected.at(0)->row());
     close();
 }
 

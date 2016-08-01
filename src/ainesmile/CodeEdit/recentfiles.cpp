@@ -97,14 +97,8 @@ void RecentFiles::sync()
 bool RecentFiles::exists(const QStringList &container, const QString &file)
 {
     QFileInfo fileInfo(file);
-    Q_FOREACH( const QString& f, container)
-    {
-        QFileInfo fi(f);
-        if (fi == fileInfo)
-            return true;
-    }
-
-    return false;
+    auto it = std::find_if(container.begin(), container.end(), [&fileInfo](const QString& f){ return QFileInfo(f) == fileInfo; });
+    return container.end() != it;
 }
 
 void RecentFiles::init()

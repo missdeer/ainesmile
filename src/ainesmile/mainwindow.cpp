@@ -179,6 +179,7 @@ void MainWindow::setRecentFiles()
     {
         connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
     }
+
     onUpdateRecentFilesMenuItems();
 }
 
@@ -802,19 +803,17 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 void MainWindow::on_actionOpenAllRecentFiles_triggered()
 {
     QStringList& files = rf_.recentFiles();
-    Q_FOREACH(const QString& file, files)
-    {
-        onRecentFileTriggered(file);
-    }
+
+    std::for_each(files.begin(), files.end(),
+                  std::bind(&MainWindow::onRecentFileTriggered, this, std::placeholders::_1));
 }
 
 void MainWindow::on_actionEmptyRecentFilesList_triggered()
 {
     rf_.clearFiles();
-    Q_FOREACH(QAction* action, recentFileActions_)
-    {
-        action->setVisible(false);
-    }
+
+    std::for_each(recentFileActions_.begin(), recentFileActions_.end(),
+                  std::bind(&QAction::setVisible, std::placeholders::_1, false));
 }
 
 void MainWindow::on_actionAlwaysOnTop_triggered()
@@ -1007,10 +1006,9 @@ void MainWindow::on_actionNewProject_triggered()
 void MainWindow::on_actionEmptyRecentProjectsList_triggered()
 {
     rf_.clearProjects();
-    Q_FOREACH(QAction* action, recentProjectActions_)
-    {
-        action->setVisible(false);
-    }
+
+    std::for_each(recentProjectActions_.begin(), recentProjectActions_.end(),
+                  std::bind(&QAction::setVisible, std::placeholders::_1, false));
 }
 
 void MainWindow::hideFeatures()
@@ -1019,8 +1017,6 @@ void MainWindow::hideFeatures()
     ui->actionAlwaysOnTop->setVisible(false);
 #endif
 }
-
-
 
 void MainWindow::on_actionOrderViaPaypal_triggered()
 {
