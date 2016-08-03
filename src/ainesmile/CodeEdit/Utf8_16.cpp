@@ -181,7 +181,11 @@ size_t Utf8_16_Read::convert(char* buf, size_t len)
 
 void Utf8_16_Read::determineEncoding()
 {
-	INT uniTest = IS_TEXT_UNICODE_STATISTICS;
+#ifndef IS_TEXT_UNICODE_STATISTICS
+    #define IS_TEXT_UNICODE_STATISTICS 0x0002
+#endif
+
+    int uniTest = IS_TEXT_UNICODE_STATISTICS;
 	m_eEncoding = uni8Bit;
 	m_nSkip = 0;
 
@@ -205,7 +209,9 @@ void Utf8_16_Read::determineEncoding()
 		m_nSkip = 3;
 	}
 	// try to detect UTF-16 little-endian without BOM
-	else if (m_nLen > 1 && m_nLen % 2 == 0 && m_pBuf[0] != NULL && m_pBuf[1] == NULL && IsTextUnicode(m_pBuf, static_cast<int32_t>(m_nLen), &uniTest))
+    else if (m_nLen > 1 && m_nLen % 2 == 0 && m_pBuf[0] != 0 && m_pBuf[1] == 0
+             //&& IsTextUnicode(m_pBuf, static_cast<int32_t>(m_nLen), &uniTest)
+             )
 	{
 		m_eEncoding = uni16LE_NoBOM;
 		m_nSkip = 0;
@@ -272,9 +278,9 @@ Utf8_16_Write::~Utf8_16_Write()
 	fclose();
 }
 
-FILE * Utf8_16_Write::fopen(const TCHAR *_name, const TCHAR *_type)
+FILE * Utf8_16_Write::fopen(const char *_name, const char *_type)
 {
-	m_pFile = ::generic_fopen(_name, _type);
+    m_pFile = ::fopen(_name, _type);
 
 	m_bFirstWrite = true;
 
@@ -563,7 +569,7 @@ void Utf16_Iter::operator++()
             break;
         case e2Bytes2:
         case e3Bytes3:
-            m_nCur = static_cast<ubyte>(0x80 | m_nCur16 & 0x3F);
+            m_nCur = static_cast<ubyte>(0x80 | ( m_nCur16 & 0x3F));
             m_eState = eStart;
             break;
         case e3Bytes2:

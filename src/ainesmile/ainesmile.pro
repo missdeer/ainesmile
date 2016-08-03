@@ -24,6 +24,7 @@ PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += CodeEdit \
     Dialogs \
+    uchardet \
     ../../3rdparty/scintilla/qt/ScintillaEditBase \
     ../../3rdparty/scintilla/qt/ScintillaEdit \
     ../../3rdparty/scintilla/include \
@@ -37,33 +38,20 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     tabwidget.cpp \
     config.cpp \
-    CodeEdit/codeeditpage.cpp \
-    CodeEdit/scintillaconfig.cpp \
-    Dialogs/gotolinedialog.cpp \
-    Dialogs/preferencedialog.cpp \
-    CodeEdit/recentfiles.cpp \
-    Dialogs/summarydialog.cpp \
-    Dialogs/windowlistdialog.cpp \
-    Dialogs/selectedlistview.cpp
+    CodeEdit/*.cpp \
+    Dialogs/*.cpp \
+    uchardet/*.cpp
 
 HEADERS  += mainwindow.h \
     tabwidget.h \
     config.h \
-    CodeEdit/codeeditpage.h \
-    CodeEdit/scintillaconfig.h \
-    Dialogs/gotolinedialog.h \
-    Dialogs/preferencedialog.h \
-    CodeEdit/recentfiles.h \
-    Dialogs/summarydialog.h \
-    Dialogs/windowlistdialog.h \
-    Dialogs/selectedlistview.h \
+    CodeEdit/*.h \
+    Dialogs/*.h \
+    uchardet/*.h \
     stdafx.h
 
 FORMS    += mainwindow.ui \
-    Dialogs/gotolinedialog.ui \
-    Dialogs/preferencedialog.ui \
-    Dialogs/summarydialog.ui \
-    Dialogs/windowlistdialog.ui
+    Dialogs/*.ui
 
 OTHER_FILES += \
     ainesmile.rc \

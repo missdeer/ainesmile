@@ -23,19 +23,17 @@
 
 #pragma once
 
-#ifndef PARAMETERS_H
-#include "Parameters.h"
-#endif// PARAMETERS_H
-
 #ifdef _MSC_VER
 #pragma warning(disable: 4514) // nreferenced inline function has been removed
 #endif
 
+enum UniMode {uni8Bit=0, uniUTF8=1, uni16BE=2, uni16LE=3, uniCookie=4, uni7Bit=5, uni16BE_NoBOM=6, uni16LE_NoBOM=7, uniEnd};
+
 class Utf8_16 {
 public:
 	typedef unsigned short utf16; // 16 bits
-	typedef UCHAR utf8; // 8 bits
-	typedef UCHAR ubyte;
+    typedef unsigned char utf8; // 8 bits
+    typedef unsigned char ubyte;
 	static const utf8 k_Boms[uniEnd][3];
 };
 
@@ -145,7 +143,7 @@ public:
 
 	void setEncoding(UniMode eType);
 
-	FILE * fopen(const TCHAR *_name, const TCHAR *_type);
+    FILE * fopen(const char *_name, const char *_type);
 	size_t fwrite(const void* p, size_t _size);
 	void   fclose();
 
