@@ -50,6 +50,7 @@ public:
     void setShowIndentGuide(bool enabled);
     void setShowWrapSymbol(bool enabled);
 
+    bool initialDocument();
 //    void focusInEvent(QFocusEvent * event);
 signals:
     void focusIn();

@@ -150,6 +150,17 @@ int TabWidget::openFile(const QString &filePath)
         emit updateRecentFiles();
     if (isHidden())
         setHidden(false);
+
+    if (count() == 2)
+    {
+        QWidget* w = widget(0);
+        CodeEditPage * p = qobject_cast<CodeEditPage*>(w);
+        if (p->initialDocument())
+        {
+            doCloseRequested(0);
+            return 0;
+        }
+    }
     return index;
 }
 

@@ -35,6 +35,9 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
     m_webView->load(QUrl("qrc:/rc/index.html"));
+
+    m_sciControlMaster->setSavePoint();
+    m_sciControlSlave->setSavePoint();
 }
 
 void CodeEditPage::init()
@@ -69,6 +72,11 @@ ScintillaEdit *CodeEditPage::getFocusView()
     else
         sci = m_sciControlSlave;
     return sci;
+}
+
+bool CodeEditPage::initialDocument()
+{
+    return !isModified() && m_filePath.isEmpty();
 }
 
 void CodeEditPage::openFile(const QString &filePath)
