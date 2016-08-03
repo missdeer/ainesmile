@@ -502,11 +502,6 @@ void MainWindow::onRecentFileTriggered(const QString & file)
     }
 }
 
-void MainWindow::onRecentProjectTriggered(const QString & project)
-{
-
-}
-
 void MainWindow::onActivateTabClicked(int index)
 {
     if (index >= ui->tabWidget->count())
@@ -558,17 +553,19 @@ void MainWindow::on_actionNewFile_triggered()
 
 void MainWindow::on_actionToggleFullScreenMode_triggered()
 {
-    static bool isMaximized = false;
-    isMaximized = this->isMaximized();
+    static bool bMaximized = false;
     if (isFullScreen())
     {
-        if (isMaximized)
+        if (bMaximized)
             showMaximized();
         else
             showNormal();
     }
     else
+    {
+        bMaximized = isMaximized();
         showFullScreen();
+    }
 }
 
 void MainWindow::on_actionOpenFile_triggered()

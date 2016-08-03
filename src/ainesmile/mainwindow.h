@@ -51,7 +51,6 @@ private slots:
     void onUndoAvailableChanged();
     void onRedoAvailableChanged();
     void onRecentFileTriggered(const QString & file);
-    void onRecentProjectTriggered(const QString & project);
     void onActivateTabClicked(int index);
     void onCloseTabClicked(const QList<int> & fileList);
     void onSaveTabClicked(const QList<int> & fileList);

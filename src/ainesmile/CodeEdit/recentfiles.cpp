@@ -45,28 +45,6 @@ QStringList& RecentFiles::recentFiles()
     return files_;
 }
 
-bool RecentFiles::addProject(const QString &project)
-{
-    if (!exists(projects_, project))
-    {
-        projects_.append(project);
-        while(projects_.size() > 10)
-            projects_.removeFirst();
-        emit addRecentProject(project);
-        return true;
-    }
-    return false;
-}
-
-void RecentFiles::clearProjects()
-{
-    projects_.clear();
-}
-
-QStringList &RecentFiles::recentProjects()
-{
-    return projects_;
-}
 
 void RecentFiles::sync()
 {
@@ -75,10 +53,7 @@ void RecentFiles::sync()
     boost::property_tree::ptree pt;
 
     std::for_each(files_.begin(), files_.end(),
-                  [&](const QString& f) { pt.add("ainesmile.recentfiles.project", f.toStdString());});
-
-    std::for_each(projects_.begin(), projects_.end(),
-                  [&](const QString& f) { pt.add("ainesmile.recentprojects.project", f.toStdString());});
+                  [&](const QString& f) { pt.add("ainesmile.recentfiles.file", f.toStdString());});
     boost::property_tree::write_json(filePath.toStdString(), pt);
 }
 
@@ -103,13 +78,8 @@ void RecentFiles::init()
                           pt.get_child("ainesmile.recentfiles"))
             {
                 QString file(v.second.data().c_str());
-                files_.append(file);
-            }
-            BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-                          pt.get_child("ainesmile.recentprojects"))
-            {
-                QString file(v.second.data().c_str());
-                projects_.append(file);
+                if (QFile::exists(file))
+                    files_.append(file);
             }
         }
         catch(boost::property_tree::ptree_bad_path&)

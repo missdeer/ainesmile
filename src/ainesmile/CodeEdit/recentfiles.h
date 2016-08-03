@@ -10,10 +10,8 @@ class RecentFiles : public QObject
     Q_OBJECT
 signals:
     void addRecentFile(const QString& file);
-    void addRecentProject(const QString& project);
 private:
     QStringList files_;
-    QStringList projects_;
     void init();
     bool exists(const QStringList& container, const QString& file);
 public:
@@ -23,9 +21,6 @@ public:
     bool addFile(const QString& file);
     void clearFiles();
     QStringList& recentFiles();
-    bool addProject(const QString& project);
-    void clearProjects();
-    QStringList& recentProjects();
     void sync();
 };
 
