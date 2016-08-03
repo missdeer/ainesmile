@@ -20,6 +20,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QMimeData>

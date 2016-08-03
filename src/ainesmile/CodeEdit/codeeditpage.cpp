@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ScintillaEdit.h"
-#include "gotolinedialog.h"
 #include "codeeditpage.h"
 
 
@@ -680,11 +679,13 @@ void CodeEditPage::incrementalSearch()
 
 void CodeEditPage::gotoLine()
 {
-    GotoLineDialog dlg(this);
-    if (dlg.exec())
+    bool ok;
+    ScintillaEdit* sci = getFocusView();
+    sptr_t lineCount = sci->lineCount();
+    int line = QInputDialog::getInt(this, tr("Goto line"), QString(tr("Input line number:(1 - %2)")).arg(lineCount), 1, 1, lineCount, 1,  &ok);
+    if (ok)
     {
-        ScintillaEdit* sci = getFocusView();
-        sci->gotoLine(dlg.line);
+        sci->gotoLine(line);
     }
 }
 
