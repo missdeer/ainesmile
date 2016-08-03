@@ -11,8 +11,8 @@ CONFIG += c++11 precompile_header
 TARGET = ainesmile
 TEMPLATE = app
 
-include(../../Boost.pri)
-include(../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
+include($$PWD/../../Boost.pri)
+include($$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
 
 
 PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)
@@ -22,47 +22,47 @@ else:INSTALLER_NAME = "ainesmile-$${PATTERN}"
 
 PRECOMPILED_HEADER = stdafx.h
 
-INCLUDEPATH += CodeEdit \
-    Dialogs \
-    uchardet \
-    ../../3rdparty/scintilla/qt/ScintillaEditBase \
-    ../../3rdparty/scintilla/qt/ScintillaEdit \
-    ../../3rdparty/scintilla/include \
-    ../../3rdparty/scintilla/src \
-    ../../3rdparty/scintilla/lexlib
+INCLUDEPATH += $$PWD/CodeEdit \
+    $$PWD/Dialogs \
+    $$PWD/uchardet \
+    $$PWD/../../3rdparty/scintilla/qt/ScintillaEditBase \
+    $$PWD/../../3rdparty/scintilla/qt/ScintillaEdit \
+    $$PWD/../../3rdparty/scintilla/include \
+    $$PWD/../../3rdparty/scintilla/src \
+    $$PWD/../../3rdparty/scintilla/lexlib
 
 DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
 
-SOURCES += main.cpp\
-    mainwindow.cpp \
-    tabwidget.cpp \
-    config.cpp \
-    CodeEdit/*.cpp \
-    Dialogs/*.cpp \
-    uchardet/*.cpp
+SOURCES += $$PWD/main.cpp\
+    $$PWD/mainwindow.cpp \
+    $$PWD/tabwidget.cpp \
+    $$PWD/config.cpp \
+    $$PWD/CodeEdit/*.cpp \
+    $$PWD/Dialogs/*.cpp \
+    $$PWD/uchardet/*.cpp
 
-HEADERS  += mainwindow.h \
-    tabwidget.h \
-    config.h \
-    CodeEdit/*.h \
-    Dialogs/*.h \
-    uchardet/*.h \
-    stdafx.h
+HEADERS  += $$PWD/mainwindow.h \
+    $$PWD/tabwidget.h \
+    $$PWD/config.h \
+    $$PWD/CodeEdit/*.h \
+    $$PWD/Dialogs/*.h \
+    $$PWD/uchardet/*.h \
+    $$PWD/stdafx.h
 
-FORMS    += mainwindow.ui \
-    Dialogs/*.ui
+FORMS    += $$PWD/mainwindow.ui \
+    $$PWD/Dialogs/*.ui
 
 OTHER_FILES += \
-    ainesmile.rc \
-    ../../3rdparty/qtsingleapplication/qtsingleapplication.pri \
-    ../../3rdparty/qtsingleapplication/qtsinglecoreapplication.pri
+    $$PWD/ainesmile.rc \
+    $$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri \
+    $$PWD/../../3rdparty/qtsingleapplication/qtsinglecoreapplication.pri
 
 RESOURCES += \
-    ainesmile.qrc
+    $$PWD/ainesmile.qrc
 
 # Windows icons
-RC_FILE = ainesmile.rc
+RC_FILE = $$PWD/ainesmile.rc
 
 win32: {
     INCLUDEPATH += $$(PORTED)\include
@@ -101,8 +101,8 @@ macx: {
         -framework CoreFoundation \
         -framework IOKit
 
-    ICON = rc/ainesmile.icns
-    icon.files += rc/ainesmile.png
+    ICON = $$PWD/rc/ainesmile.icns
+    icon.files += $$PWD/rc/ainesmile.png
     INSTALLS = target \
         desktop \
         icon
