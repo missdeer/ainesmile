@@ -100,18 +100,6 @@ private slots:
 
     void on_actionPreviousSearchResult_triggered();
 
-    void on_actionRegistration_triggered();
-
-    void on_actionSelectExtensionItem_triggered();
-
-    void on_actionShowExtensionEditor_triggered();
-
-    void on_actionEditCommands_triggered();
-
-    void on_actionEditSnippets_triggered();
-
-    void on_actionReloadExtensions_triggered();
-
     void on_actionShowWhiteSpaceAndTAB_triggered();
 
     void on_actionShowEndOfLine_triggered();
@@ -122,37 +110,17 @@ private slots:
 
     void on_actionPreferences_triggered();
 
-    void on_actionExternalTools_triggered();
-
-    void on_actionPluginManager_triggered();
-
     void on_actionWindowsList_triggered();
-
-    void on_actionOpenProject_triggered();
-
-    void on_actionCloseProject_triggered();
-
-    void on_actionNewProject_triggered();
-
-    void on_actionEmptyRecentProjectsList_triggered();
 
     void on_actionFind_triggered();
 
     void on_actionReplace_triggered();
-
-    void on_actionOrderViaPaypal_triggered();
-
-    void on_actionOrderViaAlipay_triggered();
-
 private:
     Ui::MainWindow *ui;
     QDockWidget *dockFindReplace_;
     QDockWidget *dockFindResult_;
-    QDockWidget *dockProject_;
     QSignalMapper* recentFileSignalMapper_;
-    QSignalMapper* recentProjectSignalMapper_;
     QList<QAction*> recentFileActions_;
-    QList<QAction*> recentProjectActions_;
     RecentFiles rf_;
     bool aboutToQuit_;
     bool exchanging_;

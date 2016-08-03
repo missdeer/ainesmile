@@ -264,32 +264,32 @@ void CodeEditPage::updateUI()
     }
 }
 
-void CodeEditPage::modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev)
+void CodeEditPage::modified(int /*type*/, int /*position*/, int /*length*/, int /*linesAdded*/, const QByteArray &/*text*/, int /*line*/, int /*foldNow*/, int /*foldPrev*/)
 {
     emit modifiedNotification();
 }
 
-void CodeEditPage::linesAdded(int linesAdded)
+void CodeEditPage::linesAdded(int /*linesAdded*/)
 {
     ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
-    int line_count = sci->lineCount();
-    int left = sci->marginLeft() + 2;
-    int right = sci->marginRight() + 2;
+    sptr_t line_count = sci->lineCount();
+    sptr_t left = sci->marginLeft() + 2;
+    sptr_t right = sci->marginRight() + 2;
     std::string line = boost::lexical_cast<std::string>(line_count);
-    int width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
+    sptr_t width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
     sci->setMarginWidthN(0, width);
 }
 
-void CodeEditPage::marginClicked(int position, int modifiers, int margin)
+void CodeEditPage::marginClicked(int position, int /*modifiers*/, int margin)
 {
     ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
     if (sci->marginTypeN(margin) == SC_MARGIN_SYMBOL)
     {
-        int line = sci->lineFromPosition(position);
-        int maskN = sci->marginMaskN(margin);
+        sptr_t line = sci->lineFromPosition(position);
+        sptr_t maskN = sci->marginMaskN(margin);
         if (maskN == SC_MASK_FOLDERS)
         {
-            int foldLevel = sci->foldLevel(line);
+            sptr_t foldLevel = sci->foldLevel(line);
             if (foldLevel & SC_FOLDLEVELHEADERFLAG)
             {
                 sci->toggleFold(line);
@@ -311,7 +311,7 @@ void CodeEditPage::marginClicked(int position, int modifiers, int margin)
     }
 }
 
-void CodeEditPage::dwellEnd(int x, int y)
+void CodeEditPage::dwellEnd(int /*x*/, int /*y*/)
 {
     ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
     if (sci->autoCActive())
@@ -792,17 +792,34 @@ void CodeEditPage::focusOnAnotherView()
 
 void CodeEditPage::hideLines()
 {
+    ScintillaEdit* se = getFocusView();
 
 }
 
 void CodeEditPage::foldAll()
 {
-
+    ScintillaEdit* se = getFocusView();
+    sptr_t maxLine = se->lineCount();
+    for (sptr_t line = maxLine-1; line >= 0; --line)
+    {
+        auto level = se->foldLevel(line);
+        if (level & SC_FOLDLEVELHEADERFLAG)
+            if (se->foldExpanded(line))
+                se->setFoldExpanded(line, false);
+    }
 }
 
 void CodeEditPage::unfoldAll()
 {
-
+    ScintillaEdit* se = getFocusView();
+    sptr_t maxLine = se->lineCount();
+    for (sptr_t line = maxLine-1; line >= 0; --line)
+    {
+        auto level = se->foldLevel(line);
+        if (level & SC_FOLDLEVELHEADERFLAG)
+            if (!se->foldExpanded(line))
+                se->setFoldExpanded(line, true);
+    }
 }
 
 void CodeEditPage::collapseCurrentLevel()
@@ -832,7 +849,8 @@ void CodeEditPage::encodeInANSI()
 
 void CodeEditPage::encodeInUTF8WithoutBOM()
 {
-
+    m_sciControlMaster->setCodePage(SC_CP_UTF8);
+    m_sciControlSlave->setCodePage(SC_CP_UTF8);
 }
 
 void CodeEditPage::encodeInUTF8()

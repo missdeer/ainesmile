@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     recentFileSignalMapper_(new QSignalMapper(this)),
-    recentProjectSignalMapper_(new QSignalMapper(this)),
     aboutToQuit_(false),
     exchanging_(false)
 {
@@ -42,11 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
-    ui->dockProject->close();
     ui->dockFindReplace->close();
     ui->dockFindResult->close();
 
-    ui->menuDockWindows->addAction(ui->dockProject->toggleViewAction());
     ui->menuDockWindows->addAction(ui->dockFindReplace->toggleViewAction());
     ui->menuDockWindows->addAction(ui->dockFindResult->toggleViewAction());
 
@@ -58,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
         restoreState(settings.value("windowState").toByteArray());
         restoreDockWidget(ui->dockFindReplace);
         restoreDockWidget(ui->dockFindResult);
-        restoreDockWidget(ui->dockProject);
     }
 }
 
@@ -159,25 +155,10 @@ void MainWindow::setRecentFiles()
                           << ui->actionRecentFile8
                           << ui->actionRecentFile9
                           << ui->actionRecentFile10;
-    recentProjectActions_ << ui->actionRecentProject1
-                             << ui->actionRecentProject2
-                             << ui->actionRecentProject3
-                             << ui->actionRecentProject4
-                             << ui->actionRecentProject5
-                             << ui->actionRecentProject6
-                             << ui->actionRecentProject7
-                             << ui->actionRecentProject8
-                             << ui->actionRecentProject9
-                             << ui->actionRecentProject10;
 
     Q_FOREACH(QAction* action, recentFileActions_)
     {
         connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
-    }
-
-    Q_FOREACH(QAction* action, recentProjectActions_)
-    {
-        connect(action, SIGNAL(triggered()), recentProjectSignalMapper_, SLOT(map()));
     }
 
     onUpdateRecentFilesMenuItems();
@@ -199,7 +180,6 @@ void MainWindow::setMenuItemChecked()
 void MainWindow::onUpdateRecentFilesMenuItems()
 {
     Q_ASSERT(recentFileSignalMapper_);
-    Q_ASSERT(recentProjectSignalMapper_);
 
     QStringList recentFiles = rf_.recentFiles();
     int index=0;
@@ -219,27 +199,6 @@ void MainWindow::onUpdateRecentFilesMenuItems()
     for (int i = index; i < 10; i++)
     {
         QAction* action = recentFileActions_.at(i);
-        action->setVisible(false);
-    }
-
-    QStringList recentProjects = rf_.recentProjects();
-    index=0;
-    for (QStringList::ConstIterator it = recentProjects.constBegin();
-         recentProjects.constEnd() != it && index < 10;
-         ++it, ++index)
-    {
-        QAction* action = recentProjectActions_.at(index);
-        QFile file(*it);
-        action->setText(file.fileName());
-        action->setVisible(true);
-        recentProjectSignalMapper_->removeMappings(action);
-        recentProjectSignalMapper_->setMapping(action, file.fileName());
-    }
-    connect(recentProjectSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SLOT(onRecentProjectTriggered(const QString&)));
-    for (int i = index; i < 10; i++)
-    {
-        QAction* action = recentProjectActions_.at(i);
         action->setVisible(false);
     }
 }
@@ -283,87 +242,17 @@ void MainWindow::connectSignals(CodeEditPage *page)
     disconnect(ui->actionDelete, SIGNAL(triggered()), 0, 0);
     connect(ui->actionDelete, SIGNAL(triggered()), page, SLOT(deleteCurrent()));
     disconnect(ui->actionSelectAll, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSelectAll, SIGNAL(triggered()), page, SLOT(selectAll()));
-    disconnect(ui->actionColumnMode, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionColumnMode, SIGNAL(triggered()), page, SLOT(columnMode()));
-    disconnect(ui->actionColumnEditor, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionColumnEditor, SIGNAL(triggered()), page, SLOT(columnEditor()));
-    disconnect(ui->actionCharacterPanel, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCharacterPanel, SIGNAL(triggered()), page, SLOT(characterPanel()));
-    disconnect(ui->actionClipboardHistory, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionClipboardHistory, SIGNAL(triggered()), page, SLOT(clipboardHistory()));
+    connect(ui->actionSelectAll, SIGNAL(triggered()), page, SLOT(selectAll()));    
     disconnect(ui->actionSetReadOnly, SIGNAL(triggered()), 0, 0);
     connect(ui->actionSetReadOnly, SIGNAL(triggered()), page, SLOT(setReadOnly()));
     disconnect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), page, SLOT(clearReadOnlyFlag()));
-    disconnect(ui->actionCurrentFullFilePathToClipboard, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCurrentFullFilePathToClipboard, SIGNAL(triggered()), page, SLOT(currentFullFilePathToClipboard()));
-    disconnect(ui->actionCurrentFileNameToClipboard, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCurrentFileNameToClipboard, SIGNAL(triggered()), page, SLOT(currentFileNameToClipboard()));
-    disconnect(ui->actionCurrentDirectoryPathToClipboard, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCurrentDirectoryPathToClipboard, SIGNAL(triggered()), page, SLOT(currentDirectoryPathToClipboard()));
-    disconnect(ui->actionIncreaseLineIndent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionIncreaseLineIndent, SIGNAL(triggered()), page, SLOT(increaseLineIndent()));
-    disconnect(ui->actionDecreaseLineIndent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionDecreaseLineIndent, SIGNAL(triggered()), page, SLOT(decreaseLineIndent()));
-    disconnect(ui->actionUppercase, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUppercase, SIGNAL(triggered()), page, SLOT(upperCase()));
-    disconnect(ui->actionLowercase, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionLowercase, SIGNAL(triggered()), page, SLOT(lowerCase()));
-    disconnect(ui->actionDuplicateCurrentLine, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionDuplicateCurrentLine, SIGNAL(triggered()), page, SLOT(duplicateCurrentLine()));
-    disconnect(ui->actionSplitLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSplitLines, SIGNAL(triggered()), page, SLOT(splitLines()));
-    disconnect(ui->actionJoinLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionJoinLines, SIGNAL(triggered()), page, SLOT(joinLines()));
-    disconnect(ui->actionMoveUpCurrentLine, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionMoveUpCurrentLine, SIGNAL(triggered()), page, SLOT(moveUpCurrentLine()));
-    disconnect(ui->actionMoveDownCurrentLine, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionMoveDownCurrentLine, SIGNAL(triggered()), page, SLOT(moveDownCurrentLine()));
-    disconnect(ui->actionToggleBlockComment, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionToggleBlockComment, SIGNAL(triggered()), page, SLOT(toggleBlockComment()));
-    disconnect(ui->actionBlockComment, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionBlockComment, SIGNAL(triggered()), page, SLOT(blockComment()));
-    disconnect(ui->actionBlockUncomment, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionBlockUncomment, SIGNAL(triggered()), page, SLOT(blockUncomment()));
-    disconnect(ui->actionStreamComment, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionStreamComment, SIGNAL(triggered()), page, SLOT(streamComment()));
-    disconnect(ui->actionFunctionCompletion, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFunctionCompletion, SIGNAL(triggered()), page, SLOT(functionCompletion()));
-    disconnect(ui->actionWordCompletion, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionWordCompletion, SIGNAL(triggered()), page, SLOT(wordCompletion()));
-    disconnect(ui->actionFunctionParametersHint, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFunctionParametersHint, SIGNAL(triggered()), page, SLOT(functionParametersHint()));
+    connect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), page, SLOT(clearReadOnlyFlag()));    
     disconnect(ui->actionWindowsFormat, SIGNAL(triggered()), 0, 0);
     connect(ui->actionWindowsFormat, SIGNAL(triggered()), page, SLOT(eolWindowsFormat()));
     disconnect(ui->actionUNIXFormat, SIGNAL(triggered()), 0, 0);
     connect(ui->actionUNIXFormat, SIGNAL(triggered()), page, SLOT(eolUNIXFormat()));
     disconnect(ui->actionMacFormat, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));
-    disconnect(ui->actionTrimTrailingSpace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTrimTrailingSpace, SIGNAL(triggered()), page, SLOT(trimTrailingSpace()));
-    disconnect(ui->actionTrimLeadingSpace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTrimLeadingSpace, SIGNAL(triggered()), page, SLOT(trimLeadingSpace()));
-    disconnect(ui->actionTrimLeadingAndTrailingSpace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTrimLeadingAndTrailingSpace, SIGNAL(triggered()), page, SLOT(trimLeadingAndTrailingSpace()));
-    disconnect(ui->actionEOLToSpace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEOLToSpace, SIGNAL(triggered()), page, SLOT(eolToSpace()));
-    disconnect(ui->actionRemoveUnnecessaryBlankAndEOL, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionRemoveUnnecessaryBlankAndEOL, SIGNAL(triggered()), page, SLOT(removeUnnecessaryBlankAndEOL()));
-    disconnect(ui->actionTABToSpace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionTABToSpace, SIGNAL(triggered()), page, SLOT(tabToSpace()));
-    disconnect(ui->actionSpaceToTAB, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSpaceToTAB, SIGNAL(triggered()), page, SLOT(spaceToTab()));
-    disconnect(ui->actionPasteHTMLContent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPasteHTMLContent, SIGNAL(triggered()), page, SLOT(pasteHTMLContent()));
-    disconnect(ui->actionPasteRTFContent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPasteRTFContent, SIGNAL(triggered()), page, SLOT(pasteRTFContent()));
-    disconnect(ui->actionCopyBinaryContent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCopyBinaryContent, SIGNAL(triggered()), page, SLOT(copyBinaryContent()));
-    disconnect(ui->actionCutBinaryContent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCutBinaryContent, SIGNAL(triggered()), page, SLOT(cutBinaryContent()));
-    disconnect(ui->actionPasteBinaryContent, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPasteBinaryContent, SIGNAL(triggered()), page, SLOT(pasteBinaryContent()));
+    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));    
     disconnect(ui->actionFindNext, SIGNAL(triggered()), 0, 0);
     connect(ui->actionFindNext, SIGNAL(triggered()), page, SLOT(findNext()));
     disconnect(ui->actionFindPrevious, SIGNAL(triggered()), 0, 0);
@@ -413,23 +302,11 @@ void MainWindow::connectSignals(CodeEditPage *page)
     disconnect(ui->actionReplayLastRecording, SIGNAL(triggered()), 0, 0);
     connect(ui->actionReplayLastRecording, SIGNAL(triggered()), page, SLOT(replayLastRecording()));
     disconnect(ui->actionWordWrap, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));
-    disconnect(ui->actionFocusOnAnotherView, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFocusOnAnotherView, SIGNAL(triggered()), page, SLOT(focusOnAnotherView()));
-    disconnect(ui->actionHideLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionHideLines, SIGNAL(triggered()), page, SLOT(hideLines()));
+    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));    
     disconnect(ui->actionFoldAll, SIGNAL(triggered()), 0, 0);
     connect(ui->actionFoldAll, SIGNAL(triggered()), page, SLOT(foldAll()));
     disconnect(ui->actionUnfoldAll, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUnfoldAll, SIGNAL(triggered()), page, SLOT(unfoldAll()));
-    disconnect(ui->actionCollapseCurrentLevel, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCollapseCurrentLevel, SIGNAL(triggered()), page, SLOT(collapseCurrentLevel()));
-    disconnect(ui->actionUncollapseCurrentLevel, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUncollapseCurrentLevel, SIGNAL(triggered()), page, SLOT(uncollapseCurrentLevel()));
-    disconnect(ui->actionCollapseLevel, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCollapseLevel, SIGNAL(triggered()), page, SLOT(collapseLevel()));
-    disconnect(ui->actionUnCollapseLevel, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUnCollapseLevel, SIGNAL(triggered()), page, SLOT(uncollapseLevel()));
+    connect(ui->actionUnfoldAll, SIGNAL(triggered()), page, SLOT(unfoldAll()));    
     disconnect(ui->actionEncodeInANSI, SIGNAL(triggered()), 0, 0);
     connect(ui->actionEncodeInANSI, SIGNAL(triggered()), page, SLOT(encodeInANSI()));
     disconnect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);
@@ -889,36 +766,6 @@ void MainWindow::on_actionPreviousSearchResult_triggered()
 
 }
 
-void MainWindow::on_actionRegistration_triggered()
-{
-
-}
-
-void MainWindow::on_actionSelectExtensionItem_triggered()
-{
-
-}
-
-void MainWindow::on_actionShowExtensionEditor_triggered()
-{
-
-}
-
-void MainWindow::on_actionEditCommands_triggered()
-{
-
-}
-
-void MainWindow::on_actionEditSnippets_triggered()
-{
-
-}
-
-void MainWindow::on_actionReloadExtensions_triggered()
-{
-
-}
-
 void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 {
     bool enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
@@ -965,16 +812,6 @@ void MainWindow::on_actionPreferences_triggered()
     dlg.exec();
 }
 
-void MainWindow::on_actionExternalTools_triggered()
-{
-
-}
-
-void MainWindow::on_actionPluginManager_triggered()
-{
-
-}
-
 void MainWindow::on_actionWindowsList_triggered()
 {
     QStringList fileList;
@@ -988,43 +825,10 @@ void MainWindow::on_actionWindowsList_triggered()
     dlg.exec();
 }
 
-void MainWindow::on_actionOpenProject_triggered()
-{
-
-}
-
-void MainWindow::on_actionCloseProject_triggered()
-{
-
-}
-
-void MainWindow::on_actionNewProject_triggered()
-{
-
-}
-
-void MainWindow::on_actionEmptyRecentProjectsList_triggered()
-{
-    rf_.clearProjects();
-
-    std::for_each(recentProjectActions_.begin(), recentProjectActions_.end(),
-                  std::bind(&QAction::setVisible, std::placeholders::_1, false));
-}
-
 void MainWindow::hideFeatures()
 {
 #if defined(Q_OS_MAC)
     ui->actionAlwaysOnTop->setVisible(false);
+    ui->actionToggleFullScreenMode->setVisible(false);
 #endif
 }
-
-void MainWindow::on_actionOrderViaPaypal_triggered()
-{
-    QDesktopServices::openUrl(QUrl::fromUserInput("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=7XFLGCUD5QETW&lc=C2&item_name=ainesmile%20License&amount=49%2e95&currency_code=USD&button_subtype=services&bn=PP%2dBuyNowBF%3abtn_buynowCC_LG%2egif%3aNonHosted"));
-}
-
-void MainWindow::on_actionOrderViaAlipay_triggered()
-{
-    QDesktopServices::openUrl(QUrl::fromUserInput("http://item.taobao.com/item.htm?id=35596827125"));
-}
-
