@@ -55,8 +55,7 @@ FORMS    += $$PWD/mainwindow.ui \
 
 OTHER_FILES += \
     $$PWD/ainesmile.rc \
-    $$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri \
-    $$PWD/../../3rdparty/qtsingleapplication/qtsinglecoreapplication.pri
+    $$PWD/../../resource/.ainesmilerc
 
 RESOURCES += \
     $$PWD/ainesmile.qrc

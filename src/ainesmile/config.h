@@ -23,8 +23,6 @@ public:
     QString getLanguageMapPath();
     QString getLanguageDirPath();
     QString matchPatternLanguage(const QString& filename);
-    void saveLicenseInfo(const QString& username, const QString& licenseCode);
-    void loadLicenseInfo(QString& username, QString& licenseCode);
 };
 
 #endif // CONFIG_H

@@ -20,8 +20,8 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setScrollWidth(1);
     sci->setScrollWidthTracking(true);
     sci->setEndAtLastLine(true);
-    sci->setWhitespaceFore(true, 0x808080);
-    sci->setWhitespaceBack(true, 0xFFFFFF);
+//    sci->setWhitespaceFore(true, 0x808080);
+//    sci->setWhitespaceBack(true, 0xFFFFFF);
     sci->setMouseDownCaptures(true);
 #if defined(Q_OS_WIN)
     sci->setEOLMode(SC_EOL_CRLF);
@@ -94,7 +94,6 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setEdgeColour(0xC0DCC0);
 
     sci->usePopUp(false);
-    //sci->send(SCI_SETUSEPALETTE, 1, 0);
     sci->setBufferedDraw(false);
     sci->setPhasesDraw(SC_PHASES_TWO);
     sci->setCodePage(SC_CP_UTF8);
