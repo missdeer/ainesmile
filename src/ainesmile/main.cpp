@@ -37,10 +37,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    a.setOrganizationDomain("dfordsoft.com");
+    a.setOrganizationName("DForD Software");
+    a.setApplicationName("ainesmile");
+
     QTranslator translator;
     QTranslator qtTranslator;
     QStringList uiLanguages;
-// uiLanguages crashes on Windows with 4.8.0 release builds
+
     uiLanguages = QLocale::system().uiLanguages();
     boost::property_tree::ptree& pt = Config::instance()->pt();
     QString overrideLanguage(pt.get<std::string>("General/OverrideLanguage", "").c_str());
@@ -76,7 +80,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-
 
     const int threadCount = QThreadPool::globalInstance()->maxThreadCount();
     QThreadPool::globalInstance()->setMaxThreadCount(qMax(4, 2 * threadCount));
