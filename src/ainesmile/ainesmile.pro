@@ -72,7 +72,7 @@ macx: {
     QMAKE_CFLAGS += -gdwarf-2
     QMAKE_CXXFLAGS += -gdwarf-2
     mkdir_extensions.commands = mkdir -p \"$${TARGET}.app/Contents/PlugIns/extensions\"
-    copy_themes.commands = cp -R \"$$PWD/../../resource/MacOSX/themes\" \"$${TARGET}.app/Contents/Resources\"
+    copy_themes.commands = cp -R \"$$PWD/../../resource/themes\" \"$${TARGET}.app/Contents/Resources\"
     copy_language.commands = cp -R \"$$PWD/../../resource/language\" \"$${TARGET}.app/Contents/Resources\"
     copy_langmap.commands = cp \"$$PWD/../../resource/langmap.xml\" \"$${TARGET}.app/Contents/Resources/\"
     copy_rc.commands = cp \"$$PWD/../../resource/.ainesmilerc\" \"$${TARGET}.app/Contents/Resources/\"
