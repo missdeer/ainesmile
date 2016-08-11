@@ -34,7 +34,6 @@ INCLUDEPATH += $$PWD/CodeEdit \
 
 DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
-
 SOURCES += $$PWD/main.cpp\
     $$PWD/mainwindow.cpp \
     $$PWD/tabwidget.cpp \
@@ -61,8 +60,11 @@ OTHER_FILES += \
 RESOURCES += \
     $$PWD/ainesmile.qrc
 
-# Windows icons
-RC_FILE = $$PWD/ainesmile.rc
+win32: {
+    # Windows icons
+    RC_FILE = $$PWD/ainesmile.rc
+    LIBS += -lUser32
+}
 
 # Mac OS X icon
 macx: {
