@@ -74,6 +74,11 @@ unix: !macx: {
 
 # Mac OS X icon
 macx: {
+    QMAKE_INFO_PLIST = $$PWD/osxInfo.plist
+    OTHER_FILES += \
+         $$PWD/osxInfo.plist
+    QMAKE_CFLAGS += -gdwarf-2
+    QMAKE_CXXFLAGS += -gdwarf-2
     mkdir_extensions.commands = mkdir -p \"$${TARGET}.app/Contents/PlugIns/extensions\"
     copy_themes.commands = cp -R \"$$PWD/../../resource/MacOSX/themes\" \"$${TARGET}.app/Contents/Resources\"
     copy_language.commands = cp -R \"$$PWD/../../resource/language\" \"$${TARGET}.app/Contents/Resources\"
