@@ -20,8 +20,8 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setScrollWidth(1);
     sci->setScrollWidthTracking(true);
     sci->setEndAtLastLine(true);
-//    sci->setWhitespaceFore(true, 0x808080);
-//    sci->setWhitespaceBack(true, 0xFFFFFF);
+    sci->setWhitespaceFore(true, 0x808080);
+    sci->setWhitespaceBack(true, 0xFFFFFF);
     sci->setMouseDownCaptures(true);
 #if defined(Q_OS_WIN)
     sci->setEOLMode(SC_EOL_CRLF);
