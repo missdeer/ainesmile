@@ -77,7 +77,7 @@ void TabWidget::doCloseRequested(int index)
                 QString selectedFilter;
                 filePath = QFileDialog::getSaveFileName(this,
                                                         tr("ainesmile Save File To"),
-                                                        tr(""),
+                                                        tabText(index),
                                                         tr("All Files (*);;Text Files (*.txt)"),
                                                         &selectedFilter,
                                                         options);
@@ -223,7 +223,7 @@ void TabWidget::saveAsCurrentFile()
     QString selectedFilter;
     QString filePath = QFileDialog::getSaveFileName(this,
                                             tr("ainesmile Save File To"),
-                                            tr(""),
+                                            tabText(currentIndex()),
                                             tr("All Files (*);;Text Files (*.txt)"),
                                             &selectedFilter,
                                             options);
@@ -255,7 +255,7 @@ void TabWidget::saveAll()
             QString selectedFilter;
             filePath = QFileDialog::getSaveFileName(this,
                                          tr("ainesmile Save File To"),
-                                         tr(""),
+                                         tabText(index),
                                          tr("All Files (*);;Text Files (*.txt)"),
                                          &selectedFilter,
                                          options);
