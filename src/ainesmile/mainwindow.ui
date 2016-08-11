@@ -191,24 +191,11 @@
      <addaction name="actionInverseBookmark"/>
     </widget>
     <addaction name="actionFind"/>
-    <addaction name="actionFindInFiles"/>
-    <addaction name="actionFindNext"/>
-    <addaction name="actionFindPrevious"/>
-    <addaction name="actionSelectAndFindNext"/>
-    <addaction name="actionSelectAndFindPrevious"/>
-    <addaction name="actionFindVolatieNext"/>
-    <addaction name="actionFindVolatiePrevious"/>
-    <addaction name="actionReplace"/>
-    <addaction name="actionIncrementalSearch"/>
-    <addaction name="actionSearchResultsWindow"/>
-    <addaction name="actionNextSearchResult"/>
-    <addaction name="actionPreviousSearchResult"/>
     <addaction name="actionGoTo"/>
     <addaction name="actionGoToMatchingBrace"/>
     <addaction name="separator"/>
     <addaction name="menuBookmark"/>
     <addaction name="separator"/>
-    <addaction name="actionFindCharactersInRange"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -718,18 +705,13 @@
      <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Find...</string>
+    <string>&amp;Find or Replace...</string>
+   </property>
+   <property name="toolTip">
+    <string>Find or Replace</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="actionFindInFiles">
-   <property name="text">
-    <string>Find in Files...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+F</string>
    </property>
   </action>
   <action name="actionFindNext">
@@ -748,79 +730,6 @@
     <string>Shift+F3</string>
    </property>
   </action>
-  <action name="actionSelectAndFindNext">
-   <property name="text">
-    <string>Select and Find Next</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+F3</string>
-   </property>
-  </action>
-  <action name="actionSelectAndFindPrevious">
-   <property name="text">
-    <string>Select and Find Previous</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+F3</string>
-   </property>
-  </action>
-  <action name="actionFindVolatieNext">
-   <property name="text">
-    <string>Find (Volatie) Next</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+F3</string>
-   </property>
-  </action>
-  <action name="actionFindVolatiePrevious">
-   <property name="text">
-    <string>Find (Volatie) Previous</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+Shift+F3</string>
-   </property>
-  </action>
-  <action name="actionReplace">
-   <property name="icon">
-    <iconset resource="ainesmile.qrc">
-     <normaloff>:/rc/image/searchreplace.png</normaloff>:/rc/image/searchreplace.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Replace...</string>
-   </property>
-  </action>
-  <action name="actionIncrementalSearch">
-   <property name="text">
-    <string>Incremental Search</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+I</string>
-   </property>
-  </action>
-  <action name="actionSearchResultsWindow">
-   <property name="text">
-    <string>Search Results Window</string>
-   </property>
-   <property name="shortcut">
-    <string>F7</string>
-   </property>
-  </action>
-  <action name="actionNextSearchResult">
-   <property name="text">
-    <string>Next Search Result</string>
-   </property>
-   <property name="shortcut">
-    <string>F4</string>
-   </property>
-  </action>
-  <action name="actionPreviousSearchResult">
-   <property name="text">
-    <string>Previous Search Result</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+F4</string>
-   </property>
-  </action>
   <action name="actionGoTo">
    <property name="text">
     <string>Go to...</string>
@@ -835,11 +744,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
-   </property>
-  </action>
-  <action name="actionFindCharactersInRange">
-   <property name="text">
-    <string>Find characters in range...</string>
    </property>
   </action>
   <action name="actionToggleBookmark">

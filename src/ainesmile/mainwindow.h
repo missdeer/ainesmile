@@ -91,14 +91,6 @@ private slots:
 
     void on_actionClose_triggered();
 
-    void on_actionFindInFiles_triggered();
-
-    void on_actionSearchResultsWindow_triggered();
-
-    void on_actionNextSearchResult_triggered();
-
-    void on_actionPreviousSearchResult_triggered();
-
     void on_actionShowWhiteSpaceAndTAB_triggered();
 
     void on_actionShowEndOfLine_triggered();
@@ -113,7 +105,6 @@ private slots:
 
     void on_actionFind_triggered();
 
-    void on_actionReplace_triggered();
 private:
     Ui::MainWindow *ui;
     QDockWidget *dockFindReplace_;

@@ -139,7 +139,6 @@ void MainWindow::setActionShortcuts()
     ui->actionFind->setShortcut(QKeySequence::Find);
 //    ui->actionFindNext->setShortcut(QKeySequence::FindNext);
 //    ui->actionFindPrevious->setShortcut(QKeySequence::FindPrevious);
-    ui->actionReplace->setShortcut(QKeySequence::Replace);
     ui->actionSelectAll->setShortcut(QKeySequence::SelectAll);
 }
 
@@ -257,22 +256,10 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionFindNext, SIGNAL(triggered()), page, SLOT(findNext()));
     disconnect(ui->actionFindPrevious, SIGNAL(triggered()), 0, 0);
     connect(ui->actionFindPrevious, SIGNAL(triggered()), page, SLOT(findPrevious()));
-    disconnect(ui->actionSelectAndFindNext, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSelectAndFindNext, SIGNAL(triggered()), page, SLOT(selectAndFindNext()));
-    disconnect(ui->actionSelectAndFindPrevious, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSelectAndFindPrevious, SIGNAL(triggered()), page, SLOT(selectAndFindPrevious()));
-    disconnect(ui->actionFindVolatieNext, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFindVolatieNext, SIGNAL(triggered()), page, SLOT(findVolatieNext()));
-    disconnect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFindVolatiePrevious, SIGNAL(triggered()), page, SLOT(findVolatiePrevious()));
-    disconnect(ui->actionIncrementalSearch, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionIncrementalSearch, SIGNAL(triggered()), page, SLOT(incrementalSearch()));
     disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
     connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoLine()));
     disconnect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), 0, 0);
     connect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), page, SLOT(gotoMatchingBrace()));
-    disconnect(ui->actionFindCharactersInRange, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFindCharactersInRange, SIGNAL(triggered()), page, SLOT(findCharactersInRange()));
     disconnect(ui->actionToggleBookmark, SIGNAL(triggered()), 0, 0);
     connect(ui->actionToggleBookmark, SIGNAL(triggered()), page, SLOT(toggleBookmark()));
     disconnect(ui->actionNextBookmark, SIGNAL(triggered()), 0, 0);
@@ -729,40 +716,6 @@ void MainWindow::on_actionClose_triggered()
     tabWidget->doCloseRequested(currentIndex);
 }
 
-void MainWindow::on_actionFindInFiles_triggered()
-{
-    if (!ui->dockFindReplace->isVisible())
-        ui->dockFindReplace->setVisible(true);
-}
-
-void MainWindow::on_actionFind_triggered()
-{
-    if (!ui->dockFindReplace->isVisible())
-        ui->dockFindReplace->setVisible(true);
-}
-
-void MainWindow::on_actionReplace_triggered()
-{
-    if (!ui->dockFindReplace->isVisible())
-        ui->dockFindReplace->setVisible(true);
-}
-
-void MainWindow::on_actionSearchResultsWindow_triggered()
-{
-    if (!ui->dockFindResult->isVisible())
-        ui->dockFindResult->setVisible(true);
-}
-
-void MainWindow::on_actionNextSearchResult_triggered()
-{
-
-}
-
-void MainWindow::on_actionPreviousSearchResult_triggered()
-{
-
-}
-
 void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 {
     bool enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
@@ -820,6 +773,12 @@ void MainWindow::on_actionWindowsList_triggered()
     connect(&dlg, SIGNAL(closeTab(const QList<int> &)), this, SLOT(onCloseTabClicked(const QList<int> &)));
     connect(&dlg, SIGNAL(saveTab(const QList<int> &)), this, SLOT(onSaveTabClicked(const QList<int> &)));
     dlg.exec();
+}
+
+void MainWindow::on_actionFind_triggered()
+{
+    if (!ui->dockFindReplace->isVisible())
+        ui->dockFindReplace->setVisible(true);
 }
 
 void MainWindow::hideFeatures()
