@@ -13,6 +13,7 @@ TEMPLATE = app
 
 include($$PWD/../../Boost.pri)
 include($$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
+include($$PWD/../../3rdparty/scintilla/qt/ScintillaEdit/ScintillaEdit.pri)
 
 
 PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)

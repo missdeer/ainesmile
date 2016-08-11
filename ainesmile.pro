@@ -14,7 +14,6 @@ else:linux-*: PLATFORM = "linux-$${ARCHITECTURE}"
 else: PLATFORM = "unknown"
 
 SUBDIRS += \
-    3rdparty/scintilla/qt/ScintillaEdit \
     src/ainesmile 
 
 win32-msvc* {
