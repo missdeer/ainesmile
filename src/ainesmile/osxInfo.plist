@@ -53,6 +53,8 @@
 	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2016 DForD Software. All rights reserved.</string>
+	<key>ForAppStore</key>
+	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

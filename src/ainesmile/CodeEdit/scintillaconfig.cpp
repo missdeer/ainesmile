@@ -251,7 +251,7 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
             sci->styleSetFont(id, fontName.toStdString().c_str());
         else
 #if defined(Q_OS_MAC)
-            sci->styleSetFont(id, "Monaco");
+            sci->styleSetFont(id, "Menlo");
 #elif defined(Q_OS_WIN)
             sci->styleSetFont(id, "Consolas");
 #else
