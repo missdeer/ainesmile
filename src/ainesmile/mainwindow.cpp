@@ -788,3 +788,43 @@ void MainWindow::hideFeatures()
     ui->actionToggleFullScreenMode->setVisible(false);
 #endif
 }
+
+void MainWindow::on_cbScope_currentIndexChanged(int index)
+{
+
+}
+
+void MainWindow::on_btnSelectDirectory_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"),
+                                                      "",
+                                                      QFileDialog::ShowDirsOnly
+                                                      | QFileDialog::DontResolveSymlinks);
+    if (!dir.isEmpty())
+        ui->edtDirectory->setText(dir);
+}
+
+void MainWindow::on_btnFind_clicked()
+{
+
+}
+
+void MainWindow::on_btnFindInFiles_clicked()
+{
+
+}
+
+void MainWindow::on_btnReplace_clicked()
+{
+
+}
+
+void MainWindow::on_btnReplaceAll_clicked()
+{
+
+}
+
+void MainWindow::on_btnReplaceInFiles_clicked()
+{
+
+}
