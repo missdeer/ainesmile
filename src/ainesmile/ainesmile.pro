@@ -76,26 +76,16 @@ macx: {
     QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO
     QMAKE_OBJECTIVE_CFLAGS_RELEASE =  $$QMAKE_OBJECTIVE_CFLAGS_RELEASE_WITH_DEBUGINFO
     QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
-    # Name of the application signing certificate
-    APPCERT = "3rd Party Mac Developer Application: Fan Yang"
-    # Name of the installer signing certificate
-    INSTALLERCERT = "3rd Party Mac Developer Installer: Fan Yang"
-    # Bundle identifier for your application
+
+    APPCERT = Developer ID Application: Fan Yang (Y73SBCN2CG)
+    INSTALLERCERT = 3rd Party Mac Developer Installer: Fan Yang (Y73SBCN2CG)
+
     BUNDLEID = com.dfordsoft.ainesmile
-    # Name of the entitlements file (only needed if you want to sandbox the application)
     ENTITLEMENTS = $$PWD/ainesmile/ainesmile.entitlements
 
     OTHER_FILES += $$PWD/osxInfo.plist $${ENTITLEMENTS}
 
-    codesign.depends  += all
-    codesign.commands += macdeployqt $${TARGET}.app;
-    # Extract debug symbols
     codesign.commands += dsymutil $${TARGET}.app/Contents/MacOS/$${TARGET} -o $${TARGET}.app.dSYM;
-    # Sign the application bundle, using the provided entitlements
-    codesign.commands += codesign -f -s $${APPCERT} -v –entitlements $${ENTITLEMENTS} $${TARGET}.app;
-    product.depends += all
-    # Build the product package
-    product.commands += productbuild –component $${TARGET}.app /Applications –sign $${INSTALLERCERT} $${TARGET}.pkg;
 
     mkdir_extensions.commands = mkdir -p \"$${TARGET}.app/Contents/PlugIns/extensions\"
     copy_themes.commands = cp -R \"$$PWD/../../resource/themes\" \"$${TARGET}.app/Contents/Resources\"
@@ -104,16 +94,13 @@ macx: {
     copy_rc.commands = cp \"$$PWD/../../resource/.ainesmilerc\" \"$${TARGET}.app/Contents/Resources/\"
 
     MACDEPLOYQT = $$[QT_INSTALL_BINS]/macdeployqt
-    deploy.depends =  copy_themes copy_language copy_langmap copy_rc
-    deploy.commands = $$MACDEPLOYQT \"$${OUT_PWD}/$${TARGET}.app\"  -appstore-compliant
-    QMAKE_EXTRA_TARGETS += copy_themes copy_language copy_langmap copy_rc deploy
-
-    POST_TARGETDEPS += copy_themes copy_language copy_langmap copy_rc
-    QMAKE_POST_LINK += $$quote($$MACDEPLOYQT \"$${OUT_PWD}/$${TARGET}.app\" -appstore-compliant)
-
-    codesign_installer.commands = codesign -s \"$(SIGNING_IDENTITY)\" $(SIGNING_FLAGS) \"$${INSTALLER_NAME}.app\"
-    dmg_installer.commands = hdiutil create -srcfolder "$${INSTALLER_NAME}.app" -volname \"Qt Creator\" -format UDBZ "ainesmile-$${PATTERN}-installer.dmg" -ov -scrub -stretch 2g
-    QMAKE_EXTRA_TARGETS += codesign_installer dmg_installer
+    deploy.depends += copy_themes copy_language copy_langmap copy_rc
+    deploy.commands += $$MACDEPLOYQT \"$${OUT_PWD}/$${TARGET}.app\" -appstore-compliant
+    codesign_bundle.depends += deploy
+    codesign_bundle.commands = codesign -s \"$${APPCERT}\" -v --timestamp=none --entitlements \"$${ENTITLEMENTS}\" -f --deep \"$${OUT_PWD}/$${TARGET}.app\"
+    makedmg.depends += codesign_bundle
+    makedmg.commands = hdiutil create -srcfolder "ainesmile.app" -volname \"ainesmile\" -format UDBZ "ainesmile-installer.dmg" -ov -scrub -stretch 2g
+    QMAKE_EXTRA_TARGETS +=  copy_themes copy_language copy_langmap copy_rc deploy codesign_bundle makedmg
 
     LIBS += -framework CoreFoundation \
         -framework IOKit
