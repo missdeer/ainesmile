@@ -619,7 +619,7 @@ void MainWindow::on_actionAboutApp_triggered()
         fileRevision.close();
     }
 
-    QString text = QString(tr("Build at %1\nRevision: %2\nThe best cross platform program source code editor and browser!")).arg(date).arg(revision);
+    QString text = QString(tr("Build at %1\nRevision: %2\nKeep It Simple & Stupid!")).arg(date).arg(revision);
 
     QMessageBox::about(this, tr("About ainesmile"), text);
 }

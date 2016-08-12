@@ -1,5 +1,7 @@
 #include "stdafx.h"
+#if !defined(Q_OS_MAC)
 #include "qtsingleapplication.h"
+#endif
 #include "config.h"
 #include "mainwindow.h"
 
@@ -18,10 +20,10 @@ int main(int argc, char *argv[])
 
     rl.rlim_cur = qMin((rlim_t)OPEN_MAX, rl.rlim_max);
     setrlimit(RLIMIT_NOFILE, &rl);
-#endif
 
+    QApplication a(argc, argv);
+#else
     SharedTools::QtSingleApplication a(QLatin1String("ainesmile"), argc, argv);
-    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     if (a.isRunning())
     {
         if (argc >= 2)
@@ -36,7 +38,9 @@ int main(int argc, char *argv[])
         }
         return 0;
     }
+#endif
 
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationDomain("dfordsoft.com");
     a.setOrganizationName("DForD Software");
     a.setApplicationName("ainesmile");
@@ -121,7 +125,9 @@ int main(int argc, char *argv[])
 
     w.setWindowTitle(QObject::tr("aiensmile"));
 
+#if !defined(Q_OS_MAC)
     QObject::connect(&a, SIGNAL(messageReceived(QString,QObject*)), &w, SLOT(onIPCMessageReceived(QString,QObject*)));
+#endif
     QObject::connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
     return a.exec();
 }
