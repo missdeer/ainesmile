@@ -15,24 +15,13 @@ include($$PWD/../../Boost.pri)
 include($$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
 include($$PWD/../../3rdparty/scintilla/qt/ScintillaEdit/ScintillaEdit.pri)
 
-
-PATTERN = $${PLATFORM}$(INSTALL_EDITION)-$${AINESMILE_VERSION}$(INSTALL_POSTFIX)
-
-macx:INSTALLER_NAME = "ainesmile-$${QTCREATOR_VERSION}"
-else:INSTALLER_NAME = "ainesmile-$${PATTERN}"
-
 PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += $$PWD/CodeEdit \
     $$PWD/Dialogs \
-    $$PWD/uchardet \
-    $$PWD/../../3rdparty/scintilla/qt/ScintillaEditBase \
-    $$PWD/../../3rdparty/scintilla/qt/ScintillaEdit \
-    $$PWD/../../3rdparty/scintilla/include \
-    $$PWD/../../3rdparty/scintilla/src \
-    $$PWD/../../3rdparty/scintilla/lexlib
+    $$PWD/uchardet
 
-DEFINES += SCINTILLA_QT=1 SCI_LEXER=1 _CRT_SECURE_NO_DEPRECATE=1 SCI_STATIC_LINK=1 LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
+DEFINES += LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
 SOURCES += $$PWD/main.cpp\
     $$PWD/mainwindow.cpp \
