@@ -53,6 +53,12 @@ win32: {
     # Windows icons
     RC_FILE = $$PWD/ainesmile.rc
     LIBS += -lUser32
+    WINDEPLOYQT = $$[QT_INSTALL_BINS]/windeployqt.exe
+    CONFIG(release, debug|release): {
+        QMAKE_POST_LINK += $$quote($$WINDEPLOYQT --release --force \"$${OUT_PWD}/Release/$${TARGET}.exe\")
+    } else: {
+        QMAKE_POST_LINK += $$quote($$WINDEPLOYQT --force \"$${OUT_PWD}/Debug/$${TARGET}.exe\")
+    }
 }
 
 # Mac OS X icon
