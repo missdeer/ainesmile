@@ -294,11 +294,14 @@ void CodeEditPage::marginClicked(int position, int /*modifiers*/, int margin)
     {
         sptr_t line = sci->lineFromPosition(position);
         sptr_t maskN = sci->marginMaskN(margin);
-        if (maskN == SC_MASK_FOLDERS)
+        qDebug() << "sci->marginTypeN(margin) == SC_MARGIN_SYMBOL" << margin << maskN;
+        if ((maskN & 0xFFFFFFFF) == SC_MASK_FOLDERS)
         {
+            qDebug() << "maskN == SC_MASK_FOLDERS";
             sptr_t foldLevel = sci->foldLevel(line);
             if (foldLevel & SC_FOLDLEVELHEADERFLAG)
             {
+                qDebug() << "sci->toggleFold" << line;
                 sci->toggleFold(line);
             }
         }
