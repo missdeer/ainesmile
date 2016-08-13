@@ -51,7 +51,7 @@
 	<language name="vb" pattern="" suffix="vb vbs"/>
 	<language name="verilog" pattern="" suffix="v"/>
 	<language name="vhdl" pattern="" suffix="vhd vhdl"/>
-	<language name="xml" pattern="" suffix="xml xsml xsl xsd kml wsdl"/>
+	<language name="xml" pattern="" suffix="xml xsml xsl xsd kml wsdl plist entitlements"/>
 	<language name="yaml" pattern="" suffix="yml"/>
 	<language name="searchResult" pattern="" suffix=""/>
 </AinesmileLanguageMap>
