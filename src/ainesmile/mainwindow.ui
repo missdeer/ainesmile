@@ -757,7 +757,7 @@
      <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Find or Replace...</string>
+    <string>&amp;Find/Replace...</string>
    </property>
    <property name="toolTip">
     <string>Find or Replace</string>
