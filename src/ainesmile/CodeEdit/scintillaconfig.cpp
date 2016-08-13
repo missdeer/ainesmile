@@ -3,10 +3,6 @@
 #include "scintillaconfig.h"
 #include "config.h"
 
-ScintillaConfig::ScintillaConfig()
-{
-}
-
 void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 {
     boost::property_tree::ptree& pt = Config::instance()->pt();
@@ -25,8 +21,6 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setMouseDownCaptures(true);
 #if defined(Q_OS_WIN)
     sci->setEOLMode(SC_EOL_CRLF);
-#elif defined(Q_OS_MAC)
-    sci->setEOLMode(SC_EOL_CR);
 #else
     sci->setEOLMode(SC_EOL_LF);
 #endif
@@ -87,13 +81,17 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setWrapVisualFlagsLocation(SC_WRAPVISUALFLAGLOC_DEFAULT);
     sci->setWrapStartIndent(0);
 
-    sci->setLayoutCache(2);
+    sci->setLayoutCache(SC_CACHE_PAGE);
     sci->linesSplit(0);
     sci->setEdgeMode(0);
     sci->setEdgeColumn(200);
     sci->setEdgeColour(0xC0DCC0);
 
     sci->usePopUp(false);
+
+#if defined(Q_OS_WIN)
+    sci->setTechnology(SC_TECHNOLOGY_DIRECTWRITEDC );
+#endif
     sci->setBufferedDraw(false);
     sci->setPhasesDraw(SC_PHASES_TWO);
     sci->setCodePage(SC_CP_UTF8);
@@ -103,7 +101,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setMouseDwellTime(2500);
 
     sci->setSavePoint();
-    sci->setFontQuality(SC_EFF_QUALITY_LCD_OPTIMIZED);
+    sci->setFontQuality( SC_EFF_QUALITY_ANTIALIASED);
 
     //sci:SetEncoding( cfg:GetString("config/encoding") )
     Config* config = Config::instance();
@@ -275,8 +273,10 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
             sci->styleSetHotSpot(id, true);
         if (fontStyle & 0x80)
             sci->styleSetChangeable(id, true);
-
-        int fontSize = styleElem.attribute("font_size").toInt();
-        sci->styleSetSize(id, std::max(12, fontSize));
+        QString fontSize = styleElem.attribute("font_size");
+        if (!fontSize.isEmpty())
+            sci->styleSetSize(id, std::max(12, fontSize.toInt()));
+        else
+            sci->styleSetSize(id, 12);
     }
 }
