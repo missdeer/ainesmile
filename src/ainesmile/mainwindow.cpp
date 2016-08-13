@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
+    ui->cbScope->setCurrentIndex(1);
+    ui->cbScope->setCurrentIndex(0);
     ui->dockFindReplace->close();
     ui->dockFindResult->close();
 
@@ -791,12 +793,29 @@ void MainWindow::hideFeatures()
 
 void MainWindow::on_cbScope_currentIndexChanged(int index)
 {
-
+    if (index == 0 || index == 1)
+    {
+        // document
+        ui->lbDirectory->setVisible(false);
+        ui->edtDirectory->setVisible(false);
+        ui->btnSelectDirectory->setVisible(false);
+        ui->lbFilters->setVisible(false);
+        ui->edtFilters->setVisible(false);
+    }
+    else
+    {
+        // directory
+        ui->lbDirectory->setVisible(true);
+        ui->edtDirectory->setVisible(true);
+        ui->btnSelectDirectory->setVisible(true);
+        ui->lbFilters->setVisible(true);
+        ui->edtFilters->setVisible(true);
+    }
 }
 
 void MainWindow::on_btnSelectDirectory_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"),
+    const QString& dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"),
                                                       "",
                                                       QFileDialog::ShowDirsOnly
                                                       | QFileDialog::DontResolveSymlinks);
@@ -806,25 +825,50 @@ void MainWindow::on_btnSelectDirectory_clicked()
 
 void MainWindow::on_btnFind_clicked()
 {
-
+    const QString& strToFind = ui->edtFind->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
 }
 
 void MainWindow::on_btnFindInFiles_clicked()
 {
-
+    const QString& strToFind = ui->edtFind->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
 }
 
 void MainWindow::on_btnReplace_clicked()
 {
-
+    const QString& strToFind = ui->edtFind->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
 {
-
+    const QString& strToFind = ui->edtFind->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
 }
 
 void MainWindow::on_btnReplaceInFiles_clicked()
 {
-
+    const QString& strToFind = ui->edtFind->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
 }

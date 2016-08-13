@@ -367,14 +367,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="lbDirectory">
              <property name="text">
               <string>Directory:</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+            <layout class="QHBoxLayout" name="horLayoutDirectory">
              <item>
               <widget class="QLineEdit" name="edtDirectory"/>
              </item>
@@ -388,7 +388,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="lbFilters">
              <property name="text">
               <string>Filters:</string>
              </property>
