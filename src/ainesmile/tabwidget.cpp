@@ -363,3 +363,28 @@ int TabWidget::findTabIndex(QWidget *w)
     }
     return -1;
 }
+
+void TabWidget::find(FindReplace::FindReplaceOption &fro)
+{
+
+}
+
+void TabWidget::findInFiles(FindReplace::FindReplaceOption &fro)
+{
+
+}
+
+void TabWidget::replace(FindReplace::FindReplaceOption &fro)
+{
+
+}
+
+void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
+{
+
+}
+
+void TabWidget::replaceInFiles(FindReplace::FindReplaceOption &fro)
+{
+
+}

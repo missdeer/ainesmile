@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QFileInfo>
+#include "findreplace.h"
 #include "recentfiles.h"
 #include "codeeditpage.h"
 
@@ -35,6 +36,12 @@ public:
     void setShowWrapSymbol(bool enabled);
     void getFileList(QStringList& fileList);
     int findTabIndex(QWidget* widget);
+
+    void find(FindReplace::FindReplaceOption& fro);
+    void findInFiles(FindReplace::FindReplaceOption& fro);
+    void replace(FindReplace::FindReplaceOption& fro);
+    void replaceAll(FindReplace::FindReplaceOption& fro);
+    void replaceInFiles(FindReplace::FindReplaceOption& fro);
 protected:
     void mousePressEvent(QMouseEvent * event);
 signals:

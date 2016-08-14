@@ -3,8 +3,11 @@
 #include "codeeditpage.h"
 #include "preferencedialog.h"
 #include "windowlistdialog.h"
+#include "findreplace.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+using namespace FindReplace;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -831,6 +834,19 @@ void MainWindow::on_btnFind_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        ui->edtFind->text(),
+        ui->edtReplace->text(),
+        ui->edtDirectory->text(),
+        ui->edtFilters->text(),
+    };
+    ui->tabWidget->find(fro);
 }
 
 void MainWindow::on_btnFindInFiles_clicked()
@@ -841,6 +857,19 @@ void MainWindow::on_btnFindInFiles_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        ui->edtFind->text(),
+        ui->edtReplace->text(),
+        ui->edtDirectory->text(),
+        ui->edtFilters->text(),
+    };
+    ui->tabWidget->findInFiles(fro);
 }
 
 void MainWindow::on_btnReplace_clicked()
@@ -851,6 +880,19 @@ void MainWindow::on_btnReplace_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        ui->edtFind->text(),
+        ui->edtReplace->text(),
+        ui->edtDirectory->text(),
+        ui->edtFilters->text(),
+    };
+    ui->tabWidget->replace(fro);
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
@@ -861,6 +903,19 @@ void MainWindow::on_btnReplaceAll_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        ui->edtFind->text(),
+        ui->edtReplace->text(),
+        ui->edtDirectory->text(),
+        ui->edtFilters->text(),
+    };
+    ui->tabWidget->replaceAll(fro);
 }
 
 void MainWindow::on_btnReplaceInFiles_clicked()
@@ -871,4 +926,17 @@ void MainWindow::on_btnReplaceInFiles_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        ui->edtFind->text(),
+        ui->edtReplace->text(),
+        ui->edtDirectory->text(),
+        ui->edtFilters->text(),
+    };
+    ui->tabWidget->replaceInFiles(fro);
 }
