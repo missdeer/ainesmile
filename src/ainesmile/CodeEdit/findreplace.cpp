@@ -8,9 +8,8 @@
 #include "ScintillaEdit.h"
 #include "findreplace.h"
 
-using FindReplace::FindReplaceOption;
 
-namespace FindRepalce {
+namespace FindReplace {
 
 bool findInDocument(ScintillaEdit *doc, FindReplaceOption &fro)
 {

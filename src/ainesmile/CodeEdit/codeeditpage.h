@@ -27,11 +27,11 @@ private:
     ScintillaConfig m_sc;
 
     void init();
-    ScintillaEdit* getFocusView();
 
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
+    ScintillaEdit* getFocusView();
     void openFile(const QString& filePath);
     void saveFile(const QString& filePath);
     const QString& getFilePath() const;

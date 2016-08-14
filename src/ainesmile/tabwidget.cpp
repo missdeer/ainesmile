@@ -366,7 +366,13 @@ int TabWidget::findTabIndex(QWidget *w)
 
 void TabWidget::find(FindReplace::FindReplaceOption &fro)
 {
-
+    QWidget* w = currentWidget();
+    if (w)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(w);
+        ScintillaEdit* sci = page->getFocusView();
+        FindReplace::findInDocument(sci, fro);
+    }
 }
 
 void TabWidget::findInFiles(FindReplace::FindReplaceOption &fro)
@@ -376,7 +382,13 @@ void TabWidget::findInFiles(FindReplace::FindReplaceOption &fro)
 
 void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 {
-
+    QWidget* w = currentWidget();
+    if (w)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(w);
+        ScintillaEdit* sci = page->getFocusView();
+        FindReplace::replaceInDocument(sci, fro);
+    }
 }
 
 void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
