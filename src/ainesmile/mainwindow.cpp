@@ -846,7 +846,8 @@ void MainWindow::on_btnFind_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    ui->tabWidget->find(fro);
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->find(fro);
 }
 
 void MainWindow::on_btnFindInFiles_clicked()
@@ -869,7 +870,8 @@ void MainWindow::on_btnFindInFiles_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    ui->tabWidget->findInFiles(fro);
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->findInFiles(fro);
 }
 
 void MainWindow::on_btnReplace_clicked()
@@ -892,7 +894,8 @@ void MainWindow::on_btnReplace_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    ui->tabWidget->replace(fro);
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->replace(fro);
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
@@ -915,7 +918,8 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    ui->tabWidget->replaceAll(fro);
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->replaceAll(fro);
 }
 
 void MainWindow::on_btnReplaceInFiles_clicked()
@@ -938,5 +942,6 @@ void MainWindow::on_btnReplaceInFiles_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    ui->tabWidget->replaceInFiles(fro);
+    TabWidget* tabWidget = getFocusTabWidget();
+    tabWidget->replaceInFiles(fro);
 }
