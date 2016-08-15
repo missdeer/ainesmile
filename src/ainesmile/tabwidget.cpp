@@ -390,11 +390,6 @@ void TabWidget::find(FindReplace::FindReplaceOption &fro)
     }
 }
 
-void TabWidget::findInFiles(FindReplace::FindReplaceOption &fro)
-{
-
-}
-
 void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 {
     QWidget* w = currentWidget();
@@ -408,10 +403,23 @@ void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 
 void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
 {
-
+    QWidget* w = currentWidget();
+    if (w)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(w);
+        ScintillaEdit* sci = page->getFocusView();
+        FindReplace::replaceAllInDocument(sci, fro);
+    }
 }
 
-void TabWidget::replaceInFiles(FindReplace::FindReplaceOption &fro)
+void TabWidget::getAllEditors(QList<ScintillaEdit *> &docs)
 {
+    for (int i = 0; i < count(); i++)
+    {
+        CodeEditPage* page = qobject_cast<CodeEditPage*>(widget(i));
+        Q_ASSERT(page);
+        ScintillaEdit* sci = page->getFocusView();
+        docs.push_back(sci);
+    }
 
 }

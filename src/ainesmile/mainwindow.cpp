@@ -870,8 +870,25 @@ void MainWindow::on_btnFindInFiles_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    TabWidget* tabWidget = getFocusTabWidget();
-    tabWidget->findInFiles(fro);
+
+    switch(ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT:
+    {
+        QList<ScintillaEdit*> docs;
+        ui->tabWidget->getAllEditors(docs);
+        ui->tabWidgetSlave->getAllEditors(docs);
+        FindReplace::findInDocuments(docs, fro);
+    }
+        break;
+    case FindReplace::FindScope::FS_DIRECOTRY:
+        FindReplace::findInDirectory(fro);
+        break;
+    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+        FindReplace::findInDirectories(fro);
+        break;
+
+    }
 }
 
 void MainWindow::on_btnReplace_clicked()
@@ -918,8 +935,21 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    TabWidget* tabWidget = getFocusTabWidget();
-    tabWidget->replaceAll(fro);
+
+    switch(ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_DOCUMENT:
+        getFocusTabWidget()->replaceAll(fro);
+        break;
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT:
+    {
+        QList<ScintillaEdit*> docs;
+        ui->tabWidget->getAllEditors(docs);
+        ui->tabWidgetSlave->getAllEditors(docs);
+        FindReplace::replaceAllInDocuments(docs, fro);
+    }
+        break;
+    }
 }
 
 void MainWindow::on_btnReplaceInFiles_clicked()
@@ -942,6 +972,14 @@ void MainWindow::on_btnReplaceInFiles_clicked()
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    TabWidget* tabWidget = getFocusTabWidget();
-    tabWidget->replaceInFiles(fro);
+
+    switch(ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_DIRECOTRY:
+        FindReplace::replaceAllInDirectory(fro);
+        break;
+    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+        FindReplace::replaceAllInDirectories(fro);
+        break;
+    }
 }

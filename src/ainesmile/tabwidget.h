@@ -38,10 +38,10 @@ public:
     int findTabIndex(QWidget* widget);
 
     void find(FindReplace::FindReplaceOption& fro);
-    void findInFiles(FindReplace::FindReplaceOption& fro);
     void replace(FindReplace::FindReplaceOption& fro);
     void replaceAll(FindReplace::FindReplaceOption& fro);
-    void replaceInFiles(FindReplace::FindReplaceOption& fro);
+
+    void getAllEditors(QList<ScintillaEdit*>& docs);
 protected:
     void mousePressEvent(QMouseEvent * event);
 signals:

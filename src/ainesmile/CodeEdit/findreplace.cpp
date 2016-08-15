@@ -21,12 +21,12 @@ bool findInDocuments(QList<ScintillaEdit *> &docs, FindReplaceOption &fro)
     return true;
 }
 
-bool findInDirectory(const QString &directory, FindReplaceOption &fro)
+bool findInDirectory(FindReplaceOption &fro)
 {
     return true;
 }
 
-bool findInDirectories(const QString &directory, FindReplaceOption &fro)
+bool findInDirectories(FindReplaceOption &fro)
 {
     return true;
 }
@@ -46,12 +46,12 @@ bool replaceAllInDocuments(QList<ScintillaEdit *> &docs, FindReplaceOption &fro)
     return true;
 }
 
-bool replaceAllInDirectory(const QString &directory, FindReplaceOption &fro)
+bool replaceAllInDirectory(FindReplaceOption &fro)
 {
     return true;
 }
 
-bool replaceAllInDirectories(const QString &directory, FindReplaceOption &fro)
+bool replaceAllInDirectories(FindReplaceOption &fro)
 {
     return true;
 }

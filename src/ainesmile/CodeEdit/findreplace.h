@@ -31,13 +31,13 @@ struct FindReplaceOption {
 
 bool findInDocument(ScintillaEdit* doc, FindReplaceOption& fro);
 bool findInDocuments(QList<ScintillaEdit*>& docs, FindReplaceOption& fro);
-bool findInDirectory(const QString& directory, FindReplaceOption& fro);
-bool findInDirectories(const QString& directory, FindReplaceOption& fro);
+bool findInDirectory(FindReplaceOption& fro);
+bool findInDirectories(FindReplaceOption& fro);
 bool replaceInDocument(ScintillaEdit* doc, FindReplaceOption& fro);
 bool replaceAllInDocument(ScintillaEdit* doc, FindReplaceOption& fro);
 bool replaceAllInDocuments(QList<ScintillaEdit*>& docs, FindReplaceOption& fro);
-bool replaceAllInDirectory(const QString& directory, FindReplaceOption& fro);
-bool replaceAllInDirectories(const QString& directory, FindReplaceOption& fro);
+bool replaceAllInDirectory(FindReplaceOption& fro);
+bool replaceAllInDirectories(FindReplaceOption& fro);
 }
 
 
