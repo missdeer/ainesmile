@@ -50,6 +50,8 @@ RESOURCES += \
     $$PWD/ainesmile.qrc
 
 win32: {
+    SOURCES += ShellContextMenu.cpp
+    HEADERS += ShellContextMenu.h
     # Windows icons
     RC_FILE = $$PWD/ainesmile.rc
     LIBS += -lUser32

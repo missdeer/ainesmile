@@ -7,13 +7,21 @@
 #ifndef PCH_H
 #define PCH_H
 
-#if defined(Q_OS_WIN)
+#if defined(_WIN32)
+#define NOMINMAX
 #include <Windows.h>
+#include <Shellapi.h>
+#include <shobjidl.h>
+#include <shlguid.h>
+#include <Shlobj.h>
+#include <strsafe.h>
 #endif
+
 
 #if defined(__cplusplus)
 #include <QtCore>
 #include <QtGui>
+#include <QAction>
 #include <QtXml>
 #include <QtNetwork>
 #include <QtWidgets>

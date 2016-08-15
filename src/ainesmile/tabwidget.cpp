@@ -1,16 +1,14 @@
 #include "stdafx.h"
+#if defined(Q_OS_WIN)
+#include "ShellContextMenu.h"
+#endif
 #include "tabwidget.h"
 
 TabWidget::TabWidget(QWidget *parent) :
     QTabWidget(parent),
-    contentMenu_(new QMenu(this)),
     theOtherSide_(NULL),
     aboutToQuit_(false)
 {
-    QAction* action = new QAction(tr("Move to the other side"), this);
-    connect(action, SIGNAL(triggered()), this, SIGNAL(exchangeTab()));
-    contentMenu_->addAction(action);
-
     tabBar()->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
 }
 
@@ -38,6 +36,23 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
         if (index != -1)
         {
             setCurrentIndex(index);
+
+            QMenu* contentMenu_ = new QMenu(this);
+            QAction* action = new QAction(tr("Move to the other side"), this);
+            connect(action, SIGNAL(triggered()), this, SIGNAL(exchangeTab()));
+            contentMenu_->addAction(action);
+
+#if defined(Q_OS_WIN)
+            CodeEditPage* page = qobject_cast<CodeEditPage*>(currentWidget());
+            Q_ASSERT(page);
+            QString filePath = page->getFilePath();
+            if (!filePath.isEmpty())
+            {
+                CShellContextMenu scm;
+                scm.ShowContextMenu(contentMenu_, this, mapToGlobal(event->pos()), filePath.replace(QChar('/'), QChar('\\')));
+                return;
+            }
+#endif
             contentMenu_->popup(mapToGlobal(event->pos()));
         }
     }

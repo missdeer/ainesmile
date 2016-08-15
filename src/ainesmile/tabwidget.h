@@ -51,7 +51,6 @@ signals:
 public slots:
     
 private:
-    QMenu* contentMenu_;
     TabWidget* theOtherSide_;
     RecentFiles* rf_;
     bool aboutToQuit_;

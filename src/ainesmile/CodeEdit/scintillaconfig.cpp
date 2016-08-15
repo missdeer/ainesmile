@@ -88,10 +88,6 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setEdgeColour(0xC0DCC0);
 
     sci->usePopUp(false);
-
-#if defined(Q_OS_WIN)
-    sci->setTechnology(SC_TECHNOLOGY_DIRECTWRITEDC );
-#endif
     sci->setBufferedDraw(false);
     sci->setPhasesDraw(SC_PHASES_TWO);
     sci->setCodePage(SC_CP_UTF8);
