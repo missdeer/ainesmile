@@ -385,26 +385,6 @@ void CodeEditPage::selectAll()
     sci->selectAll();
 }
 
-void CodeEditPage::columnMode()
-{
-
-}
-
-void CodeEditPage::columnEditor()
-{
-
-}
-
-void CodeEditPage::characterPanel()
-{
-
-}
-
-void CodeEditPage::clipboardHistory()
-{
-
-}
-
 void CodeEditPage::setReadOnly()
 {
     m_sciControlMaster->setReadOnly(true);
@@ -509,41 +489,6 @@ void CodeEditPage::moveDownCurrentLine()
     sci->endUndoAction();
 }
 
-void CodeEditPage::toggleBlockComment()
-{
-
-}
-
-void CodeEditPage::blockComment()
-{
-
-}
-
-void CodeEditPage::blockUncomment()
-{
-
-}
-
-void CodeEditPage::streamComment()
-{
-
-}
-
-void CodeEditPage::functionCompletion()
-{
-
-}
-
-void CodeEditPage::wordCompletion()
-{
-
-}
-
-void CodeEditPage::functionParametersHint()
-{
-
-}
-
 void CodeEditPage::eolWindowsFormat()
 {
     m_sciControlMaster->setEOLMode(SC_EOL_CRLF);
@@ -616,81 +561,6 @@ void CodeEditPage::eolToSpace()
     sci->endUndoAction();
 }
 
-void CodeEditPage::removeUnnecessaryBlankAndEOL()
-{
-
-}
-
-void CodeEditPage::tabToSpace()
-{
-
-}
-
-void CodeEditPage::spaceToTab()
-{
-
-}
-
-void CodeEditPage::pasteHTMLContent()
-{
-
-}
-
-void CodeEditPage::pasteRTFContent()
-{
-
-}
-
-void CodeEditPage::copyBinaryContent()
-{
-
-}
-
-void CodeEditPage::cutBinaryContent()
-{
-
-}
-
-void CodeEditPage::pasteBinaryContent()
-{
-
-}
-
-void CodeEditPage::findNext()
-{
-
-}
-
-void CodeEditPage::findPrevious()
-{
-
-}
-
-void CodeEditPage::selectAndFindNext()
-{
-
-}
-
-void CodeEditPage::selectAndFindPrevious()
-{
-
-}
-
-void CodeEditPage::findVolatieNext()
-{
-
-}
-
-void CodeEditPage::findVolatiePrevious()
-{
-
-}
-
-void CodeEditPage::incrementalSearch()
-{
-
-}
-
 void CodeEditPage::gotoLine()
 {
     bool ok;
@@ -704,11 +574,6 @@ void CodeEditPage::gotoLine()
 }
 
 void CodeEditPage::gotoMatchingBrace()
-{
-
-}
-
-void CodeEditPage::findCharactersInRange()
 {
 
 }
@@ -763,26 +628,6 @@ void CodeEditPage::inverseBookmark()
 
 }
 
-void CodeEditPage::startRecording()
-{
-
-}
-
-void CodeEditPage::abortRecording()
-{
-
-}
-
-void CodeEditPage::saveLastRecording()
-{
-
-}
-
-void CodeEditPage::replayLastRecording()
-{
-
-}
-
 void CodeEditPage::wordWrap()
 {
     if (m_sciControlMaster->wrapMode() == SC_WRAP_NONE)
@@ -803,58 +648,6 @@ void CodeEditPage::focusOnAnotherView()
         m_sciControlSlave->grabFocus();
     else
         m_sciControlMaster->grabFocus();
-}
-
-void CodeEditPage::hideLines()
-{
-    ScintillaEdit* se = getFocusView();
-
-}
-
-void CodeEditPage::foldAll()
-{
-    ScintillaEdit* se = getFocusView();
-    sptr_t maxLine = se->lineCount();
-    for (sptr_t line = maxLine-1; line >= 0; --line)
-    {
-        auto level = se->foldLevel(line);
-        if (level & SC_FOLDLEVELHEADERFLAG)
-            if (se->foldExpanded(line))
-                se->setFoldExpanded(line, false);
-    }
-}
-
-void CodeEditPage::unfoldAll()
-{
-    ScintillaEdit* se = getFocusView();
-    sptr_t maxLine = se->lineCount();
-    for (sptr_t line = maxLine-1; line >= 0; --line)
-    {
-        auto level = se->foldLevel(line);
-        if (level & SC_FOLDLEVELHEADERFLAG)
-            if (!se->foldExpanded(line))
-                se->setFoldExpanded(line, true);
-    }
-}
-
-void CodeEditPage::collapseCurrentLevel()
-{
-
-}
-
-void CodeEditPage::uncollapseCurrentLevel()
-{
-
-}
-
-void CodeEditPage::collapseLevel()
-{
-
-}
-
-void CodeEditPage::uncollapseLevel()
-{
-
 }
 
 void CodeEditPage::encodeInANSI()
