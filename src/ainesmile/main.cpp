@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 #endif
 
     MainWindow w;
+    g_mainWindow = &w;
     w.show();
 
     if (argc >= 2)

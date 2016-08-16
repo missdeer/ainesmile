@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "ScintillaEdit.h"
+#include "mainwindow.h"
 #include "findreplace.h"
 
 
@@ -25,10 +26,14 @@ bool findInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
     qDebug() << flags << fro.strToFind << sci->currentPos() << sci->textLength() << p << sci->lineFromPosition(p.first);
     if (p.first >= 0)
     {
-        sci->setFocus(true);
+//        g_mainWindow->activateWindow();
+//        g_mainWindow->raise();
+//        sci->activateWindow();
+//        sci->raise();
+//        sci->setFocus(true);
         sci->grabFocus();
-        sci->gotoPos(p.first);
-        sci->setCurrentPos(p.first);
+        sci->gotoPos(p.second);
+        sci->setCurrentPos(p.second);
         sci->setSel(p.first, p.second);
     }
     return true;

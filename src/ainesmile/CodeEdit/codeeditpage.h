@@ -22,7 +22,7 @@ private:
     QSplitter* m_verticalEditorSplitter;
     ScintillaEdit* m_sciControlMaster;
     ScintillaEdit* m_sciControlSlave;
-
+    ScintillaEdit* m_sciFocusView;
     QString m_filePath;
     ScintillaConfig m_sc;
 

@@ -9,6 +9,8 @@
 
 using namespace FindReplace;
 
+MainWindow* g_mainWindow = nullptr;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),

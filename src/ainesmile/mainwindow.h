@@ -130,4 +130,6 @@ private:
     bool exchanging_;
 };
 
+extern MainWindow* g_mainWindow;
+
 #endif // MAINWINDOW_H

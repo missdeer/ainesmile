@@ -9,7 +9,8 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     m_webView(new QWebEngineView(parent)),
     m_verticalEditorSplitter(new QSplitter( Qt::Vertical, parent)),
     m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
-    m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter))
+    m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
+    m_sciFocusView(m_sciControlMaster)
 {
     m_horizontalMainSplitter->addWidget(m_verticalEditorSplitter);
     m_horizontalMainSplitter->addWidget(m_webView);
@@ -66,12 +67,14 @@ void CodeEditPage::init()
 
 ScintillaEdit *CodeEditPage::getFocusView()
 {
-    ScintillaEdit* sci = NULL;
-    if (m_sciControlMaster->focus())
-        sci = m_sciControlMaster;
+    if (!m_sciControlMaster->focus() && !m_sciControlSlave->focus())
+        return m_sciFocusView != nullptr ? m_sciFocusView : (m_sciFocusView = m_sciControlMaster);
+    if (m_sciControlSlave->focus())
+        m_sciFocusView = m_sciControlSlave;
     else
-        sci = m_sciControlSlave;
-    return sci;
+        m_sciFocusView = m_sciControlMaster;
+
+    return m_sciFocusView;
 }
 
 bool CodeEditPage::initialDocument()
