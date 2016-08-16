@@ -144,8 +144,6 @@ void MainWindow::setActionShortcuts()
     ui->actionZoomOut->setShortcut(QKeySequence::ZoomOut);
     ui->actionPrint->setShortcut(QKeySequence::Print);
     ui->actionFind->setShortcut(QKeySequence::Find);
-//    ui->actionFindNext->setShortcut(QKeySequence::FindNext);
-//    ui->actionFindPrevious->setShortcut(QKeySequence::FindPrevious);
     ui->actionSelectAll->setShortcut(QKeySequence::SelectAll);
 }
 
@@ -258,11 +256,7 @@ void MainWindow::connectSignals(CodeEditPage *page)
     disconnect(ui->actionUNIXFormat, SIGNAL(triggered()), 0, 0);
     connect(ui->actionUNIXFormat, SIGNAL(triggered()), page, SLOT(eolUNIXFormat()));
     disconnect(ui->actionMacFormat, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));    
-    disconnect(ui->actionFindNext, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFindNext, SIGNAL(triggered()), page, SLOT(findNext()));
-    disconnect(ui->actionFindPrevious, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFindPrevious, SIGNAL(triggered()), page, SLOT(findPrevious()));
+    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));
     disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
     connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoLine()));
     disconnect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), 0, 0);
@@ -287,20 +281,8 @@ void MainWindow::connectSignals(CodeEditPage *page)
     connect(ui->actionRemoveUnmarkedLines, SIGNAL(triggered()), page, SLOT(removeUnbookmarkedLines()));
     disconnect(ui->actionInverseBookmark, SIGNAL(triggered()), 0, 0);
     connect(ui->actionInverseBookmark, SIGNAL(triggered()), page, SLOT(inverseBookmark()));
-    disconnect(ui->actionStartRecording, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionStartRecording, SIGNAL(triggered()), page, SLOT(startRecording()));
-    disconnect(ui->actionAbortRecording, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionAbortRecording, SIGNAL(triggered()), page, SLOT(abortRecording()));
-    disconnect(ui->actionSaveLastRecording, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSaveLastRecording, SIGNAL(triggered()), page, SLOT(saveLastRecording()));
-    disconnect(ui->actionReplayLastRecording, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionReplayLastRecording, SIGNAL(triggered()), page, SLOT(replayLastRecording()));
     disconnect(ui->actionWordWrap, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));    
-    disconnect(ui->actionFoldAll, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionFoldAll, SIGNAL(triggered()), page, SLOT(foldAll()));
-    disconnect(ui->actionUnfoldAll, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUnfoldAll, SIGNAL(triggered()), page, SLOT(unfoldAll()));    
+    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));
     disconnect(ui->actionEncodeInANSI, SIGNAL(triggered()), 0, 0);
     connect(ui->actionEncodeInANSI, SIGNAL(triggered()), page, SLOT(encodeInANSI()));
     disconnect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);

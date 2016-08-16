@@ -6,7 +6,6 @@
 
 #include "stdafx.h"
 #include "ScintillaEdit.h"
-#include "mainwindow.h"
 #include "findreplace.h"
 
 
@@ -21,20 +20,25 @@ bool findInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
         flags |= SCFIND_WHOLEWORD;
     if (fro.regexp)
         flags |= SCFIND_CXX11REGEX;
-
-    QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), sci->currentPos(), sci->textLength());
-    qDebug() << flags << fro.strToFind << sci->currentPos() << sci->textLength() << p << sci->lineFromPosition(p.first);
+    int start = sci->currentPos();
+    int end = sci->textLength();
+    if (fro.searchUp)
+        std::swap(start, end);
+    QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
     if (p.first >= 0)
     {
-//        g_mainWindow->activateWindow();
-//        g_mainWindow->raise();
-//        sci->activateWindow();
-//        sci->raise();
-//        sci->setFocus(true);
         sci->grabFocus();
         sci->gotoPos(p.second);
         sci->setCurrentPos(p.second);
         sci->setSel(p.first, p.second);
+
+        sptr_t endStyled = sci->endStyled();
+        if (endStyled < p.second)
+            sci->colourise(endStyled, p.second);
+        sptr_t lineStart = sci->lineFromPosition(p.first);
+        sptr_t lineEnd = sci->lineFromPosition(p.second);
+        for (sptr_t line = lineStart; line <=lineEnd; line++)
+            sci->ensureVisibleEnforcePolicy(line);
     }
     return true;
 }
