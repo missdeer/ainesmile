@@ -20,8 +20,8 @@ bool findInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
         flags |= SCFIND_WHOLEWORD;
     if (fro.regexp)
         flags |= SCFIND_CXX11REGEX;
-    int start = sci->currentPos();
-    int end = sci->textLength();
+    sptr_t start = sci->currentPos();
+    sptr_t end = sci->textLength();
     if (fro.searchUp)
         std::swap(start, end);
     QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
