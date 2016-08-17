@@ -71,7 +71,7 @@ int FindReplaceResultModel::rowCount(const QModelIndex& parent) const
 
 int FindReplaceResultModel::columnCount(const QModelIndex& parent) const
 {
-
+    Q_UNUSED(parent);
     return rootItem->columnCount();
 }
 
@@ -161,7 +161,7 @@ bool FindReplaceResultModel::removeRows(int position, int rows, const QModelInde
 
 FindReplaceResultModel::FindReplaceResultModel()
 {
-    QVector<QVariant> rootData;
+    QVector<QVariant> rootData{ tr("Position"), tr("Context") };
 
     rootItem = new FindReplaceResultItem(rootData);
 }
