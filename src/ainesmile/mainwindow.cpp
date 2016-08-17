@@ -4,6 +4,7 @@
 #include "preferencedialog.h"
 #include "windowlistdialog.h"
 #include "findreplace.h"
+#include "findreplaceresultmodel.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -53,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->menuDockWindows->addAction(ui->dockFindReplace->toggleViewAction());
     ui->menuDockWindows->addAction(ui->dockFindResult->toggleViewAction());
+
+    ui->tvFindReplaceResult->setModel(FindReplaceResultModel::instance());
 
     QSettings settings("dfordsoft.com", "ainesmile");
     if (settings.contains("geometry"))

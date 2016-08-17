@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1298</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -308,8 +308,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>802</width>
-          <height>443</height>
+          <width>1037</width>
+          <height>365</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -514,7 +514,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QTableWidget" name="tblFindReplaceResult"/>
+      <widget class="QTreeView" name="tvFindReplaceResult"/>
      </item>
     </layout>
    </widget>
