@@ -97,6 +97,7 @@ bool findAllInDirectories(FindReplaceOption &fro)
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext())
     {
+        QString filePath = it.next();
     }
     return true;
 }
@@ -193,6 +194,7 @@ bool replaceAllInDirectories(FindReplaceOption &fro)
     QDirIterator it(dir, QDirIterator::Subdirectories);
     while (it.hasNext()) 
     {
+        QString filePath = it.next();
     }
     return true;
 }
