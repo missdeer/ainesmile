@@ -43,17 +43,42 @@ bool findInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
     return true;
 }
 
-bool findInDocuments(QList<ScintillaEdit *> &scis, FindReplaceOption &fro)
+bool findAllInDocuments(QList<ScintillaEdit *> &scis, FindReplaceOption &fro)
+{
+    int flags = 0;
+    if (fro.matchCase)
+        flags |= SCFIND_MATCHCASE;
+    if (fro.matchWholeWord)
+        flags |= SCFIND_WHOLEWORD;
+    if (fro.regexp)
+        flags |= SCFIND_CXX11REGEX;
+    for (ScintillaEdit* sci: scis)
+    {
+        sptr_t start = 0;
+        sptr_t end = sci->textLength();
+        if (fro.searchUp)
+            std::swap(start, end);
+        QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+        while (p.first >= 0)
+        {
+            sptr_t lineStart = sci->lineFromPosition(p.first);
+            sptr_t lineEnd = sci->lineFromPosition(p.second);
+
+            sci->setCurrentPos(p.second);
+            sptr_t start = p.second;
+            sptr_t end = sci->textLength();
+            p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+        }
+    }
+    return true;
+}
+
+bool findAllInDirectory(FindReplaceOption &fro)
 {
     return true;
 }
 
-bool findInDirectory(FindReplaceOption &fro)
-{
-    return true;
-}
-
-bool findInDirectories(FindReplaceOption &fro)
+bool findAllInDirectories(FindReplaceOption &fro)
 {
     return true;
 }

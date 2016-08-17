@@ -862,14 +862,14 @@ void MainWindow::on_btnFindInFiles_clicked()
         QList<ScintillaEdit*> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
-        FindReplace::findInDocuments(docs, fro);
+        FindReplace::findAllInDocuments(docs, fro);
     }
         break;
     case FindReplace::FindScope::FS_DIRECOTRY:
-        FindReplace::findInDirectory(fro);
+        FindReplace::findAllInDirectory(fro);
         break;
     case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
-        FindReplace::findInDirectories(fro);
+        FindReplace::findAllInDirectories(fro);
         break;
 
     }

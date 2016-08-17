@@ -30,9 +30,9 @@ struct FindReplaceOption {
 };
 
 bool findInDocument(ScintillaEdit* sci, FindReplaceOption& fro);
-bool findInDocuments(QList<ScintillaEdit*>& scis, FindReplaceOption& fro);
-bool findInDirectory(FindReplaceOption& fro);
-bool findInDirectories(FindReplaceOption& fro);
+bool findAllInDocuments(QList<ScintillaEdit*>& scis, FindReplaceOption& fro);
+bool findAllInDirectory(FindReplaceOption& fro);
+bool findAllInDirectories(FindReplaceOption& fro);
 bool replaceInDocument(ScintillaEdit* sci, FindReplaceOption& fro);
 bool replaceAllInDocument(ScintillaEdit* sci, FindReplaceOption& fro);
 bool replaceAllInDocuments(QList<ScintillaEdit*>& scis, FindReplaceOption& fro);
