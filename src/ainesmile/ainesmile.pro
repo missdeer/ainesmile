@@ -29,9 +29,7 @@ SOURCES += $$PWD/main.cpp\
     $$PWD/config.cpp \
     $$PWD/CodeEdit/*.cpp \
     $$PWD/Dialogs/*.cpp \
-    $$PWD/uchardet/*.cpp \
-    CodeEdit/findreplaceresultmodel.cpp \
-    CodeEdit/findreplaceresultitem.cpp
+    $$PWD/uchardet/*.cpp
 
 HEADERS  += $$PWD/mainwindow.h \
     $$PWD/tabwidget.h \
@@ -39,9 +37,7 @@ HEADERS  += $$PWD/mainwindow.h \
     $$PWD/CodeEdit/*.h \
     $$PWD/Dialogs/*.h \
     $$PWD/uchardet/*.h \
-    $$PWD/stdafx.h \
-    CodeEdit/findreplaceresultmodel.h \
-    CodeEdit/findreplaceresultitem.h
+    $$PWD/stdafx.h
 
 FORMS    += $$PWD/mainwindow.ui \
     $$PWD/Dialogs/*.ui
