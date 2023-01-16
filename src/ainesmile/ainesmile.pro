@@ -19,7 +19,9 @@ PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += $$PWD/CodeEdit \
     $$PWD/Dialogs \
-    $$PWD/uchardet
+    $$PWD/uchardet \
+    $$PWD/../../3rdparty/scintilla/qt/ScintillaEdit \
+    $$PWD/../../3rdparty/scintilla/qt/ScintillaEditBase
 
 DEFINES += LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
@@ -27,20 +29,20 @@ SOURCES += $$PWD/main.cpp\
     $$PWD/mainwindow.cpp \
     $$PWD/tabwidget.cpp \
     $$PWD/config.cpp \
-    $$PWD/CodeEdit/*.cpp \
-    $$PWD/Dialogs/*.cpp \
-    $$PWD/uchardet/*.cpp
+    $$files(CodeEdit/*.cpp, false) \
+    $$files(Dialogs/*.cpp, false)  \
+    $$files(uchardet/*.cpp, false)
 
 HEADERS  += $$PWD/mainwindow.h \
     $$PWD/tabwidget.h \
     $$PWD/config.h \
-    $$PWD/CodeEdit/*.h \
-    $$PWD/Dialogs/*.h \
-    $$PWD/uchardet/*.h \
+    $$files(CodeEdit/*.h, false)  \
+    $$files(Dialogs/*.h, false)  \
+    $$files(uchardet/*.h, false)  \
     $$PWD/stdafx.h
 
 FORMS    += $$PWD/mainwindow.ui \
-    $$PWD/Dialogs/*.ui
+    $$files(Dialogs/*.ui, false)
 
 OTHER_FILES += \
     $$PWD/ainesmile.rc \

@@ -49,7 +49,11 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
             if (!filePath.isEmpty())
             {
                 CShellContextMenu scm;
-                scm.ShowContextMenu(contentMenu_, this, mapToGlobal(event->pos()), filePath.replace(QChar('/'), QChar('\\')));
+                auto pos = mapToGlobal(event->pos());
+                scm.ShowContextMenu(contentMenu_,
+                                    this,
+                                    pos,
+                                    filePath.replace(QChar('/'), QChar('\\')));
                 return;
             }
 #endif

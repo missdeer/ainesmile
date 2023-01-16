@@ -1,3 +1,6 @@
 [submodule "3rdparty/scintilla"]
 	path = 3rdparty/scintilla
 	url = https://github.com/missdeer/scintilla.git
+[submodule "3rdparty/lexilla"]
+	path = 3rdparty/lexilla
+	url = https://github.com/ScintillaOrg/lexilla.git

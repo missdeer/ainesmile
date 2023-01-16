@@ -163,7 +163,7 @@ void MainWindow::setRecentFiles()
                           << ui->actionRecentFile9
                           << ui->actionRecentFile10;
 
-    Q_FOREACH(QAction* action, recentFileActions_)
+    for (QAction *action : recentFileActions_)
     {
         connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
     }

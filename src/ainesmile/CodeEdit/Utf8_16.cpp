@@ -16,6 +16,10 @@
 // - Add convert function in Utf8_16_Write
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+
 #include "Utf8_16.h"
 
 const Utf8_16::utf8 Utf8_16::k_Boms[][3] = {
@@ -28,21 +32,22 @@ const Utf8_16::utf8 Utf8_16::k_Boms[][3] = {
 
 // ==================================================================
 
-Utf8_16_Read::Utf8_16_Read() {
-	m_eEncoding		= uni8Bit;
-	m_nAllocatedBufSize = 0;
-	m_nNewBufSize   = 0;
-	m_pNewBuf		= NULL;
-	m_bFirstRead	= true;
+Utf8_16_Read::Utf8_16_Read()
+{
+    m_eEncoding         = uni8Bit;
+    m_nAllocatedBufSize = 0;
+    m_nNewBufSize       = 0;
+    m_pNewBuf           = nullptr;
+    m_bFirstRead        = true;
 }
 
 Utf8_16_Read::~Utf8_16_Read()
 {
-	if ((m_eEncoding == uni16BE) || (m_eEncoding == uni16LE) || (m_eEncoding == uni16BE_NoBOM) || (m_eEncoding == uni16LE_NoBOM))
+    if ((m_eEncoding == uni16BE) || (m_eEncoding == uni16LE) || (m_eEncoding == uni16BE_NoBOM) || (m_eEncoding == uni16LE_NoBOM))
     {
-		delete [] m_pNewBuf;
-		m_pNewBuf = NULL;
-	}
+        delete[] m_pNewBuf;
+        m_pNewBuf = nullptr;
+    }
 }
 
 // Returned value :
@@ -152,7 +157,7 @@ size_t Utf8_16_Read::convert(char* buf, size_t len)
             {
 				if (m_pNewBuf)
 					delete [] m_pNewBuf;
-                m_pNewBuf  = NULL;
+                m_pNewBuf           = nullptr;
                 m_pNewBuf  = new ubyte[newSize];
 				m_nAllocatedBufSize = newSize;
             }
@@ -211,30 +216,30 @@ void Utf8_16_Read::determineEncoding()
 	// try to detect UTF-16 little-endian without BOM
     else if (m_nLen > 1 && m_nLen % 2 == 0 && m_pBuf[0] != 0 && m_pBuf[1] == 0
              //&& IsTextUnicode(m_pBuf, static_cast<int32_t>(m_nLen), &uniTest)
-             )
-	{
-		m_eEncoding = uni16LE_NoBOM;
-		m_nSkip = 0;
-	}
-	/* UTF-16 big-endian without BOM detection is taken away scince this detection is very week
+    )
+    {
+        m_eEncoding = uni16LE_NoBOM;
+        m_nSkip     = 0;
+    }
+    /* UTF-16 big-endian without BOM detection is taken away scince this detection is very week
     // try to detect UTF-16 big-endian without BOM
-    else if (m_nLen > 1 && m_pBuf[0] == NULL && m_pBuf[1] != NULL)
-	{
-		m_eEncoding = uni16BE_NoBOM;
-		m_nSkip = 0;
-	}
-	*/
-	else
-	{
-		u78 detectedEncoding = utf8_7bits_8bits();
-		if (detectedEncoding == utf8NoBOM)
-			m_eEncoding = uniCookie;
-		else if (detectedEncoding == ascii7bits)
-			m_eEncoding = uni7Bit;
-		else //(detectedEncoding == ascii8bits)
-			m_eEncoding = uni8Bit;
-		m_nSkip = 0;
-	}
+    else if (m_nLen > 1 && m_pBuf[0] == nullptr && m_pBuf[1] != nullptr)
+    {
+        m_eEncoding = uni16BE_NoBOM;
+        m_nSkip = 0;
+    }
+    */
+    else
+    {
+        u78 detectedEncoding = utf8_7bits_8bits();
+        if (detectedEncoding == utf8NoBOM)
+                m_eEncoding = uniCookie;
+        else if (detectedEncoding == ascii7bits)
+                m_eEncoding = uni7Bit;
+        else //(detectedEncoding == ascii8bits)
+                m_eEncoding = uni8Bit;
+        m_nSkip = 0;
+    }
 }
 
 UniMode Utf8_16_Read::determineEncoding(const unsigned char *buf, size_t bufLen)
@@ -266,11 +271,11 @@ UniMode Utf8_16_Read::determineEncoding(const unsigned char *buf, size_t bufLen)
 
 Utf8_16_Write::Utf8_16_Write()
 {
-	m_eEncoding = uni8Bit;
-	m_pFile = NULL;
-	m_pNewBuf = NULL;
-	m_bFirstWrite = true;
-	m_nBufSize = 0;
+    m_eEncoding   = uni8Bit;
+    m_pFile       = nullptr;
+    m_pNewBuf     = nullptr;
+    m_bFirstWrite = true;
+    m_nBufSize    = 0;
 }
 
 Utf8_16_Write::~Utf8_16_Write()
@@ -373,32 +378,34 @@ size_t Utf8_16_Write::convert(char* p, size_t _size)
             // Normal write
             m_nBufSize = _size;
             m_pNewBuf = (ubyte*)new ubyte[m_nBufSize];
-            memcpy(m_pNewBuf, p, _size);
+            std::memcpy(m_pNewBuf, p, _size);
             break;
         }
         case uniUTF8: {
             m_nBufSize = _size + 3;
             m_pNewBuf = (ubyte*)new ubyte[m_nBufSize];
-            memcpy(m_pNewBuf, k_Boms[m_eEncoding], 3);
-            memcpy(&m_pNewBuf[3], p, _size);
+            std::memcpy(m_pNewBuf, k_Boms[m_eEncoding], 3);
+            std::memcpy(&m_pNewBuf[3], p, _size);
             break;
         }
         case uni16BE_NoBOM:
         case uni16LE_NoBOM:
         case uni16BE:
-        case uni16LE:
-		{
-			utf16* pCur = NULL;
-            
-            if (m_eEncoding == uni16BE || m_eEncoding == uni16LE) {
+        case uni16LE: {
+            utf16 *pCur = nullptr;
+
+            if (m_eEncoding == uni16BE || m_eEncoding == uni16LE)
+            {
                 // Write the BOM
 				m_pNewBuf = (ubyte*)new ubyte[sizeof(utf16) * (_size + 1)];
-                memcpy(m_pNewBuf, k_Boms[m_eEncoding], 2);
-	            pCur = (utf16*)&m_pNewBuf[2];
-            } else {
-				m_pNewBuf = (ubyte*)new ubyte[sizeof(utf16) * _size];
-	            pCur = (utf16*)m_pNewBuf;
-			}
+                std::memcpy(m_pNewBuf, k_Boms[m_eEncoding], 2);
+                pCur = (utf16 *)&m_pNewBuf[2];
+            }
+            else
+            {
+                m_pNewBuf = (ubyte *)new ubyte[sizeof(utf16) * _size];
+                pCur      = (utf16 *)m_pNewBuf;
+            }
 
             Utf8_Iter iter8;
             iter8.set(reinterpret_cast<const ubyte*>(p), _size, m_eEncoding);
@@ -443,12 +450,12 @@ Utf8_Iter::Utf8_Iter()
 
 void Utf8_Iter::reset()
 {
-	m_pBuf = NULL;
-	m_pRead = NULL;
-	m_pEnd = NULL;
-	m_eState = eStart;
-	m_nCur = 0;
-	m_eEncoding = uni8Bit;
+    m_pBuf      = nullptr;
+    m_pRead     = nullptr;
+    m_pEnd      = nullptr;
+    m_eState    = eStart;
+    m_nCur      = 0;
+    m_eEncoding = uni8Bit;
 }
 
 void Utf8_Iter::set(const ubyte* pBuf, size_t nLen, UniMode eEncoding)
@@ -516,13 +523,13 @@ Utf16_Iter::Utf16_Iter()
 
 void Utf16_Iter::reset()
 {
-	m_pBuf = NULL;
-	m_pRead = NULL;
-	m_pEnd = NULL;
-	m_eState = eStart;
-	m_nCur = 0;
-	m_nCur16 = 0;
-	m_eEncoding = uni8Bit;
+    m_pBuf      = nullptr;
+    m_pRead     = nullptr;
+    m_pEnd      = nullptr;
+    m_eState    = eStart;
+    m_nCur      = 0;
+    m_nCur16    = 0;
+    m_eEncoding = uni8Bit;
 }
 
 void Utf16_Iter::set(const ubyte* pBuf, size_t nLen, UniMode eEncoding)

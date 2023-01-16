@@ -253,9 +253,13 @@ namespace utility {
         mDiskID=mcode;
 
         //trim left and right spaces
-        std::string::iterator pl = find_if (mDiskID.begin(),mDiskID.end(),std::not1(std::ptr_fun(::isspace)));   
-        mDiskID.erase(mDiskID.begin(), pl);   
-        std::string::reverse_iterator pr = find_if (mDiskID.rbegin(),mDiskID.rend(),std::not1(std::ptr_fun(::isspace)));   
+        std::string::iterator pl = find_if(mDiskID.begin(), mDiskID.end(), [](int c) {
+            return !std::isspace(c);
+        });
+        mDiskID.erase(mDiskID.begin(), pl);
+        std::string::reverse_iterator pr = find_if(mDiskID.rbegin(), mDiskID.rend(), [](int c) {
+            return !std::isspace(c);
+        });
         mDiskID.erase(pr.base(), mDiskID.end());
 
         int strLen=0;

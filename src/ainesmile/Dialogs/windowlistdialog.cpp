@@ -92,7 +92,7 @@ void WindowListDialog::on_btnSave_clicked()
 {
     QList<int> list;
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
-    Q_FOREACH(QTableWidgetItem *item, selected)
+    for (QTableWidgetItem *item : selected)
     {
         if (!list.contains(item->row()))
             list << item->row();
@@ -107,7 +107,7 @@ void WindowListDialog::on_btnCloseWindow_clicked()
 {
     QList<int> list;
     QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
-    Q_FOREACH(QTableWidgetItem *item, selected)
+    for (QTableWidgetItem *item : selected)
     {
         if (!list.contains(item->row()))
             list << item->row();

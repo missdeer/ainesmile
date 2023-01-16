@@ -1,9 +1,6 @@
-#include "stdafx.h"
-#if !defined(Q_OS_MAC)
-#include "qtsingleapplication.h"
-#endif
 #include "config.h"
 #include "mainwindow.h"
+#include "stdafx.h"
 
 #ifdef Q_OS_MAC
 #  define SHARE_PATH "/../Resources"
@@ -20,30 +17,13 @@ int main(int argc, char *argv[])
 
     rl.rlim_cur = qMin((rlim_t)OPEN_MAX, rl.rlim_max);
     setrlimit(RLIMIT_NOFILE, &rl);
-
-    QApplication a(argc, argv);
-#else
-    SharedTools::QtSingleApplication a(QLatin1String("ainesmile"), argc, argv);
-    if (a.isRunning())
-    {
-        if (argc >= 2)
-        {
-            QString files;
-            for(int i = 1; i < argc; i++)
-            {
-                files.append(argv[i]);
-                files.append("\n");
-            }
-            a.sendMessage(files);
-        }
-        return 0;
-    }
 #endif
+    QApplication a(argc, argv);
 
-    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    a.setOrganizationDomain("dfordsoft.com");
-    a.setOrganizationName("DForD Software");
-    a.setApplicationName("ainesmile");
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QCoreApplication::setOrganizationDomain("dfordsoft.com");
+    QCoreApplication::setOrganizationName("DForD Software");
+    QCoreApplication::setApplicationName("ainesmile");
 
     QTranslator translator;
     QTranslator qtTranslator;
@@ -56,7 +36,7 @@ int main(int argc, char *argv[])
         uiLanguages.prepend(overrideLanguage);
     const QString &ainesmileTrPath = QCoreApplication::applicationDirPath()
             + QLatin1String(SHARE_PATH "/translations");
-    foreach (QString locale, uiLanguages)
+    for (auto &locale : uiLanguages)
     {
         locale = QLocale(locale).name();
         if (translator.load(QLatin1String("ainesmile_") + locale, ainesmileTrPath))
@@ -126,9 +106,6 @@ int main(int argc, char *argv[])
 
     w.setWindowTitle(QObject::tr("aiensmile"));
 
-#if !defined(Q_OS_MAC)
-    QObject::connect(&a, SIGNAL(messageReceived(QString,QObject*)), &w, SLOT(onIPCMessageReceived(QString,QObject*)));
-#endif
     QObject::connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-    return a.exec();
+    return QCoreApplication::exec();
 }

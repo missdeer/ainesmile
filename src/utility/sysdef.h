@@ -39,15 +39,14 @@
 #include <string>
 #include <set>
 #ifdef _MSC_VER
-    #include <hash_set>
-    #include <hash_map>
+#    include <unordered_map>
+#    include <unordered_set>
 #else
     #include <ext/hash_set>
     #include <ext/hash_map>
 #endif
 using namespace std;
 #ifdef _MSC_VER
-    using namespace stdext;
 #else
     using namespace __gnu_cxx;
 #endif

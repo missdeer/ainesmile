@@ -1,6 +1,9 @@
 #include "stdafx.h"
-#include "ScintillaEdit.h"
+
 #include "scintillaconfig.h"
+#include "ILexer.h"
+#include "Lexilla.h"
+#include "ScintillaEdit.h"
 #include "config.h"
 
 void ScintillaConfig::initScintilla(ScintillaEdit* sci)
@@ -26,7 +29,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 #endif
     sci->setViewEOL(pt.get<bool>("show.end_of_line", false));
     sci->setViewWS(pt.get<bool>("show.white_space_and_tab", false) ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
-    sci->setStyleBits(5);
+    //    sci->setStyleBits(5);
     sci->setCaretFore(0x0000FF);
     sci->setCaretLineVisible(true);
     sci->setCaretLineBack(0xFFFFD0);
@@ -151,7 +154,17 @@ void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filenam
     Q_ASSERT(config);
 
     QString lang = config->matchPatternLanguage(filename);
-    sci->setLexerLanguage(lang.toStdString().c_str());
+    // sci->setLexerLanguage(lang.toStdString().c_str());
+    void *lexerId = CreateLexer(lang.toStdString().c_str());
+    if (!lexerId)
+    {
+        lang    = "cpp";
+        lexerId = CreateLexer(lang.toStdString().c_str());
+#if defined(LOGS_ENABLED)
+        qDebug() << Q_FUNC_INFO << __LINE__ << "fallback to lexilla cpp lexer";
+#endif
+    }
+    sci->setILexer((sptr_t)lexerId);
 
     QString themePath = config->getThemePath();
     applyThemeStyle(sci, themePath + "/global_style.xml");

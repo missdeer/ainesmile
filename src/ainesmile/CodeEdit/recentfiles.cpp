@@ -74,8 +74,7 @@ void RecentFiles::init()
         boost::property_tree::read_json(filePath.toStdString(), pt);
         try
         {
-            BOOST_FOREACH(boost::property_tree::ptree::value_type &v,
-                          pt.get_child("ainesmile.recentfiles"))
+            for (boost::property_tree::ptree::value_type &v : pt.get_child("ainesmile.recentfiles"))
             {
                 QString file(v.second.data().c_str());
                 if (QFile::exists(file))
