@@ -1,9 +1,10 @@
 #include "stdafx.h"
+
 #include "findreplaceresultmodel.h"
 
-FindReplaceResultModel* FindReplaceResultModel::m_instance = nullptr;
+FindReplaceResultModel *FindReplaceResultModel::m_instance = nullptr;
 
-FindReplaceResultModel* FindReplaceResultModel::instance()
+FindReplaceResultModel *FindReplaceResultModel::instance()
 {
     if (!m_instance)
     {
@@ -13,7 +14,7 @@ FindReplaceResultModel* FindReplaceResultModel::instance()
     return m_instance;
 }
 
-QVariant FindReplaceResultModel::data(const QModelIndex& index, int role) const
+QVariant FindReplaceResultModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -34,7 +35,7 @@ QVariant FindReplaceResultModel::headerData(int section, Qt::Orientation orienta
     return QVariant();
 }
 
-QModelIndex FindReplaceResultModel::index(int row, int column, const QModelIndex& parent) const
+QModelIndex FindReplaceResultModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid() && parent.column() != 0)
         return QModelIndex();
@@ -48,12 +49,12 @@ QModelIndex FindReplaceResultModel::index(int row, int column, const QModelIndex
         return QModelIndex();
 }
 
-QModelIndex FindReplaceResultModel::parent(const QModelIndex& index) const
+QModelIndex FindReplaceResultModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
 
-    FindReplaceResultItem *childItem = getItem(index);
+    FindReplaceResultItem *childItem  = getItem(index);
     FindReplaceResultItem *parentItem = childItem->parent();
 
     if (parentItem == rootItem)
@@ -62,34 +63,34 @@ QModelIndex FindReplaceResultModel::parent(const QModelIndex& index) const
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
-int FindReplaceResultModel::rowCount(const QModelIndex& parent) const
+int FindReplaceResultModel::rowCount(const QModelIndex &parent) const
 {
     FindReplaceResultItem *parentItem = getItem(parent);
 
     return parentItem->childCount();
 }
 
-int FindReplaceResultModel::columnCount(const QModelIndex& parent) const
+int FindReplaceResultModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return rootItem->columnCount();
 }
 
-Qt::ItemFlags FindReplaceResultModel::flags(const QModelIndex& index) const
+Qt::ItemFlags FindReplaceResultModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
 }
 
-bool FindReplaceResultModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool FindReplaceResultModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
 
-    FindReplaceResultItem *item = getItem(index);
-    bool result = item->setData(index.column(), value);
+    FindReplaceResultItem *item   = getItem(index);
+    bool                   result = item->setData(index.column(), value);
 
     if (result)
         emit dataChanged(index, index);
@@ -97,7 +98,7 @@ bool FindReplaceResultModel::setData(const QModelIndex& index, const QVariant& v
     return result;
 }
 
-bool FindReplaceResultModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role)
+bool FindReplaceResultModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
@@ -110,7 +111,7 @@ bool FindReplaceResultModel::setHeaderData(int section, Qt::Orientation orientat
     return result;
 }
 
-bool FindReplaceResultModel::insertColumns(int position, int columns, const QModelIndex& parent)
+bool FindReplaceResultModel::insertColumns(int position, int columns, const QModelIndex &parent)
 {
     bool success;
 
@@ -121,7 +122,7 @@ bool FindReplaceResultModel::insertColumns(int position, int columns, const QMod
     return success;
 }
 
-bool FindReplaceResultModel::removeColumns(int position, int columns, const QModelIndex& parent)
+bool FindReplaceResultModel::removeColumns(int position, int columns, const QModelIndex &parent)
 {
     bool success;
 
@@ -135,10 +136,10 @@ bool FindReplaceResultModel::removeColumns(int position, int columns, const QMod
     return success;
 }
 
-bool FindReplaceResultModel::insertRows(int position, int rows, const QModelIndex& parent)
+bool FindReplaceResultModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     FindReplaceResultItem *parentItem = getItem(parent);
-    bool success;
+    bool                   success;
 
     beginInsertRows(parent, position, position + rows - 1);
     success = parentItem->insertChildren(position, rows, rootItem->columnCount());
@@ -147,10 +148,10 @@ bool FindReplaceResultModel::insertRows(int position, int rows, const QModelInde
     return success;
 }
 
-bool FindReplaceResultModel::removeRows(int position, int rows, const QModelIndex& parent)
+bool FindReplaceResultModel::removeRows(int position, int rows, const QModelIndex &parent)
 {
     FindReplaceResultItem *parentItem = getItem(parent);
-    bool success = true;
+    bool                   success    = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
     success = parentItem->removeChildren(position, rows);
@@ -161,7 +162,7 @@ bool FindReplaceResultModel::removeRows(int position, int rows, const QModelInde
 
 FindReplaceResultModel::FindReplaceResultModel()
 {
-    QVector<QVariant> rootData{ tr("Position"), tr("Context") };
+    QVector<QVariant> rootData {tr("Position"), tr("Context")};
 
     rootItem = new FindReplaceResultItem(rootData);
 }
@@ -171,10 +172,11 @@ FindReplaceResultModel::~FindReplaceResultModel()
     delete rootItem;
 }
 
-FindReplaceResultItem * FindReplaceResultModel::getItem(const QModelIndex &index) const
+FindReplaceResultItem *FindReplaceResultModel::getItem(const QModelIndex &index) const
 {
-    if (index.isValid()) {
-        FindReplaceResultItem *item = static_cast<FindReplaceResultItem*>(index.internalPointer());
+    if (index.isValid())
+    {
+        FindReplaceResultItem *item = static_cast<FindReplaceResultItem *>(index.internalPointer());
         if (item)
             return item;
     }

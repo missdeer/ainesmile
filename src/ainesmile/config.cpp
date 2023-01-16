@@ -1,10 +1,12 @@
 #include "stdafx.h"
+
+#include <QRegularExpression>
+
 #include "config.h"
 
-Config* Config::instance_ = NULL;
+Config *Config::instance_ = NULL;
 
-
-boost::property_tree::ptree& Config::pt()
+boost::property_tree::ptree &Config::pt()
 {
     return pt_;
 }
@@ -21,7 +23,7 @@ void Config::sync()
 
 QString Config::getDataDirPath()
 {
-    QString configPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString configPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     QDir dir(configPath);
     if (!dir.exists())
@@ -57,7 +59,7 @@ QString Config::getConfigPath()
     {
         // copy from installed directory
         QString appDirPath = QApplication::applicationDirPath();
-        QDir configDir(appDirPath);
+        QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
         configDir.cd("Resources");
@@ -92,7 +94,7 @@ QString Config::getConfigPath()
 QString Config::getThemePath()
 {
     std::string currentTheme = pt_.get<std::string>("theme", "Default");
-    QString themePath = getConfigDirPath();
+    QString     themePath    = getConfigDirPath();
     themePath.append("/themes");
     QDir dir(themePath);
     if (!dir.exists())
@@ -107,7 +109,7 @@ QString Config::getThemePath()
     {
         // try to copy from application installed directory
         QString appDirPath = QApplication::applicationDirPath();
-        QDir configDir(appDirPath);
+        QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
         configDir.cd("Resources");
@@ -147,8 +149,7 @@ QString Config::getThemePath()
         // do copy
         themeDir.mkpath(themePath);
         QStringList files = QDir(themeDirPath).entryList(QDir::Files);
-        std::for_each(files.begin(), files.end(),
-                      [&](const QString& f) {QFile::copy(themeDirPath + "/" + f, themePath + "/" + f);});
+        std::for_each(files.begin(), files.end(), [&](const QString &f) { QFile::copy(themeDirPath + "/" + f, themePath + "/" + f); });
     }
     qDebug() << "theme path: " << themePath;
     return themePath;
@@ -163,7 +164,7 @@ QString Config::getLanguageMapPath()
     {
         // copy from installed directory
         QString appDirPath = QApplication::applicationDirPath();
-        QDir configDir(appDirPath);
+        QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
         configDir.cd("Resources");
@@ -198,12 +199,12 @@ QString Config::getLanguageMapPath()
 QString Config::getLanguageDirPath()
 {
     QString langDirPath = getConfigDirPath() + "/language";
-    QDir langDir(langDirPath);
+    QDir    langDir(langDirPath);
     if (!langDir.exists() || langDir.entryList(QDir::Files).isEmpty())
     {
         // copy from installed directory
         QString appDirPath = QApplication::applicationDirPath();
-        QDir configDir(appDirPath);
+        QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
         configDir.cd("Resources");
@@ -229,8 +230,7 @@ QString Config::getLanguageDirPath()
         // copy all files from configFile to langDirPath
         langDir.mkpath(langDirPath);
         QStringList files = QDir(configFile).entryList(QDir::Files);
-        std::for_each(files.begin(), files.end(),
-                      [&](const QString& f) {QFile::copy(configFile + "/" + f, langDirPath + "/" + f);});
+        std::for_each(files.begin(), files.end(), [&](const QString &f) { QFile::copy(configFile + "/" + f, langDirPath + "/" + f); });
     }
     qDebug() << "langDir: " << langDirPath;
     return langDirPath;
@@ -238,9 +238,9 @@ QString Config::getLanguageDirPath()
 
 QString Config::matchPatternLanguage(const QString &filename)
 {
-    QString langMapPath = getLanguageMapPath();
+    QString      langMapPath = getLanguageMapPath();
     QDomDocument doc;
-    QFile file(langMapPath);
+    QFile        file(langMapPath);
     if (!file.open(QIODevice::ReadOnly))
         return "";
     if (!doc.setContent(&file))
@@ -253,10 +253,10 @@ QString Config::matchPatternLanguage(const QString &filename)
     QDomElement docElem = doc.documentElement();
 
     QDomElement langElem = docElem.firstChildElement("language");
-    while(!langElem.isNull())
+    while (!langElem.isNull())
     {
         QString pattern = langElem.attribute("pattern");
-        QString suffix = langElem.attribute("suffix");
+        QString suffix  = langElem.attribute("suffix");
         if (matchSuffix(filename, suffix) || matchPattern(filename, pattern))
         {
             QString name = langElem.attribute("name");
@@ -269,13 +269,15 @@ QString Config::matchPatternLanguage(const QString &filename)
 
 bool Config::matchPattern(const QString &filename, const QString &pattern)
 {
+    QRegularExpression regex(pattern);
 #if defined(Q_OS_WIN)
-    QRegExp regex(pattern, Qt::CaseInsensitive);
+    regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 #else
-    QRegExp regex(pattern, Qt::CaseSensitive);
+    regex.setPatternOptions(QRegularExpression::CaseSensitiveOption);
 #endif
     QFileInfo fi(filename);
-    if (regex.exactMatch(fi.fileName()))
+    auto      match = regex.match(fi.fileName());
+    if (match.hasMatch())
         return true;
     return false;
 }
@@ -283,8 +285,8 @@ bool Config::matchPattern(const QString &filename, const QString &pattern)
 bool Config::matchSuffix(const QString &filename, const QString &suffix)
 {
     QStringList suffixes = suffix.split(' ');
-    QFileInfo fi(filename);
-    auto it = std::find_if(suffixes.begin(), suffixes.end(), [&fi](const QString& ext) {
+    QFileInfo   fi(filename);
+    auto        it = std::find_if(suffixes.begin(), suffixes.end(), [&fi](const QString &ext) {
 #if defined(Q_OS_WIN)
         return (QString::compare(ext, fi.suffix(), Qt::CaseInsensitive) == 0);
 #else

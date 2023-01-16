@@ -1,16 +1,16 @@
 #include "stdafx.h"
-#include "ScintillaEdit.h"
+
 #include "codeeditpage.h"
+#include "ScintillaEdit.h"
 
-
-CodeEditPage::CodeEditPage(QWidget *parent) :
-    QWidget(parent),
-    m_horizontalMainSplitter(new QSplitter( Qt::Horizontal, parent)),
-    m_webView(new QWebEngineView(parent)),
-    m_verticalEditorSplitter(new QSplitter( Qt::Vertical, parent)),
-    m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
-    m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
-    m_sciFocusView(m_sciControlMaster)
+CodeEditPage::CodeEditPage(QWidget *parent)
+    : QWidget(parent),
+      m_horizontalMainSplitter(new QSplitter(Qt::Horizontal, parent)),
+      m_webView(new QWebEngineView(parent)),
+      m_verticalEditorSplitter(new QSplitter(Qt::Vertical, parent)),
+      m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
+      m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
+      m_sciFocusView(m_sciControlMaster)
 {
     m_horizontalMainSplitter->addWidget(m_verticalEditorSplitter);
     m_horizontalMainSplitter->addWidget(m_webView);
@@ -19,16 +19,16 @@ CodeEditPage::CodeEditPage(QWidget *parent) :
     m_verticalEditorSplitter->addWidget(m_sciControlMaster);
 
     QList<int> sizes;
-    sizes << 0 << 0x7FFFF;// << 0;
+    sizes << 0 << 0x7FFFF; // << 0;
     m_verticalEditorSplitter->setSizes(sizes);
 
     sizes.clear();
     sizes << 0x7FFFF << 0;
     m_horizontalMainSplitter->setSizes(sizes);
 
-    QVBoxLayout* m_mainLayout = new QVBoxLayout;
+    QVBoxLayout *m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);
-    m_mainLayout->setMargin(0);
+    // m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_horizontalMainSplitter);
     setLayout(m_mainLayout);
 
@@ -46,23 +46,27 @@ void CodeEditPage::init()
     m_sc.initScintilla(m_sciControlMaster);
     m_sc.initScintilla(m_sciControlSlave);
 
-    m_lastCopyAvailable = canCopy();
+    m_lastCopyAvailable  = canCopy();
     m_lastPasteAvailable = canPaste();
-    m_lastUndoAvailable = canUndo();
-    m_lastRedoAvailable = canRedo();
+    m_lastUndoAvailable  = canUndo();
+    m_lastRedoAvailable  = canRedo();
 
     connect(m_sciControlMaster, SIGNAL(updateUi()), this, SLOT(updateUI()));
     connect(m_sciControlSlave, SIGNAL(updateUi()), this, SLOT(updateUI()));
-    connect(m_sciControlMaster, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
-            this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
-    connect(m_sciControlSlave, SIGNAL(modified(int,int,int,int,QByteArray,int,int,int)),
-            this, SLOT(modified(int,int,int,int,QByteArray,int,int,int)));
+    connect(m_sciControlMaster,
+            SIGNAL(modified(int, int, int, int, QByteArray, int, int, int)),
+            this,
+            SLOT(modified(int, int, int, int, QByteArray, int, int, int)));
+    connect(m_sciControlSlave,
+            SIGNAL(modified(int, int, int, int, QByteArray, int, int, int)),
+            this,
+            SLOT(modified(int, int, int, int, QByteArray, int, int, int)));
     connect(m_sciControlMaster, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
     connect(m_sciControlSlave, SIGNAL(linesAdded(int)), this, SLOT(linesAdded(int)));
-    connect(m_sciControlMaster, SIGNAL(marginClicked(int,int,int)), this, SLOT(marginClicked(int,int,int)));
-    connect(m_sciControlSlave, SIGNAL(marginClicked(int,int,int)), this, SLOT(marginClicked(int,int,int)));
-    connect(m_sciControlMaster, SIGNAL(dwellEnd(int,int)), this, SLOT(dwellEnd(int,int)));
-    connect(m_sciControlSlave, SIGNAL(dwellEnd(int,int)), this, SLOT(dwellEnd(int,int)));
+    connect(m_sciControlMaster, SIGNAL(marginClicked(int, int, int)), this, SLOT(marginClicked(int, int, int)));
+    connect(m_sciControlSlave, SIGNAL(marginClicked(int, int, int)), this, SLOT(marginClicked(int, int, int)));
+    connect(m_sciControlMaster, SIGNAL(dwellEnd(int, int)), this, SLOT(dwellEnd(int, int)));
+    connect(m_sciControlSlave, SIGNAL(dwellEnd(int, int)), this, SLOT(dwellEnd(int, int)));
 }
 
 ScintillaEdit *CodeEditPage::getFocusView()
@@ -89,7 +93,8 @@ void CodeEditPage::openFile(const QString &filePath)
     {
         m_filePath = filePath;
         m_sciControlMaster->setText(file.readAll().data());
-        m_sciControlMaster->emptyUndoBuffer();;
+        m_sciControlMaster->emptyUndoBuffer();
+        ;
         file.close();
         emit filePathChanged(m_filePath);
         m_sc.initEditorStyle(m_sciControlMaster, filePath);
@@ -117,14 +122,13 @@ void CodeEditPage::saveFile(const QString &filePath)
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
-            sptr_t len = m_sciControlMaster->textLength();
+            sptr_t len  = m_sciControlMaster->textLength();
             qint64 size = file.write(m_sciControlMaster->getText(len + 1));
             file.close();
 
             if (size != len)
             {
-                QMessageBox::warning(this, tr("Saving file failed:"),
-                                     tr("Not all data is saved to file."), QMessageBox::Ok);
+                QMessageBox::warning(this, tr("Saving file failed:"), tr("Not all data is saved to file."), QMessageBox::Ok);
             }
             else
             {
@@ -148,13 +152,13 @@ bool CodeEditPage::canClose()
 
 bool CodeEditPage::canCut()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     return !sci->selectionEmpty();
 }
 
 bool CodeEditPage::canCopy()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     return !sci->selectionEmpty();
 }
 
@@ -208,8 +212,8 @@ void CodeEditPage::setShowEndOfLine(bool enabled)
 
 void CodeEditPage::setShowIndentGuide(bool enabled)
 {
-    m_sciControlMaster->setIndentationGuides(enabled? SC_IV_REAL : SC_IV_NONE);
-    m_sciControlSlave->setIndentationGuides(enabled? SC_IV_REAL : SC_IV_NONE);
+    m_sciControlMaster->setIndentationGuides(enabled ? SC_IV_REAL : SC_IV_NONE);
+    m_sciControlSlave->setIndentationGuides(enabled ? SC_IV_REAL : SC_IV_NONE);
 }
 
 void CodeEditPage::setShowWrapSymbol(bool enabled)
@@ -218,29 +222,25 @@ void CodeEditPage::setShowWrapSymbol(bool enabled)
     m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
-//void CodeEditPage::focusInEvent(QFocusEvent *event)
+// void CodeEditPage::focusInEvent(QFocusEvent *event)
 //{
-//    qDebug() << __FUNCTION__;
-//    if (event->gotFocus())
-//    {
-//        focusIn_ = true;
-//        emit focusIn();
-//    }
-//    if (event->lostFocus())
-//    {
-//        focusIn_ = false;
-//    }
-//    event->ignore();
-//}
+//     qDebug() << __FUNCTION__;
+//     if (event->gotFocus())
+//     {
+//         focusIn_ = true;
+//         emit focusIn();
+//     }
+//     if (event->lostFocus())
+//     {
+//         focusIn_ = false;
+//     }
+//     event->ignore();
+// }
 
 void CodeEditPage::updateUI()
 {
-    if (!focusIn_
-            && (m_sciControlMaster->focus()
-            || m_sciControlSlave->focus()
-            || QApplication::focusWidget() == m_sciControlMaster
-            || QApplication::focusWidget() == m_sciControlSlave
-            || QApplication::focusWidget() == this))
+    if (!focusIn_ && (m_sciControlMaster->focus() || m_sciControlSlave->focus() || QApplication::focusWidget() == m_sciControlMaster ||
+                      QApplication::focusWidget() == m_sciControlSlave || QApplication::focusWidget() == this))
     {
         focusIn_ = true;
         emit focusIn();
@@ -274,28 +274,29 @@ void CodeEditPage::updateUI()
     }
 }
 
-void CodeEditPage::modified(int /*type*/, int /*position*/, int /*length*/, int /*linesAdded*/, const QByteArray &/*text*/, int /*line*/, int /*foldNow*/, int /*foldPrev*/)
+void CodeEditPage::modified(
+    int /*type*/, int /*position*/, int /*length*/, int /*linesAdded*/, const QByteArray & /*text*/, int /*line*/, int /*foldNow*/, int /*foldPrev*/)
 {
     emit modifiedNotification();
 }
 
 void CodeEditPage::linesAdded(int /*linesAdded*/)
 {
-    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
-    sptr_t line_count = sci->lineCount();
-    sptr_t left = sci->marginLeft() + 2;
-    sptr_t right = sci->marginRight() + 2;
-    std::string line = boost::lexical_cast<std::string>(line_count);
-    sptr_t width = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
+    ScintillaEdit *sci        = qobject_cast<ScintillaEdit *>(sender());
+    sptr_t         line_count = sci->lineCount();
+    sptr_t         left       = sci->marginLeft() + 2;
+    sptr_t         right      = sci->marginRight() + 2;
+    std::string    line       = boost::lexical_cast<std::string>(line_count);
+    sptr_t         width      = left + right + sci->textWidth(STYLE_LINENUMBER, line.c_str());
     sci->setMarginWidthN(0, width);
 }
 
 void CodeEditPage::marginClicked(int position, int /*modifiers*/, int margin)
 {
-    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
+    ScintillaEdit *sci = qobject_cast<ScintillaEdit *>(sender());
     if (sci->marginTypeN(margin) == SC_MARGIN_SYMBOL)
     {
-        sptr_t line = sci->lineFromPosition(position);
+        sptr_t line  = sci->lineFromPosition(position);
         sptr_t maskN = sci->marginMaskN(margin);
         qDebug() << "sci->marginTypeN(margin) == SC_MARGIN_SYMBOL" << margin << maskN;
         if ((maskN & 0xFFFFFFFF) == SC_MASK_FOLDERS)
@@ -310,7 +311,7 @@ void CodeEditPage::marginClicked(int position, int /*modifiers*/, int margin)
         }
         else if (maskN == ~SC_MASK_FOLDERS) // breakpoint margin operations
         {
-            if(sci->markerGet(line))
+            if (sci->markerGet(line))
             {
                 sci->markerDelete(line, 1);
                 // remove breakpoint
@@ -326,7 +327,7 @@ void CodeEditPage::marginClicked(int position, int /*modifiers*/, int margin)
 
 void CodeEditPage::dwellEnd(int /*x*/, int /*y*/)
 {
-    ScintillaEdit* sci = qobject_cast<ScintillaEdit*>(sender());
+    ScintillaEdit *sci = qobject_cast<ScintillaEdit *>(sender());
     if (sci->autoCActive())
     {
         sci->autoCCancel();
@@ -335,53 +336,47 @@ void CodeEditPage::dwellEnd(int /*x*/, int /*y*/)
 
 void CodeEditPage::undo()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->undo();
 }
 
 void CodeEditPage::redo()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->redo();
 }
 
 void CodeEditPage::copy()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->copy();
 }
 
 void CodeEditPage::cut()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->cut();
 }
 
 void CodeEditPage::paste()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->paste();
 }
 
-void CodeEditPage::print()
-{
+void CodeEditPage::print() {}
 
-}
-
-void CodeEditPage::printNow()
-{
-
-}
+void CodeEditPage::printNow() {}
 
 void CodeEditPage::deleteCurrent()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->deleteBack();
 }
 
 void CodeEditPage::selectAll()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->selectAll();
 }
 
@@ -405,33 +400,33 @@ void CodeEditPage::currentFullFilePathToClipboard()
 
 void CodeEditPage::currentFileNameToClipboard()
 {
-    QFileInfo fi(m_filePath);
+    QFileInfo   fi(m_filePath);
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(fi.fileName());
 }
 
 void CodeEditPage::currentDirectoryPathToClipboard()
 {
-    QFileInfo fi(m_filePath);
+    QFileInfo   fi(m_filePath);
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(fi.absolutePath());
 }
 
 void CodeEditPage::increaseLineIndent()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->tab();
 }
 
 void CodeEditPage::decreaseLineIndent()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->backTab();
 }
 
 void CodeEditPage::upperCase()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     QByteArray upperText = sci->getSelText().toUpper();
     sci->replaceSel(upperText.data());
@@ -440,7 +435,7 @@ void CodeEditPage::upperCase()
 
 void CodeEditPage::lowerCase()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     QByteArray lowerText = sci->getSelText().toLower();
     sci->replaceSel(lowerText.data());
@@ -449,7 +444,7 @@ void CodeEditPage::lowerCase()
 
 void CodeEditPage::duplicateCurrentLine()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->lineDuplicate();
     sci->endUndoAction();
@@ -457,7 +452,7 @@ void CodeEditPage::duplicateCurrentLine()
 
 void CodeEditPage::splitLines()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->targetFromSelection();
     sci->linesSplit(0);
@@ -466,7 +461,7 @@ void CodeEditPage::splitLines()
 
 void CodeEditPage::joinLines()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->targetFromSelection();
     sci->linesJoin();
@@ -474,8 +469,8 @@ void CodeEditPage::joinLines()
 }
 
 void CodeEditPage::moveUpCurrentLine()
-{    
-    ScintillaEdit* sci = getFocusView();
+{
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->lineUp();
     sci->endUndoAction();
@@ -483,7 +478,7 @@ void CodeEditPage::moveUpCurrentLine()
 
 void CodeEditPage::moveDownCurrentLine()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->lineDown();
     sci->endUndoAction();
@@ -508,12 +503,12 @@ void CodeEditPage::eolMacFormat()
 }
 
 void CodeEditPage::trimTrailingSpace()
-{    
-    ScintillaEdit* sci = getFocusView();
+{
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
-    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
-    while(lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
+    while (lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
         lineText.remove(lineText.length() - 1, 1);
     sci->setTargetStart(sci->positionFromLine(line));
     sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
@@ -523,11 +518,11 @@ void CodeEditPage::trimTrailingSpace()
 
 void CodeEditPage::trimLeadingSpace()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
-    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
-    while(lineText.at(0) == ' ' || lineText.at(0) == '\t')
+    while (lineText.at(0) == ' ' || lineText.at(0) == '\t')
         lineText.remove(0, 1);
     sci->setTargetStart(sci->positionFromLine(line));
     sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
@@ -537,13 +532,13 @@ void CodeEditPage::trimLeadingSpace()
 
 void CodeEditPage::trimLeadingAndTrailingSpace()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
-    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
-    while(lineText.at(0) == ' ' || lineText.at(0) == '\t')
+    while (lineText.at(0) == ' ' || lineText.at(0) == '\t')
         lineText.remove(0, 1);
-    while(lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
+    while (lineText.at(lineText.length() - 1) == ' ' || lineText.at(lineText.length() - 1) == '\t')
         lineText.remove(lineText.length() - 1, 1);
     sci->setTargetStart(sci->positionFromLine(line));
     sci->setTargetEnd(sci->positionBefore(sci->positionFromLine(line + 1)));
@@ -553,7 +548,7 @@ void CodeEditPage::trimLeadingAndTrailingSpace()
 
 void CodeEditPage::eolToSpace()
 {
-    ScintillaEdit* sci = getFocusView();
+    ScintillaEdit *sci = getFocusView();
     sci->beginUndoAction();
     sci->setTargetStart(0);
     sci->setTargetEnd(sci->textLength());
@@ -563,70 +558,37 @@ void CodeEditPage::eolToSpace()
 
 void CodeEditPage::gotoLine()
 {
-    bool ok;
-    ScintillaEdit* sci = getFocusView();
-    sptr_t lineCount = sci->lineCount();
-    int line = QInputDialog::getInt(this, tr("Goto line"), QString(tr("Input line number:(1 - %2)")).arg(lineCount), 1, 1, lineCount, 1,  &ok);
+    bool           ok;
+    ScintillaEdit *sci       = getFocusView();
+    sptr_t         lineCount = sci->lineCount();
+    int line = QInputDialog::getInt(this, tr("Goto line"), QString(tr("Input line number:(1 - %2)")).arg(lineCount), 1, 1, lineCount, 1, &ok);
     if (ok)
     {
         sci->gotoLine(line);
     }
 }
 
-void CodeEditPage::gotoMatchingBrace()
-{
+void CodeEditPage::gotoMatchingBrace() {}
 
-}
+void CodeEditPage::toggleBookmark() {}
 
-void CodeEditPage::toggleBookmark()
-{
+void CodeEditPage::nextBookmark() {}
 
-}
+void CodeEditPage::previousBookmark() {}
 
-void CodeEditPage::nextBookmark()
-{
+void CodeEditPage::clearAllBookmarks() {}
 
-}
+void CodeEditPage::cutBookmarkLines() {}
 
-void CodeEditPage::previousBookmark()
-{
+void CodeEditPage::copyBookmarkLines() {}
 
-}
+void CodeEditPage::pasteToReplaceBookmarkedLines() {}
 
-void CodeEditPage::clearAllBookmarks()
-{
+void CodeEditPage::removeBookmarkedLines() {}
 
-}
+void CodeEditPage::removeUnbookmarkedLines() {}
 
-void CodeEditPage::cutBookmarkLines()
-{
-
-}
-
-void CodeEditPage::copyBookmarkLines()
-{
-
-}
-
-void CodeEditPage::pasteToReplaceBookmarkedLines()
-{
-
-}
-
-void CodeEditPage::removeBookmarkedLines()
-{
-
-}
-
-void CodeEditPage::removeUnbookmarkedLines()
-{
-
-}
-
-void CodeEditPage::inverseBookmark()
-{
-
-}
+void CodeEditPage::inverseBookmark() {}
 
 void CodeEditPage::wordWrap()
 {
@@ -650,10 +612,7 @@ void CodeEditPage::focusOnAnotherView()
         m_sciControlMaster->grabFocus();
 }
 
-void CodeEditPage::encodeInANSI()
-{
-
-}
+void CodeEditPage::encodeInANSI() {}
 
 void CodeEditPage::encodeInUTF8WithoutBOM()
 {
@@ -667,39 +626,19 @@ void CodeEditPage::encodeInUTF8()
     m_sciControlSlave->setCodePage(SC_CP_UTF8);
 }
 
-void CodeEditPage::encodeInUCS2BigEndian()
-{
+void CodeEditPage::encodeInUCS2BigEndian() {}
 
-}
+void CodeEditPage::encodeInUCS2LittleEndian() {}
 
-void CodeEditPage::encodeInUCS2LittleEndian()
-{
+void CodeEditPage::convertToANSI() {}
 
-}
+void CodeEditPage::convertToUTF8WithoutBOM() {}
 
-void CodeEditPage::convertToANSI()
-{
+void CodeEditPage::convertToUTF8() {}
 
-}
+void CodeEditPage::convertToUCS2BigEndian() {}
 
-void CodeEditPage::convertToUTF8WithoutBOM()
-{
-
-}
-
-void CodeEditPage::convertToUTF8()
-{
-}
-
-void CodeEditPage::convertToUCS2BigEndian()
-{
-
-}
-
-void CodeEditPage::convertToUCS2LittleEndian()
-{
-
-}
+void CodeEditPage::convertToUCS2LittleEndian() {}
 
 void CodeEditPage::zoomIn()
 {
@@ -718,4 +657,3 @@ void CodeEditPage::restoreDefaultZoom()
     m_sciControlMaster->setZoom(1);
     m_sciControlSlave->setZoom(1);
 }
-
