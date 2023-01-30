@@ -8,21 +8,8 @@ file(GLOB
 	utility_src
 	./*.cpp
 	./*.hpp
-        ./*.h
+  ./*.h
 )
-
-find_package(Boost 1.79.0)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    link_directories(${Boost_LIBRARY_DIRS})
-
-    set(Boost_USE_STATIC_LIBS ON)
-
-    set(Boost_USE_MULTITHREADED ON)
-    if(MSVC)
-      set(Boost_USE_STATIC_RUNTIME ON)
-    endif(MSVC)
-endif(Boost_FOUND)
 
 add_library(utility STATIC ${utility_src})
 

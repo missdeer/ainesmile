@@ -11,19 +11,6 @@ IF (Qt6_FOUND)
         find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
 ENDIF(Qt6_FOUND)
 
-find_package(Boost 1.79.0)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    link_directories(${Boost_LIBRARY_DIRS})
-
-    set(Boost_USE_STATIC_LIBS ON)
-
-    set(Boost_USE_MULTITHREADED ON)
-    if(MSVC)
-      set(Boost_USE_STATIC_RUNTIME ON)
-    endif(MSVC)
-endif(Boost_FOUND)
-
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # if you have any .ui files
@@ -132,11 +119,11 @@ ELSE(APPLE)
 ENDIF(APPLE)
 
 IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-        qt_create_translation(QM_FILES 
-            ${CMAKE_CURRENT_SOURCE_DIR} 
-            ${TS_FILES}
-            OPTIONS -no-obsolete
-        )
+        # qt_create_translation(QM_FILES 
+        #     ${CMAKE_CURRENT_SOURCE_DIR} 
+        #     ${TS_FILES}
+        #     OPTIONS -no-obsolete
+        # )
         qt_add_executable(${PROJECT_NAME}  
                 ${ainesmile_headers}
                 ${ainesmile_src}
@@ -146,11 +133,11 @@ IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
                 ${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.rc
                 )
 ELSE()
-       qt5_create_translation(QM_FILES
-           ${CMAKE_CURRENT_SOURCE_DIR}
-           ${TS_FILES}
-           OPTIONS -no-obsolete
-       )
+        # qt5_create_translation(QM_FILES
+        #     ${CMAKE_CURRENT_SOURCE_DIR}
+        #     ${TS_FILES}
+        #     OPTIONS -no-obsolete
+        # )
         add_executable(${PROJECT_NAME}  
                 ${ainesmile_headers}
                 ${ainesmile_src}
