@@ -13,15 +13,14 @@ TEMPLATE = app
 
 include($$PWD/../../Boost.pri)
 include($$PWD/../../3rdparty/qtsingleapplication/qtsingleapplication.pri)
-include($$PWD/../../3rdparty/scintilla/qt/ScintillaEdit/ScintillaEdit.pri)
+include($$PWD/../../3rdparty/scintilla-latest.pri)
+include($$PWD/../../3rdparty/lexilla-latest.pri)
 
 PRECOMPILED_HEADER = stdafx.h
 
 INCLUDEPATH += $$PWD/CodeEdit \
     $$PWD/Dialogs \
-    $$PWD/uchardet \
-    $$PWD/../../3rdparty/scintilla/qt/ScintillaEdit \
-    $$PWD/../../3rdparty/scintilla/qt/ScintillaEditBase
+    $$PWD/uchardet 
 
 DEFINES += LOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT
 
