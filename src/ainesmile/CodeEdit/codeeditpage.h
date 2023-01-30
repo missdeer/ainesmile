@@ -5,6 +5,7 @@
 #include <QSplitter>
 #include <QWidget>
 
+#include "ScintillaEdit.h"
 #include "scintillaconfig.h"
 
 class CodeEditPage : public QWidget
@@ -60,10 +61,17 @@ signals:
     void modifiedNotification();
     void filePathChanged(const QString &filePath);
 public slots:
-    void updateUI();
-    void modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev);
-    void linesAdded(int linesAdded);
-    void marginClicked(int position, int modifiers, int margin);
+    void linesAdded(Scintilla::Position linesAdded);
+    void marginClicked(Scintilla::Position position, Scintilla::KeyMod modifiers, int margin);
+    void modified(Scintilla::ModificationFlags type,
+                  Scintilla::Position          position,
+                  Scintilla::Position          length,
+                  Scintilla::Position          linesAdded,
+                  const QByteArray            &text,
+                  Scintilla::Position          line,
+                  Scintilla::FoldLevel         foldNow,
+                  Scintilla::FoldLevel         foldPrev);
+    void updateUI(Scintilla::Update updated);
     void dwellEnd(int x, int y);
 
     void undo();
