@@ -1,29 +1,28 @@
 #ifndef CODEEDITPAGE_H
 #define CODEEDITPAGE_H
 
-#include <QWidget>
-#include <QWebEngineView>
-#include <QSplitter>
 #include <QFocusEvent>
+#include <QSplitter>
+#include <QWidget>
+
 #include "scintillaconfig.h"
 
 class CodeEditPage : public QWidget
 {
     Q_OBJECT
 private:
-    bool m_lastCopyAvailable;
-    bool m_lastPasteAvailable;
-    bool m_lastRedoAvailable;
-    bool m_lastUndoAvailable;
-    bool focusIn_;
-    QSplitter* m_horizontalMainSplitter;
-    QWidget* m_editorPane;
-    QWebEngineView* m_webView;
-    QSplitter* m_verticalEditorSplitter;
-    ScintillaEdit* m_sciControlMaster;
-    ScintillaEdit* m_sciControlSlave;
-    ScintillaEdit* m_sciFocusView;
-    QString m_filePath;
+    bool            m_lastCopyAvailable;
+    bool            m_lastPasteAvailable;
+    bool            m_lastRedoAvailable;
+    bool            m_lastUndoAvailable;
+    bool            focusIn_;
+    QWidget        *m_editorPane;
+    QWidget        *m_webView;
+    QSplitter      *m_verticalEditorSplitter;
+    ScintillaEdit  *m_sciControlMaster;
+    ScintillaEdit  *m_sciControlSlave;
+    ScintillaEdit  *m_sciFocusView;
+    QString         m_filePath;
     ScintillaConfig m_sc;
 
     void init();
@@ -31,27 +30,27 @@ private:
 public:
     explicit CodeEditPage(QWidget *parent = 0);
 
-    ScintillaEdit* getFocusView();
-    void openFile(const QString& filePath);
-    void saveFile(const QString& filePath);
-    const QString& getFilePath() const;
-    bool canClose();
-    bool canCut();
-    bool canCopy();
-    bool canPaste();
-    bool canUndo();
-    bool canRedo();
-    bool isModified();
-    void grabFocus();
-    bool focus();
-    void applyEditorStyles();
-    void setShowWhiteSpaceAndTAB(bool enabled);
-    void setShowEndOfLine(bool enabled);
-    void setShowIndentGuide(bool enabled);
-    void setShowWrapSymbol(bool enabled);
+    ScintillaEdit *getFocusView();
+    void           openFile(const QString &filePath);
+    void           saveFile(const QString &filePath);
+    const QString &getFilePath() const;
+    bool           canClose();
+    bool           canCut();
+    bool           canCopy();
+    bool           canPaste();
+    bool           canUndo();
+    bool           canRedo();
+    bool           isModified();
+    void           grabFocus();
+    bool           focus();
+    void           applyEditorStyles();
+    void           setShowWhiteSpaceAndTAB(bool enabled);
+    void           setShowEndOfLine(bool enabled);
+    void           setShowIndentGuide(bool enabled);
+    void           setShowWrapSymbol(bool enabled);
 
     bool initialDocument();
-//    void focusInEvent(QFocusEvent * event);
+    //    void focusInEvent(QFocusEvent * event);
 signals:
     void focusIn();
     void copyAvailableChanged();
@@ -59,11 +58,10 @@ signals:
     void redoAvailableChanged();
     void undoAvailableChanged();
     void modifiedNotification();
-    void filePathChanged(const QString& filePath);
+    void filePathChanged(const QString &filePath);
 public slots:
     void updateUI();
-    void modified(int type, int position, int length, int linesAdded,
-                  const QByteArray &text, int line, int foldNow, int foldPrev);    
+    void modified(int type, int position, int length, int linesAdded, const QByteArray &text, int line, int foldNow, int foldPrev);
     void linesAdded(int linesAdded);
     void marginClicked(int position, int modifiers, int margin);
     void dwellEnd(int x, int y);

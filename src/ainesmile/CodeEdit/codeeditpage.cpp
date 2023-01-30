@@ -5,16 +5,12 @@
 
 CodeEditPage::CodeEditPage(QWidget *parent)
     : QWidget(parent),
-      m_horizontalMainSplitter(new QSplitter(Qt::Horizontal, parent)),
-      m_webView(new QWebEngineView(parent)),
+      m_webView(new QWidget(parent)),
       m_verticalEditorSplitter(new QSplitter(Qt::Vertical, parent)),
       m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
       m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
       m_sciFocusView(m_sciControlMaster)
 {
-    m_horizontalMainSplitter->addWidget(m_verticalEditorSplitter);
-    m_horizontalMainSplitter->addWidget(m_webView);
-
     m_verticalEditorSplitter->addWidget(m_sciControlSlave);
     m_verticalEditorSplitter->addWidget(m_sciControlMaster);
 
@@ -22,20 +18,16 @@ CodeEditPage::CodeEditPage(QWidget *parent)
     sizes << 0 << 0x7FFFF; // << 0;
     m_verticalEditorSplitter->setSizes(sizes);
 
-    sizes.clear();
-    sizes << 0x7FFFF << 0;
-    m_horizontalMainSplitter->setSizes(sizes);
-
     QVBoxLayout *m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);
     // m_mainLayout->setMargin(0);
-    m_mainLayout->addWidget(m_horizontalMainSplitter);
+    m_mainLayout->addWidget(m_verticalEditorSplitter);
     setLayout(m_mainLayout);
 
     init();
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
-    m_webView->load(QUrl("qrc:/rc/index.html"));
+    // m_webView->load(QUrl("qrc:/rc/index.html"));
 
     m_sciControlMaster->setSavePoint();
     m_sciControlSlave->setSavePoint();

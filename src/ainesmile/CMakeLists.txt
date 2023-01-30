@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network WebEngineWidgets LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network WebEngineWidgets LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
 IF (Qt6_FOUND)
         find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
 ENDIF(Qt6_FOUND)
@@ -155,7 +155,6 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
         Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::WebEngineWidgets
         )
 IF (Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}  PRIVATE
