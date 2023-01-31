@@ -1,0 +1,18 @@
+diff --git a/src/Lexilla.cxx b/src/Lexilla.cxx
+index 80cf229e..99096d70 100644
+--- a/src/Lexilla.cxx
++++ b/src/Lexilla.cxx
+@@ -12,8 +12,13 @@
+ #include <initializer_list>
+ 
+ #if defined(_WIN32)
++#if (NO_DLL)
++#define EXPORT_FUNCTION
++#define CALLING_CONVENTION
++#else
+ #define EXPORT_FUNCTION __declspec(dllexport)
+ #define CALLING_CONVENTION __stdcall
++#endif
+ #else
+ #define EXPORT_FUNCTION __attribute__((visibility("default")))
+ #define CALLING_CONVENTION
