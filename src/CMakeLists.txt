@@ -17,4 +17,4 @@ endif(Boost_FOUND)
 add_compile_definitions(STRSAFE_NO_DEPRECATE)
 
 add_subdirectory(ainesmile)
-add_subdirectory(utility)
+# add_subdirectory(utility)

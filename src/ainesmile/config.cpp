@@ -272,14 +272,10 @@ bool Config::matchPattern(const QString &filename, const QString &pattern)
     QRegularExpression regex(pattern);
 #if defined(Q_OS_WIN)
     regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-#else
-    regex.setPatternOptions(QRegularExpression::CaseSensitiveOption);
 #endif
     QFileInfo fi(filename);
     auto      match = regex.match(fi.fileName());
-    if (match.hasMatch())
-        return true;
-    return false;
+    return match.hasMatch();
 }
 
 bool Config::matchSuffix(const QString &filename, const QString &suffix)
