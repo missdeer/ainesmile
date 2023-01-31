@@ -1,14 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QList>
 #include <QMainWindow>
 #include <QSignalMapper>
-#include <QList>
-#include "tabwidget.h"
-#include "recentfiles.h"
 
-namespace Ui {
-class MainWindow;
+#include "recentfiles.h"
+#include "tabwidget.h"
+
+namespace Ui
+{
+    class MainWindow;
 }
 
 class CodeEditPage;
@@ -16,29 +18,30 @@ class CodeEditPage;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    
+
 public:
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-    
-    void openFiles(const QStringList& files);
-    void newDocument();
-protected:
-    void closeEvent(QCloseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent *event);
-private:
+    ~MainWindow() override;
 
-    TabWidget *getFocusTabWidget();
-    void hideFeatures();
-    void setActionShortcuts();
-    void setRecentFiles();
-    void setMenuItemChecked();
-    void updateUI(CodeEditPage* page);
-    void connectSignals(CodeEditPage* page);
+    void openFiles(const QStringList &files);
+    void newDocument();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+
+private:
+    [[nodiscard]] TabWidget *getFocusTabWidget();
+    void                     hideFeatures();
+    void                     setActionShortcuts();
+    void                     setRecentFiles();
+    void                     setMenuItemChecked();
+    void                     updateUI(CodeEditPage *page);
+    void                     connectSignals(CodeEditPage *page);
 
 private slots:
-    void onCodeEditPageCreated(CodeEditPage* page);
+    void onCodeEditPageCreated(CodeEditPage *page);
     void onUpdateRecentFilesMenuItems();
     void onCodeEditPageFocusIn();
     void onExchangeTab();
@@ -50,10 +53,10 @@ private slots:
     void onPasteAvailableChanged();
     void onUndoAvailableChanged();
     void onRedoAvailableChanged();
-    void onRecentFileTriggered(const QString & file);
+    void onRecentFileTriggered(const QString &file);
     void onActivateTabClicked(int index);
-    void onCloseTabClicked(const QList<int> & fileList);
-    void onSaveTabClicked(const QList<int> & fileList);
+    void onCloseTabClicked(const QList<int> &fileList);
+    void onSaveTabClicked(const QList<int> &fileList);
 
     void on_actionNewFile_triggered();
 
@@ -120,16 +123,17 @@ private slots:
     void on_btnReplaceInFiles_clicked();
 
 private:
-    Ui::MainWindow *ui;
-    QDockWidget *dockFindReplace_;
-    QDockWidget *dockFindResult_;
-    QSignalMapper* recentFileSignalMapper_;
-    QList<QAction*> recentFileActions_;
-    RecentFiles rf_;
-    bool aboutToQuit_;
-    bool exchanging_;
+    Ui::MainWindow  *ui;
+    CodeEditPage    *lastConnectedCodeEditPage_ {nullptr};
+    QDockWidget     *dockFindReplace_;
+    QDockWidget     *dockFindResult_;
+    QSignalMapper   *recentFileSignalMapper_;
+    QList<QAction *> recentFileActions_;
+    RecentFiles      rf_;
+    bool             aboutToQuit_;
+    bool             exchanging_;
 };
 
-extern MainWindow* g_mainWindow;
+inline MainWindow *g_mainWindow = nullptr;
 
 #endif // MAINWINDOW_H

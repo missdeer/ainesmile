@@ -21,27 +21,10 @@ void Config::sync()
     boost::property_tree::write_json(getConfigPath().toStdString(), pt_);
 }
 
-QString Config::getDataDirPath()
-{
-    QString configPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
-    QDir dir(configPath);
-    if (!dir.exists())
-    {
-        dir.mkpath(configPath);
-    }
-
-    return configPath;
-}
-
 QString Config::getConfigDirPath()
 {
-    QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-
-#if !defined(Q_OS_WIN)
-    configPath.append("/dfordsoft.com/ainesmile");
-#endif
-    QDir dir(configPath);
+    QString configPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir    dir(configPath);
     if (!dir.exists())
     {
         dir.mkpath(configPath);
@@ -84,7 +67,7 @@ QString Config::getConfigPath()
             Q_ASSERT(QFile::exists(configFile));
         }
 
-        file.copy(configFile, configPath);
+        QFile::copy(configFile, configPath);
     }
 
     qDebug() << "config path: " << configPath;
@@ -190,7 +173,7 @@ QString Config::getLanguageMapPath()
             Q_ASSERT(QFile::exists(configFile));
         }
         qDebug() << "copy langmap from " << configFile << " to " << configPath;
-        file.copy(configFile, configPath);
+        QFile::copy(configFile, configPath);
     }
     qDebug() << "langmap: " << configPath;
     return configPath;
@@ -242,11 +225,13 @@ QString Config::matchPatternLanguage(const QString &filename)
     QDomDocument doc;
     QFile        file(langMapPath);
     if (!file.open(QIODevice::ReadOnly))
-        return "";
+    {
+        return {};
+    }
     if (!doc.setContent(&file))
     {
         file.close();
-        return "";
+        return {};
     }
     file.close();
 
@@ -264,7 +249,7 @@ QString Config::matchPatternLanguage(const QString &filename)
         }
         langElem = langElem.nextSiblingElement("language");
     }
-    return "";
+    return {};
 }
 
 bool Config::matchPattern(const QString &filename, const QString &pattern)

@@ -1,15 +1,15 @@
 #include "stdafx.h"
+
 #include "windowlistdialog.h"
 #include "ui_windowlistdialog.h"
 
-WindowListDialog::WindowListDialog(QWidget *parent) :
-    QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-    ui(new Ui::WindowListDialog)
+
+WindowListDialog::WindowListDialog(QWidget *parent) : QDialog(parent, Qt::WindowTitleHint | Qt::WindowCloseButtonHint), ui(new Ui::WindowListDialog)
 {
     ui->setupUi(this);
-    setFixedSize( size() );
+    setFixedSize(size());
     ui->btnSortTab->setVisible(false);
-    connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onTableItemSelectionChanged()));
+    connect(ui->tableWidget, &QTableWidget::itemSelectionChanged, this, &WindowListDialog::onTableItemSelectionChanged);
 }
 
 WindowListDialog::~WindowListDialog()
@@ -24,18 +24,16 @@ void WindowListDialog::setFileList(const QStringList &fileList)
     ui->tableWidget->setRowCount(fileList.size());
     ui->tableWidget->setColumnCount(3);
     QStringList headers;
-    headers << tr("File")
-            << tr("Path")
-            << tr("Type");
+    headers << tr("File") << tr("Path") << tr("Type");
     ui->tableWidget->setHorizontalHeaderLabels(headers);
     ui->tableWidget->setColumnWidth(0, 150);
     ui->tableWidget->setColumnWidth(1, 300);
     for (int i = 0; i < fileList.size(); i++)
     {
-        const QString& filePath = fileList.at(i);
+        const QString &filePath = fileList.at(i);
         if (QFile::exists(filePath))
         {
-            QFileInfo fi(filePath);
+            QFileInfo         fi(filePath);
             QTableWidgetItem *fileNameItem = new QTableWidgetItem(fi.fileName());
             ui->tableWidget->setItem(i, 0, fileNameItem);
             QTableWidgetItem *filePathItem = new QTableWidgetItem(fi.absolutePath());
@@ -53,13 +51,11 @@ void WindowListDialog::setFileList(const QStringList &fileList)
 
 void WindowListDialog::onTableItemSelectionChanged()
 {
-    QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
-    QList<int> rows;
-    for (QList<QTableWidgetItem*>::iterator it = selected.begin();
-         selected.end() != it;
-         ++it)
+    QList<QTableWidgetItem *> selected = ui->tableWidget->selectedItems();
+    QList<int>                rows;
+    for (QList<QTableWidgetItem *>::iterator it = selected.begin(); selected.end() != it; ++it)
     {
-        QTableWidgetItem* item = *it;
+        QTableWidgetItem *item = *it;
         if (!rows.contains(item->row()))
         {
             rows.append(item->row());
@@ -82,7 +78,7 @@ void WindowListDialog::on_btnOK_clicked()
 
 void WindowListDialog::on_btnActivate_clicked()
 {
-    QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
+    QList<QTableWidgetItem *> selected = ui->tableWidget->selectedItems();
     if (!selected.isEmpty())
         emit activateTab(selected.at(0)->row());
     close();
@@ -90,8 +86,8 @@ void WindowListDialog::on_btnActivate_clicked()
 
 void WindowListDialog::on_btnSave_clicked()
 {
-    QList<int> list;
-    QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
+    QList<int>                list;
+    QList<QTableWidgetItem *> selected = ui->tableWidget->selectedItems();
     for (QTableWidgetItem *item : selected)
     {
         if (!list.contains(item->row()))
@@ -105,8 +101,8 @@ void WindowListDialog::on_btnSave_clicked()
 
 void WindowListDialog::on_btnCloseWindow_clicked()
 {
-    QList<int> list;
-    QList<QTableWidgetItem*> selected = ui->tableWidget->selectedItems();
+    QList<int>                list;
+    QList<QTableWidgetItem *> selected = ui->tableWidget->selectedItems();
     for (QTableWidgetItem *item : selected)
     {
         if (!list.contains(item->row()))
@@ -118,7 +114,4 @@ void WindowListDialog::on_btnCloseWindow_clicked()
     close();
 }
 
-void WindowListDialog::on_btnSortTab_clicked()
-{
-
-}
+void WindowListDialog::on_btnSortTab_clicked() {}

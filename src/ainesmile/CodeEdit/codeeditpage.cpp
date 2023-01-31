@@ -58,11 +58,17 @@ void CodeEditPage::init()
 ScintillaEdit *CodeEditPage::getFocusView()
 {
     if (!m_sciControlMaster->focus() && !m_sciControlSlave->focus())
+    {
         return m_sciFocusView != nullptr ? m_sciFocusView : (m_sciFocusView = m_sciControlMaster);
+    }
     if (m_sciControlSlave->focus())
+    {
         m_sciFocusView = m_sciControlSlave;
+    }
     else
+    {
         m_sciFocusView = m_sciControlMaster;
+    }
 
     return m_sciFocusView;
 }
@@ -75,12 +81,11 @@ bool CodeEditPage::initialDocument()
 void CodeEditPage::openFile(const QString &filePath)
 {
     QFile file(filePath);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (file.open(QIODevice::ReadOnly))
     {
         m_filePath = filePath;
         m_sciControlMaster->setText(file.readAll().data());
         m_sciControlMaster->emptyUndoBuffer();
-        ;
         file.close();
         emit filePathChanged(m_filePath);
         m_sc.initEditorStyle(m_sciControlMaster, filePath);
@@ -138,13 +143,15 @@ bool CodeEditPage::canClose()
 
 bool CodeEditPage::canCut()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     return !sci->selectionEmpty();
 }
 
 bool CodeEditPage::canCopy()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     return !sci->selectionEmpty();
 }
 
@@ -330,31 +337,36 @@ void CodeEditPage::dwellEnd(int /*x*/, int /*y*/)
 
 void CodeEditPage::undo()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->undo();
 }
 
 void CodeEditPage::redo()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->redo();
 }
 
 void CodeEditPage::copy()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->copy();
 }
 
 void CodeEditPage::cut()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->cut();
 }
 
 void CodeEditPage::paste()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->paste();
 }
 
@@ -364,13 +376,15 @@ void CodeEditPage::printNow() {}
 
 void CodeEditPage::deleteCurrent()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->deleteBack();
 }
 
 void CodeEditPage::selectAll()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->selectAll();
 }
 
@@ -396,6 +410,7 @@ void CodeEditPage::currentFileNameToClipboard()
 {
     QFileInfo   fi(m_filePath);
     QClipboard *clipboard = QApplication::clipboard();
+    Q_ASSERT(clipboard);
     clipboard->setText(fi.fileName());
 }
 
@@ -403,24 +418,28 @@ void CodeEditPage::currentDirectoryPathToClipboard()
 {
     QFileInfo   fi(m_filePath);
     QClipboard *clipboard = QApplication::clipboard();
+    Q_ASSERT(clipboard);
     clipboard->setText(fi.absolutePath());
 }
 
 void CodeEditPage::increaseLineIndent()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->tab();
 }
 
 void CodeEditPage::decreaseLineIndent()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->backTab();
 }
 
 void CodeEditPage::upperCase()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     QByteArray upperText = sci->getSelText().toUpper();
     sci->replaceSel(upperText.data());
@@ -429,7 +448,8 @@ void CodeEditPage::upperCase()
 
 void CodeEditPage::lowerCase()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     QByteArray lowerText = sci->getSelText().toLower();
     sci->replaceSel(lowerText.data());
@@ -438,7 +458,8 @@ void CodeEditPage::lowerCase()
 
 void CodeEditPage::duplicateCurrentLine()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->lineDuplicate();
     sci->endUndoAction();
@@ -446,7 +467,8 @@ void CodeEditPage::duplicateCurrentLine()
 
 void CodeEditPage::splitLines()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->targetFromSelection();
     sci->linesSplit(0);
@@ -455,7 +477,8 @@ void CodeEditPage::splitLines()
 
 void CodeEditPage::joinLines()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->targetFromSelection();
     sci->linesJoin();
@@ -464,7 +487,8 @@ void CodeEditPage::joinLines()
 
 void CodeEditPage::moveUpCurrentLine()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->lineUp();
     sci->endUndoAction();
@@ -472,7 +496,8 @@ void CodeEditPage::moveUpCurrentLine()
 
 void CodeEditPage::moveDownCurrentLine()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->lineDown();
     sci->endUndoAction();
@@ -498,7 +523,8 @@ void CodeEditPage::eolMacFormat()
 
 void CodeEditPage::trimTrailingSpace()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
@@ -514,7 +540,8 @@ void CodeEditPage::trimTrailingSpace()
 
 void CodeEditPage::trimLeadingSpace()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
@@ -530,7 +557,8 @@ void CodeEditPage::trimLeadingSpace()
 
 void CodeEditPage::trimLeadingAndTrailingSpace()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sptr_t     line     = sci->lineFromPosition(sci->currentPos());
     QByteArray lineText = sci->getLine(line);
@@ -550,7 +578,8 @@ void CodeEditPage::trimLeadingAndTrailingSpace()
 
 void CodeEditPage::eolToSpace()
 {
-    ScintillaEdit *sci = getFocusView();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
     sci->beginUndoAction();
     sci->setTargetStart(0);
     sci->setTargetEnd(sci->textLength());
@@ -566,7 +595,7 @@ void CodeEditPage::gotoLine()
     int line = QInputDialog::getInt(this, tr("Goto line"), QString(tr("Input line number:(1 - %2)")).arg(lineCount), 1, 1, lineCount, 1, &ok);
     if (ok)
     {
-        sci->gotoLine(line);
+        sci->gotoLine(line - 1);
     }
 }
 

@@ -1,35 +1,30 @@
 #include "stdafx.h"
-#include "config.h"
+
+#include "mainwindow.h"
 #include "codeeditpage.h"
-#include "preferencedialog.h"
-#include "windowlistdialog.h"
+#include "config.h"
 #include "findreplace.h"
 #include "findreplaceresultmodel.h"
-#include "mainwindow.h"
+#include "preferencedialog.h"
 #include "ui_mainwindow.h"
+#include "windowlistdialog.h"
 
 using namespace FindReplace;
 
-MainWindow* g_mainWindow = nullptr;
-
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    recentFileSignalMapper_(new QSignalMapper(this)),
-    aboutToQuit_(false),
-    exchanging_(false)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), recentFileSignalMapper_(new QSignalMapper(this)), aboutToQuit_(false), exchanging_(false)
 {
     ui->setupUi(this);
-    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
-    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
-    connect(ui->tabWidget, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
-    connect(ui->tabWidget, SIGNAL(updateRecentFiles()), this, SLOT(onUpdateRecentFilesMenuItems()));
-    connect(ui->tabWidget, SIGNAL(codeEditPageCreated(CodeEditPage*)), this, SLOT(onCodeEditPageCreated(CodeEditPage*)));
-    connect(ui->tabWidgetSlave, SIGNAL(currentChanged(int)), this, SLOT(onCurrentPageChanged(int)));
-    connect(ui->tabWidgetSlave, SIGNAL(tabCloseRequested(int)), this, SLOT(onCloseRequested(int)));
-    connect(ui->tabWidgetSlave, SIGNAL(exchangeTab()), this, SLOT(onExchangeTab()));
-    connect(ui->tabWidgetSlave, SIGNAL(updateRecentFiles()), this, SLOT(onUpdateRecentFilesMenuItems()));
-    connect(ui->tabWidgetSlave, SIGNAL(codeEditPageCreated(CodeEditPage*)), this, SLOT(onCodeEditPageCreated(CodeEditPage*)));
+    connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
+    connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::onCloseRequested);
+    connect(ui->tabWidget, &TabWidget::exchangeTab, this, &MainWindow::onExchangeTab);
+    connect(ui->tabWidget, &TabWidget::updateRecentFiles, this, &MainWindow::onUpdateRecentFilesMenuItems);
+    connect(ui->tabWidget, &TabWidget::codeEditPageCreated, this, &MainWindow::onCodeEditPageCreated);
+    connect(ui->tabWidgetSlave, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
+    connect(ui->tabWidgetSlave, &QTabWidget::tabCloseRequested, this, &MainWindow::onCloseRequested);
+    connect(ui->tabWidgetSlave, &TabWidget::exchangeTab, this, &MainWindow::onExchangeTab);
+    connect(ui->tabWidgetSlave, &TabWidget::updateRecentFiles, this, &MainWindow::onUpdateRecentFilesMenuItems);
+    connect(ui->tabWidgetSlave, &TabWidget::codeEditPageCreated, this, &MainWindow::onCodeEditPageCreated);
     ui->tabWidget->setTheOtherSide(ui->tabWidgetSlave);
     ui->tabWidget->setRecentFiles(&rf_);
     ui->tabWidgetSlave->setTheOtherSide(ui->tabWidget);
@@ -42,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     hideFeatures();
 
     QList<int> sizes;
-    sizes << ui->widget->width()/2 << ui->widget->width()/2;
+    sizes << ui->widget->width() / 2 << ui->widget->width() / 2;
     ui->splitterMain->setSizes(sizes);
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
@@ -59,7 +54,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QSettings settings("dfordsoft.com", "ainesmile");
     if (settings.contains("geometry"))
+    {
         restoreGeometry(settings.value("geometry").toByteArray());
+    }
     if (settings.contains("windowState"))
     {
         restoreState(settings.value("windowState").toByteArray());
@@ -105,7 +102,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("text/plain"))
+    {
         event->acceptProposedAction();
+    }
 }
 
 void MainWindow::dropEvent(QDropEvent *event)
@@ -119,7 +118,9 @@ void MainWindow::dropEvent(QDropEvent *event)
 TabWidget *MainWindow::getFocusTabWidget()
 {
     if (ui->tabWidgetSlave->focus())
+    {
         return ui->tabWidgetSlave;
+    }
     return ui->tabWidget;
 }
 
@@ -152,20 +153,12 @@ void MainWindow::setActionShortcuts()
 
 void MainWindow::setRecentFiles()
 {
-    recentFileActions_ << ui->actionRecentFile1
-                          << ui->actionRecentFile2
-                          << ui->actionRecentFile3
-                          << ui->actionRecentFile4
-                          << ui->actionRecentFile5
-                          << ui->actionRecentFile6
-                          << ui->actionRecentFile7
-                          << ui->actionRecentFile8
-                          << ui->actionRecentFile9
-                          << ui->actionRecentFile10;
+    recentFileActions_ << ui->actionRecentFile1 << ui->actionRecentFile2 << ui->actionRecentFile3 << ui->actionRecentFile4 << ui->actionRecentFile5
+                       << ui->actionRecentFile6 << ui->actionRecentFile7 << ui->actionRecentFile8 << ui->actionRecentFile9 << ui->actionRecentFile10;
 
     for (QAction *action : recentFileActions_)
     {
-        connect(action, SIGNAL(triggered()), recentFileSignalMapper_, SLOT(map()));
+        connect(action, &QAction::triggered, [this]() { recentFileSignalMapper_->map(); });
     }
 
     onUpdateRecentFilesMenuItems();
@@ -173,8 +166,8 @@ void MainWindow::setRecentFiles()
 
 void MainWindow::setMenuItemChecked()
 {
-    boost::property_tree::ptree& pt = Config::instance()->pt();
-    bool enabled = pt.get<bool>("show.end_of_line", true);
+    boost::property_tree::ptree &pt      = Config::instance()->pt();
+    bool                         enabled = pt.get<bool>("show.end_of_line", true);
     ui->actionShowEndOfLine->setChecked(enabled);
     enabled = pt.get<bool>("show.indent_guide", true);
     ui->actionShowIndentGuide->setChecked(enabled);
@@ -189,28 +182,25 @@ void MainWindow::onUpdateRecentFilesMenuItems()
     Q_ASSERT(recentFileSignalMapper_);
 
     QStringList recentFiles = rf_.recentFiles();
-    int index=0;
-    for (QStringList::ConstIterator it = recentFiles.constBegin();
-         recentFiles.constEnd() != it && index < 10;
-         ++it, ++index)
+    int         index       = 0;
+    for (QStringList::ConstIterator it = recentFiles.constBegin(); recentFiles.constEnd() != it && index < 10; ++it, ++index)
     {
-        QAction* action = recentFileActions_.at(index);
-        QFile file(*it);
+        QAction *action = recentFileActions_.at(index);
+        QFile    file(*it);
         action->setText(file.fileName());
         action->setVisible(true);
         recentFileSignalMapper_->removeMappings(action);
         recentFileSignalMapper_->setMapping(action, file.fileName());
     }
-    connect(recentFileSignalMapper_, SIGNAL(mapped(const QString&)),
-            this, SLOT(onRecentFileTriggered(const QString&)));
+    connect(recentFileSignalMapper_, &QSignalMapper::mappedString, this, &MainWindow::onRecentFileTriggered);
     for (int i = index; i < 10; i++)
     {
-        QAction* action = recentFileActions_.at(i);
+        QAction *action = recentFileActions_.at(i);
         action->setVisible(false);
     }
 }
 
-void MainWindow::updateUI(CodeEditPage* page)
+void MainWindow::updateUI(CodeEditPage *page)
 {
     ui->actionSaveFile->setEnabled(page->isModified());
     ui->actionCut->setEnabled(page->canCut());
@@ -222,134 +212,146 @@ void MainWindow::updateUI(CodeEditPage* page)
 
 void MainWindow::connectSignals(CodeEditPage *page)
 {
-    disconnect(this, SLOT(onCurrentDocumentChanged()));
-    connect(page, SIGNAL(modifiedNotification()), this, SLOT(onCurrentDocumentChanged()));
-    disconnect(this, SLOT(onCopyAvailableChanged()));
-    connect(page, SIGNAL(copyAvailableChanged()), this, SLOT(onCopyAvailableChanged()));
-    disconnect(this, SLOT(onPasteAvailableChanged()));
-    connect(page, SIGNAL(pasteAvailableChanged()), this, SLOT(onPasteAvailableChanged()));
-    disconnect(this, SLOT(onUndoAvailableChanged()));
-    connect(page, SIGNAL(undoAvailableChanged()), this, SLOT(onUndoAvailableChanged()));
-    disconnect(this, SLOT(onRedoAvailableChanged()));
-    connect(page, SIGNAL(redoAvailableChanged()), this, SLOT(onRedoAvailableChanged()));
-    disconnect(ui->actionCut, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCut, SIGNAL(triggered()), page, SLOT(cut()));
-    disconnect(ui->actionCopy, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCopy, SIGNAL(triggered()), page, SLOT(copy()));
-    disconnect(ui->actionPaste, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPaste, SIGNAL(triggered()), page, SLOT(paste()));
-    disconnect(ui->actionUndo, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUndo, SIGNAL(triggered()), page, SLOT(undo()));
-    disconnect(ui->actionRedo, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionRedo, SIGNAL(triggered()), page, SLOT(redo()));
-    disconnect(ui->actionPrint, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPrint, SIGNAL(triggered()), page, SLOT(print()));
-    disconnect(ui->actionPrintNow, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPrintNow, SIGNAL(triggered()), page, SLOT(printNow()));
-    disconnect(ui->actionDelete, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionDelete, SIGNAL(triggered()), page, SLOT(deleteCurrent()));
-    disconnect(ui->actionSelectAll, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSelectAll, SIGNAL(triggered()), page, SLOT(selectAll()));    
-    disconnect(ui->actionSetReadOnly, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionSetReadOnly, SIGNAL(triggered()), page, SLOT(setReadOnly()));
-    disconnect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionClearReadOnlyFlag, SIGNAL(triggered()), page, SLOT(clearReadOnlyFlag()));    
-    disconnect(ui->actionWindowsFormat, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionWindowsFormat, SIGNAL(triggered()), page, SLOT(eolWindowsFormat()));
-    disconnect(ui->actionUNIXFormat, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionUNIXFormat, SIGNAL(triggered()), page, SLOT(eolUNIXFormat()));
-    disconnect(ui->actionMacFormat, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionMacFormat, SIGNAL(triggered()), page, SLOT(eolMacFormat()));
-    disconnect(ui->actionGoTo, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionGoTo, SIGNAL(triggered()), page, SLOT(gotoLine()));
-    disconnect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionGoToMatchingBrace, SIGNAL(triggered()), page, SLOT(gotoMatchingBrace()));
-    disconnect(ui->actionToggleBookmark, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionToggleBookmark, SIGNAL(triggered()), page, SLOT(toggleBookmark()));
-    disconnect(ui->actionNextBookmark, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionNextBookmark, SIGNAL(triggered()), page, SLOT(nextBookmark()));
-    disconnect(ui->actionPreviousBookmark, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPreviousBookmark, SIGNAL(triggered()), page, SLOT(previousBookmark()));
-    disconnect(ui->actionClearAllBookmarks, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionClearAllBookmarks, SIGNAL(triggered()), page, SLOT(clearAllBookmarks()));
-    disconnect(ui->actionCutBookmarkedLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCutBookmarkedLines, SIGNAL(triggered()), page, SLOT(cutBookmarkLines()));
-    disconnect(ui->actionCopyBookmarkedLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionCopyBookmarkedLines, SIGNAL(triggered()), page, SLOT(copyBookmarkLines()));
-    disconnect(ui->actionPasteToReplaceBookmarkedLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionPasteToReplaceBookmarkedLines, SIGNAL(triggered()), page, SLOT(pasteToReplaceBookmarkedLines()));
-    disconnect(ui->actionRemoveBookmarkedLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionRemoveBookmarkedLines, SIGNAL(triggered()), page, SLOT(removeBookmarkedLines()));
-    disconnect(ui->actionRemoveUnmarkedLines, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionRemoveUnmarkedLines, SIGNAL(triggered()), page, SLOT(removeUnbookmarkedLines()));
-    disconnect(ui->actionInverseBookmark, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionInverseBookmark, SIGNAL(triggered()), page, SLOT(inverseBookmark()));
-    disconnect(ui->actionWordWrap, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionWordWrap, SIGNAL(triggered()), page, SLOT(wordWrap()));
-    disconnect(ui->actionEncodeInANSI, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEncodeInANSI, SIGNAL(triggered()), page, SLOT(encodeInANSI()));
-    disconnect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEncodeInUTF8WithoutBOM, SIGNAL(triggered()), page, SLOT(encodeInUTF8WithoutBOM()));
-    disconnect(ui->actionEncodeInUTF8, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEncodeInUTF8, SIGNAL(triggered()), page, SLOT(encodeInUTF8()));
-    disconnect(ui->actionEncodeInUCS2BigEndian, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEncodeInUCS2BigEndian, SIGNAL(triggered()), page, SLOT(encodeInUCS2BigEndian()));
-    disconnect(ui->actionEncodeInUCS2LittleEndian, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionEncodeInUCS2LittleEndian, SIGNAL(triggered()), page, SLOT(encodeInUCS2LittleEndian()));
-    disconnect(ui->actionConvertToANSI, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionConvertToANSI, SIGNAL(triggered()), page, SLOT(convertToANSI()));
-    disconnect(ui->actionConvertToUTF8WithoutBOM, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionConvertToUTF8WithoutBOM, SIGNAL(triggered()), page, SLOT(convertToUTF8WithoutBOM()));
-    disconnect(ui->actionConvertToUTF8, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionConvertToUTF8, SIGNAL(triggered()), page, SLOT(convertToUTF8()));
-    disconnect(ui->actionConvertToUCS2BigEndian, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionConvertToUCS2BigEndian, SIGNAL(triggered()), page, SLOT(convertToUCS2BigEndian()));
-    disconnect(ui->actionConvertToUCS2LittleEndian, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionConvertToUCS2LittleEndian, SIGNAL(triggered()), page, SLOT(convertToUCS2LittleEndian()));
-    disconnect(ui->actionZoomIn, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionZoomIn, SIGNAL(triggered()), page, SLOT(zoomIn()));
-    disconnect(ui->actionZoomOut, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionZoomOut, SIGNAL(triggered()), page, SLOT(zoomOut()));
-    disconnect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), 0, 0);
-    connect(ui->actionRestoreDefaultZoom, SIGNAL(triggered()), page, SLOT(restoreDefaultZoom()));
+    if (lastConnectedCodeEditPage_)
+    {
+        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+    }
+    connect(page, &CodeEditPage::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
+    connect(page, &CodeEditPage::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
+    connect(page, &CodeEditPage::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
+    connect(page, &CodeEditPage::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
+    connect(page, &CodeEditPage::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+    disconnect(ui->actionCut, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionCut, &QAction::triggered, page, &CodeEditPage::cut);
+    disconnect(ui->actionCopy, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionCopy, &QAction::triggered, page, &CodeEditPage::copy);
+    disconnect(ui->actionPaste, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionPaste, &QAction::triggered, page, &CodeEditPage::paste);
+    disconnect(ui->actionUndo, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionUndo, &QAction::triggered, page, &CodeEditPage::undo);
+    disconnect(ui->actionRedo, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionRedo, &QAction::triggered, page, &CodeEditPage::redo);
+    disconnect(ui->actionPrint, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionPrint, &QAction::triggered, page, &CodeEditPage::print);
+    disconnect(ui->actionPrintNow, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionPrintNow, &QAction::triggered, page, &CodeEditPage::printNow);
+    disconnect(ui->actionDelete, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionDelete, &QAction::triggered, page, &CodeEditPage::deleteCurrent);
+    disconnect(ui->actionSelectAll, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionSelectAll, &QAction::triggered, page, &CodeEditPage::selectAll);
+    disconnect(ui->actionSetReadOnly, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionSetReadOnly, &QAction::triggered, page, &CodeEditPage::setReadOnly);
+    disconnect(ui->actionClearReadOnlyFlag, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionClearReadOnlyFlag, &QAction::triggered, page, &CodeEditPage::clearReadOnlyFlag);
+    disconnect(ui->actionWindowsFormat, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionWindowsFormat, &QAction::triggered, page, &CodeEditPage::eolWindowsFormat);
+    disconnect(ui->actionUNIXFormat, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionUNIXFormat, &QAction::triggered, page, &CodeEditPage::eolUNIXFormat);
+    disconnect(ui->actionMacFormat, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionMacFormat, &QAction::triggered, page, &CodeEditPage::eolMacFormat);
+    disconnect(ui->actionGoTo, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionGoTo, &QAction::triggered, page, &CodeEditPage::gotoLine);
+    disconnect(ui->actionGoToMatchingBrace, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionGoToMatchingBrace, &QAction::triggered, page, &CodeEditPage::gotoMatchingBrace);
+    disconnect(ui->actionToggleBookmark, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionToggleBookmark, &QAction::triggered, page, &CodeEditPage::toggleBookmark);
+    disconnect(ui->actionNextBookmark, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionNextBookmark, &QAction::triggered, page, &CodeEditPage::nextBookmark);
+    disconnect(ui->actionPreviousBookmark, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionPreviousBookmark, &QAction::triggered, page, &CodeEditPage::previousBookmark);
+    disconnect(ui->actionClearAllBookmarks, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionClearAllBookmarks, &QAction::triggered, page, &CodeEditPage::clearAllBookmarks);
+    disconnect(ui->actionCutBookmarkedLines, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionCutBookmarkedLines, &QAction::triggered, page, &CodeEditPage::cutBookmarkLines);
+    disconnect(ui->actionCopyBookmarkedLines, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionCopyBookmarkedLines, &QAction::triggered, page, &CodeEditPage::copyBookmarkLines);
+    disconnect(ui->actionPasteToReplaceBookmarkedLines, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionPasteToReplaceBookmarkedLines, &QAction::triggered, page, &CodeEditPage::pasteToReplaceBookmarkedLines);
+    disconnect(ui->actionRemoveBookmarkedLines, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionRemoveBookmarkedLines, &QAction::triggered, page, &CodeEditPage::removeBookmarkedLines);
+    disconnect(ui->actionRemoveUnmarkedLines, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionRemoveUnmarkedLines, &QAction::triggered, page, &CodeEditPage::removeUnbookmarkedLines);
+    disconnect(ui->actionInverseBookmark, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionInverseBookmark, &QAction::triggered, page, &CodeEditPage::inverseBookmark);
+    disconnect(ui->actionWordWrap, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionWordWrap, &QAction::triggered, page, &CodeEditPage::wordWrap);
+    disconnect(ui->actionEncodeInANSI, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionEncodeInANSI, &QAction::triggered, page, &CodeEditPage::encodeInANSI);
+    disconnect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, page, &CodeEditPage::encodeInUTF8WithoutBOM);
+    disconnect(ui->actionEncodeInUTF8, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionEncodeInUTF8, &QAction::triggered, page, &CodeEditPage::encodeInUTF8);
+    disconnect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, page, &CodeEditPage::encodeInUCS2BigEndian);
+    disconnect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, page, &CodeEditPage::encodeInUCS2LittleEndian);
+    disconnect(ui->actionConvertToANSI, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionConvertToANSI, &QAction::triggered, page, &CodeEditPage::convertToANSI);
+    disconnect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, page, &CodeEditPage::convertToUTF8WithoutBOM);
+    disconnect(ui->actionConvertToUTF8, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionConvertToUTF8, &QAction::triggered, page, &CodeEditPage::convertToUTF8);
+    disconnect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, page, &CodeEditPage::convertToUCS2BigEndian);
+    disconnect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, page, &CodeEditPage::convertToUCS2LittleEndian);
+    disconnect(ui->actionZoomIn, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionZoomIn, &QAction::triggered, page, &CodeEditPage::zoomIn);
+    disconnect(ui->actionZoomOut, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionZoomOut, &QAction::triggered, page, &CodeEditPage::zoomOut);
+    disconnect(ui->actionRestoreDefaultZoom, &QAction::triggered, nullptr, nullptr);
+    connect(ui->actionRestoreDefaultZoom, &QAction::triggered, page, &CodeEditPage::restoreDefaultZoom);
+
+    lastConnectedCodeEditPage_ = page;
 }
 
 void MainWindow::onCodeEditPageCreated(CodeEditPage *page)
 {
-    connect(page, SIGNAL(focusIn()), this, SLOT(onCodeEditPageFocusIn()));
+    connect(page, &CodeEditPage::focusIn, this, &MainWindow::onCodeEditPageFocusIn);
 }
 
 void MainWindow::onCodeEditPageFocusIn()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
+    Q_ASSERT(page);
     connectSignals(page);
     updateUI(page);
 }
 
 void MainWindow::onExchangeTab()
 {
-    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
-    QWidget* currentWidget = tabWidget->currentWidget();
-    int currentIndex = tabWidget->currentIndex();
-    QString currentText = tabWidget->tabText(currentIndex);
-    QString currentTabTooltip = tabWidget->tabToolTip(currentIndex);
-    exchanging_ = true;
+    auto *tabWidget         = qobject_cast<TabWidget *>(sender());
+    auto *currentWidget     = tabWidget->currentWidget();
+    int   currentIndex      = tabWidget->currentIndex();
+    auto  currentText       = tabWidget->tabText(currentIndex);
+    auto  currentTabTooltip = tabWidget->tabToolTip(currentIndex);
+    exchanging_             = true;
     tabWidget->removeTab(currentIndex);
-    TabWidget* targetTabWidget = ui->tabWidgetSlave;
+    TabWidget *targetTabWidget = ui->tabWidgetSlave;
     if (tabWidget == ui->tabWidgetSlave)
+    {
         targetTabWidget = ui->tabWidget;
+    }
     if (targetTabWidget->isHidden())
+    {
         targetTabWidget->setHidden(false);
+    }
     int targetIndex = targetTabWidget->addTab(currentWidget, currentText);
     targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
     targetTabWidget->setCurrentIndex(targetIndex);
     targetTabWidget->setFocus();
-    CodeEditPage* codeeditpage = qobject_cast<CodeEditPage*>(currentWidget);
+    auto *codeeditpage = qobject_cast<CodeEditPage *>(currentWidget);
     codeeditpage->setFocus();
     codeeditpage->grabFocus();
 
     if (tabWidget->count() == 0)
+    {
         tabWidget->hide();
+    }
 
     exchanging_ = false;
 }
@@ -366,31 +368,32 @@ void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
 
 void MainWindow::openFiles(const QStringList &files)
 {
-    TabWidget* tabWidget = getFocusTabWidget();
+    auto *tabWidget = getFocusTabWidget();
     tabWidget->openFiles(files);
 }
 
 void MainWindow::newDocument()
 {
-    static int count = 1;
-    QString title = QString(tr("Untitled%1")).arg(count++);
-    TabWidget* tabWidget = getFocusTabWidget();
+    static int count     = 1;
+    QString    title     = tr("Untitled%1").arg(count++);
+    auto      *tabWidget = getFocusTabWidget();
     tabWidget->newDocument(title);
 }
 
-
 void MainWindow::onCurrentPageChanged(int index)
 {
-    if (index == -1 )
-    {        
+    if (index == -1)
+    {
         if (!aboutToQuit_ && !exchanging_ && (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 0))
+        {
             newDocument();
+        }
     }
     else
     {
         // update action UI
-        TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
-        CodeEditPage* page = qobject_cast<CodeEditPage*>(tabWidget->widget(index));
+        auto *tabWidget = qobject_cast<TabWidget *>(sender());
+        auto *page      = qobject_cast<CodeEditPage *>(tabWidget->widget(index));
         Q_ASSERT(page);
         updateUI(page);
         connectSignals(page);
@@ -399,23 +402,23 @@ void MainWindow::onCurrentPageChanged(int index)
 
 void MainWindow::onCloseRequested(int index)
 {
-    TabWidget* tabWidget = qobject_cast<TabWidget*>(sender());
+    auto *tabWidget = qobject_cast<TabWidget *>(sender());
     tabWidget->doCloseRequested(index);
 }
 
 void MainWindow::onCurrentDocumentChanged()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
     Q_ASSERT(page);
     Q_UNUSED(page);
     ui->actionSaveFile->setEnabled(page->isModified());
     // change the tab title
-    TabWidget* targetTabWidget = ui->tabWidget;
-    int index = targetTabWidget->findTabIndex(page);
+    TabWidget *targetTabWidget = ui->tabWidget;
+    int        index           = targetTabWidget->findTabIndex(page);
     if (index == -1)
     {
         targetTabWidget = ui->tabWidgetSlave;
-        index = targetTabWidget->findTabIndex(page);
+        index           = targetTabWidget->findTabIndex(page);
     }
 
     if (index >= 0)
@@ -438,7 +441,7 @@ void MainWindow::onCurrentDocumentChanged()
 
 void MainWindow::onCopyAvailableChanged()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
     Q_ASSERT(page);
     ui->actionCopy->setEnabled(page->canCopy());
     ui->actionCut->setEnabled(page->canCut());
@@ -446,26 +449,26 @@ void MainWindow::onCopyAvailableChanged()
 
 void MainWindow::onPasteAvailableChanged()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
     Q_ASSERT(page);
     ui->actionPaste->setEnabled(page->canPaste());
 }
 
 void MainWindow::onUndoAvailableChanged()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
     Q_ASSERT(page);
     ui->actionUndo->setEnabled(page->canUndo());
 }
 
 void MainWindow::onRedoAvailableChanged()
 {
-    CodeEditPage* page = qobject_cast<CodeEditPage*>(sender());
+    auto *page = qobject_cast<CodeEditPage *>(sender());
     Q_ASSERT(page);
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
-void MainWindow::onRecentFileTriggered(const QString & file)
+void MainWindow::onRecentFileTriggered(const QString &file)
 {
     // open the file
     QFileInfo fileInfo(file);
@@ -475,7 +478,7 @@ void MainWindow::onRecentFileTriggered(const QString & file)
         if (!ui->tabWidget->fileExists(fileInfo) && !ui->tabWidgetSlave->fileExists(fileInfo))
         {
             // create an edit page, open the file
-            TabWidget* tabWidget = getFocusTabWidget();
+            TabWidget *tabWidget = getFocusTabWidget();
             tabWidget->openFile(fileInfo.absoluteFilePath());
         }
     }
@@ -484,14 +487,18 @@ void MainWindow::onRecentFileTriggered(const QString & file)
 void MainWindow::onActivateTabClicked(int index)
 {
     if (index >= ui->tabWidget->count())
+    {
         ui->tabWidgetSlave->setCurrentIndex(index - ui->tabWidget->count());
+    }
     else
+    {
         ui->tabWidget->setCurrentIndex(index);
+    }
 }
 
-void MainWindow::onCloseTabClicked(const QList<int>& fileList)
+void MainWindow::onCloseTabClicked(const QList<int> &fileList)
 {
-    for (int i = fileList.size() -1; i >= 0; i--)
+    for (auto i = fileList.size() - 1; i >= 0; i--)
     {
         int index = fileList.at(i);
         if (index >= ui->tabWidget->count())
@@ -506,9 +513,9 @@ void MainWindow::onCloseTabClicked(const QList<int>& fileList)
     }
 }
 
-void MainWindow::onSaveTabClicked(const QList<int>& fileList)
+void MainWindow::onSaveTabClicked(const QList<int> &fileList)
 {
-    for (int i = fileList.size() -1; i >= 0; i--)
+    for (auto i = fileList.size() - 1; i >= 0; i--)
     {
         int index = fileList.at(i);
         if (index >= ui->tabWidget->count())
@@ -536,9 +543,13 @@ void MainWindow::on_actionToggleFullScreenMode_triggered()
     if (isFullScreen())
     {
         if (bMaximized)
+        {
             showMaximized();
+        }
         else
+        {
             showNormal();
+        }
     }
     else
     {
@@ -550,13 +561,9 @@ void MainWindow::on_actionToggleFullScreenMode_triggered()
 void MainWindow::on_actionOpenFile_triggered()
 {
     QFileDialog::Options options;
-    QString selectedFilter;
-    QStringList fileNames = QFileDialog::getOpenFileNames(this,
-                                                    tr("ainesmile Open Files"),
-                                                    tr(""),
-                                                    tr("All Files (*);;Text Files (*.txt)"),
-                                                    &selectedFilter,
-                                                    options);
+    QString              selectedFilter;
+    QStringList          fileNames =
+        QFileDialog::getOpenFileNames(this, tr("ainesmile Open Files"), {}, tr("All Files (*);;Text Files (*.txt)"), &selectedFilter, options);
     openFiles(fileNames);
 }
 
@@ -567,13 +574,13 @@ void MainWindow::on_actionExitApp_triggered()
 
 void MainWindow::on_actionSaveFile_triggered()
 {
-    TabWidget* tabWidget = getFocusTabWidget();
+    TabWidget *tabWidget = getFocusTabWidget();
     tabWidget->saveCurrentFile();
 }
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-    TabWidget* tabWidget = getFocusTabWidget();
+    TabWidget *tabWidget = getFocusTabWidget();
     tabWidget->saveAsCurrentFile();
 }
 
@@ -585,22 +592,22 @@ void MainWindow::on_actionHelpContent_triggered()
 void MainWindow::on_actionAboutApp_triggered()
 {
     QString date;
-    QFile fileDate(":/DATE");
-    if (fileDate.open(QIODevice::ReadOnly | QIODevice::Text))
+    QFile   fileDate(":/DATE");
+    if (fileDate.open(QIODevice::ReadOnly))
     {
         QByteArray d = fileDate.readAll();
 #if defined(Q_OS_MAC)
         date = QString::fromUtf8(d);
 #else
-        date = QString::fromLocal8Bit(d);
+        date     = QString::fromLocal8Bit(d);
 #endif
         date = date.replace("\n", " ");
         fileDate.close();
     }
 
     QString revision;
-    QFile fileRevision(":/REVISION");
-    if (fileRevision.open(QIODevice::ReadOnly | QIODevice::Text))
+    QFile   fileRevision(":/REVISION");
+    if (fileRevision.open(QIODevice::ReadOnly))
     {
         QByteArray r = fileRevision.readAll();
 #if defined(Q_OS_MAC)
@@ -611,7 +618,7 @@ void MainWindow::on_actionAboutApp_triggered()
         fileRevision.close();
     }
 
-    QString text = QString(tr("Build at %1\nRevision: %2\nKeep It Simple & Stupid!")).arg(date).arg(revision);
+    QString text = tr("Build at %1\nRevision: %2\nKeep It Simple & Stupid!").arg(date, revision);
 
     QMessageBox::about(this, tr("About ainesmile"), text);
 }
@@ -640,7 +647,7 @@ void MainWindow::on_actionCloseAll_triggered()
 
 void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 {
-    TabWidget* tabWidget = getFocusTabWidget();
+    TabWidget *tabWidget = getFocusTabWidget();
     if (ui->tabWidget == tabWidget)
     {
         ui->tabWidget->closeAllButActive();
@@ -655,18 +662,16 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 
 void MainWindow::on_actionOpenAllRecentFiles_triggered()
 {
-    QStringList& files = rf_.recentFiles();
+    QStringList &files = rf_.recentFiles();
 
-    std::for_each(files.begin(), files.end(),
-                  std::bind(&MainWindow::onRecentFileTriggered, this, std::placeholders::_1));
+    std::for_each(files.begin(), files.end(), [this](auto &&PH1) { onRecentFileTriggered(std::forward<decltype(PH1)>(PH1)); });
 }
 
 void MainWindow::on_actionEmptyRecentFilesList_triggered()
 {
     rf_.clearFiles();
 
-    std::for_each(recentFileActions_.begin(), recentFileActions_.end(),
-                  std::bind(&QAction::setVisible, std::placeholders::_1, false));
+    std::for_each(recentFileActions_.begin(), recentFileActions_.end(), [](auto &&PH1) { PH1->setVisible(false); });
 }
 
 void MainWindow::on_actionAlwaysOnTop_triggered()
@@ -703,15 +708,15 @@ void MainWindow::on_actionCloseAllDocuments_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    TabWidget* tabWidget = getFocusTabWidget();
-    int currentIndex = tabWidget->currentIndex();
+    TabWidget *tabWidget    = getFocusTabWidget();
+    int        currentIndex = tabWidget->currentIndex();
     tabWidget->doCloseRequested(currentIndex);
 }
 
 void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 {
-    bool enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
-    boost::property_tree::ptree& pt = Config::instance()->pt();
+    bool                         enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
+    boost::property_tree::ptree &pt      = Config::instance()->pt();
     pt.put("show.white_space_and_tab", enabled);
 
     ui->tabWidget->setShowWhiteSpaceAndTAB(enabled);
@@ -720,8 +725,8 @@ void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 
 void MainWindow::on_actionShowEndOfLine_triggered()
 {
-    bool enabled = ui->actionShowEndOfLine->isChecked();
-    boost::property_tree::ptree& pt = Config::instance()->pt();
+    bool                         enabled = ui->actionShowEndOfLine->isChecked();
+    boost::property_tree::ptree &pt      = Config::instance()->pt();
     pt.put("show.end_of_line", enabled);
 
     ui->tabWidget->setShowEndOfLine(enabled);
@@ -730,8 +735,8 @@ void MainWindow::on_actionShowEndOfLine_triggered()
 
 void MainWindow::on_actionShowIndentGuide_triggered()
 {
-    bool enabled = ui->actionShowIndentGuide->isChecked();
-    boost::property_tree::ptree& pt = Config::instance()->pt();
+    bool                         enabled = ui->actionShowIndentGuide->isChecked();
+    boost::property_tree::ptree &pt      = Config::instance()->pt();
     pt.put("show.indent_guide", enabled);
 
     ui->tabWidget->setShowIndentGuide(enabled);
@@ -740,8 +745,8 @@ void MainWindow::on_actionShowIndentGuide_triggered()
 
 void MainWindow::on_actionShowWrapSymbol_triggered()
 {
-    bool enabled = ui->actionShowWrapSymbol->isChecked();
-    boost::property_tree::ptree& pt = Config::instance()->pt();
+    bool                         enabled = ui->actionShowWrapSymbol->isChecked();
+    boost::property_tree::ptree &pt      = Config::instance()->pt();
     pt.put("show.wrap_symbol", enabled);
 
     ui->tabWidget->setShowWrapSymbol(enabled);
@@ -761,16 +766,18 @@ void MainWindow::on_actionWindowsList_triggered()
     ui->tabWidgetSlave->getFileList(fileList);
     WindowListDialog dlg(this);
     dlg.setFileList(fileList);
-    connect(&dlg, SIGNAL(activateTab(int)), this, SLOT(onActivateTabClicked(int)));
-    connect(&dlg, SIGNAL(closeTab(const QList<int> &)), this, SLOT(onCloseTabClicked(const QList<int> &)));
-    connect(&dlg, SIGNAL(saveTab(const QList<int> &)), this, SLOT(onSaveTabClicked(const QList<int> &)));
+    connect(&dlg, &WindowListDialog::activateTab, this, &MainWindow::onActivateTabClicked);
+    connect(&dlg, &WindowListDialog::closeTab, this, &MainWindow::onCloseTabClicked);
+    connect(&dlg, &WindowListDialog::saveTab, this, &MainWindow::onSaveTabClicked);
     dlg.exec();
 }
 
 void MainWindow::on_actionFind_triggered()
 {
     if (!ui->dockFindReplace->isVisible())
+    {
         ui->dockFindReplace->setVisible(true);
+    }
 }
 
 void MainWindow::hideFeatures()
@@ -805,17 +812,17 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
 
 void MainWindow::on_btnSelectDirectory_clicked()
 {
-    const QString& dir = QFileDialog::getExistingDirectory(this, tr("Select Directory"),
-                                                      "",
-                                                      QFileDialog::ShowDirsOnly
-                                                      | QFileDialog::DontResolveSymlinks);
+    const QString &dir =
+        QFileDialog::getExistingDirectory(this, tr("Select Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (!dir.isEmpty())
+    {
         ui->edtDirectory->setText(dir);
+    }
 }
 
 void MainWindow::on_btnFind_clicked()
 {
-    const QString& strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->edtFind->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -827,19 +834,19 @@ void MainWindow::on_btnFind_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
         ui->edtFind->text(),
         ui->edtReplace->text(),
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    TabWidget* tabWidget = getFocusTabWidget();
+    auto *tabWidget = getFocusTabWidget();
     tabWidget->find(fro);
 }
 
 void MainWindow::on_btnFindInFiles_clicked()
 {
-    const QString& strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->edtFind->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -851,36 +858,34 @@ void MainWindow::on_btnFindInFiles_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
         ui->edtFind->text(),
         ui->edtReplace->text(),
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
 
-    switch(ui->cbScope->currentIndex())
+    switch (ui->cbScope->currentIndex())
     {
-    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT:
-    {
-        QList<ScintillaEdit*> docs;
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
+        QList<ScintillaEdit *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         FindReplace::findAllInDocuments(docs, fro);
     }
-        break;
+    break;
     case FindReplace::FindScope::FS_DIRECOTRY:
         FindReplace::findAllInDirectory(fro);
         break;
     case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
         FindReplace::findAllInDirectories(fro);
         break;
-
     }
 }
 
 void MainWindow::on_btnReplace_clicked()
 {
-    const QString& strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->edtFind->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -892,19 +897,19 @@ void MainWindow::on_btnReplace_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
         ui->edtFind->text(),
         ui->edtReplace->text(),
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
-    TabWidget* tabWidget = getFocusTabWidget();
+    auto *tabWidget = getFocusTabWidget();
     tabWidget->replace(fro);
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
 {
-    const QString& strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->edtFind->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -916,32 +921,31 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
         ui->edtFind->text(),
         ui->edtReplace->text(),
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
 
-    switch(ui->cbScope->currentIndex())
+    switch (ui->cbScope->currentIndex())
     {
     case FindReplace::FindScope::FS_DOCUMENT:
         getFocusTabWidget()->replaceAll(fro);
         break;
-    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT:
-    {
-        QList<ScintillaEdit*> docs;
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
+        QList<ScintillaEdit *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         FindReplace::replaceAllInDocuments(docs, fro);
     }
-        break;
+    break;
     }
 }
 
 void MainWindow::on_btnReplaceInFiles_clicked()
 {
-    const QString& strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->edtFind->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -953,14 +957,14 @@ void MainWindow::on_btnReplaceInFiles_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        (FindReplace::FindScope)ui->cbScope->currentIndex(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
         ui->edtFind->text(),
         ui->edtReplace->text(),
         ui->edtDirectory->text(),
         ui->edtFilters->text(),
     };
 
-    switch(ui->cbScope->currentIndex())
+    switch (ui->cbScope->currentIndex())
     {
     case FindReplace::FindScope::FS_DIRECOTRY:
         FindReplace::replaceAllInDirectory(fro);
