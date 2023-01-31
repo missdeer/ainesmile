@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.15)
+project(lexilla VERSION 1.0.0)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_compile_definitions(SCINTILLA_QT=1
+        SCI_LEXER=1
+        _CRT_SECURE_NO_DEPRECATE=1
+        SCI_STATIC_LINK=1
+        NO_DLL=1
+        EXPORT_IMPORT_API=
+        )
+
+file(GLOB
+        lexilla_src
+        ./src/*.cxx
+        ./lexers/*.cxx
+        ./lexlib/*.cxx
+)
+
+add_library(lexilla STATIC ${lexilla_src})
+
+target_link_libraries(lexilla PRIVATE scintilla)
+
+target_include_directories (lexilla PUBLIC 
+    ${CMAKE_CURRENT_BINARY_DIR} 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexers
+    ${CMAKE_CURRENT_SOURCE_DIR}/lexlib
+    )
