@@ -1,0 +1,438 @@
+name: Build ainesmile
+on: 
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+
+env:
+  WINDOWS_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19078/w_BaseKit_p_2023.0.0.25940_offline.exe
+  WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19085/w_HPCKit_p_2023.0.0.25931_offline.exe
+  WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
+  WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
+  COMPILER_VERSION: 2023.0.0
+      
+      
+jobs:
+  win32-msvc:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        qt_ver: [6.4.2]
+        qt_target: [desktop]
+        qt_arch: [win64_msvc2019_64]
+        include:
+          - qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+            mingw_arch: MINGW64 
+    env:
+      targetName: CodeInspector
+      
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          modules: "qt5compat qtimageformats"
+          aqtversion: '==3.0.1'
+                    
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install: zip curl
+          
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: true
+      
+      - name: copy CMakeLists.txt
+        shell: msys2 {0}
+        run: |
+          cd 3rdparty
+          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
+          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+
+      - name: patch
+        shell: cmd
+        run: |
+          cd 3rdparty\lexilla
+          git apply ..\lexilla.patch
+          cd ..\..
+      
+      - name: build-msvc
+        shell: cmd
+        env:
+          vc_arch: ${{ matrix.msvc_arch }}
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          set PATH=%PATH%;%CD%\jom
+          cd 3rdparty\scintilla\qt\ScintillaEdit
+          python WidgetGen.py
+          cd ..\..\..\..
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
+          ninja
+          cd ..
+          
+  win32-clang-msvc:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        qt_ver: [6.4.2]
+        qt_target: [desktop]
+        qt_arch: [win64_msvc2019_64]
+        include:
+          - qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+            mingw_arch: MINGW64 
+            clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.7/LLVM-15.0.7-win64.exe
+    env:
+      targetName: CodeInspector
+      
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          modules: "qt5compat qtimageformats"
+          aqtversion: '==3.0.1'
+                    
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install: zip curl
+          
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: true
+      
+      - name: copy CMakeLists.txt
+        shell: msys2 {0}
+        run: |
+          cd 3rdparty
+          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
+          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+
+      - name: patch
+        shell: cmd
+        run: |
+          cd 3rdparty\lexilla
+          git apply ..\lexilla.patch
+          cd ..\..
+          
+      - name: Set up clang for Windows
+        shell: cmd
+        run: |
+          mkdir llvm
+          cd llvm
+          curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
+          7z.exe x LLVM.exe
+          cd ..
+                
+      - name: build-msvc
+        shell: cmd
+        env:
+          vc_arch: ${{ matrix.msvc_arch }}
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          set PATH=%PATH%;%CD%\llvm\bin;%CD%\jom
+          cd 3rdparty\scintilla\qt\ScintillaEdit
+          python WidgetGen.py
+          cd ..\..\..\..
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja ..
+          ninja
+          cd ..
+          
+  win32-intel-msvc:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        qt_ver: [6.4.2]
+        qt_target: [desktop]
+        qt_arch: [win64_msvc2019_64]
+        include:
+          - qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+            mingw_arch: MINGW64 
+    env:
+      targetName: CodeInspector
+      
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          modules: "qt5compat qtimageformats"
+          aqtversion: '==3.0.1'
+                    
+      - name: cache intel install
+        id: cache-install
+        uses: actions/cache@v2
+        with:
+          path: |
+              C:\Program Files (x86)\Intel\oneAPI\setvars-vcvarsall.bat
+              C:\Program Files (x86)\Intel\oneAPI\compiler
+          key: install-${{ env.CACHE_NUMBER }}-${{ env.WINDOWS_HPCKIT_URL }}-${{ env.WINDOWS_CPP_COMPONENTS }}-compiler-${{ hashFiles('**/scripts/cache_exclude_windows.sh') }}
+
+      - name: install intel
+        if: steps.cache-install.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth=1 https://github.com/oneapi-src/oneapi-ci.git oneapi-ci
+          cd oneapi-ci
+          scripts/install_windows.bat ${{ env.WINDOWS_HPCKIT_URL }} ${{ env.WINDOWS_CPP_COMPONENTS }}
+          
+      - name: restore registry on cache hit
+        if: steps.cache-install.outputs.cache-hit == 'true'
+        run:  |
+          git clone --depth=1 https://github.com/oneapi-src/oneapi-ci.git oneapi-ci
+          cd oneapi-ci
+          scripts/restore_registry.bat ${{ env.COMPILER_VERSION }}
+        
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install: zip curl
+          
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: true
+      
+      - name: copy CMakeLists.txt
+        shell: msys2 {0}
+        run: |
+          cd 3rdparty
+          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
+          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+
+      - name: patch
+        shell: cmd
+        run: |
+          cd 3rdparty\lexilla
+          git apply ..\lexilla.patch
+          cd ..\..
+                
+      - name: build-intel-msvc
+        shell: cmd
+        env:
+          vc_arch: ${{ matrix.msvc_arch }}
+        run: |
+          dir "C:\Program Files (x86)\Intel\oneAPI\compiler"
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\env\vars.bat"
+          set PATH="C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\bin-llvm\";%CD%\jom;%PATH%
+          cd 3rdparty\scintilla\qt\ScintillaEdit
+          python WidgetGen.py
+          cd ..\..\..\..
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja ..
+          ninja
+          cd ..
+          
+  win32-mingw:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        qt_arch: [mingw64_qt5-gcc, mingw64_qt5-static-gcc, clang64_qt5-clang, clang64_qt5-static-clang, mingw64_qt6-gcc, clang64_qt6-clang, mingw64_qt6-static-gcc, clang64_qt6-static-clang]
+        include:
+          - qt_arch: mingw64_qt5-gcc
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            c: gcc
+            cxx: g++
+            qt_build: qt5
+            qt_dir: /mingw64/lib/cmake/Qt5
+            cmake_prefix_path: /mingw64
+          - qt_arch: mingw64_qt5-static-gcc
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            c: gcc
+            cxx: g++
+            qt_build: qt5-static
+            qt_dir: /mingw64/qt5-static/lib/cmake/Qt5
+            cmake_prefix_path: /mingw64/qt5-static
+          - qt_arch: clang64_qt5-clang
+            mingw_arch: CLANG64 
+            mingw_prefix: mingw-w64-clang-x86_64
+            toolchains: clang
+            c: clang
+            cxx: clang++
+            qt_build: qt5
+            qt_dir: /clang64/lib/cmake/Qt5
+            cmake_prefix_path: /clang64
+          - qt_arch: clang64_qt5-static-clang
+            mingw_arch: CLANG64 
+            mingw_prefix: mingw-w64-clang-x86_64
+            toolchains: clang
+            c: clang
+            cxx: clang++
+            qt_build: qt5-static
+            qt_dir: /clang64/qt5-static/lib/cmake/Qt5
+            cmake_prefix_path: /clang64/qt5-static
+          - qt_arch: mingw64_qt6-gcc
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            c: gcc
+            cxx: g++
+            qt_build: qt6
+            qt_dir: /mingw64/lib/cmake/Qt6
+            cmake_prefix_path: /mingw64
+          - qt_arch: clang64_qt6-clang
+            mingw_arch: CLANG64 
+            mingw_prefix: mingw-w64-clang-x86_64
+            toolchains: clang
+            c: clang
+            cxx: clang++
+            qt_build: qt6
+            qt_dir: /clang64/lib/cmake/Qt6
+            cmake_prefix_path: /clang64
+          - qt_arch: mingw64_qt6-static-gcc
+            mingw_arch: MINGW64 
+            mingw_prefix: mingw-w64-x86_64
+            toolchains: gcc
+            c: gcc
+            cxx: g++
+            qt_build: qt6
+            qt_dir: /mingw64/qt6-static/lib/cmake/Qt6
+            cmake_prefix_path: /mingw64/qt6-static
+          - qt_arch: clang64_qt6-static-clang
+            mingw_arch: CLANG64 
+            mingw_prefix: mingw-w64-clang-x86_64
+            toolchains: clang
+            c: clang
+            cxx: clang++
+            qt_build: qt6
+            qt_dir: /clang64/qt6-static/lib/cmake/Qt6
+            cmake_prefix_path: /clang64/qt6-static
+    env:
+      targetName: CodeInspector
+      
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          msystem: ${{ matrix.mingw_arch }}
+          install:  ${{ matrix.mingw_prefix }}-cmake ${{ matrix.mingw_prefix }}-ninja ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-libb2 ${{ matrix.mingw_prefix }}-jasper
+
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 1
+          submodules: true
+          
+      - run: |
+          git clone https://github.com/missdeer/mingwdeployqt.git
+          
+      - name: Build mingwdeployqt
+        shell: msys2 {0}
+        run: |
+          cd mingwdeployqt
+          mkdir build
+          cd build
+          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          ninja
+          cp mingwdeployqt.exe /${{ matrix.mingw_arch }}/bin/
+          cd ../..
+
+      - name: copy CMakeLists.txt
+        shell: msys2 {0}
+        run: |
+          cd 3rdparty
+          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
+          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+
+      - name: patch 3rdparty
+        shell: cmd
+        run: |
+          cd 3rdpartylexilla
+          git apply ..\lexilla.patch
+
+      - name: prepare Scintilla
+        shell: cmd
+        run: |
+          cd 3rdparty\scintilla\qt\ScintillaEdit
+          python WidgetGen.py
+          cd ..\..\..\..
+
+      - name: build
+        shell: msys2 {0}
+        run: |
+          ./pre-build.sh
+          mkdir build
+          cd build
+          env PATH=/${{ matrix.mingw_arch }}/bin:/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DQT_DIR=${{ matrix.qt_dir }} -DCMAKE_PREFIX_PATH=${{ matrix.cmake_prefix_path }} -G Ninja ..
+          env PATH=/${{ matrix.mingw_arch }}/bin ninja
+          env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe src/ainesmile/ainesmile.exe
+          
+  macOS:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [macos-latest]
+        qt_ver: [6.4.2]
+        qt_arch: [clang_64]
+    env:
+      targetName: CodeInspector
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.qt_ver }}
+          modules: "qt5compat qtimageformats"
+          aqtversion: '==3.0.1'
+        
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          submodules: true
+      
+      - name: patch 3rdparty
+        run: |
+          cd 3rdparty
+          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
+          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+          cd lexilla
+          git apply ../lexilla.patch
+          cd ../..
+      
+      - name: build macos
+        run: |
+          ./pre-build.sh
+          cd 3rdparty/scintilla/qt/ScintillaEdit
+          python WidgetGen.py
+          cd ../../../..
+          mkdir build
+          cd build
+          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
+          make -j `sysctl -n hw.logicalcpu`
+          cd ..
+          
+      - name: package
+        run: |
+          macdeployqt "build/desktop-qt/${targetName}.app" -qmldir=. -verbose=1 -dmg
+        
