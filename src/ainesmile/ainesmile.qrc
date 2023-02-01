@@ -17,9 +17,6 @@
         <file>rc/ainesmile.png</file>
         <file>DATE</file>
         <file>REVISION</file>
-        <file>public-standard.pem</file>
-        <file>public-deluxe.pem</file>
-        <file>public-professional.pem</file>
         <file>rc/image/config/category_backup.png</file>
         <file>rc/image/config/category_document.png</file>
         <file>rc/image/config/category_editing.png</file>
@@ -31,6 +28,5 @@
         <file>rc/image/config/category_print.png</file>
         <file>rc/image/config/category_style.png</file>
         <file>rc/image/config/category_vcs.png</file>
-        <file>rc/index.html</file>
     </qresource>
 </RCC>
