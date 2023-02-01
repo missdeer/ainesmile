@@ -29,26 +29,30 @@ private:
     void init();
 
 public:
-    explicit CodeEditPage(QWidget *parent = 0);
+    explicit CodeEditPage(QWidget *parent = nullptr);
 
-    ScintillaEdit *getFocusView();
-    void           openFile(const QString &filePath);
-    void           saveFile(const QString &filePath);
-    const QString &getFilePath() const;
-    bool           canClose();
-    bool           canCut();
-    bool           canCopy();
-    bool           canPaste();
-    bool           canUndo();
-    bool           canRedo();
-    bool           isModified();
-    void           grabFocus();
-    bool           focus();
-    void           applyEditorStyles();
-    void           setShowWhiteSpaceAndTAB(bool enabled);
-    void           setShowEndOfLine(bool enabled);
-    void           setShowIndentGuide(bool enabled);
-    void           setShowWrapSymbol(bool enabled);
+    ScintillaEdit               *getFocusView();
+    void                         openFile(const QString &filePath);
+    void                         saveFile(const QString &filePath);
+    [[nodiscard]] const QString &getFilePath() const;
+    [[nodiscard]] bool           canClose();
+    [[nodiscard]] bool           canCut();
+    [[nodiscard]] bool           canCopy();
+    [[nodiscard]] bool           canPaste();
+    [[nodiscard]] bool           canUndo();
+    [[nodiscard]] bool           canRedo();
+    [[nodiscard]] bool           isModified();
+    void                         grabFocus();
+    [[nodiscard]] bool           focus();
+    void                         applyEditorStyles();
+    void                         setShowWhiteSpaceAndTAB(bool enabled);
+    void                         setShowEndOfLine(bool enabled);
+    void                         setShowIndentGuide(bool enabled);
+    void                         setShowWrapSymbol(bool enabled);
+    [[nodiscard]] bool           getShowWhiteSpaceAndTAB();
+    [[nodiscard]] bool           getShowEndOfLine();
+    [[nodiscard]] bool           getShowIndentGuide();
+    [[nodiscard]] bool           getShowWrapSymbol();
 
     bool initialDocument();
     //    void focusInEvent(QFocusEvent * event);

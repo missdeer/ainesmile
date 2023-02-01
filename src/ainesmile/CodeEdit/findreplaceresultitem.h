@@ -1,9 +1,9 @@
 #ifndef FINDREPLACERESULTITEM_H
 #define FINDREPLACERESULTITEM_H
 
+#include <QList>
 #include <QVariant>
 #include <QVector>
-#include <QList>
 
 class FindReplaceResultItem
 {
@@ -12,21 +12,21 @@ public:
     ~FindReplaceResultItem();
 
     FindReplaceResultItem *child(int number);
-    int childCount() const;
-    int columnCount() const;
-    QVariant data(int column) const;
-    bool insertChildren(int position, int count, int columns);
-    bool insertColumns(int position, int columns);
+    [[nodiscard]] int      childCount() const;
+    [[nodiscard]] int      columnCount() const;
+    [[nodiscard]] QVariant data(int column) const;
+    bool                   insertChildren(int position, int count, int columns);
+    bool                   insertColumns(int position, int columns);
     FindReplaceResultItem *parent();
-    bool removeChildren(int position, int count);
-    bool removeColumns(int position, int columns);
-    int childNumber() const;
-    bool setData(int column, const QVariant &value);
+    bool                   removeChildren(int position, int count);
+    bool                   removeColumns(int position, int columns);
+    [[nodiscard]] int      childNumber() const;
+    bool                   setData(int column, const QVariant &value);
 
 private:
-    QList<FindReplaceResultItem*> childItems;
-    QVector<QVariant> itemData;
-    FindReplaceResultItem *parentItem;
+    QList<FindReplaceResultItem *> childItems;
+    QVector<QVariant>              itemData;
+    FindReplaceResultItem         *parentItem {nullptr};
 };
 
 #endif // FINDREPLACERESULTITEM_H

@@ -1,11 +1,13 @@
 #include "stdafx.h"
-#include "findreplaceresultitem.h"
+
 #include <QStringList>
+
+#include "findreplaceresultitem.h"
 
 FindReplaceResultItem::FindReplaceResultItem(const QVector<QVariant> &data, FindReplaceResultItem *parent)
 {
     parentItem = parent;
-    itemData = data;
+    itemData   = data;
 }
 
 FindReplaceResultItem::~FindReplaceResultItem()
@@ -26,7 +28,9 @@ int FindReplaceResultItem::childCount() const
 int FindReplaceResultItem::childNumber() const
 {
     if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<FindReplaceResultItem*>(this));
+    {
+        return parentItem->childItems.indexOf(const_cast<FindReplaceResultItem *>(this));
+    }
 
     return 0;
 }
@@ -44,11 +48,14 @@ QVariant FindReplaceResultItem::data(int column) const
 bool FindReplaceResultItem::insertChildren(int position, int count, int columns)
 {
     if (position < 0 || position > childItems.size())
+    {
         return false;
+    }
 
-    for (int row = 0; row < count; ++row) {
+    for (int row = 0; row < count; ++row)
+    {
         QVector<QVariant> data(columns);
-        FindReplaceResultItem *item = new FindReplaceResultItem(data, this);
+        auto             *item = new FindReplaceResultItem(data, this);
         childItems.insert(position, item);
     }
 
@@ -58,13 +65,19 @@ bool FindReplaceResultItem::insertChildren(int position, int count, int columns)
 bool FindReplaceResultItem::insertColumns(int position, int columns)
 {
     if (position < 0 || position > itemData.size())
+    {
         return false;
+    }
 
     for (int column = 0; column < columns; ++column)
+    {
         itemData.insert(position, QVariant());
+    }
 
-    foreach (FindReplaceResultItem *child, childItems)
+    for (auto *child : childItems)
+    {
         child->insertColumns(position, columns);
+    }
 
     return true;
 }
@@ -77,10 +90,14 @@ FindReplaceResultItem *FindReplaceResultItem::parent()
 bool FindReplaceResultItem::removeChildren(int position, int count)
 {
     if (position < 0 || position + count > childItems.size())
+    {
         return false;
+    }
 
     for (int row = 0; row < count; ++row)
+    {
         delete childItems.takeAt(position);
+    }
 
     return true;
 }
@@ -88,13 +105,19 @@ bool FindReplaceResultItem::removeChildren(int position, int count)
 bool FindReplaceResultItem::removeColumns(int position, int columns)
 {
     if (position < 0 || position + columns > itemData.size())
+    {
         return false;
+    }
 
     for (int column = 0; column < columns; ++column)
+    {
         itemData.remove(position);
+    }
 
-    foreach (FindReplaceResultItem *child, childItems)
+    for (auto *child : childItems)
+    {
         child->removeColumns(position, columns);
+    }
 
     return true;
 }
@@ -102,7 +125,9 @@ bool FindReplaceResultItem::removeColumns(int position, int columns)
 bool FindReplaceResultItem::setData(int column, const QVariant &value)
 {
     if (column < 0 || column >= itemData.size())
+    {
         return false;
+    }
 
     itemData[column] = value;
     return true;

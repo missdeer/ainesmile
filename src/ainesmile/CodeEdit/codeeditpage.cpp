@@ -505,20 +505,26 @@ void CodeEditPage::moveDownCurrentLine()
 
 void CodeEditPage::eolWindowsFormat()
 {
-    m_sciControlMaster->setEOLMode(SC_EOL_CRLF);
-    m_sciControlMaster->convertEOLs(SC_EOL_CRLF);
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->setEOLMode(SC_EOL_CRLF);
+    sci->convertEOLs(SC_EOL_CRLF);
 }
 
 void CodeEditPage::eolUNIXFormat()
 {
-    m_sciControlMaster->setEOLMode(SC_EOL_LF);
-    m_sciControlMaster->convertEOLs(SC_EOL_LF);
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->setEOLMode(SC_EOL_LF);
+    sci->convertEOLs(SC_EOL_LF);
 }
 
 void CodeEditPage::eolMacFormat()
 {
-    m_sciControlMaster->setEOLMode(SC_EOL_CR);
-    m_sciControlMaster->convertEOLs(SC_EOL_CR);
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->setEOLMode(SC_EOL_CR);
+    sci->convertEOLs(SC_EOL_CR);
 }
 
 void CodeEditPage::trimTrailingSpace()
@@ -589,10 +595,11 @@ void CodeEditPage::eolToSpace()
 
 void CodeEditPage::gotoLine()
 {
-    bool           ok        = false;
-    ScintillaEdit *sci       = getFocusView();
-    sptr_t         lineCount = sci->lineCount();
-    int line = QInputDialog::getInt(this, tr("Goto line"), QString(tr("Input line number:(1 - %2)")).arg(lineCount), 1, 1, lineCount, 1, &ok);
+    bool  ok  = false;
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sptr_t lineCount = sci->lineCount();
+    int    line      = QInputDialog::getInt(this, tr("Goto line"), tr("Input line number:(1 - %2)").arg(lineCount), 1, 1, lineCount, 1, &ok);
     if (ok)
     {
         sci->gotoLine(line - 1);
@@ -677,18 +684,49 @@ void CodeEditPage::convertToUCS2LittleEndian() {}
 
 void CodeEditPage::zoomIn()
 {
-    m_sciControlMaster->zoomIn();
-    m_sciControlSlave->zoomIn();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->zoomIn();
 }
 
 void CodeEditPage::zoomOut()
 {
-    m_sciControlMaster->zoomOut();
-    m_sciControlSlave->zoomOut();
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->zoomOut();
 }
 
 void CodeEditPage::restoreDefaultZoom()
 {
-    m_sciControlMaster->setZoom(1);
-    m_sciControlSlave->setZoom(1);
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sci->setZoom(1);
+}
+
+bool CodeEditPage::getShowWhiteSpaceAndTAB()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    return sci->viewWS() == SCWS_VISIBLEALWAYS;
+}
+
+bool CodeEditPage::getShowEndOfLine()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    return sci->viewEOL();
+}
+
+bool CodeEditPage::getShowIndentGuide()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    return sci->indentationGuides() == SC_IV_REAL;
+}
+
+bool CodeEditPage::getShowWrapSymbol()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    return sci->wrapVisualFlags() == SC_WRAPVISUALFLAG_END;
 }
