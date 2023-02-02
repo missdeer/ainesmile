@@ -29,7 +29,7 @@ jobs:
           - qt_arch: win64_msvc2019_64
             msvc_arch: x64
             qt_arch_install: msvc2019_64
-            mingw_arch: MINGW64 
+            mingw_arch: UCRT64 
     env:
       targetName: ainesmile
       
@@ -103,7 +103,7 @@ jobs:
           - qt_arch: win64_msvc2019_64
             msvc_arch: x64
             qt_arch_install: msvc2019_64
-            mingw_arch: MINGW64 
+            mingw_arch: UCRT64 
             clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.7/LLVM-15.0.7-win64.exe
     env:
       targetName: ainesmile
@@ -179,7 +179,7 @@ jobs:
           - qt_arch: win64_msvc2019_64
             msvc_arch: x64
             qt_arch_install: msvc2019_64
-            mingw_arch: MINGW64 
+            mingw_arch: UCRT64 
     env:
       targetName: ainesmile
       
@@ -263,26 +263,26 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        qt_arch: [mingw64_qt5-gcc, mingw64_qt5-static-gcc, clang64_qt5-clang, clang64_qt5-static-clang, mingw64_qt6-gcc, clang64_qt6-clang, mingw64_qt6-static-gcc, clang64_qt6-static-clang]
+        qt_arch: [ucrt64_qt5-gcc, ucrt64_qt5-static-gcc, clang64_qt5-clang, clang64_qt5-static-clang, ucrt64_qt6-gcc, clang64_qt6-clang, ucrt64_qt6-static-gcc, clang64_qt6-static-clang]
         include:
-          - qt_arch: mingw64_qt5-gcc
-            mingw_arch: MINGW64 
-            mingw_prefix: mingw-w64-x86_64
+          - qt_arch: ucrt64_qt5-gcc
+            mingw_arch: UCRT64 
+            mingw_prefix: mingw-w64-ucrt-x86_64
             toolchains: gcc
             c: gcc
             cxx: g++
             qt_build: qt5
-            qt_dir: /mingw64/lib/cmake/Qt5
-            cmake_prefix_path: /mingw64
-          - qt_arch: mingw64_qt5-static-gcc
-            mingw_arch: MINGW64 
-            mingw_prefix: mingw-w64-x86_64
+            qt_dir: /ucrt64/lib/cmake/Qt5
+            cmake_prefix_path: /ucrt64
+          - qt_arch: ucrt64_qt5-static-gcc
+            mingw_arch: UCRT64 
+            mingw_prefix: mingw-w64-ucrt-x86_64
             toolchains: gcc
             c: gcc
             cxx: g++
             qt_build: qt5-static
-            qt_dir: /mingw64/qt5-static/lib/cmake/Qt5
-            cmake_prefix_path: /mingw64/qt5-static
+            qt_dir: /ucrt64/qt5-static/lib/cmake/Qt5
+            cmake_prefix_path: /ucrt64/qt5-static
           - qt_arch: clang64_qt5-clang
             mingw_arch: CLANG64 
             mingw_prefix: mingw-w64-clang-x86_64
@@ -301,15 +301,15 @@ jobs:
             qt_build: qt5-static
             qt_dir: /clang64/qt5-static/lib/cmake/Qt5
             cmake_prefix_path: /clang64/qt5-static
-          - qt_arch: mingw64_qt6-gcc
-            mingw_arch: MINGW64 
-            mingw_prefix: mingw-w64-x86_64
+          - qt_arch: ucrt64_qt6-gcc
+            mingw_arch: UCRT64 
+            mingw_prefix: mingw-w64-ucrt-x86_64
             toolchains: gcc
             c: gcc
             cxx: g++
             qt_build: qt6
-            qt_dir: /mingw64/lib/cmake/Qt6
-            cmake_prefix_path: /mingw64
+            qt_dir: /ucrt64/lib/cmake/Qt6
+            cmake_prefix_path: /ucrt64
           - qt_arch: clang64_qt6-clang
             mingw_arch: CLANG64 
             mingw_prefix: mingw-w64-clang-x86_64
@@ -319,15 +319,15 @@ jobs:
             qt_build: qt6
             qt_dir: /clang64/lib/cmake/Qt6
             cmake_prefix_path: /clang64
-          - qt_arch: mingw64_qt6-static-gcc
-            mingw_arch: MINGW64 
-            mingw_prefix: mingw-w64-x86_64
+          - qt_arch: ucrt64_qt6-static-gcc
+            mingw_arch: UCRT64 
+            mingw_prefix: mingw-w64-ucrt-x86_64
             toolchains: gcc
             c: gcc
             cxx: g++
             qt_build: qt6
-            qt_dir: /mingw64/qt6-static/lib/cmake/Qt6
-            cmake_prefix_path: /mingw64/qt6-static
+            qt_dir: /ucrt64/qt6-static/lib/cmake/Qt6
+            cmake_prefix_path: /ucrt64/qt6-static
           - qt_arch: clang64_qt6-static-clang
             mingw_arch: CLANG64 
             mingw_prefix: mingw-w64-clang-x86_64
@@ -362,7 +362,7 @@ jobs:
           cd mingwdeployqt
           mkdir build
           cd build
-          env PATH=$PATH:/${{ matrix.mingw_arch }}/bin:/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
           ninja
           cp mingwdeployqt.exe /${{ matrix.mingw_arch }}/bin/
           cd ../..
@@ -393,7 +393,7 @@ jobs:
           ./pre-build.sh
           mkdir build
           cd build
-          env PATH=/${{ matrix.mingw_arch }}/bin:/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DQT_DIR=${{ matrix.qt_dir }} -DCMAKE_PREFIX_PATH=${{ matrix.cmake_prefix_path }} -G Ninja ..
+          env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DQT_DIR=${{ matrix.qt_dir }} -DCMAKE_PREFIX_PATH=${{ matrix.cmake_prefix_path }} -G Ninja ..
           env PATH=/${{ matrix.mingw_arch }}/bin ninja
           mkdir bin
           cp src/ainesmile/ainesmile.exe ./bin/
