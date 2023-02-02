@@ -87,7 +87,7 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }}/boost -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
           ninja
           cd ..
           
