@@ -20,7 +20,7 @@ env:
       
       
 jobs:
-  win32-msvc:
+  win64-msvc:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -89,9 +89,18 @@ jobs:
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
           ninja
+          mkdir bin
+          copy src\ainesmile\ainesmile.exe bin\
+          windeployqt bin\ainesmile.exe
           cd ..
           
-  win32-clang-msvc:
+      - name: upload executable artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: build\bin
+          name: ainesmile-win64-msvc
+          
+  win64-clang-msvc:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -150,6 +159,12 @@ jobs:
           curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
           7z.exe x LLVM.exe
           cd ..
+      
+      - name: Install boost
+        run: |
+          curl -O -L ${{ env.BOOST_URL }}
+          tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
+
                 
       - name: build-msvc
         shell: cmd
@@ -163,11 +178,20 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl  -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
           ninja
+          mkdir bin
+          copy src\ainesmile\ainesmile.exe bin\
+          windeployqt bin\ainesmile.exe
           cd ..
           
-  win32-intel-msvc:
+      - name: upload executable artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: build\bin
+          name: ainesmile-win64-clang-msvc
+          
+  win64-intel-msvc:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -239,6 +263,12 @@ jobs:
           cd 3rdparty\lexilla
           git apply ..\lexilla.patch
           cd ..\..
+      
+      - name: Install boost
+        run: |
+          curl -O -L ${{ env.BOOST_URL }}
+          tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
+
                 
       - name: build-intel-msvc
         shell: cmd
@@ -254,11 +284,20 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx  -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
           ninja
+          mkdir bin
+          copy src\ainesmile\ainesmile.exe bin\
+          windeployqt bin\ainesmile.exe
           cd ..
           
-  win32-mingw:
+      - name: upload executable artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: build\bin
+          name: ainesmile-win64-intel-msvc
+          
+  win64-mingw:
     runs-on: windows-latest
     strategy:
       matrix:
