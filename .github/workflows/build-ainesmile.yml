@@ -64,8 +64,8 @@ jobs:
         shell: cmd
         run: |
           cd 3rdparty
-          copy cmakes\CMakeLists.txt.lexilla lexilla\
-          cp cmakes\CMakeLists.txt.scintilla scintilla\
+          copy cmakes\CMakeLists.txt.lexilla lexilla\CMakeLists.txt
+          copy cmakes\CMakeLists.txt.scintilla scintilla\CMakeLists.txt
 
       - name: patch
         shell: cmd
@@ -148,8 +148,8 @@ jobs:
         shell: cmd
         run: |
           cd 3rdparty
-          copy cmakes\CMakeLists.txt.lexilla lexilla\
-          cp cmakes\CMakeLists.txt.scintilla scintilla\
+          copy cmakes\CMakeLists.txt.lexilla lexilla\CMakeLists.txt
+          copy cmakes\CMakeLists.txt.scintilla scintilla\CMakeLists.txt
 
       - name: patch
         shell: cmd
@@ -264,8 +264,8 @@ jobs:
         shell: cmd
         run: |
           cd 3rdparty
-          copy cmakes\CMakeLists.txt.lexilla lexilla\
-          cp cmakes\CMakeLists.txt.scintilla scintilla\
+          copy cmakes\CMakeLists.txt.lexilla lexilla\CMakeLists.txt
+          copy cmakes\CMakeLists.txt.scintilla scintilla\CMakeLists.txt
 
       - name: patch
         shell: cmd
