@@ -88,6 +88,7 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
+          dir "${{ github.workspace }}\boost"
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ github.workspace }}\boost -G Ninja ..
           ninja
           cd ..
@@ -325,7 +326,7 @@ jobs:
             toolchains: gcc
             c: gcc
             cxx: g++
-            qt_build: qt6
+            qt_build: qt6-static
             qt_dir: /ucrt64/qt6-static/lib/cmake/Qt6
             cmake_prefix_path: /ucrt64/qt6-static
           - qt_arch: clang64_qt6-static-clang
@@ -334,7 +335,7 @@ jobs:
             toolchains: clang
             c: clang
             cxx: clang++
-            qt_build: qt6
+            qt_build: qt6-static
             qt_dir: /clang64/qt6-static/lib/cmake/Qt6
             cmake_prefix_path: /clang64/qt6-static
     env:
