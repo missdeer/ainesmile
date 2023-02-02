@@ -42,7 +42,11 @@ jobs:
           arch: ${{ matrix.qt_arch }}
           modules: "qt5compat qtimageformats"
           aqtversion: '==3.0.1'
-                    
+
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.1
+        id: install-boost      
+
       - uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -80,7 +84,7 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ github.workspace }} -G Ninja ..
           ninja
           cd ..
           
@@ -387,8 +391,16 @@ jobs:
           cd build
           env PATH=/${{ matrix.mingw_arch }}/bin:/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DQT_DIR=${{ matrix.qt_dir }} -DCMAKE_PREFIX_PATH=${{ matrix.cmake_prefix_path }} -G Ninja ..
           env PATH=/${{ matrix.mingw_arch }}/bin ninja
-          env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe src/ainesmile/ainesmile.exe
+          mkdir bin
+          cp src/ainesmile/ainesmile.exe ./bin/
+          env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe bin/ainesmile.exe
           
+      - name: upload executable artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: build\bin
+          name: ainesmile-${{ matrix.qt_arch }}
+
   macOS:
     runs-on: macos-latest
     strategy:
@@ -435,5 +447,5 @@ jobs:
           
       - name: package
         run: |
-          macdeployqt "build/desktop-qt/${targetName}.app" -qmldir=. -verbose=1 -dmg
+          macdeployqt "build/src/ainesmile/ainesmile.app" -qmldir=. -verbose=1 -dmg
         
