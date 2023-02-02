@@ -31,7 +31,7 @@ jobs:
             qt_arch_install: msvc2019_64
             mingw_arch: MINGW64 
     env:
-      targetName: CodeInspector
+      targetName: ainesmile
       
     steps:
       - name: Install Qt
@@ -48,6 +48,8 @@ jobs:
         id: install-boost      
         with:
           boost_version: 1.81.0
+          platform_version: 2022
+          toolset: msvc
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -86,7 +88,7 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ github.workspace }} -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ github.workspace }}\boost -G Ninja ..
           ninja
           cd ..
           
@@ -104,7 +106,7 @@ jobs:
             mingw_arch: MINGW64 
             clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.7/LLVM-15.0.7-win64.exe
     env:
-      targetName: CodeInspector
+      targetName: ainesmile
       
     steps:
       - name: Install Qt
@@ -179,7 +181,7 @@ jobs:
             qt_arch_install: msvc2019_64
             mingw_arch: MINGW64 
     env:
-      targetName: CodeInspector
+      targetName: ainesmile
       
     steps:
       - name: Install Qt
@@ -336,7 +338,7 @@ jobs:
             qt_dir: /clang64/qt6-static/lib/cmake/Qt6
             cmake_prefix_path: /clang64/qt6-static
     env:
-      targetName: CodeInspector
+      targetName: ainesmile
       
     steps:
       - uses: msys2/setup-msys2@v2
@@ -411,7 +413,7 @@ jobs:
         qt_ver: [6.4.2]
         qt_arch: [clang_64]
     env:
-      targetName: CodeInspector
+      targetName: ainesmile
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
