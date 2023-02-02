@@ -15,6 +15,8 @@ env:
   WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
   WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
   COMPILER_VERSION: 2023.0.0
+  BOOST_URL: https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.gz
+  BOOST_PKG: boost_1_81_0
       
       
 jobs:
@@ -43,14 +45,6 @@ jobs:
           modules: "qt5compat qtimageformats"
           aqtversion: '==3.0.1'
 
-      - name: Install boost
-        uses: MarkusJx/install-boost@v2.4.1
-        id: install-boost      
-        with:
-          boost_version: 1.81.0
-          platform_version: 2022
-          toolset: msvc
-
       - uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -76,11 +70,15 @@ jobs:
           git apply ..\lexilla.patch
           cd ..\..
       
+      - name: Install boost
+        run: |
+          curl -O -L ${{ env.BOOST_URL }}
+          tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
+
       - name: build-msvc
         shell: cmd
         env:
           vc_arch: ${{ matrix.msvc_arch }}
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=%PATH%;%CD%\jom
@@ -89,8 +87,7 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          dir "${{ env.BOOST_ROOT }}"
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{steps.install-boost.outputs.BOOST_ROOT}}/include -DBoost_LIBRARY_DIRS=${{steps.install-boost.outputs.BOOST_ROOT}}/lib -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }}/include -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
           ninja
           cd ..
           
