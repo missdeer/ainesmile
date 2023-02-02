@@ -80,6 +80,7 @@ jobs:
         shell: cmd
         env:
           vc_arch: ${{ matrix.msvc_arch }}
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
           set PATH=%PATH%;%CD%\jom
