@@ -88,8 +88,8 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          dir "${{ github.workspace }}\boost"
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ github.workspace }}\boost -G Ninja ..
+          dir "${{ env.BOOST_ROOT }}"
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_PREFIX_PATH=${{ env.BOOST_ROOT }} -G Ninja ..
           ninja
           cd ..
           
