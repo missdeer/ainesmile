@@ -55,23 +55,17 @@ jobs:
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
           aqtversion: '==3.0.1'
 
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          msystem: UCRT64
-          install: zip curl
-          
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
           submodules: true
       
       - name: copy CMakeLists.txt
-        shell: msys2 {0}
+        shell: cmd
         run: |
           cd 3rdparty
-          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
-          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+          copy cmakes\CMakeLists.txt.lexilla lexilla\
+          cp cmakes\CMakeLists.txt.scintilla scintilla\
 
       - name: patch
         shell: cmd
@@ -144,24 +138,18 @@ jobs:
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
           aqtversion: '==3.0.1'
-                    
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          msystem: ${{ matrix.mingw_arch }}
-          install: zip curl
-          
+                              
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
           submodules: true
       
       - name: copy CMakeLists.txt
-        shell: msys2 {0}
+        shell: cmd
         run: |
           cd 3rdparty
-          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
-          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+          copy cmakes\CMakeLists.txt.lexilla lexilla\
+          cp cmakes\CMakeLists.txt.scintilla scintilla\
 
       - name: patch
         shell: cmd
@@ -183,7 +171,6 @@ jobs:
         run: |
           curl -O -L ${{ env.BOOST_URL }}
           tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
-
                 
       - name: build-msvc
         shell: cmd
@@ -268,23 +255,17 @@ jobs:
           cd oneapi-ci
           scripts/restore_registry.bat ${{ env.COMPILER_VERSION }}
         
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          msystem: ${{ matrix.mingw_arch }}
-          install: zip curl
-          
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
           submodules: true
       
       - name: copy CMakeLists.txt
-        shell: msys2 {0}
+        shell: cmd
         run: |
           cd 3rdparty
-          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
-          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
+          copy cmakes\CMakeLists.txt.lexilla lexilla\
+          cp cmakes\CMakeLists.txt.scintilla scintilla\
 
       - name: patch
         shell: cmd
@@ -297,7 +278,6 @@ jobs:
         run: |
           curl -O -L ${{ env.BOOST_URL }}
           tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
-
                 
       - name: build-intel-msvc
         shell: cmd
