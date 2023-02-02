@@ -35,11 +35,6 @@ jobs:
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
-          - qt_arch: win32_msvc2019
-            qt_ver: 5.15.2
-            qt_modules: ""
-            msvc_arch: x86
-            output_dir: x86
     env:
       targetName: ainesmile
       
@@ -119,11 +114,6 @@ jobs:
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
-          - qt_arch: win32_msvc2019
-            qt_ver: 5.15.2
-            qt_modules: ""
-            msvc_arch: x86
-            output_dir: x86
     env:
       targetName: ainesmile
       
@@ -212,11 +202,6 @@ jobs:
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
-          - qt_arch: win32_msvc2019
-            qt_ver: 5.15.2
-            qt_modules: ""
-            msvc_arch: x86
-            output_dir: x86
     env:
       targetName: ainesmile
       
@@ -310,7 +295,6 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        qt_arch: [ucrt64_qt5-gcc, ucrt64_qt5-static-gcc, clang64_qt5-clang, clang64_qt5-static-clang, ucrt64_qt6-gcc, clang64_qt6-clang, ucrt64_qt6-static-gcc, clang64_qt6-static-clang]
         include:
           - qt_arch: ucrt64_qt5-gcc
             mingw_arch: UCRT64 
