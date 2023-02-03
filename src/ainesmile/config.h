@@ -11,6 +11,8 @@ private:
     static Config *instance_;
 
     boost::property_tree::ptree pt_;
+    bool                        ok_ {false};
+
     Config();
     bool matchPattern(const QString &filename, const QString &pattern);
     bool matchSuffix(const QString &filename, const QString &suffix);
@@ -18,7 +20,9 @@ private:
 public:
     static Config               *instance();
     boost::property_tree::ptree &pt();
-    void                         sync();
+    bool                         sync();
+    bool                         init();
+    [[nodiscard]] bool           isOk() const;
     QString                      getConfigDirPath();
     QString                      getConfigPath();
     QString                      getThemePath();

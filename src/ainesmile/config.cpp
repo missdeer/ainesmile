@@ -4,7 +4,7 @@
 
 #include "config.h"
 
-Config *Config::instance_ = NULL;
+Config *Config::instance_ = nullptr;
 
 boost::property_tree::ptree &Config::pt()
 {
@@ -13,12 +13,40 @@ boost::property_tree::ptree &Config::pt()
 
 Config::Config()
 {
-    boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
+    init();
 }
 
-void Config::sync()
+bool Config::sync()
 {
-    boost::property_tree::write_json(getConfigPath().toStdString(), pt_);
+    ok_ = true;
+    try
+    {
+        boost::property_tree::write_json(getConfigPath().toStdString(), pt_);
+    }
+    catch (boost::property_tree::ptree_error &)
+    {
+        ok_ = false;
+    }
+    return ok_;
+}
+
+bool Config::init()
+{
+    ok_ = true;
+    try
+    {
+        boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
+    }
+    catch (boost::property_tree::ptree_error &)
+    {
+        ok_ = false;
+    }
+    return ok_;
+}
+
+bool Config::isOk() const
+{
+    return ok_;
 }
 
 QString Config::getConfigDirPath()

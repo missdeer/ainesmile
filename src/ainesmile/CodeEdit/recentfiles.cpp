@@ -55,8 +55,14 @@ void RecentFiles::sync()
     filePath.append("/recent");
     boost::property_tree::ptree pt;
 
-    std::for_each(files_.begin(), files_.end(), [&](const QString &f) { pt.add("ainesmile.recentfiles.file", f.toStdString()); });
-    boost::property_tree::write_json(filePath.toStdString(), pt);
+    std::for_each(files_.begin(), files_.end(), [&pt](const QString &f) { pt.add("ainesmile.recentfiles.file", f.toStdString()); });
+    try
+    {
+        boost::property_tree::write_json(filePath.toStdString(), pt);
+    }
+    catch (boost::property_tree::ptree_error &)
+    {
+    }
 }
 
 bool RecentFiles::exists(const QStringList &container, const QString &file)
@@ -85,7 +91,7 @@ void RecentFiles::init()
                 }
             }
         }
-        catch (boost::property_tree::ptree_bad_path &)
+        catch (boost::property_tree::ptree_error &)
         {
         }
     }
