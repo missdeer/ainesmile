@@ -99,6 +99,16 @@ jobs:
           path: build\bin
           name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
           
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          asset_name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true 
+          
   win64-clang-msvc:
     runs-on: windows-latest
     strategy:
@@ -186,6 +196,16 @@ jobs:
         with:
           path: build\bin
           name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+          
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          asset_name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true 
           
   win64-intel-msvc:
     runs-on: windows-latest
@@ -291,6 +311,16 @@ jobs:
           path: build\bin
           name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
           
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          asset_name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true 
+
   win64-mingw:
     runs-on: windows-latest
     strategy:
@@ -435,6 +465,16 @@ jobs:
         with:
           path: build\bin
           name: ainesmile-${{ matrix.qt_arch }}
+
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-${{ matrix.qt_arch }}.zip
+          asset_name: ainesmile-${{ matrix.qt_arch }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true 
 
   macOS:
     runs-on: macos-latest
