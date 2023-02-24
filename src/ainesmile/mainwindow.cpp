@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include "mainwindow.h"
 #include "codeeditpage.h"
@@ -200,7 +200,7 @@ void MainWindow::onUpdateRecentFilesMenuItems()
     }
 }
 
-void MainWindow::updateUI(CodeEditPage *page)
+void MainWindow::updateUI(CodeEditor *page)
 {
     ui->actionSaveFile->setEnabled(page->isModified());
     ui->actionCut->setEnabled(page->canCut());
@@ -210,113 +210,113 @@ void MainWindow::updateUI(CodeEditPage *page)
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
-void MainWindow::connectSignals(CodeEditPage *page)
+void MainWindow::connectSignals(CodeEditor *page)
 {
     if (lastConnectedCodeEditPage_)
     {
-        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditPage::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
+        disconnect(lastConnectedCodeEditPage_, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
     }
-    connect(page, &CodeEditPage::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-    connect(page, &CodeEditPage::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
-    connect(page, &CodeEditPage::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
-    connect(page, &CodeEditPage::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
-    connect(page, &CodeEditPage::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+    connect(page, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
+    connect(page, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
+    connect(page, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
+    connect(page, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
+    connect(page, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
     disconnect(ui->actionCut, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionCut, &QAction::triggered, page, &CodeEditPage::cut);
+    connect(ui->actionCut, &QAction::triggered, page, &CodeEditor::cut);
     disconnect(ui->actionCopy, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionCopy, &QAction::triggered, page, &CodeEditPage::copy);
+    connect(ui->actionCopy, &QAction::triggered, page, &CodeEditor::copy);
     disconnect(ui->actionPaste, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPaste, &QAction::triggered, page, &CodeEditPage::paste);
+    connect(ui->actionPaste, &QAction::triggered, page, &CodeEditor::paste);
     disconnect(ui->actionUndo, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionUndo, &QAction::triggered, page, &CodeEditPage::undo);
+    connect(ui->actionUndo, &QAction::triggered, page, &CodeEditor::undo);
     disconnect(ui->actionRedo, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionRedo, &QAction::triggered, page, &CodeEditPage::redo);
+    connect(ui->actionRedo, &QAction::triggered, page, &CodeEditor::redo);
     disconnect(ui->actionPrint, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPrint, &QAction::triggered, page, &CodeEditPage::print);
+    connect(ui->actionPrint, &QAction::triggered, page, &CodeEditor::print);
     disconnect(ui->actionPrintNow, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPrintNow, &QAction::triggered, page, &CodeEditPage::printNow);
+    connect(ui->actionPrintNow, &QAction::triggered, page, &CodeEditor::printNow);
     disconnect(ui->actionDelete, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionDelete, &QAction::triggered, page, &CodeEditPage::deleteCurrent);
+    connect(ui->actionDelete, &QAction::triggered, page, &CodeEditor::deleteCurrent);
     disconnect(ui->actionSelectAll, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionSelectAll, &QAction::triggered, page, &CodeEditPage::selectAll);
+    connect(ui->actionSelectAll, &QAction::triggered, page, &CodeEditor::selectAll);
     disconnect(ui->actionSetReadOnly, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionSetReadOnly, &QAction::triggered, page, &CodeEditPage::setReadOnly);
+    connect(ui->actionSetReadOnly, &QAction::triggered, page, &CodeEditor::setReadOnly);
     disconnect(ui->actionClearReadOnlyFlag, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionClearReadOnlyFlag, &QAction::triggered, page, &CodeEditPage::clearReadOnlyFlag);
+    connect(ui->actionClearReadOnlyFlag, &QAction::triggered, page, &CodeEditor::clearReadOnlyFlag);
     disconnect(ui->actionWindowsFormat, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionWindowsFormat, &QAction::triggered, page, &CodeEditPage::eolWindowsFormat);
+    connect(ui->actionWindowsFormat, &QAction::triggered, page, &CodeEditor::eolWindowsFormat);
     disconnect(ui->actionUNIXFormat, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionUNIXFormat, &QAction::triggered, page, &CodeEditPage::eolUNIXFormat);
+    connect(ui->actionUNIXFormat, &QAction::triggered, page, &CodeEditor::eolUNIXFormat);
     disconnect(ui->actionMacFormat, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionMacFormat, &QAction::triggered, page, &CodeEditPage::eolMacFormat);
+    connect(ui->actionMacFormat, &QAction::triggered, page, &CodeEditor::eolMacFormat);
     disconnect(ui->actionGoTo, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionGoTo, &QAction::triggered, page, &CodeEditPage::gotoLine);
+    connect(ui->actionGoTo, &QAction::triggered, page, &CodeEditor::gotoLine);
     disconnect(ui->actionGoToMatchingBrace, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionGoToMatchingBrace, &QAction::triggered, page, &CodeEditPage::gotoMatchingBrace);
+    connect(ui->actionGoToMatchingBrace, &QAction::triggered, page, &CodeEditor::gotoMatchingBrace);
     disconnect(ui->actionToggleBookmark, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionToggleBookmark, &QAction::triggered, page, &CodeEditPage::toggleBookmark);
+    connect(ui->actionToggleBookmark, &QAction::triggered, page, &CodeEditor::toggleBookmark);
     disconnect(ui->actionNextBookmark, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionNextBookmark, &QAction::triggered, page, &CodeEditPage::nextBookmark);
+    connect(ui->actionNextBookmark, &QAction::triggered, page, &CodeEditor::nextBookmark);
     disconnect(ui->actionPreviousBookmark, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPreviousBookmark, &QAction::triggered, page, &CodeEditPage::previousBookmark);
+    connect(ui->actionPreviousBookmark, &QAction::triggered, page, &CodeEditor::previousBookmark);
     disconnect(ui->actionClearAllBookmarks, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionClearAllBookmarks, &QAction::triggered, page, &CodeEditPage::clearAllBookmarks);
+    connect(ui->actionClearAllBookmarks, &QAction::triggered, page, &CodeEditor::clearAllBookmarks);
     disconnect(ui->actionCutBookmarkedLines, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionCutBookmarkedLines, &QAction::triggered, page, &CodeEditPage::cutBookmarkLines);
+    connect(ui->actionCutBookmarkedLines, &QAction::triggered, page, &CodeEditor::cutBookmarkLines);
     disconnect(ui->actionCopyBookmarkedLines, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionCopyBookmarkedLines, &QAction::triggered, page, &CodeEditPage::copyBookmarkLines);
+    connect(ui->actionCopyBookmarkedLines, &QAction::triggered, page, &CodeEditor::copyBookmarkLines);
     disconnect(ui->actionPasteToReplaceBookmarkedLines, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPasteToReplaceBookmarkedLines, &QAction::triggered, page, &CodeEditPage::pasteToReplaceBookmarkedLines);
+    connect(ui->actionPasteToReplaceBookmarkedLines, &QAction::triggered, page, &CodeEditor::pasteToReplaceBookmarkedLines);
     disconnect(ui->actionRemoveBookmarkedLines, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionRemoveBookmarkedLines, &QAction::triggered, page, &CodeEditPage::removeBookmarkedLines);
+    connect(ui->actionRemoveBookmarkedLines, &QAction::triggered, page, &CodeEditor::removeBookmarkedLines);
     disconnect(ui->actionRemoveUnmarkedLines, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionRemoveUnmarkedLines, &QAction::triggered, page, &CodeEditPage::removeUnbookmarkedLines);
+    connect(ui->actionRemoveUnmarkedLines, &QAction::triggered, page, &CodeEditor::removeUnbookmarkedLines);
     disconnect(ui->actionInverseBookmark, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionInverseBookmark, &QAction::triggered, page, &CodeEditPage::inverseBookmark);
+    connect(ui->actionInverseBookmark, &QAction::triggered, page, &CodeEditor::inverseBookmark);
     disconnect(ui->actionWordWrap, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionWordWrap, &QAction::triggered, page, &CodeEditPage::wordWrap);
+    connect(ui->actionWordWrap, &QAction::triggered, page, &CodeEditor::wordWrap);
     disconnect(ui->actionEncodeInANSI, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInANSI, &QAction::triggered, page, &CodeEditPage::encodeInANSI);
+    connect(ui->actionEncodeInANSI, &QAction::triggered, page, &CodeEditor::encodeInANSI);
     disconnect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, page, &CodeEditPage::encodeInUTF8WithoutBOM);
+    connect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, page, &CodeEditor::encodeInUTF8WithoutBOM);
     disconnect(ui->actionEncodeInUTF8, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUTF8, &QAction::triggered, page, &CodeEditPage::encodeInUTF8);
+    connect(ui->actionEncodeInUTF8, &QAction::triggered, page, &CodeEditor::encodeInUTF8);
     disconnect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, page, &CodeEditPage::encodeInUCS2BigEndian);
+    connect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, page, &CodeEditor::encodeInUCS2BigEndian);
     disconnect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, page, &CodeEditPage::encodeInUCS2LittleEndian);
+    connect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, page, &CodeEditor::encodeInUCS2LittleEndian);
     disconnect(ui->actionConvertToANSI, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToANSI, &QAction::triggered, page, &CodeEditPage::convertToANSI);
+    connect(ui->actionConvertToANSI, &QAction::triggered, page, &CodeEditor::convertToANSI);
     disconnect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, page, &CodeEditPage::convertToUTF8WithoutBOM);
+    connect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, page, &CodeEditor::convertToUTF8WithoutBOM);
     disconnect(ui->actionConvertToUTF8, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUTF8, &QAction::triggered, page, &CodeEditPage::convertToUTF8);
+    connect(ui->actionConvertToUTF8, &QAction::triggered, page, &CodeEditor::convertToUTF8);
     disconnect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, page, &CodeEditPage::convertToUCS2BigEndian);
+    connect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, page, &CodeEditor::convertToUCS2BigEndian);
     disconnect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, page, &CodeEditPage::convertToUCS2LittleEndian);
+    connect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, page, &CodeEditor::convertToUCS2LittleEndian);
     disconnect(ui->actionZoomIn, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionZoomIn, &QAction::triggered, page, &CodeEditPage::zoomIn);
+    connect(ui->actionZoomIn, &QAction::triggered, page, &CodeEditor::zoomIn);
     disconnect(ui->actionZoomOut, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionZoomOut, &QAction::triggered, page, &CodeEditPage::zoomOut);
+    connect(ui->actionZoomOut, &QAction::triggered, page, &CodeEditor::zoomOut);
     disconnect(ui->actionRestoreDefaultZoom, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionRestoreDefaultZoom, &QAction::triggered, page, &CodeEditPage::restoreDefaultZoom);
+    connect(ui->actionRestoreDefaultZoom, &QAction::triggered, page, &CodeEditor::restoreDefaultZoom);
 
     lastConnectedCodeEditPage_ = page;
 }
 
-void MainWindow::onCodeEditPageCreated(CodeEditPage *page)
+void MainWindow::onCodeEditPageCreated(CodeEditor *page)
 {
-    connect(page, &CodeEditPage::focusIn, this, &MainWindow::onCodeEditPageFocusIn);
+    connect(page, &CodeEditor::focusIn, this, &MainWindow::onCodeEditPageFocusIn);
 }
 
 void MainWindow::onCodeEditPageFocusIn()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     connectSignals(page);
     updateUI(page);
@@ -344,7 +344,7 @@ void MainWindow::onExchangeTab()
     targetTabWidget->setTabToolTip(targetIndex, currentTabTooltip);
     targetTabWidget->setCurrentIndex(targetIndex);
     targetTabWidget->setFocus();
-    auto *codeeditpage = qobject_cast<CodeEditPage *>(currentWidget);
+    auto *codeeditpage = qobject_cast<CodeEditor *>(currentWidget);
     codeeditpage->setFocus();
     codeeditpage->grabFocus();
 
@@ -393,7 +393,7 @@ void MainWindow::onCurrentPageChanged(int index)
     {
         // update action UI
         auto *tabWidget = qobject_cast<TabWidget *>(sender());
-        auto *page      = qobject_cast<CodeEditPage *>(tabWidget->widget(index));
+        auto *page      = qobject_cast<CodeEditor *>(tabWidget->widget(index));
         Q_ASSERT(page);
         updateUI(page);
         connectSignals(page);
@@ -408,7 +408,7 @@ void MainWindow::onCloseRequested(int index)
 
 void MainWindow::onCurrentDocumentChanged()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     Q_UNUSED(page);
     ui->actionSaveFile->setEnabled(page->isModified());
@@ -441,7 +441,7 @@ void MainWindow::onCurrentDocumentChanged()
 
 void MainWindow::onCopyAvailableChanged()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     ui->actionCopy->setEnabled(page->canCopy());
     ui->actionCut->setEnabled(page->canCut());
@@ -449,21 +449,21 @@ void MainWindow::onCopyAvailableChanged()
 
 void MainWindow::onPasteAvailableChanged()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     ui->actionPaste->setEnabled(page->canPaste());
 }
 
 void MainWindow::onUndoAvailableChanged()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     ui->actionUndo->setEnabled(page->canUndo());
 }
 
 void MainWindow::onRedoAvailableChanged()
 {
-    auto *page = qobject_cast<CodeEditPage *>(sender());
+    auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     ui->actionRedo->setEnabled(page->canRedo());
 }

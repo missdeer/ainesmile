@@ -1,4 +1,4 @@
-#ifndef CODEEDITPAGE_H
+﻿#ifndef CODEEDITPAGE_H
 #define CODEEDITPAGE_H
 
 #include <QFocusEvent>
@@ -8,7 +8,7 @@
 #include "ScintillaEdit.h"
 #include "scintillaconfig.h"
 
-class CodeEditPage : public QWidget
+class CodeEditor : public QWidget
 {
     Q_OBJECT
 private:
@@ -16,7 +16,7 @@ private:
     bool            m_lastPasteAvailable;
     bool            m_lastRedoAvailable;
     bool            m_lastUndoAvailable;
-    bool            focusIn_;
+    bool            m_isFocusIn;
     QWidget        *m_editorPane;
     QWidget        *m_webView;
     QSplitter      *m_verticalEditorSplitter;
@@ -29,7 +29,7 @@ private:
     void init();
 
 public:
-    explicit CodeEditPage(QWidget *parent = nullptr);
+    explicit CodeEditor(QWidget *parent = nullptr);
 
     ScintillaEdit               *getFocusView();
     void                         openFile(const QString &filePath);

@@ -1,4 +1,4 @@
-#ifndef TABWIDGET_H
+﻿#ifndef TABWIDGET_H
 #define TABWIDGET_H
 
 #include <QTabWidget>
@@ -47,7 +47,7 @@ protected:
 signals:
     void exchangeTab();
     void updateRecentFiles();
-    void codeEditPageCreated(CodeEditPage* page);
+    void codeEditPageCreated(CodeEditor* page);
 public slots:
     
 private:

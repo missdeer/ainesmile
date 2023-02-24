@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QList>
@@ -13,7 +13,7 @@ namespace Ui
     class MainWindow;
 }
 
-class CodeEditPage;
+class CodeEditor;
 
 class MainWindow : public QMainWindow
 {
@@ -37,11 +37,11 @@ private:
     void                     setActionShortcuts();
     void                     setRecentFiles();
     void                     setMenuItemChecked();
-    void                     updateUI(CodeEditPage *page);
-    void                     connectSignals(CodeEditPage *page);
+    void                     updateUI(CodeEditor *page);
+    void                     connectSignals(CodeEditor *page);
 
 private slots:
-    void onCodeEditPageCreated(CodeEditPage *page);
+    void onCodeEditPageCreated(CodeEditor *page);
     void onUpdateRecentFilesMenuItems();
     void onCodeEditPageFocusIn();
     void onExchangeTab();
@@ -124,7 +124,7 @@ private slots:
 
 private:
     Ui::MainWindow  *ui;
-    CodeEditPage    *lastConnectedCodeEditPage_ {nullptr};
+    CodeEditor    *lastConnectedCodeEditPage_ {nullptr};
     QDockWidget     *dockFindReplace_;
     QDockWidget     *dockFindResult_;
     QSignalMapper   *recentFileSignalMapper_;
