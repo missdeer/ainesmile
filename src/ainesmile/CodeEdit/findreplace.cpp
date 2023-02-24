@@ -1,4 +1,4 @@
-/**************************************************************************
+﻿/**************************************************************************
 **   Author: Fan Yang
 **   Email: missdeer@gmail.com
 **   License: see the license.txt file
@@ -31,23 +31,30 @@ namespace FindReplace
         sptr_t end   = sci->textLength();
         if (fro.searchUp)
         {
-            std::swap(start, end);
+            end = 0;
         }
-        QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
-        if (p.first >= 0)
+        QPair<int, int> findResult = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+        if (findResult.first >= 0)
         {
             sci->grabFocus();
-            sci->gotoPos(p.second);
-            sci->setCurrentPos(p.second);
-            sci->setSel(p.first, p.second);
+            sci->gotoPos(findResult.second);
+            sci->setCurrentPos(findResult.second);
+            if (fro.searchUp)
+            {
+                sci->setSel(findResult.second, findResult.first);
+            }
+            else
+            {
+                sci->setSel(findResult.first, findResult.second);
+            }
 
             sptr_t endStyled = sci->endStyled();
-            if (endStyled < p.second)
+            if (endStyled < findResult.second)
             {
-                sci->colourise(endStyled, p.second);
+                sci->colourise(endStyled, findResult.second);
             }
-            sptr_t lineStart = sci->lineFromPosition(p.first);
-            sptr_t lineEnd   = sci->lineFromPosition(p.second);
+            sptr_t lineStart = sci->lineFromPosition(findResult.first);
+            sptr_t lineEnd   = sci->lineFromPosition(findResult.second);
             for (sptr_t line = lineStart; line <= lineEnd; line++)
             {
                 sci->ensureVisibleEnforcePolicy(line);
@@ -79,18 +86,18 @@ namespace FindReplace
             sptr_t end   = sci->textLength();
             if (fro.searchUp)
             {
-                std::swap(start, end);
+                end = 0;
             }
-            QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
-            while (p.first >= 0)
+            QPair<int, int> findResult = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+            while (findResult.first >= 0)
             {
-                sptr_t lineStart = sci->lineFromPosition(p.first);
-                sptr_t lineEnd   = sci->lineFromPosition(p.second);
+                sptr_t lineStart = sci->lineFromPosition(findResult.first);
+                sptr_t lineEnd   = sci->lineFromPosition(findResult.second);
 
-                sci->setCurrentPos(p.second);
-                sptr_t start = p.second;
+                sci->setCurrentPos(findResult.second);
+                sptr_t start = findResult.second;
                 sptr_t end   = sci->textLength();
-                p            = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+                findResult   = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
             }
         }
         return true;
@@ -102,10 +109,10 @@ namespace FindReplace
         dir.setFilter(QDir::Files | QDir::NoSymLinks);
         dir.setNameFilters(fro.filters.split(QChar(';')));
 
-        QFileInfoList &&files = dir.entryInfoList();
-        for (auto &fi : files)
+        QFileInfoList &&fileInfos = dir.entryInfoList();
+        for (auto &fileInfo : fileInfos)
         {
-            fi.absoluteFilePath();
+            fileInfo.absoluteFilePath();
         }
         return true;
     }
@@ -142,24 +149,22 @@ namespace FindReplace
         sptr_t end   = sci->textLength();
         if (fro.searchUp)
         {
-            std::swap(start, end);
+            end = 0;
         }
-        QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
-        if (p.first >= 0)
+        QPair<int, int> findResult = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+        if (findResult.first >= 0)
         {
             sci->grabFocus();
-            sci->setSel(p.first, p.second);
+            sci->setSel(findResult.first, findResult.second);
             sci->replaceSel(fro.strReplaceWith.toStdString().c_str());
-            sptr_t newEnd = p.first + fro.strReplaceWith.length();
-            sci->gotoPos(newEnd);
-            sci->setCurrentPos(newEnd);
+            sptr_t newEnd = findResult.first + fro.strReplaceWith.length();
 
             sptr_t endStyled = sci->endStyled();
             if (endStyled < newEnd)
             {
                 sci->colourise(endStyled, newEnd);
             }
-            sptr_t lineStart = sci->lineFromPosition(p.first);
+            sptr_t lineStart = sci->lineFromPosition(findResult.first);
             sptr_t lineEnd   = sci->lineFromPosition(newEnd);
             for (sptr_t line = lineStart; line <= lineEnd; line++)
             {
@@ -190,19 +195,18 @@ namespace FindReplace
         sptr_t end   = sci->textLength();
         if (fro.searchUp)
         {
-            std::swap(start, end);
+            end = 0;
         }
-        QPair<int, int> p = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
-        while (p.first >= 0)
+        QPair<int, int> findResult = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+        while (findResult.first >= 0)
         {
-            sci->setSel(p.first, p.second);
+            sci->setSel(findResult.first, findResult.second);
             sci->replaceSel(fro.strReplaceWith.toStdString().c_str());
-            sptr_t newEnd = p.first + fro.strReplaceWith.length();
-            sci->setCurrentPos(newEnd);
+            sptr_t newEnd = findResult.first + fro.strReplaceWith.length();
 
             sptr_t start = newEnd;
             sptr_t end   = sci->textLength();
-            p            = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
+            findResult   = sci->findText(flags, fro.strToFind.toStdString().c_str(), start, end);
         }
         return true;
     }
@@ -219,10 +223,10 @@ namespace FindReplace
         dir.setFilter(QDir::Files | QDir::NoSymLinks);
         dir.setNameFilters(fro.filters.split(QChar(';')));
 
-        QFileInfoList &&files = dir.entryInfoList();
-        for (auto &fi : files)
+        QFileInfoList &&fileInfos = dir.entryInfoList();
+        for (auto &fileInfo : fileInfos)
         {
-            fi.absoluteFilePath();
+            fileInfo.absoluteFilePath();
         }
         return true;
     }
