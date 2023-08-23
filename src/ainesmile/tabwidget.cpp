@@ -193,12 +193,14 @@ void TabWidget::openFiles(const QStringList &files)
     }
 
     if (!files.isEmpty())
+    {
         setCurrentIndex(index);
+    }
 }
 
 int TabWidget::newDocument(const QString &title)
 {
-    CodeEditor *codeeditpage = new CodeEditor(this);
+    auto *codeeditpage = new CodeEditor(this);
     connect(codeeditpage, &CodeEditor::openFilesRequest, this, &TabWidget::onOpenFilesRequest);
     int index = addTab(codeeditpage, QIcon(), title);
     setCurrentIndex(index);
@@ -207,13 +209,22 @@ int TabWidget::newDocument(const QString &title)
     codeeditpage->setFocus();
     codeeditpage->grabFocus();
     if (isHidden())
+    {
         setHidden(false);
+    }
     return index;
+}
+
+QString TabWidget::getCurrentFilePath()
+{
+    auto *page = qobject_cast<CodeEditor *>(currentWidget());
+    Q_ASSERT(page);
+    return page->getFilePath();
 }
 
 void TabWidget::saveCurrentFile()
 {
-    CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
+    auto *page = qobject_cast<CodeEditor *>(currentWidget());
     Q_ASSERT(page);
     QString filePath = page->getFilePath();
     if (filePath.isEmpty())
@@ -228,7 +239,7 @@ void TabWidget::saveCurrentFile()
 
 void TabWidget::saveAsCurrentFile()
 {
-    CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
+    auto *page = qobject_cast<CodeEditor *>(currentWidget());
     Q_ASSERT(page);
 
     QFileDialog::Options options;

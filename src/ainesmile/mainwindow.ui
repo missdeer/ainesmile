@@ -14,7 +14,7 @@
    <string>ainesmile</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ainesmile.qrc">
+   <iconset>
     <normaloff>:/rc/ainesmile.png</normaloff>:/rc/ainesmile.png</iconset>
   </property>
   <property name="dockOptions">
@@ -117,11 +117,19 @@
      <addaction name="actionOpenAllRecentFiles"/>
      <addaction name="actionEmptyRecentFilesList"/>
     </widget>
+    <widget class="QMenu" name="menuEncoding">
+     <property name="title">
+      <string>Encoding</string>
+     </property>
+     <addaction name="actionReopenAs"/>
+     <addaction name="actionSaveAsEncoding"/>
+    </widget>
     <addaction name="actionNewFile"/>
     <addaction name="actionOpenFile"/>
     <addaction name="actionSaveFile"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSaveAll"/>
+    <addaction name="menuEncoding"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="actionCloseAll"/>
@@ -237,22 +245,6 @@
     <addaction name="actionUnfoldAll"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuEncoding">
-    <property name="title">
-     <string>En&amp;coding</string>
-    </property>
-    <addaction name="actionEncodeInANSI"/>
-    <addaction name="actionEncodeInUTF8WithoutBOM"/>
-    <addaction name="actionEncodeInUTF8"/>
-    <addaction name="actionEncodeInUCS2BigEndian"/>
-    <addaction name="actionEncodeInUCS2LittleEndian"/>
-    <addaction name="separator"/>
-    <addaction name="actionConvertToANSI"/>
-    <addaction name="actionConvertToUTF8WithoutBOM"/>
-    <addaction name="actionConvertToUTF8"/>
-    <addaction name="actionConvertToUCS2BigEndian"/>
-    <addaction name="actionConvertToUCS2LittleEndian"/>
-   </widget>
    <widget class="QMenu" name="menuTool">
     <property name="title">
      <string>&amp;Tool</string>
@@ -271,7 +263,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuSearch"/>
    <addaction name="menuView"/>
-   <addaction name="menuEncoding"/>
    <addaction name="menuTool"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
@@ -308,8 +299,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1037</width>
-          <height>365</height>
+          <width>725</width>
+          <height>399</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -521,7 +512,7 @@
   </widget>
   <action name="actionOpenFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/fileopen.png</normaloff>:/rc/image/fileopen.png</iconset>
    </property>
    <property name="text">
@@ -533,7 +524,7 @@
   </action>
   <action name="actionSaveFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filesave.png</normaloff>:/rc/image/filesave.png</iconset>
    </property>
    <property name="text">
@@ -577,7 +568,7 @@
   </action>
   <action name="actionNewFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filenew.png</normaloff>:/rc/image/filenew.png</iconset>
    </property>
    <property name="text">
@@ -589,7 +580,7 @@
   </action>
   <action name="actionSaveAll">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filesaveall.png</normaloff>:/rc/image/filesaveall.png</iconset>
    </property>
    <property name="text">
@@ -616,7 +607,7 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/fileprint.png</normaloff>:/rc/image/fileprint.png</iconset>
    </property>
    <property name="text">
@@ -643,7 +634,7 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/undo.png</normaloff>:/rc/image/undo.png</iconset>
    </property>
    <property name="text">
@@ -655,7 +646,7 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/redo.png</normaloff>:/rc/image/redo.png</iconset>
    </property>
    <property name="text">
@@ -667,7 +658,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editcut.png</normaloff>:/rc/image/editcut.png</iconset>
    </property>
    <property name="text">
@@ -679,7 +670,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editcopy.png</normaloff>:/rc/image/editcopy.png</iconset>
    </property>
    <property name="text">
@@ -691,7 +682,7 @@
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editpaste.png</normaloff>:/rc/image/editpaste.png</iconset>
    </property>
    <property name="text">
@@ -753,7 +744,7 @@
   </action>
   <action name="actionFind">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
    </property>
    <property name="text">
@@ -1092,6 +1083,16 @@
     <string>Recent File10</string>
    </property>
   </action>
+  <action name="actionReopenAs">
+   <property name="text">
+    <string>Reopen As...</string>
+   </property>
+  </action>
+  <action name="actionSaveAsEncoding">
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1101,8 +1102,6 @@
    <header>tabwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="ainesmile.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

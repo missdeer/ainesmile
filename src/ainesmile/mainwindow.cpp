@@ -1,8 +1,11 @@
 ﻿#include "stdafx.h"
 
+#include <QTimer>
+
 #include "mainwindow.h"
 #include "codeeditpage.h"
 #include "config.h"
+#include "encodinglistdialog.h"
 #include "findreplace.h"
 #include "findreplaceresultmodel.h"
 #include "preferencedialog.h"
@@ -11,7 +14,8 @@
 
 using namespace FindReplace;
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_aboutToQuit(false), m_exchanging(false)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_idleTimer(new QTimer), m_aboutToQuit(false), m_exchanging(false)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
@@ -29,11 +33,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidgetSlave->setTheOtherSide(ui->tabWidget);
     ui->tabWidgetSlave->setRecentFiles(&m_recentFiles);
 
+    connect(ui->actionReopenAs, &QAction::triggered, this, &MainWindow::onReopenAsEncoding);
+    connect(ui->actionSaveAsEncoding, &QAction::triggered, this, &MainWindow::onSaveAsEncoding);
+
     setActionShortcuts();
     setRecentFiles();
     setMenuItemChecked();
     setAcceptDrops(true);
     hideFeatures();
+
+    m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
+    m_encodingLabel->setMaximumWidth(150);
+    ui->statusBar->addPermanentWidget(m_encodingLabel);
+    m_withBOMLabel = new QLabel(QStringLiteral("BOM"), this);
+    m_withBOMLabel->setEnabled(false);
+    ui->statusBar->addPermanentWidget(m_withBOMLabel);
 
     QList<int> sizes;
     sizes << ui->widget->width() / 2 << ui->widget->width() / 2;
@@ -62,12 +76,37 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         restoreDockWidget(ui->dockFindReplace);
         restoreDockWidget(ui->dockFindResult);
     }
+    Q_ASSERT(m_idleTimer);
+    connect(m_idleTimer, &QTimer::timeout, this, &MainWindow::onIdle);
+    m_idleTimer->start(0);
 }
 
 MainWindow::~MainWindow()
 {
     Config::instance()->sync();
     delete ui;
+}
+
+void MainWindow::onIdle()
+{
+    auto *page = getFocusCodeEditor();
+    if (page)
+    {
+        updateUI(page);
+        auto filePath = page->getFilePath();
+        if (QFile::exists(filePath))
+        {
+            ui->actionReopenAs->setEnabled(true);
+            ui->actionSaveAsEncoding->setEnabled(true);
+            m_encodingLabel->setText(page->encoding());
+            m_withBOMLabel->setEnabled(page->hasBOM());
+            return;
+        }
+    }
+    ui->actionReopenAs->setEnabled(false);
+    ui->actionSaveAsEncoding->setEnabled(false);
+    m_encodingLabel->setText("");
+    m_withBOMLabel->setEnabled(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -209,6 +248,32 @@ void MainWindow::updateUI(CodeEditor *page)
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
+void MainWindow::onReopenAsEncoding()
+{
+    EncodingListDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        auto *page = getFocusCodeEditor();
+        if (page)
+        {
+            page->ReopenAsEncoding(dlg.selectedCodec(), dlg.withBOM());
+        }
+    }
+}
+
+void MainWindow::onSaveAsEncoding()
+{
+    EncodingListDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        auto *page = getFocusCodeEditor();
+        if (page)
+        {
+            page->SaveAsEncoding(dlg.selectedCodec(), dlg.withBOM());
+        }
+    }
+}
+
 void MainWindow::connectSignals(CodeEditor *page)
 {
     if (m_lastConnectedCodeEditPage)
@@ -278,26 +343,6 @@ void MainWindow::connectSignals(CodeEditor *page)
     connect(ui->actionInverseBookmark, &QAction::triggered, page, &CodeEditor::inverseBookmark);
     disconnect(ui->actionWordWrap, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionWordWrap, &QAction::triggered, page, &CodeEditor::wordWrap);
-    disconnect(ui->actionEncodeInANSI, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInANSI, &QAction::triggered, page, &CodeEditor::encodeInANSI);
-    disconnect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUTF8WithoutBOM, &QAction::triggered, page, &CodeEditor::encodeInUTF8WithoutBOM);
-    disconnect(ui->actionEncodeInUTF8, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUTF8, &QAction::triggered, page, &CodeEditor::encodeInUTF8);
-    disconnect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUCS2BigEndian, &QAction::triggered, page, &CodeEditor::encodeInUCS2BigEndian);
-    disconnect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionEncodeInUCS2LittleEndian, &QAction::triggered, page, &CodeEditor::encodeInUCS2LittleEndian);
-    disconnect(ui->actionConvertToANSI, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToANSI, &QAction::triggered, page, &CodeEditor::convertToANSI);
-    disconnect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUTF8WithoutBOM, &QAction::triggered, page, &CodeEditor::convertToUTF8WithoutBOM);
-    disconnect(ui->actionConvertToUTF8, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUTF8, &QAction::triggered, page, &CodeEditor::convertToUTF8);
-    disconnect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUCS2BigEndian, &QAction::triggered, page, &CodeEditor::convertToUCS2BigEndian);
-    disconnect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionConvertToUCS2LittleEndian, &QAction::triggered, page, &CodeEditor::convertToUCS2LittleEndian);
     disconnect(ui->actionZoomIn, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionZoomIn, &QAction::triggered, page, &CodeEditor::zoomIn);
     disconnect(ui->actionZoomOut, &QAction::triggered, nullptr, nullptr);
@@ -318,7 +363,6 @@ void MainWindow::onCodeEditPageFocusIn()
     auto *page = qobject_cast<CodeEditor *>(sender());
     Q_ASSERT(page);
     connectSignals(page);
-    updateUI(page);
 }
 
 void MainWindow::onExchangeTab()
@@ -394,7 +438,6 @@ void MainWindow::onCurrentPageChanged(int index)
         auto *tabWidget = qobject_cast<TabWidget *>(sender());
         auto *page      = qobject_cast<CodeEditor *>(tabWidget->widget(index));
         Q_ASSERT(page);
-        updateUI(page);
         connectSignals(page);
     }
 }
@@ -981,4 +1024,19 @@ void MainWindow::on_btnReplaceInFiles_clicked()
         FindReplace::replaceAllInDirectories(fro);
         break;
     }
+}
+
+CodeEditor *MainWindow::getFocusCodeEditor()
+{
+    auto *tabWidget = getFocusTabWidget();
+    if (!tabWidget)
+    {
+        return nullptr;
+    }
+    auto *widget = tabWidget->currentWidget();
+    if (!widget)
+    {
+        return nullptr;
+    }
+    return qobject_cast<CodeEditor *>(widget);
 }

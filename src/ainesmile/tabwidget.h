@@ -14,7 +14,7 @@ class TabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    explicit TabWidget(QWidget *parent = 0);
+    explicit TabWidget(QWidget *parent = nullptr);
     void setTheOtherSide(TabWidget *tabWidget);
     void setRecentFiles(RecentFiles *recentFiles);
     void setAboutToQuit(bool aboutToQuit);
@@ -42,10 +42,11 @@ public:
     void replace(FindReplace::FindReplaceOption &fro);
     void replaceAll(FindReplace::FindReplaceOption &fro);
 
-    void getAllEditors(QList<ScintillaEdit *> &docs);
+    void    getAllEditors(QList<ScintillaEdit *> &docs);
+    QString getCurrentFilePath();
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
 signals:
     void exchangeTab();
     void updateRecentFiles();

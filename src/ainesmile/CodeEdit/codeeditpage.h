@@ -33,6 +33,8 @@ public:
     [[nodiscard]] ScintillaEdit *getFocusView();
     void                         openFile(const QString &filePath);
     void                         saveFile(const QString &filePath);
+    void                         ReopenAsEncoding(const QString &encoding, bool withBOM);
+    void                         SaveAsEncoding(const QString &encoding, bool withBOM);
     [[nodiscard]] const QString &getFilePath() const;
     [[nodiscard]] bool           canClose();
     [[nodiscard]] bool           canCut();
@@ -52,6 +54,8 @@ public:
     [[nodiscard]] bool           getShowEndOfLine();
     [[nodiscard]] bool           getShowIndentGuide();
     [[nodiscard]] bool           getShowWrapSymbol();
+    [[nodiscard]] QString        encoding() const;
+    [[nodiscard]] bool           hasBOM();
 
     bool initialDocument();
     //    void focusInEvent(QFocusEvent * event);
@@ -77,6 +81,7 @@ public slots:
                   Scintilla::FoldLevel         foldPrev);
     void updateUI(Scintilla::Update updated);
     void dwellEnd(int x, int y);
+    void uriDropped(const QString &uri);
 
     void undo();
     void redo();
@@ -122,23 +127,9 @@ public slots:
     void inverseBookmark();
     void wordWrap();
     void focusOnAnotherView();
-    void encodeInANSI();
-    void encodeInUTF8WithoutBOM();
-    void encodeInUTF8();
-    void encodeInUCS2BigEndian();
-    void encodeInUCS2LittleEndian();
-    void convertToANSI();
-    void convertToUTF8WithoutBOM();
-    void convertToUTF8();
-    void convertToUCS2BigEndian();
-    void convertToUCS2LittleEndian();
     void zoomIn();
     void zoomOut();
     void restoreDefaultZoom();
-
-protected:
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
 
 private:
     bool            m_lastCopyAvailable;
@@ -158,6 +149,7 @@ private:
     ScintillaConfig m_sc;
 
     void init();
+    void doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom);
 
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
     static QByteArray                   codecNameForBOM(BOM bom);

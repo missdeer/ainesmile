@@ -3,10 +3,12 @@
 
 #include <QList>
 #include <QMainWindow>
-#include <QSignalMapper>
 
 #include "recentfiles.h"
 #include "tabwidget.h"
+
+QT_FORWARD_DECLARE_CLASS(QTimer);
+QT_FORWARD_DECLARE_CLASS(QLabel);
 
 namespace Ui
 {
@@ -32,14 +34,15 @@ protected:
     void dropEvent(QDropEvent *event) override;
 
 private:
-    [[nodiscard]] TabWidget *getFocusTabWidget();
-    void                     hideFeatures();
-    void                     setActionShortcuts();
-    void                     setRecentFiles();
-    void                     setMenuItemChecked();
-    void                     updateUI(CodeEditor *page);
-    void                     connectSignals(CodeEditor *page);
-    void                     openFile(const QString &file);
+    [[nodiscard]] TabWidget  *getFocusTabWidget();
+    [[nodiscard]] CodeEditor *getFocusCodeEditor();
+    void                      hideFeatures();
+    void                      setActionShortcuts();
+    void                      setRecentFiles();
+    void                      setMenuItemChecked();
+    void                      updateUI(CodeEditor *page);
+    void                      connectSignals(CodeEditor *page);
+    void                      openFile(const QString &file);
 
 private slots:
     void onCodeEditPageCreated(CodeEditor *page);
@@ -58,6 +61,9 @@ private slots:
     void onActivateTabClicked(int index);
     void onCloseTabClicked(const QList<int> &fileList);
     void onSaveTabClicked(const QList<int> &fileList);
+    void onReopenAsEncoding();
+    void onSaveAsEncoding();
+    void onIdle();
 
     void on_actionNewFile_triggered();
 
@@ -128,6 +134,9 @@ private:
     CodeEditor      *m_lastConnectedCodeEditPage {nullptr};
     QDockWidget     *m_dockFindReplace;
     QDockWidget     *m_dockFindResult;
+    QTimer          *m_idleTimer;
+    QLabel          *m_encodingLabel;
+    QLabel          *m_withBOMLabel;
     QList<QAction *> m_recentFileActions;
     RecentFiles      m_recentFiles;
     bool             m_aboutToQuit;

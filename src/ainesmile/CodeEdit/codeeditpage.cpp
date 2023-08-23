@@ -28,7 +28,6 @@ CodeEditor::CodeEditor(QWidget *parent)
     setLayout(m_mainLayout);
 
     init();
-    setAcceptDrops(true);
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
     // m_webView->load(QUrl("qrc:/rc/index.html"));
@@ -52,11 +51,13 @@ void CodeEditor::init()
     connect(m_sciControlMaster, &ScintillaEdit::modified, this, &CodeEditor::modified);
     connect(m_sciControlMaster, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
     connect(m_sciControlMaster, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
+    connect(m_sciControlMaster, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
     connect(m_sciControlSlave, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
     connect(m_sciControlSlave, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
     connect(m_sciControlSlave, &ScintillaEdit::modified, this, &CodeEditor::modified);
     connect(m_sciControlSlave, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
     connect(m_sciControlSlave, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
+    connect(m_sciControlSlave, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
 }
 
 ScintillaEdit *CodeEditor::getFocusView()
@@ -145,6 +146,42 @@ void CodeEditor::openFile(const QString &filePath)
     m_sciControlSlave->colourise(0, -1);
 }
 
+void CodeEditor::doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom)
+{
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        sptr_t len = m_sciControlMaster->textLength();
+        //  check bom & encoding
+        auto bytes = generateBOM(bom);
+        if (!bytes.isEmpty())
+        {
+            file.write(bytes);
+        }
+        auto data = m_sciControlMaster->getText(len + 1);
+        if (encoding.toLower() != "utf-8")
+        {
+            QTextCodec *codec = QTextCodec::codecForName(encoding);
+            if (codec)
+            {
+                data = codec->fromUnicode(QString(data));
+                len  = data.length();
+            }
+        }
+        qint64 size = file.write(data);
+        file.close();
+
+        if (size == len)
+        {
+            m_sciControlMaster->setSavePoint();
+            m_sciControlSlave->setSavePoint();
+            emit modifiedNotification();
+            return;
+        }
+    }
+    QMessageBox::warning(this, tr("Saving file failed:"), tr("Not all data is saved to file."), QMessageBox::Ok);
+}
+
 void CodeEditor::saveFile(const QString &filePath)
 {
     QFileInfo saveFileInfo(filePath);
@@ -160,40 +197,7 @@ void CodeEditor::saveFile(const QString &filePath)
 
     if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
     {
-        QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly))
-        {
-            sptr_t len = m_sciControlMaster->textLength();
-            //  check bom & encoding
-            auto bom = generateBOM(m_bom);
-            if (!bom.isEmpty())
-            {
-                file.write(bom);
-            }
-            auto data = m_sciControlMaster->getText(len + 1);
-            if (m_encoding.toLower() != "utf-8")
-            {
-                QTextCodec *codec = QTextCodec::codecForName(m_encoding);
-                if (codec)
-                {
-                    data = codec->fromUnicode(QString(data));
-                    len  = data.length();
-                }
-            }
-            qint64 size = file.write(data);
-            file.close();
-
-            if (size != len)
-            {
-                QMessageBox::warning(this, tr("Saving file failed:"), tr("Not all data is saved to file."), QMessageBox::Ok);
-            }
-            else
-            {
-                m_sciControlMaster->setSavePoint();
-                m_sciControlSlave->setSavePoint();
-                emit modifiedNotification();
-            }
-        }
+        doSaveFile(filePath, m_encoding, m_bom);
     }
 }
 
@@ -331,6 +335,11 @@ void CodeEditor::updateUI(Scintilla::Update /*updated*/)
         m_lastUndoAvailable = !m_lastUndoAvailable;
         emit undoAvailableChanged();
     }
+}
+
+void CodeEditor::uriDropped(const QString &uri)
+{
+    emit openFilesRequest({QUrl::fromUserInput(uri).toLocalFile()});
 }
 
 void CodeEditor::modified(Scintilla::ModificationFlags /*type*/,
@@ -720,34 +729,6 @@ void CodeEditor::focusOnAnotherView()
     }
 }
 
-void CodeEditor::encodeInANSI() {}
-
-void CodeEditor::encodeInUTF8WithoutBOM()
-{
-    m_sciControlMaster->setCodePage(SC_CP_UTF8);
-    m_sciControlSlave->setCodePage(SC_CP_UTF8);
-}
-
-void CodeEditor::encodeInUTF8()
-{
-    m_sciControlMaster->setCodePage(SC_CP_UTF8);
-    m_sciControlSlave->setCodePage(SC_CP_UTF8);
-}
-
-void CodeEditor::encodeInUCS2BigEndian() {}
-
-void CodeEditor::encodeInUCS2LittleEndian() {}
-
-void CodeEditor::convertToANSI() {}
-
-void CodeEditor::convertToUTF8WithoutBOM() {}
-
-void CodeEditor::convertToUTF8() {}
-
-void CodeEditor::convertToUCS2BigEndian() {}
-
-void CodeEditor::convertToUCS2LittleEndian() {}
-
 void CodeEditor::zoomIn()
 {
     auto *sci = getFocusView();
@@ -859,25 +840,47 @@ QByteArray CodeEditor::generateBOM(BOM bom)
     return {};
 }
 
-void CodeEditor::dragEnterEvent(QDragEnterEvent *event)
+void CodeEditor::ReopenAsEncoding(const QString &encoding, bool withBOM)
 {
-    if (event && event->mimeData() && event->mimeData()->hasUrls())
+    m_encoding = encoding.toUtf8();
+    m_bom      = BOM::None;
+    if (withBOM)
     {
-        event->acceptProposedAction();
+        if (encoding.toLower() == "utf-8")
+        {
+            m_bom = BOM::UTF8;
+        }
+        if (encoding.toLower() == "gb18030")
+        {
+            m_bom = BOM::GB18030;
+        }
     }
 }
 
-void CodeEditor::dropEvent(QDropEvent *event)
+void CodeEditor::SaveAsEncoding(const QString &encoding, bool withBOM)
 {
-    const auto *mime = event->mimeData();
-    if (mime && mime->hasUrls())
+    m_encoding = encoding.toUtf8();
+    m_bom      = BOM::None;
+    if (withBOM)
     {
-        auto        urls = mime->urls();
-        QStringList files;
-        for (auto &url : urls)
+        if (encoding.toLower() == "utf-8")
         {
-            files.append(url.toLocalFile());
+            m_bom = BOM::UTF8;
         }
-        emit openFilesRequest(files);
+        if (encoding.toLower() == "gb18030")
+        {
+            m_bom = BOM::GB18030;
+        }
     }
+    doSaveFile(m_filePath, m_encoding, m_bom);
+}
+
+QString CodeEditor::encoding() const
+{
+    return m_encoding;
+}
+
+bool CodeEditor::hasBOM()
+{
+    return m_bom != BOM::None;
 }

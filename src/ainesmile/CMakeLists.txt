@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+﻿cmake_minimum_required(VERSION 3.21)
 project(ainesmile VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -37,27 +37,27 @@ ENDIF(APPLE)
 
 include_directories(${Qt${QT_VERSION_MAJOR}Gui_PRIVATE_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/CodeEdit
-        ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs
-        ${CMAKE_CURRENT_SOURCE_DIR}/uchardet
+        CodeEdit
+        Dialogs
+        uchardet
         )
 
 file(GLOB
         CodeEdit_headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/CodeEdit/*.h
+        CodeEdit/*.h
         )
 file(GLOB
         Dialogs_headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs/*.h
+        Dialogs/*.h
         )
 file(GLOB
         uchardet_headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/uchardet/*.h
+        uchardet/*.h
         )
 set(ainesmile_headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/stdafx.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/tabwidget.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/config.h
+        stdafx.h
+        tabwidget.h
+        config.h
 		${CodeEdit_headers}
 		${Dialogs_headers}
 		${uchardet_headers}
@@ -65,22 +65,22 @@ set(ainesmile_headers
 
 file(GLOB
         CodeEdit_src
-        ${CMAKE_CURRENT_SOURCE_DIR}/CodeEdit/*.cpp
+        CodeEdit/*.cpp
         )
 file(GLOB
         Dialogs_src
-        ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs/*.cpp
+        Dialogs/*.cpp
         )
 file(GLOB
         uchardet_src
-        ${CMAKE_CURRENT_SOURCE_DIR}/uchardet/*.cpp
+        uchardet/*.cpp
         )
 
 set(ainesmile_src
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/tabwidget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/config.cpp
+        main.cpp
+        mainwindow.cpp
+        tabwidget.cpp
+        config.cpp
 		${CodeEdit_src}
 		${Dialogs_src}
 		${uchardet_src}
@@ -88,28 +88,28 @@ set(ainesmile_src
 
 file(GLOB
         Dialogs_ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/Dialogs/*.ui
+        Dialogs/*.ui
         )
 set(ainesmile_ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.ui 
+        mainwindow.ui
 		${Dialogs_ui}
         )
 IF(WIN32)
     list(APPEND ainesmile_headers 
-        ${CMAKE_CURRENT_SOURCE_DIR}/ShellContextMenu.h
+        ShellContextMenu.h
         )
     list(APPEND ainesmile_src 
-        ${CMAKE_CURRENT_SOURCE_DIR}/ShellContextMenu.cpp
+        ShellContextMenu.cpp
         )
 ENDIF(WIN32)        
 IF(APPLE)
 ENDIF(APPLE)
 
-qt_add_resources(qrcs ${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.qrc)
+qt_add_resources(qrcs ainesmile.qrc)
 
 set(TS_FILES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/translations/ainesmile_zh_CN.ts
-        ${CMAKE_CURRENT_SOURCE_DIR}/translations/ainesmile_en_US.ts
+        translations/ainesmile_zh_CN.ts
+        translations/ainesmile_en_US.ts
         )
 
 IF(APPLE)
@@ -130,7 +130,7 @@ IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
                 ${ainesmile_ui}
                 ${qrcs}
                 ${QM_FILES}
-                ${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.rc
+                ainesmile.rc
                 )
 ELSE()
         # qt5_create_translation(QM_FILES
@@ -144,7 +144,7 @@ ELSE()
                 ${ainesmile_ui}
                 ${qrcs}
                 ${QM_FILES}
-                ${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.rc
+                ainesmile.rc
                 )
 ENDIF()
 
