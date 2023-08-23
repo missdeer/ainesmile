@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 
+#include <QTextCodec>
+
 #include "codeeditpage.h"
+#include "uchardet.h"
 
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
@@ -83,8 +86,24 @@ void CodeEditor::openFile(const QString &filePath)
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly))
     {
-        m_filePath = filePath;
-        m_sciControlMaster->setText(file.readAll().data());
+        m_filePath     = filePath;
+        auto  data     = file.readAll();
+        auto *uchardet = uchardet_new();
+        uchardet_handle_data(uchardet, data.data(), data.length());
+        uchardet_data_end(uchardet);
+        QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
+        uchardet_delete(uchardet);
+        if (charset.toLower() != "utf-8")
+        {
+            QMessageBox::information(this, tr("Charset"), charset);
+            auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
+            auto  utf8Str   = textCodec->toUnicode(data);
+            m_sciControlMaster->setText(utf8Str.toUtf8().data());
+        }
+        else
+        {
+            m_sciControlMaster->setText(data.data());
+        }
         m_sciControlMaster->emptyUndoBuffer();
         file.close();
         emit filePathChanged(m_filePath);
