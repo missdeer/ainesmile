@@ -39,6 +39,7 @@ private:
     void                     setMenuItemChecked();
     void                     updateUI(CodeEditor *page);
     void                     connectSignals(CodeEditor *page);
+    void                     openFile(const QString &file);
 
 private slots:
     void onCodeEditPageCreated(CodeEditor *page);
@@ -53,7 +54,7 @@ private slots:
     void onPasteAvailableChanged();
     void onUndoAvailableChanged();
     void onRedoAvailableChanged();
-    void onRecentFileTriggered(const QString &file);
+    void onRecentFileTriggered();
     void onActivateTabClicked(int index);
     void onCloseTabClicked(const QList<int> &fileList);
     void onSaveTabClicked(const QList<int> &fileList);
@@ -124,14 +125,13 @@ private slots:
 
 private:
     Ui::MainWindow  *ui;
-    CodeEditor    *lastConnectedCodeEditPage_ {nullptr};
-    QDockWidget     *dockFindReplace_;
-    QDockWidget     *dockFindResult_;
-    QSignalMapper   *recentFileSignalMapper_;
-    QList<QAction *> recentFileActions_;
-    RecentFiles      rf_;
-    bool             aboutToQuit_;
-    bool             exchanging_;
+    CodeEditor      *m_lastConnectedCodeEditPage {nullptr};
+    QDockWidget     *m_dockFindReplace;
+    QDockWidget     *m_dockFindResult;
+    QList<QAction *> m_recentFileActions;
+    RecentFiles      m_recentFiles;
+    bool             m_aboutToQuit;
+    bool             m_exchanging;
 };
 
 inline MainWindow *g_mainWindow = nullptr;

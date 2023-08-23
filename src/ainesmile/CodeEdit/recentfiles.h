@@ -1,4 +1,4 @@
-#ifndef RECENTFILES_H
+﻿#ifndef RECENTFILES_H
 #define RECENTFILES_H
 
 #include <boost/property_tree/ptree.hpp>
@@ -13,7 +13,7 @@ signals:
     void addRecentFile(const QString &file);
 
 private:
-    QStringList        files_;
+    QStringList        m_files;
     void               init();
     [[nodiscard]] bool exists(const QStringList &container, const QString &file);
 

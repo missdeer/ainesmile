@@ -11,8 +11,7 @@
 
 using namespace FindReplace;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), recentFileSignalMapper_(new QSignalMapper(this)), aboutToQuit_(false), exchanging_(false)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_aboutToQuit(false), m_exchanging(false)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
@@ -26,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tabWidgetSlave, &TabWidget::updateRecentFiles, this, &MainWindow::onUpdateRecentFilesMenuItems);
     connect(ui->tabWidgetSlave, &TabWidget::codeEditPageCreated, this, &MainWindow::onCodeEditPageCreated);
     ui->tabWidget->setTheOtherSide(ui->tabWidgetSlave);
-    ui->tabWidget->setRecentFiles(&rf_);
+    ui->tabWidget->setRecentFiles(&m_recentFiles);
     ui->tabWidgetSlave->setTheOtherSide(ui->tabWidget);
-    ui->tabWidgetSlave->setRecentFiles(&rf_);
+    ui->tabWidgetSlave->setRecentFiles(&m_recentFiles);
 
     setActionShortcuts();
     setRecentFiles();
@@ -73,9 +72,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    aboutToQuit_ = true;
-    ui->tabWidget->setAboutToQuit(aboutToQuit_);
-    ui->tabWidgetSlave->setAboutToQuit(aboutToQuit_);
+    m_aboutToQuit = true;
+    ui->tabWidget->setAboutToQuit(m_aboutToQuit);
+    ui->tabWidgetSlave->setAboutToQuit(m_aboutToQuit);
 
     ui->tabWidget->closeAll();
     ui->tabWidgetSlave->closeAll();
@@ -92,9 +91,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         settings.sync();
         event->accept();
     }
-    aboutToQuit_ = false;
-    ui->tabWidget->setAboutToQuit(aboutToQuit_);
-    ui->tabWidgetSlave->setAboutToQuit(aboutToQuit_);
+    m_aboutToQuit = false;
+    ui->tabWidget->setAboutToQuit(m_aboutToQuit);
+    ui->tabWidgetSlave->setAboutToQuit(m_aboutToQuit);
 
     QMainWindow::closeEvent(event);
 }
@@ -153,12 +152,12 @@ void MainWindow::setActionShortcuts()
 
 void MainWindow::setRecentFiles()
 {
-    recentFileActions_ << ui->actionRecentFile1 << ui->actionRecentFile2 << ui->actionRecentFile3 << ui->actionRecentFile4 << ui->actionRecentFile5
-                       << ui->actionRecentFile6 << ui->actionRecentFile7 << ui->actionRecentFile8 << ui->actionRecentFile9 << ui->actionRecentFile10;
+    m_recentFileActions << ui->actionRecentFile1 << ui->actionRecentFile2 << ui->actionRecentFile3 << ui->actionRecentFile4 << ui->actionRecentFile5
+                        << ui->actionRecentFile6 << ui->actionRecentFile7 << ui->actionRecentFile8 << ui->actionRecentFile9 << ui->actionRecentFile10;
 
-    for (QAction *action : recentFileActions_)
+    for (QAction *action : m_recentFileActions)
     {
-        connect(action, &QAction::triggered, [this]() { recentFileSignalMapper_->map(); });
+        connect(action, &QAction::triggered, this, &MainWindow::onRecentFileTriggered);
     }
 
     onUpdateRecentFilesMenuItems();
@@ -166,36 +165,31 @@ void MainWindow::setRecentFiles()
 
 void MainWindow::setMenuItemChecked()
 {
-    boost::property_tree::ptree &pt      = Config::instance()->pt();
-    bool                         enabled = pt.get<bool>("show.end_of_line", true);
+    boost::property_tree::ptree &ptree   = Config::instance()->pt();
+    bool                         enabled = ptree.get<bool>("show.end_of_line", true);
     ui->actionShowEndOfLine->setChecked(enabled);
-    enabled = pt.get<bool>("show.indent_guide", true);
+    enabled = ptree.get<bool>("show.indent_guide", true);
     ui->actionShowIndentGuide->setChecked(enabled);
-    enabled = pt.get<bool>("show.white_space_and_tab", true);
+    enabled = ptree.get<bool>("show.white_space_and_tab", true);
     ui->actionShowWhiteSpaceAndTAB->setChecked(enabled);
-    enabled = pt.get<bool>("show.wrap_symbol", true);
+    enabled = ptree.get<bool>("show.wrap_symbol", true);
     ui->actionShowWrapSymbol->setChecked(enabled);
 }
 
 void MainWindow::onUpdateRecentFilesMenuItems()
 {
-    Q_ASSERT(recentFileSignalMapper_);
-
-    QStringList recentFiles = rf_.recentFiles();
-    int         index       = 0;
-    for (QStringList::ConstIterator it = recentFiles.constBegin(); recentFiles.constEnd() != it && index < 10; ++it, ++index)
+    const int   maxRecentCount = 10;
+    QStringList recentFiles    = m_recentFiles.recentFiles();
+    for (int index = 0; index < recentFiles.length() && index < maxRecentCount; ++index)
     {
-        QAction *action = recentFileActions_.at(index);
-        QFile    file(*it);
-        action->setText(file.fileName());
+        const QString &filePath = recentFiles.at(index);
+        QAction       *action   = m_recentFileActions.at(index);
+        action->setText(filePath);
         action->setVisible(true);
-        recentFileSignalMapper_->removeMappings(action);
-        recentFileSignalMapper_->setMapping(action, file.fileName());
     }
-    connect(recentFileSignalMapper_, &QSignalMapper::mappedString, this, &MainWindow::onRecentFileTriggered);
-    for (int i = index; i < 10; i++)
+    for (int index = recentFiles.length(); index < maxRecentCount; index++)
     {
-        QAction *action = recentFileActions_.at(i);
+        QAction *action = m_recentFileActions.at(index);
         action->setVisible(false);
     }
 }
@@ -212,13 +206,13 @@ void MainWindow::updateUI(CodeEditor *page)
 
 void MainWindow::connectSignals(CodeEditor *page)
 {
-    if (lastConnectedCodeEditPage_)
+    if (m_lastConnectedCodeEditPage)
     {
-        disconnect(lastConnectedCodeEditPage_, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
-        disconnect(lastConnectedCodeEditPage_, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
+        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
+        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
+        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
+        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
     }
     connect(page, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
     connect(page, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
@@ -306,7 +300,7 @@ void MainWindow::connectSignals(CodeEditor *page)
     disconnect(ui->actionRestoreDefaultZoom, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionRestoreDefaultZoom, &QAction::triggered, page, &CodeEditor::restoreDefaultZoom);
 
-    lastConnectedCodeEditPage_ = page;
+    m_lastConnectedCodeEditPage = page;
 }
 
 void MainWindow::onCodeEditPageCreated(CodeEditor *page)
@@ -329,7 +323,7 @@ void MainWindow::onExchangeTab()
     int   currentIndex      = tabWidget->currentIndex();
     auto  currentText       = tabWidget->tabText(currentIndex);
     auto  currentTabTooltip = tabWidget->tabToolTip(currentIndex);
-    exchanging_             = true;
+    m_exchanging            = true;
     tabWidget->removeTab(currentIndex);
     TabWidget *targetTabWidget = ui->tabWidgetSlave;
     if (tabWidget == ui->tabWidgetSlave)
@@ -353,7 +347,7 @@ void MainWindow::onExchangeTab()
         tabWidget->hide();
     }
 
-    exchanging_ = false;
+    m_exchanging = false;
 }
 
 void MainWindow::onIPCMessageReceived(const QString &message, QObject *socket)
@@ -384,7 +378,7 @@ void MainWindow::onCurrentPageChanged(int index)
 {
     if (index == -1)
     {
-        if (!aboutToQuit_ && !exchanging_ && (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 0))
+        if (!m_aboutToQuit && !m_exchanging && (ui->tabWidget->count() + ui->tabWidgetSlave->count() == 0))
         {
             newDocument();
         }
@@ -468,13 +462,22 @@ void MainWindow::onRedoAvailableChanged()
     ui->actionRedo->setEnabled(page->canRedo());
 }
 
-void MainWindow::onRecentFileTriggered(const QString &file)
+void MainWindow::onRecentFileTriggered()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    Q_ASSERT(action);
+
+    QString file = action->text();
+    openFile(file);
+}
+
+void MainWindow::openFile(const QString &file)
 {
     // open the file
-    QFileInfo fileInfo(file);
-    if (QFile::exists(fileInfo.absoluteFilePath()))
+    if (QFile::exists(file))
     {
         // check if the file has been opened already
+        QFileInfo fileInfo(file);
         if (!ui->tabWidget->fileExists(fileInfo) && !ui->tabWidgetSlave->fileExists(fileInfo))
         {
             // create an edit page, open the file
@@ -599,7 +602,7 @@ void MainWindow::on_actionAboutApp_triggered()
 #if defined(Q_OS_MAC)
         date = QString::fromUtf8(d);
 #else
-        date     = QString::fromLocal8Bit(d);
+        date = QString::fromLocal8Bit(d);
 #endif
         date = date.replace("\n", " ");
         fileDate.close();
@@ -662,16 +665,16 @@ void MainWindow::on_actionCloseAllButActiveDocument_triggered()
 
 void MainWindow::on_actionOpenAllRecentFiles_triggered()
 {
-    QStringList &files = rf_.recentFiles();
+    QStringList &files = m_recentFiles.recentFiles();
 
-    std::for_each(files.begin(), files.end(), [this](auto &&PH1) { onRecentFileTriggered(std::forward<decltype(PH1)>(PH1)); });
+    std::for_each(files.begin(), files.end(), [this](auto &&PH1) { openFile(std::forward<decltype(PH1)>(PH1)); });
 }
 
 void MainWindow::on_actionEmptyRecentFilesList_triggered()
 {
-    rf_.clearFiles();
+    m_recentFiles.clearFiles();
 
-    std::for_each(recentFileActions_.begin(), recentFileActions_.end(), [](auto &&PH1) { PH1->setVisible(false); });
+    std::for_each(m_recentFileActions.begin(), m_recentFileActions.end(), [](auto &&PH1) { PH1->setVisible(false); });
 }
 
 void MainWindow::on_actionAlwaysOnTop_triggered()
