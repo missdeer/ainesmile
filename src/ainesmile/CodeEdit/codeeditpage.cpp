@@ -28,6 +28,7 @@ CodeEditor::CodeEditor(QWidget *parent)
     setLayout(m_mainLayout);
 
     init();
+    setAcceptDrops(true);
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
     // m_webView->load(QUrl("qrc:/rc/index.html"));
@@ -856,4 +857,27 @@ QByteArray CodeEditor::generateBOM(BOM bom)
         return iter->second;
     }
     return {};
+}
+
+void CodeEditor::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event && event->mimeData() && event->mimeData()->hasUrls())
+    {
+        event->acceptProposedAction();
+    }
+}
+
+void CodeEditor::dropEvent(QDropEvent *event)
+{
+    const auto *mime = event->mimeData();
+    if (mime && mime->hasUrls())
+    {
+        auto        urls = mime->urls();
+        QStringList files;
+        for (auto &url : urls)
+        {
+            files.append(url.toLocalFile());
+        }
+        emit openFilesRequest(files);
+    }
 }

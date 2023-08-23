@@ -100,7 +100,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasFormat("text/plain"))
+    if (event && event->mimeData() && event->mimeData()->hasUrls())
     {
         event->acceptProposedAction();
     }
@@ -108,10 +108,15 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
-    event->mimeData()->formats();
-    event->mimeData()->text();
-
-    event->acceptProposedAction();
+    const auto *mime = event->mimeData();
+    if (mime && mime->hasUrls())
+    {
+        auto urls = mime->urls();
+        for (auto &url : urls)
+        {
+            openFile(url.toLocalFile());
+        }
+    }
 }
 
 TabWidget *MainWindow::getFocusTabWidget()

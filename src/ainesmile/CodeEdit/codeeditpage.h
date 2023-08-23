@@ -63,6 +63,7 @@ signals:
     void undoAvailableChanged();
     void modifiedNotification();
     void filePathChanged(const QString &filePath);
+    void openFilesRequest(const QStringList &filePath);
 public slots:
     void linesAdded(Scintilla::Position linesAdded);
     void marginClicked(Scintilla::Position position, Scintilla::KeyMod modifiers, int margin);
@@ -134,6 +135,10 @@ public slots:
     void zoomIn();
     void zoomOut();
     void restoreDefaultZoom();
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     bool            m_lastCopyAvailable;

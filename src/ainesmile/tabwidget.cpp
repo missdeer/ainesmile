@@ -1,13 +1,10 @@
 ﻿#include "stdafx.h"
 #if defined(Q_OS_WIN)
-#include "ShellContextMenu.h"
+#    include "ShellContextMenu.h"
 #endif
 #include "tabwidget.h"
 
-TabWidget::TabWidget(QWidget *parent) :
-    QTabWidget(parent),
-    theOtherSide_(NULL),
-    aboutToQuit_(false)
+TabWidget::TabWidget(QWidget *parent) : QTabWidget(parent), theOtherSide_(NULL), aboutToQuit_(false)
 {
     tabBar()->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
 }
@@ -37,23 +34,20 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
         {
             setCurrentIndex(index);
 
-            QMenu* contentMenu_ = new QMenu(this);
-            QAction* action = new QAction(tr("Move to the other side"), this);
-            connect(action, SIGNAL(triggered()), this, SIGNAL(exchangeTab()));
+            QMenu   *contentMenu_ = new QMenu(this);
+            QAction *action       = new QAction(tr("Move to the other side"), this);
+            connect(action, &QAction::triggered, this, &TabWidget::exchangeTab);
             contentMenu_->addAction(action);
 
 #if defined(Q_OS_WIN)
-            CodeEditor* page = qobject_cast<CodeEditor*>(currentWidget());
+            CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
             Q_ASSERT(page);
             QString filePath = page->getFilePath();
             if (!filePath.isEmpty())
             {
                 CShellContextMenu scm;
-                auto pos = mapToGlobal(event->pos());
-                scm.ShowContextMenu(contentMenu_,
-                                    this,
-                                    pos,
-                                    filePath.replace(QChar('/'), QChar('\\')));
+                auto              pos = mapToGlobal(event->pos());
+                scm.ShowContextMenu(contentMenu_, this, pos, filePath.replace(QChar('/'), QChar('\\')));
                 return;
             }
 #endif
@@ -70,7 +64,7 @@ bool TabWidget::focus()
 {
     for (int i = 0; i < count(); i++)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(currentWidget());
+        CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
         Q_ASSERT(page);
         if (page->focus())
             return true;
@@ -80,26 +74,21 @@ bool TabWidget::focus()
 
 void TabWidget::doCloseRequested(int index)
 {
-    CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+    CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
     Q_ASSERT(page);
     if (!page->canClose())
     {
-        if (QMessageBox::question(this, tr("Confirm"),
-                                  tr("This document is not saved, save it now?"),
-                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+        if (QMessageBox::question(this, tr("Confirm"), tr("This document is not saved, save it now?"), QMessageBox::Yes | QMessageBox::No) ==
+            QMessageBox::Yes)
         {
             // save to file
             QString filePath = page->getFilePath();
             if (!QFile::exists(filePath))
             {
                 QFileDialog::Options options;
-                QString selectedFilter;
-                filePath = QFileDialog::getSaveFileName(this,
-                                                        tr("ainesmile Save File To"),
-                                                        tabText(index),
-                                                        tr("All Files (*);;Text Files (*.txt)"),
-                                                        &selectedFilter,
-                                                        options);
+                QString              selectedFilter;
+                filePath = QFileDialog::getSaveFileName(
+                    this, tr("ainesmile Save File To"), tabText(index), tr("All Files (*);;Text Files (*.txt)"), &selectedFilter, options);
             }
 
             if (filePath.isEmpty())
@@ -112,10 +101,7 @@ void TabWidget::doCloseRequested(int index)
     }
     else
     {
-        if (count() + theOtherSide_->count() == 1
-                && !page->isModified()
-                && !aboutToQuit_
-                && page->getFilePath().isEmpty())
+        if (count() + theOtherSide_->count() == 1 && !page->isModified() && !aboutToQuit_ && page->getFilePath().isEmpty())
         {
             // the only unmodified page, just skip this action
             return;
@@ -137,11 +123,11 @@ bool TabWidget::fileExists(const QString &filePath)
 
 bool TabWidget::fileExists(const QFileInfo &fileInfo)
 {
-    for (int i = 0; i< count(); i++)
+    for (int i = 0; i < count(); i++)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(i));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
-        const QString& pageFileName = page->getFilePath();
+        const QString &pageFileName = page->getFilePath();
         if (!pageFileName.isEmpty())
         {
             QFileInfo pageFileInfo(pageFileName);
@@ -154,10 +140,16 @@ bool TabWidget::fileExists(const QFileInfo &fileInfo)
     return false;
 }
 
+void TabWidget::onOpenFilesRequest(const QStringList &files)
+{
+    openFiles(files);
+}
+
 int TabWidget::openFile(const QString &filePath)
 {
-    CodeEditor* codeeditpage = new CodeEditor(this);
-    int index = addTab(codeeditpage, QIcon(), QFileInfo(filePath).fileName());
+    CodeEditor *codeeditpage = new CodeEditor(this);
+    connect(codeeditpage, &CodeEditor::openFilesRequest, this, &TabWidget::onOpenFilesRequest);
+    int  index = addTab(codeeditpage, QIcon(), QFileInfo(filePath).fileName());
     emit codeEditPageCreated(codeeditpage);
     codeeditpage->openFile(filePath);
     setTabToolTip(index, filePath);
@@ -172,8 +164,8 @@ int TabWidget::openFile(const QString &filePath)
 
     if (count() == 2)
     {
-        QWidget* w = widget(0);
-        CodeEditor * p = qobject_cast<CodeEditor*>(w);
+        QWidget    *w = widget(0);
+        CodeEditor *p = qobject_cast<CodeEditor *>(w);
         if (p->initialDocument())
         {
             doCloseRequested(0);
@@ -186,7 +178,7 @@ int TabWidget::openFile(const QString &filePath)
 void TabWidget::openFiles(const QStringList &files)
 {
     int index = 0;
-    foreach(const QString& file, files)
+    foreach (const QString &file, files)
     {
         QFileInfo fileInfo(file);
         if (QFile::exists(fileInfo.absoluteFilePath()))
@@ -204,9 +196,10 @@ void TabWidget::openFiles(const QStringList &files)
         setCurrentIndex(index);
 }
 
-int TabWidget::newDocument(const QString& title)
+int TabWidget::newDocument(const QString &title)
 {
-    CodeEditor* codeeditpage = new CodeEditor(this);
+    CodeEditor *codeeditpage = new CodeEditor(this);
+    connect(codeeditpage, &CodeEditor::openFilesRequest, this, &TabWidget::onOpenFilesRequest);
     int index = addTab(codeeditpage, QIcon(), title);
     setCurrentIndex(index);
     emit codeEditPageCreated(codeeditpage);
@@ -220,7 +213,7 @@ int TabWidget::newDocument(const QString& title)
 
 void TabWidget::saveCurrentFile()
 {
-    CodeEditor* page = qobject_cast<CodeEditor*>(currentWidget());
+    CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
     Q_ASSERT(page);
     QString filePath = page->getFilePath();
     if (filePath.isEmpty())
@@ -235,17 +228,13 @@ void TabWidget::saveCurrentFile()
 
 void TabWidget::saveAsCurrentFile()
 {
-    CodeEditor* page = qobject_cast<CodeEditor*>(currentWidget());
+    CodeEditor *page = qobject_cast<CodeEditor *>(currentWidget());
     Q_ASSERT(page);
 
     QFileDialog::Options options;
-    QString selectedFilter;
-    QString filePath = QFileDialog::getSaveFileName(this,
-                                            tr("ainesmile Save File To"),
-                                            tabText(currentIndex()),
-                                            tr("All Files (*);;Text Files (*.txt)"),
-                                            &selectedFilter,
-                                            options);
+    QString              selectedFilter;
+    QString              filePath = QFileDialog::getSaveFileName(
+        this, tr("ainesmile Save File To"), tabText(currentIndex()), tr("All Files (*);;Text Files (*.txt)"), &selectedFilter, options);
     if (!filePath.isEmpty())
     {
         QString originalFilePath = page->getFilePath();
@@ -262,22 +251,18 @@ void TabWidget::saveAsCurrentFile()
 
 void TabWidget::saveAll()
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
         Q_ASSERT(page);
-        QString filePath = page->getFilePath();
-        bool resetTabText = false;
+        QString filePath     = page->getFilePath();
+        bool    resetTabText = false;
         if (!QFile::exists(filePath))
         {
             QFileDialog::Options options;
-            QString selectedFilter;
-            filePath = QFileDialog::getSaveFileName(this,
-                                         tr("ainesmile Save File To"),
-                                         tabText(index),
-                                         tr("All Files (*);;Text Files (*.txt)"),
-                                         &selectedFilter,
-                                         options);
+            QString              selectedFilter;
+            filePath = QFileDialog::getSaveFileName(
+                this, tr("ainesmile Save File To"), tabText(index), tr("All Files (*);;Text Files (*.txt)"), &selectedFilter, options);
             if (!filePath.isEmpty())
                 resetTabText = true;
         }
@@ -296,7 +281,7 @@ void TabWidget::saveAll()
 
 void TabWidget::closeAll()
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
         doCloseRequested(index);
     }
@@ -304,7 +289,7 @@ void TabWidget::closeAll()
 
 void TabWidget::closeAllButActive()
 {
-    for (int index = count() -1; index > currentIndex(); index--)
+    for (int index = count() - 1; index > currentIndex(); index--)
     {
         doCloseRequested(index);
     }
@@ -316,9 +301,9 @@ void TabWidget::closeAllButActive()
 
 void TabWidget::setShowWhiteSpaceAndTAB(bool enabled)
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
         Q_ASSERT(page);
 
         page->setShowWhiteSpaceAndTAB(enabled);
@@ -327,9 +312,9 @@ void TabWidget::setShowWhiteSpaceAndTAB(bool enabled)
 
 void TabWidget::setShowEndOfLine(bool enabled)
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
         Q_ASSERT(page);
 
         page->setShowEndOfLine(enabled);
@@ -338,9 +323,9 @@ void TabWidget::setShowEndOfLine(bool enabled)
 
 void TabWidget::setShowIndentGuide(bool enabled)
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
         Q_ASSERT(page);
 
         page->setShowIndentGuide(enabled);
@@ -349,9 +334,9 @@ void TabWidget::setShowIndentGuide(bool enabled)
 
 void TabWidget::setShowWrapSymbol(bool enabled)
 {
-    for (int index = count() -1; index >=0; index--)
+    for (int index = count() - 1; index >= 0; index--)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(index));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(index));
         Q_ASSERT(page);
 
         page->setShowWrapSymbol(enabled);
@@ -362,7 +347,7 @@ void TabWidget::getFileList(QStringList &fileList)
 {
     for (int i = 0; i < count(); i++)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(i));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
         if (!page->getFilePath().isEmpty())
             fileList << page->getFilePath();
@@ -375,7 +360,7 @@ int TabWidget::findTabIndex(QWidget *w)
 {
     for (int i = 0; i < count(); i++)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(i));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
         if (page == w)
             return i;
@@ -385,33 +370,33 @@ int TabWidget::findTabIndex(QWidget *w)
 
 void TabWidget::find(FindReplace::FindReplaceOption &fro)
 {
-    QWidget* w = currentWidget();
+    QWidget *w = currentWidget();
     if (w)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(w);
-        ScintillaEdit* sci = page->getFocusView();
+        CodeEditor    *page = qobject_cast<CodeEditor *>(w);
+        ScintillaEdit *sci  = page->getFocusView();
         FindReplace::findInDocument(sci, fro);
     }
 }
 
 void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 {
-    QWidget* w = currentWidget();
+    QWidget *w = currentWidget();
     if (w)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(w);
-        ScintillaEdit* sci = page->getFocusView();
+        CodeEditor    *page = qobject_cast<CodeEditor *>(w);
+        ScintillaEdit *sci  = page->getFocusView();
         FindReplace::replaceInDocument(sci, fro);
     }
 }
 
 void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
 {
-    QWidget* w = currentWidget();
+    QWidget *w = currentWidget();
     if (w)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(w);
-        ScintillaEdit* sci = page->getFocusView();
+        CodeEditor    *page = qobject_cast<CodeEditor *>(w);
+        ScintillaEdit *sci  = page->getFocusView();
         FindReplace::replaceAllInDocument(sci, fro);
     }
 }
@@ -420,10 +405,9 @@ void TabWidget::getAllEditors(QList<ScintillaEdit *> &docs)
 {
     for (int i = 0; i < count(); i++)
     {
-        CodeEditor* page = qobject_cast<CodeEditor*>(widget(i));
+        CodeEditor *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
-        ScintillaEdit* sci = page->getFocusView();
+        ScintillaEdit *sci = page->getFocusView();
         docs.push_back(sci);
     }
-
 }
