@@ -84,34 +84,64 @@ bool CodeEditor::initialDocument()
 void CodeEditor::openFile(const QString &filePath)
 {
     QFile file(filePath);
-    if (file.open(QIODevice::ReadOnly))
+    if (!file.open(QIODevice::ReadOnly))
     {
-        m_filePath     = filePath;
-        auto  data     = file.readAll();
+        return;
+    }
+    m_filePath           = filePath;
+    auto data            = file.readAll();
+    bool charsetDetected = false;
+
+    auto [bom, length] = checkBOM(data);
+    if (bom != BOM::None)
+    {
+        m_bom           = bom;
+        auto  newData   = data.right(data.length() - length);
+        auto  codecName = codecNameForBOM(bom);
+        auto *textCodec = QTextCodec::codecForName(codecName);
+        if (textCodec)
+        {
+            auto utf8Str = textCodec->toUnicode(data);
+            m_sciControlMaster->setText(utf8Str.toUtf8().data());
+            m_encoding      = codecName;
+            charsetDetected = true;
+        }
+    }
+
+    if (!charsetDetected)
+    {
+        m_bom          = BOM::None;
         auto *uchardet = uchardet_new();
         uchardet_handle_data(uchardet, data.data(), data.length());
         uchardet_data_end(uchardet);
         QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
         uchardet_delete(uchardet);
-        if (charset.toLower() != "utf-8")
+        if (!charset.isEmpty() && charset.toLower() != "utf-8")
         {
-            QMessageBox::information(this, tr("Charset"), charset);
             auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
-            auto  utf8Str   = textCodec->toUnicode(data);
-            m_sciControlMaster->setText(utf8Str.toUtf8().data());
+            if (textCodec)
+            {
+                auto utf8Str = textCodec->toUnicode(data);
+                m_sciControlMaster->setText(utf8Str.toUtf8().data());
+                m_encoding      = charset.toUtf8();
+                charsetDetected = true;
+            }
         }
-        else
-        {
-            m_sciControlMaster->setText(data.data());
-        }
-        m_sciControlMaster->emptyUndoBuffer();
-        file.close();
-        emit filePathChanged(m_filePath);
-        m_sc.initEditorStyle(m_sciControlMaster, filePath);
-        m_sc.initEditorStyle(m_sciControlSlave, filePath);
-        m_sciControlMaster->colourise(0, -1);
-        m_sciControlSlave->colourise(0, -1);
     }
+    if (!charsetDetected)
+    {
+        m_bom = BOM::None;
+        m_sciControlMaster->setText(data.data());
+        m_encoding = QByteArrayLiteral("UTF-8");
+    }
+
+    m_sciControlMaster->emptyUndoBuffer();
+    file.close();
+    emit filePathChanged(m_filePath);
+    m_sc.initEditorStyle(m_sciControlMaster, filePath);
+    m_sc.initEditorStyle(m_sciControlSlave, filePath);
+    m_sciControlMaster->colourise(0, -1);
+    m_sciControlSlave->colourise(0, -1);
 }
 
 void CodeEditor::saveFile(const QString &filePath)
@@ -132,8 +162,24 @@ void CodeEditor::saveFile(const QString &filePath)
         QFile file(filePath);
         if (file.open(QIODevice::WriteOnly))
         {
-            sptr_t len  = m_sciControlMaster->textLength();
-            qint64 size = file.write(m_sciControlMaster->getText(len + 1));
+            sptr_t len = m_sciControlMaster->textLength();
+            //  check bom & encoding
+            auto bom = generateBOM(m_bom);
+            if (!bom.isEmpty())
+            {
+                file.write(bom);
+            }
+            auto data = m_sciControlMaster->getText(len + 1);
+            if (m_encoding.toLower() != "utf-8")
+            {
+                QTextCodec *codec = QTextCodec::codecForName(m_encoding);
+                if (codec)
+                {
+                    data = codec->fromUnicode(QString(data));
+                    len  = data.length();
+                }
+            }
+            qint64 size = file.write(data);
             file.close();
 
             if (size != len)
@@ -748,4 +794,66 @@ bool CodeEditor::getShowWrapSymbol()
     auto *sci = getFocusView();
     Q_ASSERT(sci);
     return sci->wrapVisualFlags() == SC_WRAPVISUALFLAG_END;
+}
+
+std::pair<BOM, std::uint8_t> CodeEditor::checkBOM(const QByteArray &data)
+{
+    static std::map<QByteArray, BOM> bomMap = {
+        {QByteArrayLiteral("\xEF\xBB\xBF"), BOM::UTF8},
+        {QByteArrayLiteral("\xFF\xFE"), BOM::UTF16LE},
+        {QByteArrayLiteral("\xFE\xFF"), BOM::UTF16BE},
+        {QByteArrayLiteral("\xFF\xFE\x00\x00"), BOM::UTF32LE},
+        {QByteArrayLiteral("\x00\x00\xFE\xFF"), BOM::UTF32BE},
+        {QByteArrayLiteral("\x2B\x2F\x76"), BOM::UTF7},
+        {QByteArrayLiteral("\xF7\x64\x4C"), BOM::UTF1},
+        {QByteArrayLiteral("\xDD\x73\x66\x73"), BOM::UTFEBCDIC},
+        {QByteArrayLiteral("\x0E\xFE\xFF"), BOM::SCSU},
+        {QByteArrayLiteral("\xFB\xEE\x28"), BOM::BOCU1},
+        {QByteArrayLiteral("\x84\x31\x95\x33"), BOM::GB18030},
+    };
+    for (auto &[bytes, bom] : bomMap)
+    {
+        if (data.length() >= bytes.length() && bytes == data.mid(0, bytes.length()))
+        {
+            return {bom, bytes.length()};
+        }
+    }
+    return {BOM::None, 0};
+}
+
+QByteArray CodeEditor::codecNameForBOM(BOM bom)
+{
+    static std::map<BOM, QByteArray> codecNameMap = {
+        {BOM::UTF8, QByteArrayLiteral("UTF-8")},
+        {BOM::UTF16LE, QByteArrayLiteral("UTF-16LE")},
+        {BOM::UTF16BE, QByteArrayLiteral("UTF-16BE")},
+        {BOM::UTF32LE, QByteArrayLiteral("UTF-32LE")},
+        {BOM::UTF32BE, QByteArrayLiteral("UTF-32BE")},
+        {BOM::GB18030, QByteArrayLiteral("GB18030")},
+    };
+    auto iter = codecNameMap.find(bom);
+    if (codecNameMap.end() != iter)
+    {
+        return iter->second;
+    }
+
+    return {};
+}
+
+QByteArray CodeEditor::generateBOM(BOM bom)
+{
+    static std::map<BOM, QByteArray> codecNameMap = {
+        {BOM::UTF8, QByteArrayLiteral("\xEF\xBB\xBF")},
+        {BOM::UTF16LE, QByteArrayLiteral("\xFF\xFE")},
+        {BOM::UTF16BE, QByteArrayLiteral("\xFE\xFF")},
+        {BOM::UTF32LE, QByteArrayLiteral("\xFF\xFE\x00\x00")},
+        {BOM::UTF32BE, QByteArrayLiteral("\x00\x00\xFE\xFF")},
+        {BOM::GB18030, QByteArrayLiteral("\x84\x31\x95\x33")},
+    };
+    auto iter = codecNameMap.find(bom);
+    if (codecNameMap.end() != iter)
+    {
+        return iter->second;
+    }
+    return {};
 }

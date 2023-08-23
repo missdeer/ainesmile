@@ -8,30 +8,29 @@
 #include "ScintillaEdit.h"
 #include "scintillaconfig.h"
 
+enum class BOM : std::uint8_t
+{
+    None,
+    UTF8,
+    UTF16LE,
+    UTF16BE,
+    UTF32LE,
+    UTF32BE,
+    UTF7,
+    UTF1,
+    UTFEBCDIC,
+    SCSU,
+    BOCU1,
+    GB18030,
+};
+
 class CodeEditor : public QWidget
 {
     Q_OBJECT
-private:
-    bool            m_lastCopyAvailable;
-    bool            m_lastPasteAvailable;
-    bool            m_lastRedoAvailable;
-    bool            m_lastUndoAvailable;
-    bool            m_isFocusIn;
-    QWidget        *m_editorPane;
-    QWidget        *m_webView;
-    QSplitter      *m_verticalEditorSplitter;
-    ScintillaEdit  *m_sciControlMaster;
-    ScintillaEdit  *m_sciControlSlave;
-    ScintillaEdit  *m_sciFocusView;
-    QString         m_filePath;
-    ScintillaConfig m_sc;
-
-    void init();
-
 public:
     explicit CodeEditor(QWidget *parent = nullptr);
 
-    ScintillaEdit               *getFocusView();
+    [[nodiscard]] ScintillaEdit *getFocusView();
     void                         openFile(const QString &filePath);
     void                         saveFile(const QString &filePath);
     [[nodiscard]] const QString &getFilePath() const;
@@ -135,6 +134,29 @@ public slots:
     void zoomIn();
     void zoomOut();
     void restoreDefaultZoom();
+
+private:
+    bool            m_lastCopyAvailable;
+    bool            m_lastPasteAvailable;
+    bool            m_lastRedoAvailable;
+    bool            m_lastUndoAvailable;
+    bool            m_isFocusIn;
+    QWidget        *m_editorPane;
+    QWidget        *m_webView;
+    QSplitter      *m_verticalEditorSplitter;
+    ScintillaEdit  *m_sciControlMaster;
+    ScintillaEdit  *m_sciControlSlave;
+    ScintillaEdit  *m_sciFocusView;
+    QString         m_filePath;
+    QByteArray      m_encoding {"UTF-8"};
+    BOM             m_bom {BOM::None};
+    ScintillaConfig m_sc;
+
+    void init();
+
+    static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
+    static QByteArray                   codecNameForBOM(BOM bom);
+    static QByteArray                   generateBOM(BOM bom);
 };
 
 #endif // CODEEDITPAGE_H
