@@ -56,8 +56,8 @@ jobs:
       - name: vcpkg build
         run: |
           cd C:\vcpkg
-          vcpkg install boost[core]:x64-windows-release uchardet:x64-windows-release
-          pkgs: boost[core] uchardet
+          vcpkg install boost-property-tree:x64-windows-release uchardet:x64-windows-release
+          pkgs: boost-property-tree uchardet
           triplet: x64-windows-release
           token: ${{ github.token }}
         
@@ -151,7 +151,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost[core] uchardet
+          pkgs: boost-property-tree uchardet
           triplet: x64-windows-release
           token: ${{ github.token }}
                               
@@ -254,7 +254,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost[core] uchardet
+          pkgs: boost-property-tree uchardet
           triplet: x64-windows-release
           token: ${{ github.token }}
                     
