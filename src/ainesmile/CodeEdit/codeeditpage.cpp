@@ -3,11 +3,11 @@
 #include <QTextCodec>
 
 #include "codeeditpage.h"
+#include "config.h"
 #include "uchardet.h"
 
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
-      m_webView(new QWidget(parent)),
       m_verticalEditorSplitter(new QSplitter(Qt::Vertical, parent)),
       m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
       m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
@@ -30,7 +30,6 @@ CodeEditor::CodeEditor(QWidget *parent)
     init();
 
     m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
-    // m_webView->load(QUrl("qrc:/rc/index.html"));
 
     m_sciControlMaster->setSavePoint();
     m_sciControlSlave->setSavePoint();
@@ -90,6 +89,10 @@ void CodeEditor::openFile(const QString &filePath)
     {
         return;
     }
+
+    auto &ptree              = Config::instance()->pt();
+    bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", true);
+
     m_filePath           = filePath;
     auto data            = file.readAll();
     bool charsetDetected = false;
@@ -110,7 +113,7 @@ void CodeEditor::openFile(const QString &filePath)
         }
     }
 
-    if (!charsetDetected)
+    if (autoDetectEncoding && !charsetDetected)
     {
         m_bom          = BOM::None;
         auto *uchardet = uchardet_new();

@@ -209,8 +209,8 @@ void MainWindow::setRecentFiles()
 
 void MainWindow::setMenuItemChecked()
 {
-    boost::property_tree::ptree &ptree   = Config::instance()->pt();
-    bool                         enabled = ptree.get<bool>("show.end_of_line", true);
+    auto &ptree   = Config::instance()->pt();
+    bool  enabled = ptree.get<bool>("show.end_of_line", true);
     ui->actionShowEndOfLine->setChecked(enabled);
     enabled = ptree.get<bool>("show.indent_guide", true);
     ui->actionShowIndentGuide->setChecked(enabled);
@@ -218,6 +218,8 @@ void MainWindow::setMenuItemChecked()
     ui->actionShowWhiteSpaceAndTAB->setChecked(enabled);
     enabled = ptree.get<bool>("show.wrap_symbol", true);
     ui->actionShowWrapSymbol->setChecked(enabled);
+    enabled = ptree.get<bool>("encoding.auto_detect", true);
+    ui->actionAutoDetectEncoding->setChecked(enabled);
 }
 
 void MainWindow::onUpdateRecentFilesMenuItems()

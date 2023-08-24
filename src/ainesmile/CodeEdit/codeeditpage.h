@@ -138,7 +138,6 @@ private:
     bool            m_lastUndoAvailable;
     bool            m_isFocusIn;
     QWidget        *m_editorPane;
-    QWidget        *m_webView;
     QSplitter      *m_verticalEditorSplitter;
     ScintillaEdit  *m_sciControlMaster;
     ScintillaEdit  *m_sciControlSlave;
