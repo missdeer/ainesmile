@@ -54,9 +54,9 @@ jobs:
           aqtversion: '==3.0.1'
           
       - name: vcpkg build
-        run: |
-          cd C:\vcpkg
-          vcpkg install boost-property-tree:x64-windows-release uchardet:x64-windows-release
+        uses: johnwason/vcpkg-action@v5
+        id: vcpkg
+        with:
           pkgs: boost-property-tree uchardet
           triplet: x64-windows-release
           token: ${{ github.token }}
