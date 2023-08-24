@@ -94,6 +94,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
+          dir "${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
@@ -197,6 +198,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
+          dir "${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
@@ -316,6 +318,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
+          dir "${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
