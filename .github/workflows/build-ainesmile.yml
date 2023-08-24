@@ -10,13 +10,16 @@ on:
       - 'LICENSE'
 
 env:
-  WINDOWS_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19078/w_BaseKit_p_2023.0.0.25940_offline.exe
-  WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/19085/w_HPCKit_p_2023.0.0.25931_offline.exe
+  WINDOWS_BASEKIT_URL: https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f96c71db-2c6c-45d9-8c1f-0348ef5885cf/w_BaseKit_p_2023.2.0.49396_offline.exe
+  WINDOWS_HPCKIT_URL: https://registrationcenter-download.intel.com/akdlm/IRC_NAS/438527fc-7140-422c-a851-389f2791816b/w_HPCKit_p_2023.2.0.49441_offline.exe
   WINDOWS_CPP_COMPONENTS: intel.oneapi.win.cpp-compiler
   WINDOWS_DPCPP_COMPONENTS: intel.oneapi.win.dpcpp-compiler
-  COMPILER_VERSION: 2023.0.0
-  BOOST_URL: https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.gz
-  BOOST_PKG: boost_1_81_0
+  SAMPLES_TAG: 2023.2.0
+  COMPILER_VERSION: 2023.2.0
+  TBB_VERSION: 2021.10.0
+  VS_VER: vs2022
+  BOOST_URL: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.gz
+  BOOST_PKG: boost_1_83_0
       
       
 jobs:
@@ -31,7 +34,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.4.2
+            qt_ver: 6.5.2
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -87,7 +90,7 @@ jobs:
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
-          ninja
+          cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
           windeployqt bin\ainesmile.exe
@@ -120,7 +123,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.4.2
+            qt_ver: 6.5.2
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -185,7 +188,7 @@ jobs:
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl  -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
-          ninja
+          cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
           windeployqt bin\ainesmile.exe
@@ -218,7 +221,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.4.2
+            qt_ver: 6.5.2
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -299,7 +302,7 @@ jobs:
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx  -DBoost_INCLUDE_DIR=${{github.workspace}}/${{ env.BOOST_PKG }} -DCMAKE_PREFIX_PATH=${{github.workspace}}/${{ env.BOOST_PKG }} -G Ninja ..
-          ninja
+          cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
           windeployqt bin\ainesmile.exe
@@ -455,7 +458,7 @@ jobs:
           mkdir build
           cd build
           env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DQT_DIR=${{ matrix.qt_dir }} -DCMAKE_PREFIX_PATH=${{ matrix.cmake_prefix_path }} -G Ninja ..
-          env PATH=/${{ matrix.mingw_arch }}/bin ninja
+          env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake --build . --parallel --verbose
           mkdir bin
           cp src/ainesmile/ainesmile.exe ./bin/
           env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe bin/ainesmile.exe
@@ -481,7 +484,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        qt_ver: [6.4.2]
+        qt_ver: [6.5.2]
         qt_arch: [clang_64]
     env:
       targetName: ainesmile
