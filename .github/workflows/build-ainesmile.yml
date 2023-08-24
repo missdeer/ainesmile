@@ -92,7 +92,9 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ..
+          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          7z x ninja.zip
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
@@ -180,12 +182,7 @@ jobs:
           curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
           7z.exe x LLVM.exe
           cd ..
-      
-      - name: Install boost
-        run: |
-          curl -O -L ${{ env.BOOST_URL }}
-          tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
-                
+                      
       - name: build-msvc
         shell: cmd
         env:
@@ -198,7 +195,9 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja ..
+          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          7z x ninja.zip
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
@@ -300,12 +299,7 @@ jobs:
           cd 3rdparty\lexilla
           git apply ..\lexilla.patch
           cd ..\..
-      
-      - name: Install boost
-        run: |
-          curl -O -L ${{ env.BOOST_URL }}
-          tar -z -xf ${{ env.BOOST_PKG }}".tar.gz"
-                
+                      
       - name: build-intel-msvc
         shell: cmd
         env:
@@ -320,7 +314,9 @@ jobs:
           cd ..\..\..\..
           mkdir build
           cd build
-          cmake ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja ..
+          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          7z x ninja.zip
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
