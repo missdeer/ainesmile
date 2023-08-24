@@ -54,12 +54,9 @@ jobs:
           aqtversion: '==3.0.1'
           
       - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost[core] uchardet
-          triplet: x64-windows-release
-          token: ${{ github.token }}
+        run: |
+          cd C:\vcpkg
+          vcpkg install boost[core]:x64-windows-release uchardet:x64-windows-release
         
       - uses: actions/checkout@v2
         with:
@@ -94,7 +91,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
@@ -148,12 +145,9 @@ jobs:
           aqtversion: '==3.0.1'
           
       - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost[core] uchardet
-          triplet: x64-windows-release
-          token: ${{ github.token }}
+        run: |
+          cd C:\vcpkg
+          vcpkg install boost[core]:x64-windows-release uchardet:x64-windows-release
                               
       - uses: actions/checkout@v2
         with:
@@ -197,7 +191,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja  -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
@@ -251,12 +245,9 @@ jobs:
           aqtversion: '==3.0.1'
           
       - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost[core] uchardet
-          triplet: x64-windows-release
-          token: ${{ github.token }}
+        run: |
+          cd C:\vcpkg
+          vcpkg install boost[core]:x64-windows-release uchardet:x64-windows-release
                     
       - name: cache intel install
         id: cache-install
@@ -316,7 +307,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} ..
+          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja  -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\ainesmile.exe bin\
