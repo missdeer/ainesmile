@@ -93,27 +93,28 @@ void CodeEditor::openFile(const QString &filePath)
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", true);
 
+    m_bom                                 = BOM::None;
     m_filePath                            = filePath;
     const qint64                headerLen = 4;
     std::array<char, headerLen> header;
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
-
+    QByteArray                  data;
     if (autoDetectEncoding)
     {
         auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
         if (bom != BOM::None)
         {
-            m_bom           = bom;
             auto  codecName = codecNameForBOM(bom);
             auto *textCodec = QTextCodec::codecForName(codecName);
             if (textCodec)
             {
                 file.seek(length);
-                auto data    = file.readAll();
-                auto utf8Str = textCodec->toUnicode(data);
-                m_sciControlMaster->setText(utf8Str.toUtf8().data());
+                data            = file.readAll();
+                auto utf8Str    = textCodec->toUnicode(data);
+                data            = utf8Str.toUtf8();
                 m_encoding      = codecName;
+                m_bom           = bom;
                 charsetDetected = true;
             }
         }
@@ -126,7 +127,7 @@ void CodeEditor::openFile(const QString &filePath)
         {
             m_bom          = BOM::None;
             auto *uchardet = uchardet_new();
-            auto  data     = file.readAll();
+            data           = file.readAll();
             uchardet_handle_data(uchardet, data.data(), data.length());
             uchardet_data_end(uchardet);
             QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
@@ -136,8 +137,8 @@ void CodeEditor::openFile(const QString &filePath)
                 auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
                 if (textCodec)
                 {
-                    auto utf8Str = textCodec->toUnicode(data);
-                    m_sciControlMaster->setText(utf8Str.toUtf8().data());
+                    auto utf8Str    = textCodec->toUnicode(data);
+                    data            = utf8Str.toUtf8();
                     m_encoding      = charset.toUtf8();
                     charsetDetected = true;
                 }
@@ -146,12 +147,14 @@ void CodeEditor::openFile(const QString &filePath)
     }
     if (!charsetDetected)
     {
-        m_bom     = BOM::None;
-        auto data = file.readAll();
-        m_sciControlMaster->setText(data.data());
+        if (data.isEmpty())
+        {
+            file.seek(0);
+            data = file.readAll();
+        }
         m_encoding = QByteArrayLiteral("UTF-8");
     }
-
+    m_sciControlMaster->setText(data.data());
     m_sciControlMaster->emptyUndoBuffer();
     file.close();
     emit filePathChanged(m_filePath);
