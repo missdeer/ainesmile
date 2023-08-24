@@ -11,6 +11,8 @@ IF (Qt6_FOUND)
         find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
 ENDIF(Qt6_FOUND)
 
+find_package ( uchardet )
+
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # if you have any .ui files
@@ -50,17 +52,13 @@ file(GLOB
         Dialogs_headers
         Dialogs/*.h
         )
-file(GLOB
-        uchardet_headers
-        uchardet/*.h
-        )
+
 set(ainesmile_headers
         stdafx.h
         tabwidget.h
         config.h
 		${CodeEdit_headers}
 		${Dialogs_headers}
-		${uchardet_headers}
         )
 
 file(GLOB
@@ -71,10 +69,6 @@ file(GLOB
         Dialogs_src
         Dialogs/*.cpp
         )
-file(GLOB
-        uchardet_src
-        uchardet/*.cpp
-        )
 
 set(ainesmile_src
         main.cpp
@@ -83,7 +77,6 @@ set(ainesmile_src
         config.cpp
 		${CodeEdit_src}
 		${Dialogs_src}
-		${uchardet_src}
         )
 
 file(GLOB
@@ -151,6 +144,7 @@ ENDIF()
 target_link_libraries(${PROJECT_NAME}  PRIVATE
         scintilla
         lexilla
+        uchardet::libuchardet
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml

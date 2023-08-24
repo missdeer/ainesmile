@@ -93,49 +93,61 @@ void CodeEditor::openFile(const QString &filePath)
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", true);
 
-    m_filePath           = filePath;
-    auto data            = file.readAll();
-    bool charsetDetected = false;
+    m_filePath                            = filePath;
+    const qint64                headerLen = 4;
+    std::array<char, headerLen> header;
+    qint64                      cbRead          = file.read(header.data(), headerLen);
+    bool                        charsetDetected = false;
 
-    auto [bom, length] = checkBOM(data);
-    if (bom != BOM::None)
+    if (autoDetectEncoding)
     {
-        m_bom           = bom;
-        auto  newData   = data.right(data.length() - length);
-        auto  codecName = codecNameForBOM(bom);
-        auto *textCodec = QTextCodec::codecForName(codecName);
-        if (textCodec)
+        auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+        if (bom != BOM::None)
         {
-            auto utf8Str = textCodec->toUnicode(data);
-            m_sciControlMaster->setText(utf8Str.toUtf8().data());
-            m_encoding      = codecName;
-            charsetDetected = true;
-        }
-    }
-
-    if (autoDetectEncoding && !charsetDetected)
-    {
-        m_bom          = BOM::None;
-        auto *uchardet = uchardet_new();
-        uchardet_handle_data(uchardet, data.data(), data.length());
-        uchardet_data_end(uchardet);
-        QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
-        uchardet_delete(uchardet);
-        if (!charset.isEmpty() && charset.toLower() != "utf-8")
-        {
-            auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
+            m_bom           = bom;
+            auto  codecName = codecNameForBOM(bom);
+            auto *textCodec = QTextCodec::codecForName(codecName);
             if (textCodec)
             {
+                file.seek(length);
+                auto data    = file.readAll();
                 auto utf8Str = textCodec->toUnicode(data);
                 m_sciControlMaster->setText(utf8Str.toUtf8().data());
-                m_encoding      = charset.toUtf8();
+                m_encoding      = codecName;
                 charsetDetected = true;
+            }
+        }
+        else
+        {
+            file.seek(0);
+        }
+
+        if (!charsetDetected)
+        {
+            m_bom          = BOM::None;
+            auto *uchardet = uchardet_new();
+            auto  data     = file.readAll();
+            uchardet_handle_data(uchardet, data.data(), data.length());
+            uchardet_data_end(uchardet);
+            QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
+            uchardet_delete(uchardet);
+            if (!charset.isEmpty() && charset.toLower() != "utf-8")
+            {
+                auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
+                if (textCodec)
+                {
+                    auto utf8Str = textCodec->toUnicode(data);
+                    m_sciControlMaster->setText(utf8Str.toUtf8().data());
+                    m_encoding      = charset.toUtf8();
+                    charsetDetected = true;
+                }
             }
         }
     }
     if (!charsetDetected)
     {
-        m_bom = BOM::None;
+        m_bom     = BOM::None;
+        auto data = file.readAll();
         m_sciControlMaster->setText(data.data());
         m_encoding = QByteArrayLiteral("UTF-8");
     }
