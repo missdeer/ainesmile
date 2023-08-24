@@ -149,6 +149,7 @@ private:
 
     void init();
     void doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom);
+    void setContent(const char *pData);
 
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
     static QByteArray                   codecNameForBOM(BOM bom);

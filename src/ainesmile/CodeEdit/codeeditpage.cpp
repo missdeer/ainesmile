@@ -154,12 +154,17 @@ void CodeEditor::openFile(const QString &filePath)
         }
         m_encoding = QByteArrayLiteral("UTF-8");
     }
-    m_sciControlMaster->setText(data.data());
-    m_sciControlMaster->emptyUndoBuffer();
     file.close();
+    setContent(data.data());
+}
+
+void CodeEditor::setContent(const char *pData)
+{
+    m_sciControlMaster->setText(pData);
+    m_sciControlMaster->emptyUndoBuffer();
     emit filePathChanged(m_filePath);
-    m_sc.initEditorStyle(m_sciControlMaster, filePath);
-    m_sc.initEditorStyle(m_sciControlSlave, filePath);
+    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
+    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
     m_sciControlMaster->colourise(0, -1);
     m_sciControlSlave->colourise(0, -1);
 }
@@ -872,6 +877,26 @@ void CodeEditor::ReopenAsEncoding(const QString &encoding, bool withBOM)
         {
             m_bom = BOM::GB18030;
         }
+    }
+
+    auto *textCodec = QTextCodec::codecForName(m_encoding);
+    if (textCodec)
+    {
+        QFile file(m_filePath);
+        if (!file.open(QIODevice::ReadOnly))
+        {
+            return;
+        }
+        if (m_bom != BOM::None)
+        {
+            auto bom = generateBOM(m_bom);
+            file.seek(bom.length());
+        }
+        auto data = file.readAll();
+        file.close();
+        auto utf8Str = textCodec->toUnicode(data);
+        data         = utf8Str.toUtf8();
+        setContent(data.data());
     }
 }
 
