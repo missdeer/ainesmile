@@ -91,7 +91,7 @@ void CodeEditor::openFile(const QString &filePath)
     }
 
     auto &ptree              = Config::instance()->pt();
-    bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", true);
+    bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
 
     m_bom                                 = BOM::None;
     m_filePath                            = filePath;
@@ -105,6 +105,14 @@ void CodeEditor::openFile(const QString &filePath)
         auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
         if (bom != BOM::None)
         {
+            if (bom == BOM::UTF8)
+            {
+                m_encoding = QByteArrayLiteral("UTF-8");
+                m_bom      = bom;
+                loadRawFile(file, length);
+                return;
+            }
+
             auto  codecName = codecNameForBOM(bom);
             auto *textCodec = QTextCodec::codecForName(codecName);
             if (textCodec)
@@ -116,6 +124,8 @@ void CodeEditor::openFile(const QString &filePath)
                 m_encoding      = codecName;
                 m_bom           = bom;
                 charsetDetected = true;
+                setContent(data.data());
+                return;
             }
         }
         else
@@ -125,42 +135,100 @@ void CodeEditor::openFile(const QString &filePath)
 
         if (!charsetDetected)
         {
-            m_bom          = BOM::None;
-            auto *uchardet = uchardet_new();
-            data           = file.readAll();
-            uchardet_handle_data(uchardet, data.data(), data.length());
-            uchardet_data_end(uchardet);
-            QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
-            uchardet_delete(uchardet);
+            m_bom = BOM::None;
+            file.seek(0);
+            QString charset = fileEncodingDetect(file);
             if (!charset.isEmpty() && charset.toLower() != "utf-8")
             {
                 auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
                 if (textCodec)
                 {
+                    file.seek(0);
+                    data            = file.readAll();
                     auto utf8Str    = textCodec->toUnicode(data);
                     data            = utf8Str.toUtf8();
                     m_encoding      = charset.toUtf8();
                     charsetDetected = true;
+                    setContent(data.data());
+                    return;
                 }
             }
         }
     }
     if (!charsetDetected)
     {
+        m_encoding = QByteArrayLiteral("UTF-8");
         if (data.isEmpty())
         {
             file.seek(0);
-            data = file.readAll();
+            loadRawFile(file);
+            return;
         }
-        m_encoding = QByteArrayLiteral("UTF-8");
     }
-    file.close();
-    setContent(data.data());
+}
+
+QString CodeEditor::fileEncodingDetect(QFile &file)
+{
+    qint64       fileSize  = file.size();
+    qint64       offset    = 0;
+    const qint64 blockSize = 4096;
+    auto        *uchardet  = uchardet_new();
+    while (fileSize >= blockSize)
+    {
+        uchar *pData = file.map(offset, blockSize);
+        uchardet_handle_data(uchardet, (const char *)pData, blockSize);
+        file.unmap(pData);
+        m_sciControlMaster->gotoPos(m_sciControlMaster->length());
+        fileSize -= blockSize;
+        offset += blockSize;
+    }
+    if (fileSize > 0)
+    {
+        uchar *pData = file.map(offset, fileSize);
+        uchardet_handle_data(uchardet, (const char *)pData, fileSize);
+        file.unmap(pData);
+    }
+    uchardet_data_end(uchardet);
+    QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
+    uchardet_delete(uchardet);
+    return charset;
+}
+
+void CodeEditor::loadRawFile(QFile &file, qint64 skipBytes)
+{
+    qint64 fileSize = file.size() - skipBytes;
+    qint64 offset   = skipBytes == 0 ? 0 : skipBytes - 1;
+    file.seek(offset);
+    const qint64 blockSize = 4096;
+
+    while (fileSize >= blockSize)
+    {
+        uchar *pData = file.map(offset, blockSize);
+        m_sciControlMaster->appendText(blockSize, (const char *)pData);
+        file.unmap(pData);
+        fileSize -= blockSize;
+        offset += blockSize;
+    }
+    if (fileSize > 0)
+    {
+        uchar *pData = file.map(offset, fileSize);
+        m_sciControlMaster->appendText(fileSize, (const char *)pData);
+        file.unmap(pData);
+    }
+    m_sciControlMaster->gotoPos(0);
+
+    m_sciControlMaster->emptyUndoBuffer();
+    emit filePathChanged(m_filePath);
+    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
+    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
+    m_sciControlMaster->colourise(0, -1);
+    m_sciControlSlave->colourise(0, -1);
 }
 
 void CodeEditor::setContent(const char *pData)
 {
     m_sciControlMaster->setText(pData);
+
     m_sciControlMaster->emptyUndoBuffer();
     emit filePathChanged(m_filePath);
     m_sc.initEditorStyle(m_sciControlMaster, m_filePath);

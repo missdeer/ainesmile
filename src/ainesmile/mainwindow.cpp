@@ -218,7 +218,7 @@ void MainWindow::setMenuItemChecked()
     ui->actionShowWhiteSpaceAndTAB->setChecked(enabled);
     enabled = ptree.get<bool>("show.wrap_symbol", true);
     ui->actionShowWrapSymbol->setChecked(enabled);
-    enabled = ptree.get<bool>("encoding.auto_detect", true);
+    enabled = ptree.get<bool>("encoding.auto_detect", false);
     ui->actionAutoDetectEncoding->setChecked(enabled);
 }
 
