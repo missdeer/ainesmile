@@ -1,4 +1,4 @@
-name: Build ainesmile
+﻿name: Build ainesmile
 on: 
   push:
     paths-ignore:
@@ -57,7 +57,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost-property-tree uchardet
+          pkgs: boost-property-tree uchardet icu
           triplet: x64-windows-release
           token: ${{ github.token }}
         
@@ -152,7 +152,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost-property-tree uchardet
+          pkgs: boost-property-tree uchardet icu
           triplet: x64-windows-release
           token: ${{ github.token }}
                               
@@ -256,7 +256,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost-property-tree uchardet
+          pkgs: boost-property-tree uchardet icu
           triplet: x64-windows-release
           token: ${{ github.token }}
                     
@@ -427,7 +427,7 @@ jobs:
         with:
           update: true
           msystem: ${{ matrix.mingw_arch }}
-          install:  ${{ matrix.mingw_prefix }}-boost ${{ matrix.mingw_prefix }}-cmake ${{ matrix.mingw_prefix }}-ninja ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-libb2 ${{ matrix.mingw_prefix }}-jasper ${{ matrix.mingw_prefix }}-uchardet
+          install:  ${{ matrix.mingw_prefix }}-boost ${{ matrix.mingw_prefix }}-cmake ${{ matrix.mingw_prefix }}-ninja ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-libb2 ${{ matrix.mingw_prefix }}-jasper ${{ matrix.mingw_prefix }}-uchardet ${{ matrix.mingw_prefix }}-icu
 
       - uses: actions/checkout@v2
         with:
@@ -530,7 +530,7 @@ jobs:
       
       - name: build macos
         run: |
-          brew install boost uchardet ninja
+          brew install boost uchardet ninja icu
           ./pre-build.sh
           cd 3rdparty/scintilla/qt/ScintillaEdit
           python WidgetGen.py
