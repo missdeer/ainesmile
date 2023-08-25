@@ -12,7 +12,7 @@ IF (Qt6_FOUND)
 ENDIF(Qt6_FOUND)
 
 find_package ( uchardet )
-find_package(ICU 71.0 COMPONENTS uc i18n REQUIRED)
+find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
