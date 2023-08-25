@@ -33,8 +33,8 @@ public:
     [[nodiscard]] ScintillaEdit *getFocusView();
     void                         openFile(const QString &filePath);
     void                         saveFile(const QString &filePath);
-    void                         ReopenAsEncoding(const QString &encoding, bool withBOM);
-    void                         SaveAsEncoding(const QString &encoding, bool withBOM);
+    void                         reopenAsEncoding(const QString &encoding, bool withBOM);
+    void                         saveAsEncoding(const QString &encoding, bool withBOM);
     [[nodiscard]] const QString &getFilePath() const;
     [[nodiscard]] bool           canClose();
     [[nodiscard]] bool           canCut();

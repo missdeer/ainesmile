@@ -259,7 +259,7 @@ void MainWindow::onReopenAsEncoding()
         auto *page = getFocusCodeEditor();
         if (page)
         {
-            page->ReopenAsEncoding(dlg.selectedCodec(), dlg.withBOM());
+            page->reopenAsEncoding(dlg.selectedEncoding(), dlg.withBOM());
         }
     }
 }
@@ -272,7 +272,7 @@ void MainWindow::onSaveAsEncoding()
         auto *page = getFocusCodeEditor();
         if (page)
         {
-            page->SaveAsEncoding(dlg.selectedCodec(), dlg.withBOM());
+            page->saveAsEncoding(dlg.selectedEncoding(), dlg.withBOM());
         }
     }
 }

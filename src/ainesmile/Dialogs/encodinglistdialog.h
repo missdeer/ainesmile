@@ -16,7 +16,7 @@ public:
     explicit EncodingListDialog(QWidget *parent = nullptr);
     ~EncodingListDialog();
 
-    [[nodiscard]] QString selectedCodec() const;
+    [[nodiscard]] QString selectedEncoding() const;
     [[nodiscard]] bool    withBOM() const;
 
 private slots:
@@ -26,7 +26,7 @@ private slots:
 
 private:
     Ui::EncodingListDialog *ui;
-    QString                 m_selectedCodec;
+    QString                 m_selectedEncoding;
     bool                    m_withBOM {false};
 };
 
