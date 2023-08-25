@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 3.15)
+﻿cmake_minimum_required(VERSION 3.15)
 project(AinesmileEditor VERSION 1.0.0)
 
 set(CMAKE_EXPORT_COMPILECOMMANDS ON)
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
+if(NOT DEFINED CMAKE_OSX_ARCHITECTURES)
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+endif()
 
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     set(BUILD_TYPE Debug)
