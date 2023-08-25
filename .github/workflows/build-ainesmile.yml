@@ -94,7 +94,8 @@ jobs:
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
-          copy src\ainesmile\ainesmile.exe bin\
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
@@ -197,7 +198,8 @@ jobs:
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
-          copy src\ainesmile\ainesmile.exe bin\
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
@@ -316,7 +318,8 @@ jobs:
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
-          copy src\ainesmile\ainesmile.exe bin\
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
@@ -531,7 +534,7 @@ jobs:
           cd ../../../..
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
+          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
           cmake --build . --parallel --verbose
           cd ..
           
