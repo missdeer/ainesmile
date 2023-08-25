@@ -63,6 +63,7 @@ private slots:
     void onSaveTabClicked(const QList<int> &fileList);
     void onReopenAsEncoding();
     void onSaveAsEncoding();
+    void onAutoDetectEncoding(bool toggled);
     void onIdle();
 
     void on_actionNewFile_triggered();

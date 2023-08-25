@@ -55,9 +55,9 @@ public slots:
     void onOpenFilesRequest(const QStringList &file);
 
 private:
-    TabWidget   *theOtherSide_;
+    TabWidget   *theOtherSide_ {nullptr};
     RecentFiles *rf_;
-    bool         aboutToQuit_;
+    bool         aboutToQuit_ {false};
 };
 
 #endif // TABWIDGET_H

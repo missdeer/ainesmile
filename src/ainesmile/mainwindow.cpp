@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionReopenAs, &QAction::triggered, this, &MainWindow::onReopenAsEncoding);
     connect(ui->actionSaveAsEncoding, &QAction::triggered, this, &MainWindow::onSaveAsEncoding);
+    connect(ui->actionAutoDetectEncoding, &QAction::toggled, this, &MainWindow::onAutoDetectEncoding);
 
     setActionShortcuts();
     setRecentFiles();
@@ -274,6 +275,13 @@ void MainWindow::onSaveAsEncoding()
             page->SaveAsEncoding(dlg.selectedCodec(), dlg.withBOM());
         }
     }
+}
+
+void MainWindow::onAutoDetectEncoding(bool toggled)
+{
+    auto &ptree = Config::instance()->pt();
+    ptree.put("encoding.auto_detect", toggled);
+    Config::instance()->sync();
 }
 
 void MainWindow::connectSignals(CodeEditor *page)
@@ -768,9 +776,9 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 {
-    bool                         enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
-    boost::property_tree::ptree &pt      = Config::instance()->pt();
-    pt.put("show.white_space_and_tab", enabled);
+    bool  enabled = ui->actionShowWhiteSpaceAndTAB->isChecked();
+    auto &ptree   = Config::instance()->pt();
+    ptree.put("show.white_space_and_tab", enabled);
 
     ui->tabWidget->setShowWhiteSpaceAndTAB(enabled);
     ui->tabWidgetSlave->setShowWhiteSpaceAndTAB(enabled);
@@ -778,9 +786,9 @@ void MainWindow::on_actionShowWhiteSpaceAndTAB_triggered()
 
 void MainWindow::on_actionShowEndOfLine_triggered()
 {
-    bool                         enabled = ui->actionShowEndOfLine->isChecked();
-    boost::property_tree::ptree &pt      = Config::instance()->pt();
-    pt.put("show.end_of_line", enabled);
+    bool  enabled = ui->actionShowEndOfLine->isChecked();
+    auto &ptree   = Config::instance()->pt();
+    ptree.put("show.end_of_line", enabled);
 
     ui->tabWidget->setShowEndOfLine(enabled);
     ui->tabWidgetSlave->setShowEndOfLine(enabled);
@@ -788,9 +796,9 @@ void MainWindow::on_actionShowEndOfLine_triggered()
 
 void MainWindow::on_actionShowIndentGuide_triggered()
 {
-    bool                         enabled = ui->actionShowIndentGuide->isChecked();
-    boost::property_tree::ptree &pt      = Config::instance()->pt();
-    pt.put("show.indent_guide", enabled);
+    bool  enabled = ui->actionShowIndentGuide->isChecked();
+    auto &ptree   = Config::instance()->pt();
+    ptree.put("show.indent_guide", enabled);
 
     ui->tabWidget->setShowIndentGuide(enabled);
     ui->tabWidgetSlave->setShowIndentGuide(enabled);
