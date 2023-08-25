@@ -1,5 +1,6 @@
-﻿#include <QMessageBox>
-#include <QTextCodec>
+﻿#include <unicode/ucnv.h>
+
+#include <QMessageBox>
 
 #include "encodinglistdialog.h"
 #include "ui_encodinglistdialog.h"
@@ -8,10 +9,29 @@ EncodingListDialog::EncodingListDialog(QWidget *parent) : QDialog(parent), ui(ne
 {
     ui->setupUi(this);
 
-    auto codecs = QTextCodec::availableCodecs();
-    for (const auto &codec : codecs)
+    int32_t count = ucnv_countAvailable();
+    for (int32_t i = 0; i < count; ++i)
     {
-        ui->listWidget->addItem(QString(codec));
+        const char *name = ucnv_getAvailableName(i);
+
+        QStringList aliasList;
+        UErrorCode  errorCode  = U_ZERO_ERROR;
+        int32_t     aliasCount = ucnv_countAliases(name, &errorCode);
+        if (U_SUCCESS(errorCode) && aliasCount > 0)
+        {
+            for (int32_t j = 1; j < aliasCount; ++j)
+            {
+                const char *alias = ucnv_getAlias(name, j, &errorCode);
+                aliasList.append(QString::fromLatin1(alias));
+            }
+        }
+
+        QString item = QString::fromLatin1(name);
+        if (!aliasList.isEmpty())
+        {
+            item.append(" - " + aliasList.join('/'));
+        }
+        ui->listWidget->addItem(item);
     }
 }
 
