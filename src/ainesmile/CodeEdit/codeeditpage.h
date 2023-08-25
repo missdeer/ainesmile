@@ -151,6 +151,7 @@ private:
     void    doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom);
     void    setContent(const char *pData);
     void    loadRawFile(QFile &file, qint64 skipBytes = 0);
+    void    loadFileAsEncoding(QFile &file, const QString &encoding, qint64 skipBytes = 0);
     QString fileEncodingDetect(QFile &file);
 
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);

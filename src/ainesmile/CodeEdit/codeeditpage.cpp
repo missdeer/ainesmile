@@ -1,5 +1,8 @@
 ﻿#include "stdafx.h"
 
+#include <unicode/ucnv.h>
+#include <unicode/utext.h>
+
 #include <QTextCodec>
 
 #include "codeeditpage.h"
@@ -103,30 +106,21 @@ void CodeEditor::openFile(const QString &filePath)
     if (autoDetectEncoding)
     {
         auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+        if (bom == BOM::UTF8)
+        {
+            m_encoding = QByteArrayLiteral("UTF-8");
+            m_bom      = bom;
+            loadRawFile(file, length);
+            return;
+        }
         if (bom != BOM::None)
         {
-            if (bom == BOM::UTF8)
-            {
-                m_encoding = QByteArrayLiteral("UTF-8");
-                m_bom      = bom;
-                loadRawFile(file, length);
-                return;
-            }
-
-            auto  codecName = codecNameForBOM(bom);
-            auto *textCodec = QTextCodec::codecForName(codecName);
-            if (textCodec)
-            {
-                file.seek(length);
-                data            = file.readAll();
-                auto utf8Str    = textCodec->toUnicode(data);
-                data            = utf8Str.toUtf8();
-                m_encoding      = codecName;
-                m_bom           = bom;
-                charsetDetected = true;
-                setContent(data.data());
-                return;
-            }
+            auto encoding = codecNameForBOM(bom);
+            loadFileAsEncoding(file, encoding, length);
+            m_encoding      = encoding;
+            m_bom           = bom;
+            charsetDetected = true;
+            return;
         }
         else
         {
@@ -137,21 +131,13 @@ void CodeEditor::openFile(const QString &filePath)
         {
             m_bom = BOM::None;
             file.seek(0);
-            QString charset = fileEncodingDetect(file);
-            if (!charset.isEmpty() && charset.toLower() != "utf-8")
+            QString encoding = fileEncodingDetect(file);
+            if (!encoding.isEmpty() && encoding.toLower() != "utf-8")
             {
-                auto *textCodec = QTextCodec::codecForName(charset.toUtf8());
-                if (textCodec)
-                {
-                    file.seek(0);
-                    data            = file.readAll();
-                    auto utf8Str    = textCodec->toUnicode(data);
-                    data            = utf8Str.toUtf8();
-                    m_encoding      = charset.toUtf8();
-                    charsetDetected = true;
-                    setContent(data.data());
-                    return;
-                }
+                loadFileAsEncoding(file, encoding);
+                m_encoding      = encoding.toUtf8();
+                charsetDetected = true;
+                return;
             }
         }
     }
@@ -165,6 +151,65 @@ void CodeEditor::openFile(const QString &filePath)
             return;
         }
     }
+}
+
+void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64 skipBytes)
+{
+    UErrorCode errorCode = U_ZERO_ERROR;
+
+    UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
+    UConverter *sourceConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
+
+    const qint64                    blockSize = 4096;
+    std::array<char, blockSize * 2> targetBuffer; // A buffer for converted data
+    char                           *target      = targetBuffer.data();
+    char                           *targetLimit = target + blockSize;
+
+    qint64 fileSize = file.size() - skipBytes;
+    qint64 offset   = skipBytes == 0 ? 0 : skipBytes - 1;
+    file.seek(offset);
+
+    while (fileSize >= 0)
+    {
+        qint64      requestSize = std::min(blockSize, fileSize);
+        char       *pData       = (char *)file.map(offset, requestSize);
+        const char *source      = pData;
+        char       *sourceStart = pData;
+        const char *sourceLimit = source + requestSize;
+        char       *targetStart = target;
+        // convert encoding
+        ucnv_convertEx(
+            targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
+
+        if (errorCode == U_BUFFER_OVERFLOW_ERROR)
+        {
+            errorCode = U_ZERO_ERROR;
+        }
+        else if (U_FAILURE(errorCode))
+        {
+            // Handle conversion error
+            break;
+        }
+        ptrdiff_t charsConsumed = source - sourceStart;
+        ptrdiff_t bytesUsed     = target - targetStart;
+        // display text
+        m_sciControlMaster->appendText(bytesUsed, (const char *)target);
+        file.unmap((uchar *)pData);
+        fileSize -= charsConsumed;
+        offset += charsConsumed;
+    }
+
+    ucnv_close(sourceConv);
+    ucnv_close(targetConv);
+
+    m_sciControlMaster->gotoPos(0);
+
+    m_sciControlMaster->emptyUndoBuffer();
+    emit filePathChanged(m_filePath);
+    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
+    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
+    m_sciControlMaster->colourise(0, -1);
+    m_sciControlSlave->colourise(0, -1);
 }
 
 QString CodeEditor::fileEncodingDetect(QFile &file)

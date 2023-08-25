@@ -12,6 +12,7 @@ IF (Qt6_FOUND)
 ENDIF(Qt6_FOUND)
 
 find_package ( uchardet )
+find_package(ICU 71.0 COMPONENTS uc i18n REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -145,6 +146,7 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         scintilla
         lexilla
         uchardet::libuchardet
+        ICU::uc ICU::i18n
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
