@@ -115,7 +115,7 @@ void CodeEditor::openFile(const QString &filePath)
         }
         if (bom != BOM::None)
         {
-            auto encoding = codecNameForBOM(bom);
+            auto encoding = encodingNameForBOM(bom);
             loadFileAsEncoding(file, encoding, length);
             m_encoding      = encoding;
             m_bom           = bom;
@@ -939,9 +939,9 @@ std::pair<BOM, std::uint8_t> CodeEditor::checkBOM(const QByteArray &data)
     return {BOM::None, 0};
 }
 
-QByteArray CodeEditor::codecNameForBOM(BOM bom)
+QByteArray CodeEditor::encodingNameForBOM(BOM bom)
 {
-    static std::map<BOM, QByteArray> codecNameMap = {
+    static std::map<BOM, QByteArray> encodingNameMap = {
         {BOM::UTF8, QByteArrayLiteral("UTF-8")},
         {BOM::UTF16LE, QByteArrayLiteral("UTF-16LE")},
         {BOM::UTF16BE, QByteArrayLiteral("UTF-16BE")},
@@ -949,8 +949,8 @@ QByteArray CodeEditor::codecNameForBOM(BOM bom)
         {BOM::UTF32BE, QByteArrayLiteral("UTF-32BE")},
         {BOM::GB18030, QByteArrayLiteral("GB18030")},
     };
-    auto iter = codecNameMap.find(bom);
-    if (codecNameMap.end() != iter)
+    auto iter = encodingNameMap.find(bom);
+    if (encodingNameMap.end() != iter)
     {
         return iter->second;
     }
@@ -982,13 +982,18 @@ void CodeEditor::ReopenAsEncoding(const QString &encoding, bool withBOM)
     m_bom      = BOM::None;
     if (withBOM)
     {
-        if (encoding.toLower() == "utf-8")
+        static std::map<QString, BOM> encodingNameBOMMap = {
+            {QStringLiteral("UTF-8"), BOM::UTF8},
+            {QStringLiteral("UTF-16LE"), BOM::UTF16LE},
+            {QStringLiteral("UTF-16BE"), BOM::UTF16BE},
+            {QStringLiteral("UTF-32LE"), BOM::UTF32LE},
+            {QStringLiteral("UTF-32BE"), BOM::UTF32BE},
+            {QStringLiteral("GB18030"), BOM::GB18030},
+        };
+        auto iter = encodingNameBOMMap.find(encoding.toUpper());
+        if (encodingNameBOMMap.end() != iter)
         {
-            m_bom = BOM::UTF8;
-        }
-        if (encoding.toLower() == "gb18030")
-        {
-            m_bom = BOM::GB18030;
+            m_bom = iter->second;
         }
     }
 
@@ -1019,13 +1024,18 @@ void CodeEditor::SaveAsEncoding(const QString &encoding, bool withBOM)
     m_bom      = BOM::None;
     if (withBOM)
     {
-        if (encoding.toLower() == "utf-8")
+        static std::map<QString, BOM> encodingNameBOMMap = {
+            {QStringLiteral("UTF-8"), BOM::UTF8},
+            {QStringLiteral("UTF-16LE"), BOM::UTF16LE},
+            {QStringLiteral("UTF-16BE"), BOM::UTF16BE},
+            {QStringLiteral("UTF-32LE"), BOM::UTF32LE},
+            {QStringLiteral("UTF-32BE"), BOM::UTF32BE},
+            {QStringLiteral("GB18030"), BOM::GB18030},
+        };
+        auto iter = encodingNameBOMMap.find(encoding.toUpper());
+        if (encodingNameBOMMap.end() != iter)
         {
-            m_bom = BOM::UTF8;
-        }
-        if (encoding.toLower() == "gb18030")
-        {
-            m_bom = BOM::GB18030;
+            m_bom = iter->second;
         }
     }
     doSaveFile(m_filePath, m_encoding, m_bom);

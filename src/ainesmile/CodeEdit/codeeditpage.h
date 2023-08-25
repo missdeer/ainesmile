@@ -155,7 +155,7 @@ private:
     QString fileEncodingDetect(QFile &file);
 
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
-    static QByteArray                   codecNameForBOM(BOM bom);
+    static QByteArray                   encodingNameForBOM(BOM bom);
     static QByteArray                   generateBOM(BOM bom);
 };
 
