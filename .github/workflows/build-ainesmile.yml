@@ -534,7 +534,7 @@ jobs:
           cd ../../../..
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
+          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
           cmake --build . --parallel --verbose
           cd ..
           
