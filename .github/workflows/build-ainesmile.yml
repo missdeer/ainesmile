@@ -52,14 +52,6 @@ jobs:
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
           aqtversion: '==3.0.1'
-          
-      - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost-property-tree uchardet icu
-          triplet: x64-windows-release
-          token: ${{ github.token }}
         
       - uses: actions/checkout@v2
         with:
@@ -79,6 +71,14 @@ jobs:
           cd 3rdparty\lexilla
           git apply ..\lexilla.patch
           cd ..\..
+
+      - name: vcpkg build
+        uses: johnwason/vcpkg-action@v5
+        id: vcpkg
+        with:
+          pkgs: boost-property-tree uchardet icu
+          triplet: x64-windows-release
+          token: ${{ github.token }}
       
       - name: build-msvc
         shell: cmd
@@ -151,14 +151,6 @@ jobs:
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
           aqtversion: '==3.0.1'
-          
-      - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost-property-tree uchardet icu
-          triplet: x64-windows-release
-          token: ${{ github.token }}
                               
       - uses: actions/checkout@v2
         with:
@@ -187,6 +179,14 @@ jobs:
           curl.exe -o LLVM.exe -L ${{ matrix.clang_link }}
           7z.exe x LLVM.exe
           cd ..
+
+      - name: vcpkg build
+        uses: johnwason/vcpkg-action@v5
+        id: vcpkg
+        with:
+          pkgs: boost-property-tree uchardet icu
+          triplet: x64-windows-release
+          token: ${{ github.token }}
                       
       - name: build-msvc
         shell: cmd
@@ -259,14 +259,6 @@ jobs:
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
           aqtversion: '==3.0.1'
-          
-      - name: vcpkg build
-        uses: johnwason/vcpkg-action@v5
-        id: vcpkg
-        with:
-          pkgs: boost-property-tree uchardet icu
-          triplet: x64-windows-release
-          token: ${{ github.token }}
                     
       - name: cache intel install
         id: cache-install
@@ -309,6 +301,14 @@ jobs:
           cd 3rdparty\lexilla
           git apply ..\lexilla.patch
           cd ..\..
+
+      - name: vcpkg build
+        uses: johnwason/vcpkg-action@v5
+        id: vcpkg
+        with:
+          pkgs: boost-property-tree uchardet icu
+          triplet: x64-windows-release
+          token: ${{ github.token }}
                       
       - name: build-intel-msvc
         shell: cmd
