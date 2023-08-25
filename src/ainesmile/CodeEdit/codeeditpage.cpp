@@ -9,6 +9,8 @@
 #include "config.h"
 #include "uchardet.h"
 
+#pragma optimize("", off)
+
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
       m_verticalEditorSplitter(new QSplitter(Qt::Vertical, parent)),
@@ -157,26 +159,38 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
 {
     UErrorCode errorCode = U_ZERO_ERROR;
 
-    UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
     UConverter *sourceConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
+    if (U_FAILURE(errorCode))
+    {
+        // Handle error for sourceConv
+        return;
+    }
+    UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
+    if (U_FAILURE(errorCode))
+    {
+        // Handle error for targetConv
+        ucnv_close(sourceConv); // don't forget to close the already opened converter
+        return;
+    }
+    const qint64                       blockSize        = 4096;
+    const qint64                       targetBufferSize = blockSize * 2;
+    std::array<char, targetBufferSize> targetBuffer;
 
-    const qint64                    blockSize = 4096;
-    std::array<char, blockSize * 2> targetBuffer; // A buffer for converted data
-    char                           *target      = targetBuffer.data();
-    char                           *targetLimit = target + blockSize;
-
-    qint64 fileSize = file.size() - skipBytes;
-    qint64 offset   = skipBytes == 0 ? 0 : skipBytes - 1;
+    qint64 fileSize  = file.size();
+    qint64 bytesLeft = file.size() - skipBytes;
+    qint64 offset    = skipBytes;
     file.seek(offset);
 
-    while (fileSize >= 0)
+    while (bytesLeft >= 0 && offset < fileSize)
     {
-        qint64      requestSize = std::min(blockSize, fileSize);
+        qint64      requestSize = std::min(blockSize, bytesLeft);
         char       *pData       = (char *)file.map(offset, requestSize);
         const char *source      = pData;
         char       *sourceStart = pData;
         const char *sourceLimit = source + requestSize;
+        char       *target      = targetBuffer.data();
         char       *targetStart = target;
+        char       *targetLimit = target + targetBufferSize;
         // convert encoding
         ucnv_convertEx(
             targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
@@ -190,13 +204,13 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
             // Handle conversion error
             break;
         }
-        ptrdiff_t charsConsumed = source - sourceStart;
-        ptrdiff_t bytesUsed     = target - targetStart;
+        ptrdiff_t bytesConsumed  = source - sourceStart;
+        ptrdiff_t bytesGenerated = target - targetStart;
         // display text
-        m_sciControlMaster->appendText(bytesUsed, (const char *)target);
+        m_sciControlMaster->appendText(bytesGenerated, (const char *)targetStart);
         file.unmap((uchar *)pData);
-        fileSize -= charsConsumed;
-        offset += charsConsumed;
+        bytesLeft -= bytesConsumed;
+        offset += bytesConsumed;
     }
 
     ucnv_close(sourceConv);
@@ -236,13 +250,17 @@ QString CodeEditor::fileEncodingDetect(QFile &file)
     uchardet_data_end(uchardet);
     QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
     uchardet_delete(uchardet);
+    if (charset.toUpper() == QStringLiteral("ASCII"))
+    {
+        return QStringLiteral("UTF-8");
+    }
     return charset;
 }
 
 void CodeEditor::loadRawFile(QFile &file, qint64 skipBytes)
 {
     qint64 fileSize = file.size() - skipBytes;
-    qint64 offset   = skipBytes == 0 ? 0 : skipBytes - 1;
+    qint64 offset   = skipBytes;
     file.seek(offset);
     const qint64 blockSize = 4096;
 
