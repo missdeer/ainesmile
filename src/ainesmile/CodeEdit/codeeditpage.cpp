@@ -3,13 +3,9 @@
 #include <unicode/ucnv.h>
 #include <unicode/utext.h>
 
-#include <QTextCodec>
-
 #include "codeeditpage.h"
 #include "config.h"
 #include "uchardet.h"
-
-#pragma optimize("", off)
 
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
@@ -96,7 +92,7 @@ void CodeEditor::openFile(const QString &filePath)
     m_bom                                 = BOM::None;
     m_filePath                            = filePath;
     const qint64                headerLen = 4;
-    std::array<char, headerLen> header{};
+    std::array<char, headerLen> header {};
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
     QByteArray                  data;
@@ -167,7 +163,7 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     }
     const qint64                       blockSize        = 4096;
     const qint64                       targetBufferSize = blockSize * 2;
-    std::array<char, targetBufferSize> targetBuffer{};
+    std::array<char, targetBufferSize> targetBuffer {};
 
     qint64 fileSize  = file.size();
     qint64 bytesLeft = file.size() - skipBytes;
@@ -292,25 +288,69 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &e
             file.write(bytes);
         }
         auto data = m_sciControlMaster->getText(len + 1);
-        if (encoding.toLower() != "utf-8")
+        if (encoding.toLower() != "utf-8" && encoding.toLower() != "ascii")
         {
-            QTextCodec *codec = QTextCodec::codecForName(encoding);
-            if (codec)
+            UErrorCode errorCode = U_ZERO_ERROR;
+
+            UConverter *sourceConv = ucnv_open("UTF-8", &errorCode);
+            if (U_FAILURE(errorCode))
             {
-                data = codec->fromUnicode(QString(data));
-                len  = data.length();
+                // Handle error for sourceConv
+                return;
+            }
+            UConverter *targetConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
+            if (U_FAILURE(errorCode))
+            {
+                // Handle error for targetConv
+                ucnv_close(sourceConv); // don't forget to close the already opened converter
+                return;
+            }
+            const qint64                       blockSize        = 4096;
+            const qint64                       targetBufferSize = blockSize * 2;
+            std::array<char, targetBufferSize> targetBuffer {};
+            qint64                             bytesLeft = data.length();
+            const char                        *source    = data.constData();
+
+            while (bytesLeft >= 0)
+            {
+                qint64 requestSize = std::min(blockSize, bytesLeft);
+
+                const char *sourceStart = source;
+                const char *sourceLimit = source + requestSize;
+                char       *target      = targetBuffer.data();
+                char       *targetStart = target;
+                char       *targetLimit = target + targetBufferSize;
+                // convert encoding
+                ucnv_convertEx(
+                    targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
+
+                if (errorCode == U_BUFFER_OVERFLOW_ERROR)
+                {
+                    errorCode = U_ZERO_ERROR;
+                }
+                else if (U_FAILURE(errorCode))
+                {
+                    // Handle conversion error
+                    break;
+                }
+                ptrdiff_t bytesConsumed  = source - sourceStart;
+                ptrdiff_t bytesGenerated = target - targetStart;
+
+                // write to file
+                file.write(targetStart, bytesGenerated);
+                bytesLeft -= bytesConsumed;
             }
         }
-        qint64 size = file.write(data);
+        else
+        {
+            qint64 size = file.write(data);
+        }
         file.close();
 
-        if (size == len)
-        {
-            m_sciControlMaster->setSavePoint();
-            m_sciControlSlave->setSavePoint();
-            emit modifiedNotification();
-            return;
-        }
+        m_sciControlMaster->setSavePoint();
+        m_sciControlSlave->setSavePoint();
+        emit modifiedNotification();
+        return;
     }
     QMessageBox::warning(this, tr("Saving file failed:"), tr("Not all data is saved to file."), QMessageBox::Ok);
 }
@@ -418,9 +458,7 @@ void CodeEditor::setShowWrapSymbol(bool enabled)
     m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
-void CodeEditor::updateUI(Scintilla::Update /*updated*/)
-{
-}
+void CodeEditor::updateUI(Scintilla::Update /*updated*/) {}
 
 void CodeEditor::uriDropped(const QString &uri)
 {
