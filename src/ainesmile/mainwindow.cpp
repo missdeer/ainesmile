@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tvFindReplaceResult->setModel(FindReplaceResultModel::instance());
 
-    QSettings settings("dfordsoft.com", "ainesmile");
+    QSettings settings(QStringLiteral("dfordsoft.com"), QStringLiteral("ainesmile"));
     if (settings.contains("geometry"))
     {
         restoreGeometry(settings.value("geometry").toByteArray());
@@ -111,7 +111,7 @@ void MainWindow::onIdle()
     }
     ui->actionReopenAs->setEnabled(false);
     ui->actionSaveAsEncoding->setEnabled(false);
-    m_encodingLabel->setText("");
+    m_encodingLabel->setText(QLatin1String(""));
     m_withBOMLabel->setEnabled(false);
 }
 
@@ -130,7 +130,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-        QSettings settings("dfordsoft.com", "ainesmile");
+        QSettings settings(QStringLiteral("dfordsoft.com"), QStringLiteral("ainesmile"));
         settings.setValue("geometry", saveGeometry());
         settings.setValue("windowState", saveState());
         settings.sync();
@@ -296,7 +296,7 @@ void MainWindow::connectSignals(CodeEditor *page)
         disconnect(m_lastConnectedCodeEditPage, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
     }
     connect(page, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-    
+
     disconnect(ui->actionCut, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionCut, &QAction::triggered, page, &CodeEditor::cut);
     disconnect(ui->actionCopy, &QAction::triggered, nullptr, nullptr);
@@ -616,13 +616,13 @@ void MainWindow::on_actionSaveAs_triggered()
 
 void MainWindow::on_actionHelpContent_triggered()
 {
-    QDesktopServices::openUrl(QUrl("https://bitbucket.org/missdeer/ainesmile/wiki/Home"));
+    QDesktopServices::openUrl(QUrl(QStringLiteral("https://bitbucket.org/missdeer/ainesmile/wiki/Home")));
 }
 
 void MainWindow::on_actionAboutApp_triggered()
 {
     QString date;
-    QFile   fileDate(":/DATE");
+    QFile   fileDate(QStringLiteral(":/DATE"));
     if (fileDate.open(QIODevice::ReadOnly))
     {
         QByteArray d = fileDate.readAll();
@@ -631,12 +631,12 @@ void MainWindow::on_actionAboutApp_triggered()
 #else
         date = QString::fromLocal8Bit(d);
 #endif
-        date = date.replace("\n", " ");
+        date = date.replace(QLatin1String("\n"), QLatin1String(" "));
         fileDate.close();
     }
 
     QString revision;
-    QFile   fileRevision(":/REVISION");
+    QFile   fileRevision(QStringLiteral(":/REVISION"));
     if (fileRevision.open(QIODevice::ReadOnly))
     {
         QByteArray r = fileRevision.readAll();
@@ -655,12 +655,12 @@ void MainWindow::on_actionAboutApp_triggered()
 
 void MainWindow::on_actionDForDSoftwareHome_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com"));
+    QDesktopServices::openUrl(QUrl(QStringLiteral("http://www.dfordsoft.com")));
 }
 
 void MainWindow::on_actionAinesmileProductPage_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.dfordsoft.com/ainesmile/"));
+    QDesktopServices::openUrl(QUrl(QStringLiteral("http://www.dfordsoft.com/ainesmile/")));
 }
 
 void MainWindow::on_actionSaveAll_triggered()
@@ -842,8 +842,8 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
 
 void MainWindow::on_btnSelectDirectory_clicked()
 {
-    const QString &dir =
-        QFileDialog::getExistingDirectory(this, tr("Select Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    const QString &dir = QFileDialog::getExistingDirectory(
+        this, tr("Select Directory"), QLatin1String(""), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (!dir.isEmpty())
     {
         ui->edtDirectory->setText(dir);
@@ -1020,7 +1020,7 @@ CodeEditor *MainWindow::getFocusCodeEditor()
     return qobject_cast<CodeEditor *>(widget);
 }
 
-void MainWindow::onSelectEncodingCustomContextMenuRequested(const QPoint &pos)
+void MainWindow::onSelectEncodingCustomContextMenuRequested(QPoint pos)
 {
     QWidget *widget = qobject_cast<QWidget *>(sender());
     Q_ASSERT(widget);
