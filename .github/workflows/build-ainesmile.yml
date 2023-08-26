@@ -96,6 +96,7 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
@@ -200,6 +201,7 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
@@ -320,6 +322,7 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
           
