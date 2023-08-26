@@ -45,9 +45,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
     m_encodingLabel->setMaximumWidth(150);
+    m_encodingLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_encodingLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
     ui->statusBar->addPermanentWidget(m_encodingLabel);
+
     m_withBOMLabel = new QLabel(QStringLiteral("BOM"), this);
     m_withBOMLabel->setEnabled(false);
+    m_withBOMLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_withBOMLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
     ui->statusBar->addPermanentWidget(m_withBOMLabel);
 
     QList<int> sizes;
@@ -1049,4 +1054,15 @@ CodeEditor *MainWindow::getFocusCodeEditor()
         return nullptr;
     }
     return qobject_cast<CodeEditor *>(widget);
+}
+
+void MainWindow::onSelectEncodingCustomContextMenuRequested(const QPoint &pos)
+{
+    QWidget *widget = qobject_cast<QWidget *>(sender());
+    Q_ASSERT(widget);
+    auto  globalPos = widget->mapToGlobal(pos);
+    QMenu menu;
+    menu.addAction(ui->actionReopenAs);
+    menu.addAction(ui->actionSaveAsEncoding);
+    menu.exec(globalPos);
 }

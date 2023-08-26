@@ -64,6 +64,7 @@ private slots:
     void onReopenAsEncoding();
     void onSaveAsEncoding();
     void onAutoDetectEncoding(bool toggled);
+    void onSelectEncodingCustomContextMenuRequested(const QPoint &pos);
     void onIdle();
 
     void on_actionNewFile_triggered();
