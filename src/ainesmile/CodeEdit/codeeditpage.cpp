@@ -47,29 +47,18 @@ void CodeEditor::init()
     connect(m_sciControlMaster, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
     connect(m_sciControlMaster, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
     connect(m_sciControlMaster, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
+    connect(m_sciControlMaster, &ScintillaEdit::focusChanged, this, &CodeEditor::focusChanged);
     connect(m_sciControlSlave, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
     connect(m_sciControlSlave, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
     connect(m_sciControlSlave, &ScintillaEdit::modified, this, &CodeEditor::modified);
     connect(m_sciControlSlave, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
     connect(m_sciControlSlave, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
     connect(m_sciControlSlave, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
+    connect(m_sciControlSlave, &ScintillaEdit::focusChanged, this, &CodeEditor::focusChanged);
 }
 
 ScintillaEdit *CodeEditor::getFocusView()
 {
-    if (!m_sciControlMaster->focus() && !m_sciControlSlave->focus())
-    {
-        return m_sciFocusView != nullptr ? m_sciFocusView : (m_sciFocusView = m_sciControlMaster);
-    }
-    if (m_sciControlSlave->focus())
-    {
-        m_sciFocusView = m_sciControlSlave;
-    }
-    else
-    {
-        m_sciFocusView = m_sciControlMaster;
-    }
-
     return m_sciFocusView;
 }
 
@@ -1037,6 +1026,9 @@ void CodeEditor::focusChanged(bool focused)
 {
     if (focused)
     {
+        m_sciFocusView = qobject_cast<ScintillaEdit *>(sender());
+        Q_ASSERT(m_sciFocusView);
+        
         emit focusIn();
     }
 }
