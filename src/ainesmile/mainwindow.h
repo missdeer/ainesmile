@@ -53,10 +53,6 @@ private slots:
     void onCurrentPageChanged(int index);
     void onCloseRequested(int index);
     void onCurrentDocumentChanged();
-    void onCopyAvailableChanged();
-    void onPasteAvailableChanged();
-    void onUndoAvailableChanged();
-    void onRedoAvailableChanged();
     void onRecentFileTriggered();
     void onActivateTabClicked(int index);
     void onCloseTabClicked(const QList<int> &fileList);

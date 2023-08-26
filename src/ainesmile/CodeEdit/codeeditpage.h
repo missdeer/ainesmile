@@ -61,10 +61,6 @@ public:
     //    void focusInEvent(QFocusEvent * event);
 signals:
     void focusIn();
-    void copyAvailableChanged();
-    void pasteAvailableChanged();
-    void redoAvailableChanged();
-    void undoAvailableChanged();
     void modifiedNotification();
     void filePathChanged(const QString &filePath);
     void openFilesRequest(const QStringList &filePath);
@@ -133,11 +129,6 @@ public slots:
     void restoreDefaultZoom();
 
 private:
-    bool            m_lastCopyAvailable;
-    bool            m_lastPasteAvailable;
-    bool            m_lastRedoAvailable;
-    bool            m_lastUndoAvailable;
-    bool            m_isFocusIn;
     QWidget        *m_editorPane;
     QSplitter      *m_verticalEditorSplitter;
     ScintillaEdit  *m_sciControlMaster;
@@ -149,8 +140,8 @@ private:
     ScintillaConfig m_sc;
 
     void    init();
-    void    doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom);
-    void    setContent(const char *pData);
+    void    saveFileAsEncoding(const QString &filePath, const QByteArray &encoding, BOM bom);
+    void    documentChanged();
     void    loadRawFile(QFile &file, qint64 skipBytes = 0);
     void    loadFileAsEncoding(QFile &file, const QString &encoding, qint64 skipBytes = 0);
     QString fileEncodingDetect(QFile &file);

@@ -294,16 +294,9 @@ void MainWindow::connectSignals(CodeEditor *page)
     if (m_lastConnectedCodeEditPage)
     {
         disconnect(m_lastConnectedCodeEditPage, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
-        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
-        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
-        disconnect(m_lastConnectedCodeEditPage, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
     }
     connect(page, &CodeEditor::modifiedNotification, this, &MainWindow::onCurrentDocumentChanged);
-    connect(page, &CodeEditor::copyAvailableChanged, this, &MainWindow::onCopyAvailableChanged);
-    connect(page, &CodeEditor::pasteAvailableChanged, this, &MainWindow::onPasteAvailableChanged);
-    connect(page, &CodeEditor::undoAvailableChanged, this, &MainWindow::onUndoAvailableChanged);
-    connect(page, &CodeEditor::redoAvailableChanged, this, &MainWindow::onRedoAvailableChanged);
+    
     disconnect(ui->actionCut, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionCut, &QAction::triggered, page, &CodeEditor::cut);
     disconnect(ui->actionCopy, &QAction::triggered, nullptr, nullptr);
@@ -494,35 +487,6 @@ void MainWindow::onCurrentDocumentChanged()
             targetTabWidget->setTabText(index, text);
         }
     }
-}
-
-void MainWindow::onCopyAvailableChanged()
-{
-    auto *page = qobject_cast<CodeEditor *>(sender());
-    Q_ASSERT(page);
-    ui->actionCopy->setEnabled(page->canCopy());
-    ui->actionCut->setEnabled(page->canCut());
-}
-
-void MainWindow::onPasteAvailableChanged()
-{
-    auto *page = qobject_cast<CodeEditor *>(sender());
-    Q_ASSERT(page);
-    ui->actionPaste->setEnabled(page->canPaste());
-}
-
-void MainWindow::onUndoAvailableChanged()
-{
-    auto *page = qobject_cast<CodeEditor *>(sender());
-    Q_ASSERT(page);
-    ui->actionUndo->setEnabled(page->canUndo());
-}
-
-void MainWindow::onRedoAvailableChanged()
-{
-    auto *page = qobject_cast<CodeEditor *>(sender());
-    Q_ASSERT(page);
-    ui->actionRedo->setEnabled(page->canRedo());
 }
 
 void MainWindow::onRecentFileTriggered()

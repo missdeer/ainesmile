@@ -25,7 +25,7 @@ CodeEditor::CodeEditor(QWidget *parent)
     sizes << 0 << 0x7FFFF; // << 0;
     m_verticalEditorSplitter->setSizes(sizes);
 
-    QVBoxLayout *m_mainLayout = new QVBoxLayout;
+    auto *m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     // m_mainLayout->setMargin(0);
@@ -44,11 +44,6 @@ void CodeEditor::init()
 {
     m_sc.initScintilla(m_sciControlMaster);
     m_sc.initScintilla(m_sciControlSlave);
-
-    m_lastCopyAvailable  = canCopy();
-    m_lastPasteAvailable = canPaste();
-    m_lastUndoAvailable  = canUndo();
-    m_lastRedoAvailable  = canRedo();
 
     connect(m_sciControlMaster, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
     connect(m_sciControlMaster, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
@@ -101,7 +96,7 @@ void CodeEditor::openFile(const QString &filePath)
     m_bom                                 = BOM::None;
     m_filePath                            = filePath;
     const qint64                headerLen = 4;
-    std::array<char, headerLen> header;
+    std::array<char, headerLen> header{};
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
     QByteArray                  data;
@@ -124,10 +119,8 @@ void CodeEditor::openFile(const QString &filePath)
             charsetDetected = true;
             return;
         }
-        else
-        {
-            file.seek(0);
-        }
+
+        file.seek(0);
 
         if (!charsetDetected)
         {
@@ -174,7 +167,7 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     }
     const qint64                       blockSize        = 4096;
     const qint64                       targetBufferSize = blockSize * 2;
-    std::array<char, targetBufferSize> targetBuffer;
+    std::array<char, targetBufferSize> targetBuffer{};
 
     qint64 fileSize  = file.size();
     qint64 bytesLeft = file.size() - skipBytes;
@@ -216,14 +209,7 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     ucnv_close(sourceConv);
     ucnv_close(targetConv);
 
-    m_sciControlMaster->gotoPos(0);
-
-    m_sciControlMaster->emptyUndoBuffer();
-    emit filePathChanged(m_filePath);
-    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
-    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
-    m_sciControlMaster->colourise(0, -1);
-    m_sciControlSlave->colourise(0, -1);
+    documentChanged();
 }
 
 QString CodeEditor::fileEncodingDetect(QFile &file)
@@ -278,6 +264,11 @@ void CodeEditor::loadRawFile(QFile &file, qint64 skipBytes)
         m_sciControlMaster->appendText(fileSize, (const char *)pData);
         file.unmap(pData);
     }
+    documentChanged();
+}
+
+void CodeEditor::documentChanged()
+{
     m_sciControlMaster->gotoPos(0);
 
     m_sciControlMaster->emptyUndoBuffer();
@@ -288,22 +279,10 @@ void CodeEditor::loadRawFile(QFile &file, qint64 skipBytes)
     m_sciControlSlave->colourise(0, -1);
 }
 
-void CodeEditor::setContent(const char *pData)
-{
-    m_sciControlMaster->setText(pData);
-
-    m_sciControlMaster->emptyUndoBuffer();
-    emit filePathChanged(m_filePath);
-    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
-    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
-    m_sciControlMaster->colourise(0, -1);
-    m_sciControlSlave->colourise(0, -1);
-}
-
-void CodeEditor::doSaveFile(const QString &filePath, const QByteArray &encoding, BOM bom)
+void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &encoding, BOM bom)
 {
     QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly))
+    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         sptr_t len = m_sciControlMaster->textLength();
         //  check bom & encoding
@@ -351,7 +330,7 @@ void CodeEditor::saveFile(const QString &filePath)
 
     if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
     {
-        doSaveFile(filePath, m_encoding, m_bom);
+        saveFileAsEncoding(filePath, m_encoding, m_bom);
     }
 }
 
@@ -439,56 +418,8 @@ void CodeEditor::setShowWrapSymbol(bool enabled)
     m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
-// void CodeEditPage::focusInEvent(QFocusEvent *event)
-//{
-//     qDebug() << __FUNCTION__;
-//     if (event->gotFocus())
-//     {
-//         focusIn_ = true;
-//         emit focusIn();
-//     }
-//     if (event->lostFocus())
-//     {
-//         focusIn_ = false;
-//     }
-//     event->ignore();
-// }
-
 void CodeEditor::updateUI(Scintilla::Update /*updated*/)
 {
-    // if (!m_isFocusIn && (m_sciControlMaster->focus() || m_sciControlSlave->focus() || QApplication::focusWidget() == m_sciControlMaster ||
-    //                      QApplication::focusWidget() == m_sciControlSlave || QApplication::focusWidget() == this))
-    // {
-    //     m_isFocusIn = true;
-    //     emit focusIn();
-    // }
-    // else
-    // {
-    //     m_isFocusIn = false;
-    // }
-    if (m_lastCopyAvailable != canCopy())
-    {
-        m_lastCopyAvailable = !m_lastCopyAvailable;
-        emit copyAvailableChanged();
-    }
-
-    if (m_lastPasteAvailable != canPaste())
-    {
-        m_lastPasteAvailable = !m_lastPasteAvailable;
-        emit pasteAvailableChanged();
-    }
-
-    if (m_lastRedoAvailable != canRedo())
-    {
-        m_lastRedoAvailable = !m_lastRedoAvailable;
-        emit redoAvailableChanged();
-    }
-
-    if (m_lastUndoAvailable != canUndo())
-    {
-        m_lastUndoAvailable = !m_lastUndoAvailable;
-        emit undoAvailableChanged();
-    }
 }
 
 void CodeEditor::uriDropped(const QString &uri)
@@ -1051,7 +982,7 @@ void CodeEditor::saveAsEncoding(const QString &encoding, bool withBOM)
             m_bom = iter->second;
         }
     }
-    doSaveFile(m_filePath, m_encoding, m_bom);
+    saveFileAsEncoding(m_filePath, m_encoding, m_bom);
 }
 
 QString CodeEditor::encoding() const
@@ -1066,8 +997,7 @@ bool CodeEditor::hasBOM()
 
 void CodeEditor::focusChanged(bool focused)
 {
-    m_isFocusIn = focused;
-    if (m_isFocusIn)
+    if (focused)
     {
         emit focusIn();
     }
