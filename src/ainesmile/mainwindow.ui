@@ -179,6 +179,7 @@
     <addaction name="separator"/>
     <addaction name="actionSetReadOnly"/>
     <addaction name="actionClearReadOnlyFlag"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuSearch">
     <property name="title">
@@ -246,12 +247,6 @@
     <addaction name="actionUnfoldAll"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuTool">
-    <property name="title">
-     <string>&amp;Tool</string>
-    </property>
-    <addaction name="actionPreferences"/>
-   </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>&amp;Window</string>
@@ -264,7 +259,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuSearch"/>
    <addaction name="menuView"/>
-   <addaction name="menuTool"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
