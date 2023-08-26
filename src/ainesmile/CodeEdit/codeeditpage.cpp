@@ -456,16 +456,16 @@ void CodeEditor::setShowWrapSymbol(bool enabled)
 
 void CodeEditor::updateUI(Scintilla::Update /*updated*/)
 {
-    if (!m_isFocusIn && (m_sciControlMaster->focus() || m_sciControlSlave->focus() || QApplication::focusWidget() == m_sciControlMaster ||
-                         QApplication::focusWidget() == m_sciControlSlave || QApplication::focusWidget() == this))
-    {
-        m_isFocusIn = true;
-        emit focusIn();
-    }
-    else
-    {
-        m_isFocusIn = false;
-    }
+    // if (!m_isFocusIn && (m_sciControlMaster->focus() || m_sciControlSlave->focus() || QApplication::focusWidget() == m_sciControlMaster ||
+    //                      QApplication::focusWidget() == m_sciControlSlave || QApplication::focusWidget() == this))
+    // {
+    //     m_isFocusIn = true;
+    //     emit focusIn();
+    // }
+    // else
+    // {
+    //     m_isFocusIn = false;
+    // }
     if (m_lastCopyAvailable != canCopy())
     {
         m_lastCopyAvailable = !m_lastCopyAvailable;
@@ -1062,4 +1062,13 @@ QString CodeEditor::encoding() const
 bool CodeEditor::hasBOM()
 {
     return m_bom != BOM::None;
+}
+
+void CodeEditor::focusChanged(bool focused)
+{
+    m_isFocusIn = focused;
+    if (m_isFocusIn)
+    {
+        emit focusIn();
+    }
 }

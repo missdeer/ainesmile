@@ -82,6 +82,7 @@ public slots:
     void updateUI(Scintilla::Update updated);
     void dwellEnd(int x, int y);
     void uriDropped(const QString &uri);
+    void focusChanged(bool focused);
 
     void undo();
     void redo();
