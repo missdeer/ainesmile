@@ -25,17 +25,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-    QCoreApplication::setOrganizationDomain("dfordsoft.com");
-    QCoreApplication::setOrganizationName("DForD Software");
-    QCoreApplication::setApplicationName("ainesmile");
+    QCoreApplication::setOrganizationDomain(QStringLiteral("dfordsoft.com"));
+    QCoreApplication::setOrganizationName(QStringLiteral("DForD Software"));
+    QCoreApplication::setApplicationName(QStringLiteral("ainesmile"));
 
     QTranslator translator;
     QTranslator qtTranslator;
     QStringList uiLanguages;
 
-    uiLanguages                     = QLocale::system().uiLanguages();
-    boost::property_tree::ptree &pt = Config::instance()->pt();
-    QString                      overrideLanguage(pt.get<std::string>("General/OverrideLanguage", "").c_str());
+    uiLanguages                                   = QLocale::system().uiLanguages();
+    boost::property_tree::ptree &pt               = Config::instance()->pt();
+    QString                      overrideLanguage = QString::fromStdString(pt.get<std::string>("General/OverrideLanguage", ""));
     if (!overrideLanguage.isEmpty())
     {
         uiLanguages.prepend(overrideLanguage);
