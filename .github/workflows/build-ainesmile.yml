@@ -96,10 +96,16 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
-          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
-          
+
+      - name: Copy directory
+        shell: pwsh
+        run: |
+          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
+
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
         with:
@@ -201,9 +207,15 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
-          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
+
+      - name: Copy directory
+        shell: pwsh
+        run: |
+          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
           
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -322,9 +334,15 @@ jobs:
           mkdir bin
           copy src\ainesmile\*.exe bin\
           copy src\ainesmile\*.dll bin\
-          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icu*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
+
+      - name: Copy directory
+        shell: pwsh
+        run: |
+          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
           
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -479,6 +497,7 @@ jobs:
           env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake --build . --parallel --verbose
           mkdir bin
           cp src/ainesmile/ainesmile.exe ./bin/
+          cp -r "../resource" ./bin/
           env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe bin/ainesmile.exe
           
       - name: upload executable artifact
@@ -539,9 +558,25 @@ jobs:
           cd build
           cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
           cmake --build . --parallel --verbose
+          cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           cd ..
           
       - name: package
         run: |
           macdeployqt "build/src/ainesmile/ainesmile.app" -qmldir=. -verbose=1 -dmg
         
+      - name: upload executable artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: ainesmile.dmg
+          name: ainesmile-macOS-x86_64.dmg
+
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile.dmg
+          asset_name: ainesmile-macOS-x86_64.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
