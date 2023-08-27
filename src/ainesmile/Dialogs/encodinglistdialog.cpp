@@ -43,15 +43,7 @@ QString EncodingListDialog::selectedEncoding() const
 void EncodingListDialog::on_btnOK_clicked()
 {
     auto *item = ui->listWidget->currentItem();
-    if (!item)
-    {
-        QMessageBox::warning(this, tr("Warning"), tr("Please select the expected encoding in list"), QMessageBox::Ok);
-        return;
-    }
-    auto aliasList     = item->text().split('/');
-    m_selectedEncoding = aliasList.at(0);
-    m_withBOM          = ui->cbWithBOM->isChecked();
-    QDialog::accept();
+    on_listWidget_itemActivated(item);
 }
 
 void EncodingListDialog::on_btnCancel_clicked()
@@ -63,4 +55,17 @@ void EncodingListDialog::on_btnCancel_clicked()
 bool EncodingListDialog::withBOM() const
 {
     return m_withBOM;
+}
+
+void EncodingListDialog::on_listWidget_itemActivated(QListWidgetItem *item)
+{
+    if (!item)
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please select the expected encoding in list"), QMessageBox::Ok);
+        return;
+    }
+    auto aliasList     = item->text().split('/');
+    m_selectedEncoding = aliasList.at(0);
+    m_withBOM          = ui->cbWithBOM->isChecked();
+    QDialog::accept();
 }
