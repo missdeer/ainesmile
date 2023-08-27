@@ -88,7 +88,7 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
-          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
           date /T > src\ainesmile\DATE
           time /T >> src\ainesmile\DATE
           mkdir build
@@ -114,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           path: build\bin
-          name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+          name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
           
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -202,7 +202,7 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
-          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
           date /T > src\ainesmile\DATE
           time /T >> src\ainesmile\DATE
           mkdir build
@@ -228,7 +228,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           path: build\bin
-          name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+          name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
           
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -332,7 +332,7 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
-          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
           date /T > src\ainesmile\DATE
           time /T >> src\ainesmile\DATE
           mkdir build
@@ -358,7 +358,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           path: build\bin
-          name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}
+          name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
           
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -514,7 +514,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           path: build\bin
-          name: ainesmile-${{ matrix.qt_arch }}
+          name: ainesmile-${{ matrix.qt_arch }}.zip
 
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
