@@ -564,11 +564,12 @@ jobs:
       - name: package
         run: |
           macdeployqt "build/src/ainesmile/ainesmile.app" -qmldir=. -verbose=1 -dmg
+          find . -name '*.dmg' -type f -print
         
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
         with:
-          path: ainesmile.dmg
+          path: build/src/ainesmile/ainesmile.dmg
           name: ainesmile-macOS-x86_64.dmg
 
       - name: uploadRelease
@@ -576,7 +577,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: ainesmile.dmg
+          file: build/src/ainesmile/ainesmile.dmg
           asset_name: ainesmile-macOS-x86_64.dmg
           tag: ${{ github.ref }}
           overwrite: true
