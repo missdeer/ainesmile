@@ -88,6 +88,9 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
+          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          date /T > src\ainesmile\DATE
+          time /T >> src\ainesmile\DATE
           mkdir build
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
@@ -199,6 +202,9 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
+          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          date /T > src\ainesmile\DATE
+          time /T >> src\ainesmile\DATE
           mkdir build
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
@@ -326,6 +332,9 @@ jobs:
           cd 3rdparty\scintilla\qt\ScintillaEdit
           python WidgetGen.py
           cd ..\..\..\..
+          git log -1 --pretty=format:%h > src\ainesmile\REVISION
+          date /T > src\ainesmile\DATE
+          time /T >> src\ainesmile\DATE
           mkdir build
           cd build
           curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
