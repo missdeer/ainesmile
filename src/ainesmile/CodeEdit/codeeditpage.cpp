@@ -84,8 +84,7 @@ void CodeEditor::openFile(const QString &filePath)
     std::array<char, headerLen> header {};
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
-    QByteArray                  data;
-    auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+    auto [bom, length]                          = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
     if (bom == BOM::UTF8)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
@@ -122,12 +121,9 @@ void CodeEditor::openFile(const QString &filePath)
     if (!charsetDetected)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
-        if (data.isEmpty())
-        {
-            file.seek(0);
-            loadRawFile(file);
-            return;
-        }
+        file.seek(0);
+        loadRawFile(file);
+        return;
     }
 }
 
