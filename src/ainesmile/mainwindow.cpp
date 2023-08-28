@@ -216,13 +216,13 @@ void MainWindow::setRecentFiles()
 void MainWindow::setMenuItemChecked()
 {
     auto &ptree   = Config::instance()->pt();
-    bool  enabled = ptree.get<bool>("show.end_of_line", true);
+    bool  enabled = ptree.get<bool>("show.end_of_line", false);
     ui->actionShowEndOfLine->setChecked(enabled);
-    enabled = ptree.get<bool>("show.indent_guide", true);
+    enabled = ptree.get<bool>("show.indent_guide", false);
     ui->actionShowIndentGuide->setChecked(enabled);
-    enabled = ptree.get<bool>("show.white_space_and_tab", true);
+    enabled = ptree.get<bool>("show.white_space_and_tab", false);
     ui->actionShowWhiteSpaceAndTAB->setChecked(enabled);
-    enabled = ptree.get<bool>("show.wrap_symbol", true);
+    enabled = ptree.get<bool>("show.wrap_symbol", false);
     ui->actionShowWrapSymbol->setChecked(enabled);
     enabled = ptree.get<bool>("encoding.auto_detect", false);
     ui->actionAutoDetectEncoding->setChecked(enabled);
