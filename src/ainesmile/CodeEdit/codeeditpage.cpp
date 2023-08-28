@@ -85,28 +85,26 @@ void CodeEditor::openFile(const QString &filePath)
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
     QByteArray                  data;
+    auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+    if (bom == BOM::UTF8)
+    {
+        m_encoding = QByteArrayLiteral("UTF-8");
+        m_bom      = bom;
+        loadRawFile(file, length);
+        return;
+    }
+    if (bom != BOM::None)
+    {
+        auto encoding = encodingNameForBOM(bom);
+        loadFileAsEncoding(file, encoding, length);
+        m_encoding      = encoding;
+        m_bom           = bom;
+        charsetDetected = true;
+        return;
+    }
+
     if (autoDetectEncoding)
     {
-        auto [bom, length] = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
-        if (bom == BOM::UTF8)
-        {
-            m_encoding = QByteArrayLiteral("UTF-8");
-            m_bom      = bom;
-            loadRawFile(file, length);
-            return;
-        }
-        if (bom != BOM::None)
-        {
-            auto encoding = encodingNameForBOM(bom);
-            loadFileAsEncoding(file, encoding, length);
-            m_encoding      = encoding;
-            m_bom           = bom;
-            charsetDetected = true;
-            return;
-        }
-
-        file.seek(0);
-
         if (!charsetDetected)
         {
             m_bom = BOM::None;
@@ -1028,7 +1026,7 @@ void CodeEditor::focusChanged(bool focused)
     {
         m_sciFocusView = qobject_cast<ScintillaEdit *>(sender());
         Q_ASSERT(m_sciFocusView);
-        
+
         emit focusIn();
     }
 }
