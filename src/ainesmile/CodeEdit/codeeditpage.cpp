@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 
+#include <boost/scope_exit.hpp>
 #include <unicode/ucnv.h>
 #include <unicode/utext.h>
 
@@ -134,16 +135,25 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     UConverter *sourceConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
-        // Handle error for sourceConv
         return;
     }
+    BOOST_SCOPE_EXIT(sourceConv)
+    {
+        ucnv_close(sourceConv);
+    }
+    BOOST_SCOPE_EXIT_END
+
     UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
     if (U_FAILURE(errorCode))
     {
-        // Handle error for targetConv
-        ucnv_close(sourceConv); // don't forget to close the already opened converter
         return;
     }
+    BOOST_SCOPE_EXIT(targetConv)
+    {
+        ucnv_close(targetConv);
+    }
+    BOOST_SCOPE_EXIT_END
+
     const qint64                       blockSize        = 4096;
     const qint64                       targetBufferSize = blockSize * 2;
     std::array<char, targetBufferSize> targetBuffer {};
@@ -184,9 +194,6 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
         bytesLeft -= bytesConsumed;
         offset += bytesConsumed;
     }
-
-    ucnv_close(sourceConv);
-    ucnv_close(targetConv);
 
     documentChanged();
 }
@@ -278,16 +285,25 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &e
             UConverter *sourceConv = ucnv_open("UTF-8", &errorCode);
             if (U_FAILURE(errorCode))
             {
-                // Handle error for sourceConv
                 return;
             }
+            BOOST_SCOPE_EXIT(sourceConv)
+            {
+                ucnv_close(sourceConv);
+            }
+            BOOST_SCOPE_EXIT_END
+
             UConverter *targetConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
             if (U_FAILURE(errorCode))
             {
-                // Handle error for targetConv
-                ucnv_close(sourceConv); // don't forget to close the already opened converter
                 return;
             }
+            BOOST_SCOPE_EXIT(targetConv)
+            {
+                ucnv_close(targetConv);
+            }
+            BOOST_SCOPE_EXIT_END
+
             const qint64                       blockSize        = 4096;
             const qint64                       targetBufferSize = blockSize * 2;
             std::array<char, targetBufferSize> targetBuffer {};
