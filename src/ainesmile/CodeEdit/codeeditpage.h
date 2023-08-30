@@ -149,6 +149,8 @@ private:
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
     static QByteArray                   encodingNameForBOM(BOM bom);
     static QByteArray                   generateBOM(BOM bom);
+    static int                          getLineCount(const char *pData, qint64 length);
+    static int                          getLineCount(const QByteArray &data);
 };
 
 #endif // CODEEDITPAGE_H
