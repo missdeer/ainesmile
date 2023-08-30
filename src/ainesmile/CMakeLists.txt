@@ -57,8 +57,8 @@ set(ainesmile_headers
         stdafx.h
         tabwidget.h
         config.h
-		${CodeEdit_headers}
-		${Dialogs_headers}
+	${CodeEdit_headers}
+	${Dialogs_headers}
         )
 
 file(GLOB

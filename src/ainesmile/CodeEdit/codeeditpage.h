@@ -6,23 +6,9 @@
 #include <QWidget>
 
 #include "ScintillaEdit.h"
+#include "encodingutils.h"
 #include "scintillaconfig.h"
 
-enum class BOM : std::uint8_t
-{
-    None,
-    UTF8,
-    UTF16LE,
-    UTF16BE,
-    UTF32LE,
-    UTF32BE,
-    UTF7,
-    UTF1,
-    UTFEBCDIC,
-    SCSU,
-    BOCU1,
-    GB18030,
-};
 
 class CodeEditor : public QWidget
 {
@@ -129,28 +115,24 @@ public slots:
     void restoreDefaultZoom();
 
 private:
-    QWidget        *m_editorPane;
-    QSplitter      *m_verticalEditorSplitter;
-    ScintillaEdit  *m_sciControlMaster;
-    ScintillaEdit  *m_sciControlSlave;
-    ScintillaEdit  *m_sciFocusView;
-    QString         m_filePath;
-    QString         m_encoding {"UTF-8"};
-    BOM             m_bom {BOM::None};
-    ScintillaConfig m_sc;
+    QWidget           *m_editorPane;
+    QSplitter         *m_verticalEditorSplitter;
+    ScintillaEdit     *m_sciControlMaster;
+    ScintillaEdit     *m_sciControlSlave;
+    ScintillaEdit     *m_sciFocusView;
+    QString            m_filePath;
+    QString            m_encoding {"UTF-8"};
+    EncodingUtils::BOM m_bom {EncodingUtils::BOM::None};
+    ScintillaConfig    m_sc;
 
     void init();
-    void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
+    void saveFileAsEncoding(const QString &filePath, const QString &encoding, EncodingUtils::BOM bom);
     void documentChanged();
     void loadRawFile(const QByteArray &data);
     void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
 
-    static QString                      fileEncodingDetect(const QByteArray &data);
-    static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
-    static QByteArray                   encodingNameForBOM(BOM bom);
-    static QByteArray                   generateBOM(BOM bom);
-    static int                          getLineCount(const char *pData, qint64 length);
-    static int                          getLineCount(const QByteArray &data);
+    static int getLineCount(const char *pData, qint64 length);
+    static int getLineCount(const QByteArray &data);
 };
 
 #endif // CODEEDITPAGE_H
