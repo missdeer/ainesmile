@@ -276,14 +276,14 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
         else
         {
 #if defined(Q_OS_MAC)
-            sci->styleSetFont(id, "Menlo");
+            sci->styleSetFont(styleId, "Menlo");
 #elif defined(Q_OS_WIN)
             sci->styleSetFont(styleId, "Consolas");
 #else
-            sci->styleSetFont(id, "Droid Sans Mono");
+            sci->styleSetFont(styleId, "Droid Sans Mono");
 #endif
         }
-        
+
         uint fontStyle = styleElem.attribute("font_style").toUInt();
 
         std::map<unsigned char, std::function<void(sptr_t, bool)>> styleSetterMap = {
