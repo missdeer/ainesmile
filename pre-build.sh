@@ -1,6 +1,6 @@
 #!/bin/sh
 cd 3rdparty/scintilla/qt/ScintillaEdit/
-python3 WidgetGen.py
+python WidgetGen.py
 cd ../../../..
 git rev-parse --short HEAD > src/ainesmile/REVISION
 if [ "$1" = "mac" ]; then

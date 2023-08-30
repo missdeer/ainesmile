@@ -464,6 +464,9 @@ jobs:
           submodules: true
           
       - run: |
+          git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
+          date /T > src\ainesmile\DATE
+          time /T >> src\ainesmile\DATE
           git clone https://github.com/missdeer/mingwdeployqt.git
           
       - name: Build mingwdeployqt
@@ -560,7 +563,7 @@ jobs:
       - name: build macos
         run: |
           brew install boost ninja icu4c
-          ./pre-build.sh
+          ./pre-build.sh mac
           cd 3rdparty/scintilla/qt/ScintillaEdit
           python WidgetGen.py
           cd ../../../..
@@ -573,7 +576,8 @@ jobs:
           
       - name: package
         run: |
-          macdeployqt "build/src/ainesmile/ainesmile.app" -qmldir=. -verbose=1 -dmg
+          cd build/src/ainesmile
+          macdeployqt ainesmile.app -verbose=1 -dmg
           find . -name '*.dmg' -type f -print
         
       - name: upload executable artifact
