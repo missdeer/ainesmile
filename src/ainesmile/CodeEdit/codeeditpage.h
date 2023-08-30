@@ -135,17 +135,17 @@ private:
     ScintillaEdit  *m_sciControlSlave;
     ScintillaEdit  *m_sciFocusView;
     QString         m_filePath;
-    QByteArray      m_encoding {"UTF-8"};
+    QString         m_encoding {"UTF-8"};
     BOM             m_bom {BOM::None};
     ScintillaConfig m_sc;
 
-    void    init();
-    void    saveFileAsEncoding(const QString &filePath, const QByteArray &encoding, BOM bom);
-    void    documentChanged();
-    void    loadRawFile(QFile &file, qint64 skipBytes = 0);
-    void    loadFileAsEncoding(QFile &file, const QString &encoding, qint64 skipBytes = 0);
-    QString fileEncodingDetect(QFile &file);
+    void init();
+    void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
+    void documentChanged();
+    void loadRawFile(const QByteArray &data);
+    void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
 
+    static QString                      fileEncodingDetect(const QByteArray &data);
     static std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
     static QByteArray                   encodingNameForBOM(BOM bom);
     static QByteArray                   generateBOM(BOM bom);

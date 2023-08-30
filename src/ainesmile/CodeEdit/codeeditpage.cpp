@@ -2,11 +2,11 @@
 
 #include <boost/scope_exit.hpp>
 #include <unicode/ucnv.h>
+#include <unicode/ucsdet.h>
 #include <unicode/utext.h>
 
 #include "codeeditpage.h"
 #include "config.h"
-#include "uchardet.h"
 
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
@@ -86,17 +86,20 @@ void CodeEditor::openFile(const QString &filePath)
     qint64                      cbRead          = file.read(header.data(), headerLen);
     bool                        charsetDetected = false;
     auto [bom, length]                          = checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+
+    file.seek(length);
+    auto data = file.readAll();
     if (bom == BOM::UTF8)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
         m_bom      = bom;
-        loadRawFile(file, length);
+        loadRawFile(data);
         return;
     }
     if (bom != BOM::None)
     {
         auto encoding = encodingNameForBOM(bom);
-        loadFileAsEncoding(file, encoding, length);
+        loadFileAsEncoding(data, encoding);
         m_encoding      = encoding;
         m_bom           = bom;
         charsetDetected = true;
@@ -109,10 +112,10 @@ void CodeEditor::openFile(const QString &filePath)
         {
             m_bom = BOM::None;
             file.seek(0);
-            QString encoding = fileEncodingDetect(file);
-            if (!encoding.isEmpty() && encoding.toLower() != "utf-8")
+            QString encoding = fileEncodingDetect(data);
+            if (!encoding.isEmpty() && encoding.toUpper() != QByteArrayLiteral("UTF-8"))
             {
-                loadFileAsEncoding(file, encoding);
+                loadFileAsEncoding(data, encoding);
                 m_encoding      = encoding.toUtf8();
                 charsetDetected = true;
                 return;
@@ -122,19 +125,20 @@ void CodeEditor::openFile(const QString &filePath)
     if (!charsetDetected)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
-        file.seek(0);
-        loadRawFile(file);
+        loadRawFile(data);
         return;
     }
 }
 
-void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64 skipBytes)
+void CodeEditor::loadFileAsEncoding(const QByteArray &data, const QString &encoding)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
 
     UConverter *sourceConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
+        const char *errorName = u_errorName(errorCode);
+        QMessageBox::critical(this, tr("Error"), tr("creating converter for %1 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
         return;
     }
     BOOST_SCOPE_EXIT(sourceConv)
@@ -146,6 +150,8 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
     if (U_FAILURE(errorCode))
     {
+        const char *errorName = u_errorName(errorCode);
+        QMessageBox::critical(this, tr("Error"), tr("creating converter for UTF-8 failed: %1").arg(errorName), QMessageBox::Ok);
         return;
     }
     BOOST_SCOPE_EXIT(targetConv)
@@ -154,110 +160,90 @@ void CodeEditor::loadFileAsEncoding(QFile &file, const QString &encoding, qint64
     }
     BOOST_SCOPE_EXIT_END
 
-    const qint64                       blockSize        = 4096;
-    const qint64                       targetBufferSize = blockSize * 2;
-    std::array<char, targetBufferSize> targetBuffer {};
+    const qint64 sourceSize  = data.length();
+    const char  *source      = data.constData();
+    const char  *sourceStart = data.constData();
+    const char  *sourceLimit = source + sourceSize;
 
-    qint64 fileSize  = file.size();
-    qint64 bytesLeft = file.size() - skipBytes;
-    qint64 offset    = skipBytes;
-    file.seek(offset);
+    const qint64      targetBufferSize = sourceSize * 2;
+    std::vector<char> targetBuffer;
+    targetBuffer.resize(targetBufferSize);
+    char *target      = targetBuffer.data();
+    char *targetStart = target;
+    char *targetLimit = target + targetBufferSize;
+    // convert encoding
+    ucnv_convertEx(targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
 
-    while (bytesLeft >= 0 && offset < fileSize)
+    if (errorCode == U_BUFFER_OVERFLOW_ERROR)
     {
-        qint64      requestSize = std::min(blockSize, bytesLeft);
-        char       *pData       = (char *)file.map(offset, requestSize);
-        const char *source      = pData;
-        char       *sourceStart = pData;
-        const char *sourceLimit = source + requestSize;
-        char       *target      = targetBuffer.data();
-        char       *targetStart = target;
-        char       *targetLimit = target + targetBufferSize;
-        // convert encoding
-        ucnv_convertEx(
-            targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
-
-        if (errorCode == U_BUFFER_OVERFLOW_ERROR)
-        {
-            errorCode = U_ZERO_ERROR;
-        }
-        else if (U_FAILURE(errorCode))
-        {
-            // Handle conversion error
-            break;
-        }
-        ptrdiff_t bytesConsumed  = source - sourceStart;
-        ptrdiff_t bytesGenerated = target - targetStart;
-        // display text
-        m_sciControlMaster->appendText(bytesGenerated, (const char *)targetStart);
-        file.unmap((uchar *)pData);
-        bytesLeft -= bytesConsumed;
-        offset += bytesConsumed;
+        errorCode = U_ZERO_ERROR;
     }
+    else if (U_FAILURE(errorCode))
+    {
+        const char *errorName = u_errorName(errorCode);
+        QMessageBox::critical(this, tr("Error"), tr("converting from %1 to UTF-8 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
+        return;
+    }
+    ptrdiff_t bytesConsumed  = source - sourceStart;
+    ptrdiff_t bytesGenerated = target - targetStart;
+    // display text
+    m_sciControlMaster->clearAll();
+    m_sciControlMaster->appendText(bytesGenerated, (const char *)targetStart);
 
     documentChanged();
 }
 
-QString CodeEditor::fileEncodingDetect(QFile &file)
+QString CodeEditor::fileEncodingDetect(const QByteArray &data)
 {
-    qint64       fileSize  = file.size();
-    qint64       offset    = 0;
-    const qint64 blockSize = 4096;
-    auto        *uchardet  = uchardet_new();
-    while (fileSize >= blockSize)
-    {
-        uchar *pData = file.map(offset, blockSize);
-        uchardet_handle_data(uchardet, (const char *)pData, blockSize);
-        file.unmap(pData);
-        m_sciControlMaster->gotoPos(m_sciControlMaster->length());
-        fileSize -= blockSize;
-        offset += blockSize;
-    }
-    if (fileSize > 0)
-    {
-        uchar *pData = file.map(offset, fileSize);
-        uchardet_handle_data(uchardet, (const char *)pData, fileSize);
-        file.unmap(pData);
-    }
-    uchardet_data_end(uchardet);
-    QString charset = QString::fromLatin1(uchardet_get_charset(uchardet));
-    uchardet_delete(uchardet);
-    if (charset.toUpper() == QStringLiteral("ASCII"))
+    UErrorCode status = U_ZERO_ERROR;
+
+    UCharsetDetector *csd = ucsdet_open(&status);
+    if (U_FAILURE(status))
     {
         return QStringLiteral("UTF-8");
     }
-    return charset;
+    BOOST_SCOPE_EXIT(csd)
+    {
+        ucsdet_close(csd);
+    }
+    BOOST_SCOPE_EXIT_END
+
+    ucsdet_setText(csd, data.constData(), data.length(), &status);
+    if (U_FAILURE(status))
+    {
+        return QStringLiteral("UTF-8");
+    }
+
+    const UCharsetMatch *match = ucsdet_detect(csd, &status);
+    if (U_FAILURE(status))
+    {
+        return QStringLiteral("UTF-8");
+    }
+
+    const char *charset = ucsdet_getName(match, &status);
+    if (U_FAILURE(status))
+    {
+        return QStringLiteral("UTF-8");
+    }
+
+    return QString::fromLatin1(charset);
 }
 
-void CodeEditor::loadRawFile(QFile &file, qint64 skipBytes)
+void CodeEditor::loadRawFile(const QByteArray &data)
 {
-    qint64 fileSize = file.size() - skipBytes;
-    qint64 offset   = skipBytes;
-    file.seek(offset);
-    const qint64 blockSize = 4096;
+    m_sciControlMaster->clearAll();
+    m_sciControlMaster->appendText(data.length(), data.constData());
 
-    while (fileSize >= blockSize)
-    {
-        uchar *pData = file.map(offset, blockSize);
-        m_sciControlMaster->appendText(blockSize, (const char *)pData);
-        file.unmap(pData);
-        fileSize -= blockSize;
-        offset += blockSize;
-    }
-    if (fileSize > 0)
-    {
-        uchar *pData = file.map(offset, fileSize);
-        m_sciControlMaster->appendText(fileSize, (const char *)pData);
-        file.unmap(pData);
-    }
     documentChanged();
 }
 
 void CodeEditor::documentChanged()
 {
     m_sciControlMaster->gotoPos(0);
+    m_sciControlSlave->gotoPos(0);
 
     m_sciControlMaster->emptyUndoBuffer();
+    m_sciControlSlave->emptyUndoBuffer();
     emit filePathChanged(m_filePath);
     m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
     m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
@@ -265,26 +251,35 @@ void CodeEditor::documentChanged()
     m_sciControlSlave->colourise(0, -1);
 }
 
-void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &encoding, BOM bom)
+void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom)
 {
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
-        sptr_t len = m_sciControlMaster->textLength();
+        BOOST_SCOPE_EXIT(&file)
+        {
+            file.close();
+        }
+        BOOST_SCOPE_EXIT_END
+
+        sptr_t textLength = m_sciControlMaster->textLength();
         //  check bom & encoding
         auto bytes = generateBOM(bom);
         if (!bytes.isEmpty())
         {
             file.write(bytes);
         }
-        auto data = m_sciControlMaster->getText(len + 1);
-        if (encoding.toLower() != "utf-8" && encoding.toLower() != "ascii")
+        auto data = m_sciControlMaster->getText(textLength + 1);
+        if (encoding.toUpper() != QByteArrayLiteral("UTF-8") && encoding.toLower() != QByteArrayLiteral("ASCII") &&
+            encoding.toLower() != QByteArrayLiteral("ANSI"))
         {
             UErrorCode errorCode = U_ZERO_ERROR;
 
             UConverter *sourceConv = ucnv_open("UTF-8", &errorCode);
             if (U_FAILURE(errorCode))
             {
+                const char *errorName = u_errorName(errorCode);
+                QMessageBox::critical(this, tr("Error"), tr("creating converter for UTF-8 failed: %1").arg(errorName), QMessageBox::Ok);
                 return;
             }
             BOOST_SCOPE_EXIT(sourceConv)
@@ -296,6 +291,8 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &e
             UConverter *targetConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
             if (U_FAILURE(errorCode))
             {
+                const char *errorName = u_errorName(errorCode);
+                QMessageBox::critical(this, tr("Error"), tr("creating converter for %1 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
                 return;
             }
             BOOST_SCOPE_EXIT(targetConv)
@@ -304,54 +301,46 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QByteArray &e
             }
             BOOST_SCOPE_EXIT_END
 
-            const qint64                       blockSize        = 4096;
-            const qint64                       targetBufferSize = blockSize * 2;
-            std::array<char, targetBufferSize> targetBuffer {};
-            qint64                             bytesLeft = data.length();
-            const char                        *source    = data.constData();
+            const char *source      = data.constData();
+            const char *sourceStart = source;
+            const char *sourceLimit = source + textLength;
 
-            while (bytesLeft >= 0)
+            const qint64      targetBufferSize = textLength * 2;
+            std::vector<char> targetBuffer;
+            targetBuffer.resize(targetBufferSize);
+            char *target      = targetBuffer.data();
+            char *targetStart = target;
+            char *targetLimit = target + targetBufferSize;
+            // convert encoding
+            ucnv_convertEx(
+                targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
+
+            if (errorCode == U_BUFFER_OVERFLOW_ERROR)
             {
-                qint64 requestSize = std::min(blockSize, bytesLeft);
-
-                const char *sourceStart = source;
-                const char *sourceLimit = source + requestSize;
-                char       *target      = targetBuffer.data();
-                char       *targetStart = target;
-                char       *targetLimit = target + targetBufferSize;
-                // convert encoding
-                ucnv_convertEx(
-                    targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
-
-                if (errorCode == U_BUFFER_OVERFLOW_ERROR)
-                {
-                    errorCode = U_ZERO_ERROR;
-                }
-                else if (U_FAILURE(errorCode))
-                {
-                    // Handle conversion error
-                    break;
-                }
-                ptrdiff_t bytesConsumed  = source - sourceStart;
-                ptrdiff_t bytesGenerated = target - targetStart;
-
-                // write to file
-                file.write(targetStart, bytesGenerated);
-                bytesLeft -= bytesConsumed;
+                errorCode = U_ZERO_ERROR;
             }
+            else if (U_FAILURE(errorCode))
+            {
+                // Handle conversion error
+                const char *errorName = u_errorName(errorCode);
+                QMessageBox::critical(this, tr("Error"), tr("converting from UTF-8 to %1 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
+                return;
+            }
+            ptrdiff_t bytesGenerated = target - targetStart;
+
+            file.write(targetStart, bytesGenerated);
         }
         else
         {
-            qint64 size = file.write(data);
+            file.write(data);
         }
-        file.close();
 
         m_sciControlMaster->setSavePoint();
         m_sciControlSlave->setSavePoint();
         emit modifiedNotification();
         return;
     }
-    QMessageBox::warning(this, tr("Saving file failed:"), tr("Not all data is saved to file."), QMessageBox::Ok);
+    QMessageBox::warning(this, tr("Error"), tr("Cannot write to file %1.").arg(QDir::toNativeSeparators(filePath)), QMessageBox::Ok);
 }
 
 void CodeEditor::saveFile(const QString &filePath)
@@ -994,8 +983,9 @@ void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
         auto bom  = generateBOM(m_bom);
         skipBytes = bom.length();
     }
-    m_sciControlMaster->clearAll();
-    loadFileAsEncoding(file, encoding, skipBytes);
+    file.seek(skipBytes);
+    auto data = file.readAll();
+    loadFileAsEncoding(data, encoding);
     file.close();
 }
 
