@@ -130,9 +130,6 @@ private:
     void documentChanged();
     void loadRawFile(const QByteArray &data);
     void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
-
-    static int getLineCount(const char *pData, qint64 length);
-    static int getLineCount(const QByteArray &data);
 };
 
 #endif // CODEEDITPAGE_H
