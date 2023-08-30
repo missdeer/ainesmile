@@ -1,14 +1,16 @@
 #include "stdafx.h"
 
+#include <boost/scope_exit.hpp>
+
 #include "scintillaconfig.h"
 #include "ILexer.h"
 #include "Lexilla.h"
 #include "ScintillaEdit.h"
 #include "config.h"
 
-void ScintillaConfig::initScintilla(ScintillaEdit* sci)
+void ScintillaConfig::initScintilla(ScintillaEdit *sci)
 {
-    boost::property_tree::ptree& ptree = Config::instance()->pt();
+    boost::property_tree::ptree &ptree = Config::instance()->pt();
 
     sci->styleResetDefault();
     sci->styleClearAll();
@@ -49,7 +51,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setHotspotSingleLine(false);
     sci->setControlCharSymbol(0);
     sci->setMarginLeft(4);
-    //sci->setMarginRight(4);
+    // sci->setMarginRight(4);
     sci->setMarginTypeN(0, SC_MARGIN_NUMBER);
     sci->setMarginWidthN(0, 24);
     sci->setMarginMaskN(0, 0);
@@ -60,7 +62,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setMarginSensitiveN(1, true);
     sci->setMarginTypeN(2, SC_MARGIN_SYMBOL);
     sci->setMarginWidthN(2, 16);
-    sci->setMarginMaskN(2, SC_MASK_FOLDERS);// 0xFE000000 or -33554432
+    sci->setMarginMaskN(2, SC_MASK_FOLDERS); // 0xFE000000 or -33554432
     sci->setMarginSensitiveN(2, true);
 
     sci->setFoldMarginColour(true, 0xE9E9E9);
@@ -77,7 +79,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setPrintColourMode(0);
     sci->setPrintWrapMode(1);
 
-    initFolderStyle( sci );
+    initFolderStyle(sci);
 
     sci->setWrapMode(SC_WRAP_NONE);
     sci->setWrapVisualFlags(ptree.get<bool>("show.wrap_symbol", false) ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
@@ -96,14 +98,14 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
     sci->setCodePage(SC_CP_UTF8);
     sci->setWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
     sci->setZoom(1);
-    sci->setWhitespaceChars(NULL);
+    sci->setWhitespaceChars(nullptr);
     sci->setMouseDwellTime(2500);
 
     sci->setSavePoint();
-    sci->setFontQuality( SC_EFF_QUALITY_ANTIALIASED);
+    sci->setFontQuality(SC_EFF_QUALITY_ANTIALIASED);
 
-    //sci:SetEncoding( cfg:GetString("config/encoding") )
-    Config* config = Config::instance();
+    // sci:SetEncoding( cfg:GetString("config/encoding") )
+    Config *config = Config::instance();
     Q_ASSERT(config);
     QString themePath = config->getThemePath();
     applyThemeStyle(sci, themePath + "/global_style.xml");
@@ -111,7 +113,7 @@ void ScintillaConfig::initScintilla(ScintillaEdit* sci)
 
 void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
 {
-    sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED );
+    sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED);
 
     sci->markerDefine(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS);
     sci->markerDefine(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS);
@@ -135,22 +137,22 @@ void ScintillaConfig::initFolderStyle(ScintillaEdit *sci)
     sci->markerSetBack(SC_MARKNUM_FOLDEROPENMID, 0x808080);
     sci->markerSetFore(SC_MARKNUM_FOLDERMIDTAIL, 0xFFFFFF);
     sci->markerSetBack(SC_MARKNUM_FOLDERMIDTAIL, 0x808080);
-    sci->setProperty( "fold", "1");
-    sci->setProperty( "fold.flags", "16");
-    sci->setProperty( "fold.symbols", "1");
-    sci->setProperty( "fold.compact", "0");
-    sci->setProperty( "fold.at.else", "1");
-    sci->setProperty( "fold.preprocessor", "1");
-    sci->setProperty( "fold.view", "1");
-    sci->setProperty( "fold.comment", "1");
-    sci->setProperty( "fold.html", "1");
-    sci->setProperty( "fold.comment.python", "1");
-    sci->setProperty( "fold.quotes.python", "1");
+    sci->setProperty("fold", "1");
+    sci->setProperty("fold.flags", "16");
+    sci->setProperty("fold.symbols", "1");
+    sci->setProperty("fold.compact", "0");
+    sci->setProperty("fold.at.else", "1");
+    sci->setProperty("fold.preprocessor", "1");
+    sci->setProperty("fold.view", "1");
+    sci->setProperty("fold.comment", "1");
+    sci->setProperty("fold.html", "1");
+    sci->setProperty("fold.comment.python", "1");
+    sci->setProperty("fold.quotes.python", "1");
 }
 
-void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filename)
+void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString &filename)
 {
-    Config* config = Config::instance();
+    Config *config = Config::instance();
     Q_ASSERT(config);
 
     QString lang = config->matchPatternLanguage(filename);
@@ -185,107 +187,131 @@ void ScintillaConfig::initEditorStyle(ScintillaEdit *sci, const QString& filenam
 void ScintillaConfig::applyLanguageStyle(ScintillaEdit *sci, const QString &configPath)
 {
     QDomDocument doc;
-    QFile file(configPath);
+    QFile        file(configPath);
     if (!file.open(QIODevice::ReadOnly))
-        return;
-    if (!doc.setContent(&file))
     {
-        file.close();
         return;
     }
-    file.close();
 
-    QDomElement docElem = doc.documentElement();
-    QString commentLine = docElem.attribute("comment_line");
-    QString commentStart = docElem.attribute("comment_start");
-    QString commentEnd = docElem.attribute("comment_end");
+    BOOST_SCOPE_EXIT(&file)
+    {
+        file.close();
+    }
+    BOOST_SCOPE_EXIT_END
+
+    if (!doc.setContent(&file))
+    {
+        return;
+    }
+
+    QDomElement docElem      = doc.documentElement();
+    QString     commentLine  = docElem.attribute("comment_line");
+    QString     commentStart = docElem.attribute("comment_start");
+    QString     commentEnd   = docElem.attribute("comment_end");
 
     QDomElement keywordElem = docElem.firstChildElement("keyword");
-    int keywordSet = 0;
-    while(!keywordElem.isNull())
+    int         keywordSet  = 0;
+    while (!keywordElem.isNull())
     {
-        QString name = keywordElem.attribute("name");
+        QString name    = keywordElem.attribute("name");
         QString keyword = keywordElem.text();
         sci->setKeyWords(keywordSet++, keyword.toStdString().c_str());
         keywordElem = keywordElem.nextSiblingElement("keyword");
     }
-
 }
 
 void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePath)
 {
     QDomDocument doc;
-    QFile file(themePath);
+    QFile        file(themePath);
     if (!file.open(QIODevice::ReadOnly))
-        return;
-    if (!doc.setContent(&file))
     {
-        file.close();
         return;
     }
-    file.close();
+
+    BOOST_SCOPE_EXIT(&file)
+    {
+        file.close();
+    }
+    BOOST_SCOPE_EXIT_END
+
+    if (!doc.setContent(&file))
+    {
+        return;
+    }
 
     QDomElement docElem = doc.documentElement();
 
     bool zeroId = false;
-    for(QDomElement styleElem = docElem.firstChildElement("style");
-        !styleElem.isNull();
-        styleElem = styleElem.nextSiblingElement("style"))
+    for (QDomElement styleElem = docElem.firstChildElement("style"); !styleElem.isNull(); styleElem = styleElem.nextSiblingElement("style"))
     {
-        int id = styleElem.attribute("style_id").toInt();
-        if (id == 0)
+        int styleId = styleElem.attribute("style_id").toInt();
+        if (styleId == 0)
         {
             if (zeroId)
+            {
                 continue;
+            }
             zeroId = true;
         }
         QString foreColor = styleElem.attribute("fg_color");
         if (!foreColor.isEmpty())
         {
-            int color = foreColor.toLong(NULL, 16);
-            color = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
-            sci->styleSetFore(id, color);
+            int color = foreColor.toLong(nullptr, 16);
+            color     = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
+            sci->styleSetFore(styleId, color);
         }
         QString backColor = styleElem.attribute("bg_color");
         if (!backColor.isEmpty())
         {
-            int color = backColor.toLong(NULL, 16);
-            color = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
-            sci->styleSetBack(id, color);
+            int color = backColor.toLong(nullptr, 16);
+            color     = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
+            sci->styleSetBack(styleId, color);
         }
         QString fontName = styleElem.attribute("font_name");
         if (!fontName.isEmpty())
-            sci->styleSetFont(id, fontName.toStdString().c_str());
+        {
+            sci->styleSetFont(styleId, fontName.toStdString().c_str());
+        }
         else
+        {
 #if defined(Q_OS_MAC)
             sci->styleSetFont(id, "Menlo");
 #elif defined(Q_OS_WIN)
-            sci->styleSetFont(id, "Consolas");
+            sci->styleSetFont(styleId, "Consolas");
 #else
             sci->styleSetFont(id, "Droid Sans Mono");
 #endif
-
+        }
+        
         uint fontStyle = styleElem.attribute("font_style").toUInt();
-        if (fontStyle & 0x01)
-            sci->styleSetBold(id, true);
-        if (fontStyle & 0x02)
-            sci->styleSetItalic(id, true);
-        if (fontStyle & 0x04)
-            sci->styleSetUnderline(id, true);
-        if (fontStyle & 0x08)
-            sci->styleSetVisible(id, true);
-        if (fontStyle & 0x10)
-            sci->styleSetCase(id, true);
-        if (fontStyle & 0x20)
-            sci->styleSetEOLFilled(id, true);
-        if (fontStyle & 0x40)
-            sci->styleSetHotSpot(id, true);
-        if (fontStyle & 0x80)
-            sci->styleSetChangeable(id, true);
+
+        std::map<unsigned char, std::function<void(sptr_t, bool)>> styleSetterMap = {
+            {0x01, [sci](sptr_t styleId, bool value) { sci->styleSetBold(styleId, value); }},
+            {0x02, [sci](sptr_t styleId, bool value) { sci->styleSetItalic(styleId, value); }},
+            {0x04, [sci](sptr_t styleId, bool value) { sci->styleSetUnderline(styleId, value); }},
+            {0x08, [sci](sptr_t styleId, bool value) { sci->styleSetVisible(styleId, value); }},
+            {0x10, [sci](sptr_t styleId, bool value) { sci->styleSetCase(styleId, value); }},
+            {0x20, [sci](sptr_t styleId, bool value) { sci->styleSetEOLFilled(styleId, value); }},
+            {0x40, [sci](sptr_t styleId, bool value) { sci->styleSetHotSpot(styleId, value); }},
+            {0x80, [sci](sptr_t styleId, bool value) { sci->styleSetChangeable(styleId, value); }},
+        };
+        for (auto &[key, setter] : styleSetterMap)
+        {
+            if (fontStyle & key)
+            {
+                setter(styleId, true);
+            }
+        }
+
         QString fontSize = styleElem.attribute("font_size");
         if (!fontSize.isEmpty())
-            sci->styleSetSize(id, std::max(12, fontSize.toInt()));
+        {
+            sci->styleSetSize(styleId, std::max(12, fontSize.toInt()));
+        }
         else
-            sci->styleSetSize(id, 12);
+        {
+            sci->styleSetSize(styleId, 12);
+        }
     }
 }
