@@ -406,6 +406,8 @@ jobs:
           copy src\ainesmile\*.dll bin\
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libmmd.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libiomp5md.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
           mkdir build-avx2
@@ -419,6 +421,8 @@ jobs:
           copy src\ainesmile\*.dll bin\
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libmmd.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libiomp5md.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
 
@@ -647,7 +651,7 @@ jobs:
           asset_name: ainesmile-${{ matrix.qt_arch }}-avx2.zip
           tag: ${{ github.ref }}
           overwrite: true 
-          
+
   macOS:
     runs-on: macos-latest
     strategy:
