@@ -12,7 +12,10 @@ IF (Qt6_FOUND)
 ENDIF(Qt6_FOUND)
 
 find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
-find_package(OpenMP)
+if((NOT APPLE) OR MACOMP)
+        find_package(OpenMP)
+        add_compile_definitions(OMP_ENABLED)
+endif()
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -146,12 +149,18 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         scintilla
         lexilla
         ICU::uc ICU::i18n
-        OpenMP::OpenMP_CXX
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
         Qt${QT_VERSION_MAJOR}::Widgets
         )
+
+if((NOT APPLE) OR MACOMP)
+        target_link_libraries(${PROJECT_NAME}  PRIVATE
+                OpenMP::OpenMP_CXX
+                )
+endif()
+
 IF (Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}  PRIVATE
             Qt${QT_VERSION_MAJOR}::Core5Compat
