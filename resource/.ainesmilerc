@@ -110,5 +110,26 @@
     },
     "codepage": "0",
     "zoom": "1",
-    "mousedwelltime": "2500"
+    "mousedwelltime": "2500",
+    "encoding": {
+        "auto_detect": "true"
+    },
+    "show": {
+        "white_space_and_tab": "true",
+        "end_of_line": "true",
+        "indent_guide": "true",
+        "wrap_symbol": "true"
+    },
+    "find": {
+        "texts": {
+        }
+    },
+    "replace": {
+        "texts": {
+        }
+    },
+    "filters": {
+        "texts": {
+        }
+    }
 }
