@@ -71,6 +71,45 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tvFindReplaceResult->setModel(FindReplaceResultModel::instance());
 
+    
+    auto &ptree = Config::instance()->pt();
+    try
+    {
+        auto texts = ptree.get_child("find.texts");
+        for (auto &val : texts)
+        {
+            ui->cbFind->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbFind->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
+    try
+    {
+        auto texts = ptree.get_child("replace.texts");
+        for (auto &val : texts)
+        {
+            ui->cbReplace->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbReplace->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
+    try
+    {
+        auto texts = ptree.get_child("filters.texts");
+        for (auto &val : texts)
+        {
+            ui->cbFilters->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbFilters->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
+
     QSettings settings(QStringLiteral("dfordsoft.com"), QStringLiteral("ainesmile"));
     if (settings.contains("geometry"))
     {
@@ -858,6 +897,7 @@ void MainWindow::on_btnFind_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+    updateFindList();
 
     FindReplace::FindReplaceOption fro {
         ui->cbMatchCase->isChecked(),
@@ -882,6 +922,9 @@ void MainWindow::on_btnReplace_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+    updateFindList();
+    updateReplaceList();
+    updateFindReplaceFilterList();
 
     FindReplace::FindReplaceOption fro {
         ui->cbMatchCase->isChecked(),
@@ -906,6 +949,9 @@ void MainWindow::on_btnReplaceAll_clicked()
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
         return;
     }
+    updateFindList();
+    updateReplaceList();
+    updateFindReplaceFilterList();
 
     FindReplace::FindReplaceOption fro {
         ui->cbMatchCase->isChecked(),
@@ -931,6 +977,61 @@ void MainWindow::on_btnReplaceAll_clicked()
         FindReplace::replaceAllInDocuments(docs, fro);
     }
     break;
+    }
+}
+
+void MainWindow::updateFindList()
+{
+    auto strToFind = ui->cbFind->lineEdit()->text().toStdString();
+    if (!strToFind.empty())
+    {
+        auto &ptree = Config::instance()->pt();
+        try
+        {
+            auto findTexts = ptree.get_child("find.texts");
+            auto iter = std::find_if(findTexts.begin(), findTexts.end(), [&strToFind](const auto &val) { return val.second.data() == strToFind; });
+            if (findTexts.end() != iter)
+            {
+                return;
+            }
+        }
+        catch (...)
+        {
+        }
+        ptree.add("find.texts.text", strToFind);
+        ui->cbFind->addItem(QString::fromStdString(strToFind));
+    }
+}
+
+void MainWindow::updateReplaceList()
+{
+    auto strReplace = ui->cbReplace->lineEdit()->text().toStdString();
+    if (!strReplace.empty())
+    {
+        auto &ptree        = Config::instance()->pt();
+        auto  replaceTexts = ptree.get_child("replace.texts");
+        auto  iter =
+            std::find_if(replaceTexts.begin(), replaceTexts.end(), [&strReplace](const auto &val) { return val.second.data() == strReplace; });
+        if (replaceTexts.end() == iter)
+        {
+            ptree.add("replace.texts.text", strReplace);
+            ui->cbReplace->addItem(QString::fromStdString(strReplace));
+        }
+    }
+}
+void MainWindow::updateFindReplaceFilterList()
+{
+    auto strFilters = ui->cbFilters->lineEdit()->text().toStdString();
+    if (!strFilters.empty())
+    {
+        auto &ptree       = Config::instance()->pt();
+        auto  filterTexts = ptree.get_child("filters.texts");
+        auto  iter = std::find_if(filterTexts.begin(), filterTexts.end(), [&strFilters](const auto &val) { return val.second.data() == strFilters; });
+        if (filterTexts.end() == iter)
+        {
+            ptree.add("filters.texts.text", strFilters);
+            ui->cbFilters->addItem(QString::fromStdString(strFilters));
+        }
     }
 }
 

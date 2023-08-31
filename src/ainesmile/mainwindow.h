@@ -133,8 +133,12 @@ private:
     QLabel          *m_withBOMLabel;
     QList<QAction *> m_recentFileActions;
     RecentFiles      m_recentFiles;
-    bool             m_aboutToQuit;
-    bool             m_exchanging;
+    bool             m_aboutToQuit {false};
+    bool             m_exchanging {false};
+
+    void updateFindList();
+    void updateReplaceList();
+    void updateFindReplaceFilterList();
 };
 
 inline MainWindow *g_mainWindow = nullptr;
