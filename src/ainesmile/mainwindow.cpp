@@ -70,45 +70,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->menuDockWindows->addAction(ui->dockFindResult->toggleViewAction());
 
     ui->tvFindReplaceResult->setModel(FindReplaceResultModel::instance());
+        
+    readFindHistory();
 
-    
-    auto &ptree = Config::instance()->pt();
-    try
-    {
-        auto texts = ptree.get_child("find.texts");
-        for (auto &val : texts)
-        {
-            ui->cbFind->addItem(QString::fromStdString(val.second.data()));
-        }
-        ui->cbFind->lineEdit()->clear();
-    }
-    catch (...)
-    {
-    }
-    try
-    {
-        auto texts = ptree.get_child("replace.texts");
-        for (auto &val : texts)
-        {
-            ui->cbReplace->addItem(QString::fromStdString(val.second.data()));
-        }
-        ui->cbReplace->lineEdit()->clear();
-    }
-    catch (...)
-    {
-    }
-    try
-    {
-        auto texts = ptree.get_child("filters.texts");
-        for (auto &val : texts)
-        {
-            ui->cbFilters->addItem(QString::fromStdString(val.second.data()));
-        }
-        ui->cbFilters->lineEdit()->clear();
-    }
-    catch (...)
-    {
-    }
+    readReplaceHistory();
+
+    readFindReplaceFiltersHistory();
 
     QSettings settings(QStringLiteral("dfordsoft.com"), QStringLiteral("ainesmile"));
     if (settings.contains("geometry"))
@@ -124,6 +91,57 @@ MainWindow::MainWindow(QWidget *parent)
     Q_ASSERT(m_idleTimer);
     connect(m_idleTimer, &QTimer::timeout, this, &MainWindow::onIdle);
     m_idleTimer->start(0);
+}
+
+void MainWindow::readFindHistory()
+{
+    auto &ptree = Config::instance()->pt();
+    try
+    {
+        auto texts = ptree.get_child("find.texts");
+        for (auto &val : texts)
+        {
+            ui->cbFind->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbFind->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
+}
+
+void MainWindow::readReplaceHistory()
+{
+    auto &ptree = Config::instance()->pt();
+    try
+    {
+        auto texts = ptree.get_child("replace.texts");
+        for (auto &val : texts)
+        {
+            ui->cbReplace->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbReplace->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
+}
+
+void MainWindow::readFindReplaceFiltersHistory()
+{
+    auto &ptree = Config::instance()->pt();
+    try
+    {
+        auto texts = ptree.get_child("filters.texts");
+        for (auto &val : texts)
+        {
+            ui->cbFilters->addItem(QString::fromStdString(val.second.data()));
+        }
+        ui->cbFilters->lineEdit()->clear();
+    }
+    catch (...)
+    {
+    }
 }
 
 MainWindow::~MainWindow()

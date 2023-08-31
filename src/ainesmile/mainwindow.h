@@ -23,6 +23,13 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
+    void readFindHistory();
+
+    void readReplaceHistory();
+
+    void readFindReplaceFiltersHistory();
+
     ~MainWindow() override;
 
     void openFiles(const QStringList &files);
