@@ -119,13 +119,9 @@ private slots:
 
     void on_btnFind_clicked();
 
-    void on_btnFindInFiles_clicked();
-
     void on_btnReplace_clicked();
 
     void on_btnReplaceAll_clicked();
-
-    void on_btnReplaceInFiles_clicked();
 
 private:
     Ui::MainWindow  *ui;

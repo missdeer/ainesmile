@@ -827,7 +827,7 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
         ui->edtDirectory->setVisible(false);
         ui->btnSelectDirectory->setVisible(false);
         ui->lbFilters->setVisible(false);
-        ui->edtFilters->setVisible(false);
+        ui->cbFilters->setVisible(false);
     }
     else
     {
@@ -836,7 +836,7 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
         ui->edtDirectory->setVisible(true);
         ui->btnSelectDirectory->setVisible(true);
         ui->lbFilters->setVisible(true);
-        ui->edtFilters->setVisible(true);
+        ui->cbFilters->setVisible(true);
     }
 }
 
@@ -852,7 +852,7 @@ void MainWindow::on_btnSelectDirectory_clicked()
 
 void MainWindow::on_btnFind_clicked()
 {
-    const QString &strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->cbFind->lineEdit()->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -865,57 +865,18 @@ void MainWindow::on_btnFind_clicked()
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
         static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
-        ui->edtFind->text(),
-        ui->edtReplace->text(),
+        ui->cbFind->lineEdit()->text(),
+        ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
-        ui->edtFilters->text(),
+        ui->cbFilters->lineEdit()->text(),
     };
     auto *tabWidget = getFocusTabWidget();
     tabWidget->find(fro);
 }
 
-void MainWindow::on_btnFindInFiles_clicked()
-{
-    const QString &strToFind = ui->edtFind->text();
-    if (strToFind.isEmpty())
-    {
-        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
-        return;
-    }
-
-    FindReplace::FindReplaceOption fro {
-        ui->cbMatchCase->isChecked(),
-        ui->cbMatchWholeWord->isChecked(),
-        ui->cbSearchUp->isChecked(),
-        ui->cbRegexp->isChecked(),
-        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
-        ui->edtFind->text(),
-        ui->edtReplace->text(),
-        ui->edtDirectory->text(),
-        ui->edtFilters->text(),
-    };
-
-    switch (ui->cbScope->currentIndex())
-    {
-    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
-        QList<ScintillaEdit *> docs;
-        ui->tabWidget->getAllEditors(docs);
-        ui->tabWidgetSlave->getAllEditors(docs);
-        FindReplace::findAllInDocuments(docs, fro);
-    }
-    break;
-    case FindReplace::FindScope::FS_DIRECOTRY:
-        FindReplace::findAllInDirectory(fro);
-        break;
-    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
-        FindReplace::findAllInDirectories(fro);
-        break;
-    }
-}
-
 void MainWindow::on_btnReplace_clicked()
 {
-    const QString &strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->cbFind->lineEdit()->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -928,10 +889,10 @@ void MainWindow::on_btnReplace_clicked()
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
         static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
-        ui->edtFind->text(),
-        ui->edtReplace->text(),
+        ui->cbFind->lineEdit()->text(),
+        ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
-        ui->edtFilters->text(),
+        ui->cbFilters->lineEdit()->text(),
     };
     auto *tabWidget = getFocusTabWidget();
     tabWidget->replace(fro);
@@ -939,7 +900,7 @@ void MainWindow::on_btnReplace_clicked()
 
 void MainWindow::on_btnReplaceAll_clicked()
 {
-    const QString &strToFind = ui->edtFind->text();
+    const QString &strToFind = ui->cbFind->lineEdit()->text();
     if (strToFind.isEmpty())
     {
         QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
@@ -952,10 +913,10 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
         static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
-        ui->edtFind->text(),
-        ui->edtReplace->text(),
+        ui->cbFind->lineEdit()->text(),
+        ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
-        ui->edtFilters->text(),
+        ui->cbFilters->lineEdit()->text(),
     };
 
     switch (ui->cbScope->currentIndex())
@@ -970,38 +931,6 @@ void MainWindow::on_btnReplaceAll_clicked()
         FindReplace::replaceAllInDocuments(docs, fro);
     }
     break;
-    }
-}
-
-void MainWindow::on_btnReplaceInFiles_clicked()
-{
-    const QString &strToFind = ui->edtFind->text();
-    if (strToFind.isEmpty())
-    {
-        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
-        return;
-    }
-
-    FindReplace::FindReplaceOption fro {
-        ui->cbMatchCase->isChecked(),
-        ui->cbMatchWholeWord->isChecked(),
-        ui->cbSearchUp->isChecked(),
-        ui->cbRegexp->isChecked(),
-        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
-        ui->edtFind->text(),
-        ui->edtReplace->text(),
-        ui->edtDirectory->text(),
-        ui->edtFilters->text(),
-    };
-
-    switch (ui->cbScope->currentIndex())
-    {
-    case FindReplace::FindScope::FS_DIRECOTRY:
-        FindReplace::replaceAllInDirectory(fro);
-        break;
-    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
-        FindReplace::replaceAllInDirectories(fro);
-        break;
     }
 }
 
