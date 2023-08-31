@@ -303,15 +303,19 @@ void ScintillaConfig::applyThemeStyle(ScintillaEdit *sci, const QString &themePa
                 setter(styleId, true);
             }
         }
-
+#if defined(Q_OS_MAC)
+        const int defaultFontSize = 14;
+#else
+        const int defaultFontSize = 12;
+#endif
         QString fontSize = styleElem.attribute("font_size");
         if (!fontSize.isEmpty())
         {
-            sci->styleSetSize(styleId, std::max(12, fontSize.toInt()));
+            sci->styleSetSize(styleId, std::max(defaultFontSize, fontSize.toInt()));
         }
         else
         {
-            sci->styleSetSize(styleId, 12);
+            sci->styleSetSize(styleId, defaultFontSize);
         }
     }
 }
