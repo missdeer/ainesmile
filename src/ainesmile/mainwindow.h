@@ -7,7 +7,6 @@
 #include "recentfiles.h"
 #include "tabwidget.h"
 
-QT_FORWARD_DECLARE_CLASS(QTimer);
 QT_FORWARD_DECLARE_CLASS(QLabel);
 
 namespace Ui
@@ -24,12 +23,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    void readFindHistory();
-
-    void readReplaceHistory();
-
-    void readFindReplaceFiltersHistory();
-
     ~MainWindow() override;
 
     void openFiles(const QStringList &files);
@@ -39,6 +32,8 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+
+    void customEvent(QEvent *event) override;
 
 private:
     [[nodiscard]] TabWidget  *getFocusTabWidget();
@@ -135,7 +130,6 @@ private:
     CodeEditor      *m_lastConnectedCodeEditPage {nullptr};
     QDockWidget     *m_dockFindReplace;
     QDockWidget     *m_dockFindResult;
-    QTimer          *m_idleTimer;
     QLabel          *m_encodingLabel;
     QLabel          *m_withBOMLabel;
     QList<QAction *> m_recentFileActions;
@@ -146,6 +140,10 @@ private:
     void updateFindList();
     void updateReplaceList();
     void updateFindReplaceFilterList();
+
+    void readFindHistory();
+    void readReplaceHistory();
+    void readFindReplaceFiltersHistory();
 };
 
 inline MainWindow *g_mainWindow = nullptr;

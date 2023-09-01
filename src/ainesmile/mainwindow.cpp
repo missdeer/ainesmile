@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 
-#include <QTimer>
+#include <QCoreApplication>
+#include <QEvent>
 
 #include "mainwindow.h"
 #include "codeeditpage.h"
@@ -14,8 +15,15 @@
 
 using namespace FindReplace;
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), m_idleTimer(new QTimer), m_aboutToQuit(false), m_exchanging(false)
+const QEvent::Type AppIdleEventType = static_cast<QEvent::Type>(QEvent::registerEventType());
+
+class IdleEvent : public QEvent
+{
+public:
+    IdleEvent() : QEvent(AppIdleEventType) {}
+};
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
@@ -70,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->menuDockWindows->addAction(ui->dockFindResult->toggleViewAction());
 
     ui->tvFindReplaceResult->setModel(FindReplaceResultModel::instance());
-        
+
     readFindHistory();
 
     readReplaceHistory();
@@ -88,9 +96,9 @@ MainWindow::MainWindow(QWidget *parent)
         restoreDockWidget(ui->dockFindReplace);
         restoreDockWidget(ui->dockFindResult);
     }
-    Q_ASSERT(m_idleTimer);
-    connect(m_idleTimer, &QTimer::timeout, this, &MainWindow::onIdle);
-    m_idleTimer->start(0);
+
+    // Post the initial idle event
+    QCoreApplication::postEvent(this, new IdleEvent());
 }
 
 void MainWindow::readFindHistory()
@@ -157,7 +165,7 @@ void MainWindow::onIdle()
     {
         updateUI(page);
         auto filePath = page->getFilePath();
-        if (QFile::exists(filePath))
+        if (!filePath.isEmpty())
         {
             ui->actionReopenAs->setEnabled(true);
             ui->actionSaveAsEncoding->setEnabled(true);
@@ -167,8 +175,8 @@ void MainWindow::onIdle()
         }
     }
     ui->actionReopenAs->setEnabled(false);
-    ui->actionSaveAsEncoding->setEnabled(false);
-    m_encodingLabel->setText(QLatin1String(""));
+    ui->actionSaveAsEncoding->setEnabled(true);
+    m_encodingLabel->setText(QStringLiteral("UTF-8"));
     m_withBOMLabel->setEnabled(false);
 }
 
@@ -1077,4 +1085,13 @@ void MainWindow::onSelectEncodingCustomContextMenuRequested(QPoint pos)
     menu.addAction(ui->actionReopenAs);
     menu.addAction(ui->actionSaveAsEncoding);
     menu.exec(globalPos);
+}
+
+void MainWindow::customEvent(QEvent *event)
+{
+    if (event->type() == AppIdleEventType)
+    {
+        onIdle();
+        QCoreApplication::postEvent(this, new IdleEvent()); // repost the event to keep it running when idle
+    }
 }
