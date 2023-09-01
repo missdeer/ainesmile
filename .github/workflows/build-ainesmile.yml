@@ -685,14 +685,14 @@ jobs:
       
       - name: build macos
         run: |
-          brew install boost ninja icu4c
+          brew install boost ninja icu4c llvm
           ./pre-build.sh mac
           cd 3rdparty/scintilla/qt/ScintillaEdit
           python WidgetGen.py
           cd ../../../..
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
+          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c;/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/local/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ ..
           cmake --build . --parallel --verbose
           cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           cd ..
