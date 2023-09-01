@@ -697,6 +697,8 @@ jobs:
           cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /usr/local/opt/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find /usr/local/lib -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find /usr/local -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
           ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
           cd ..
           
