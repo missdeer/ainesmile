@@ -111,6 +111,26 @@
 #endif
 #endif
 
+#if defined(__APPLE__) && defined(__clang__)
+unsigned char _BitScanReverse(unsigned long *index, unsigned long mask) {
+    if (mask == 0) {
+        return false;
+    }
+
+    *index = (CHAR_BIT * sizeof(unsigned long) - 1) - __builtin_clzl(mask);
+    return true;
+}
+
+unsigned char _BitScanReverse64(unsigned long *index, unsigned long long mask) {
+    if (mask == 0) {
+        return false;
+    }
+
+    *index = (CHAR_BIT * sizeof(unsigned long long) - 1) - __builtin_clzll(mask);
+    return true;
+}
+#endif
+
 // find index of the highest set bit
 #if AS_TARGET_ARM
 #if defined(__clang__) || defined(__GNUC__)
@@ -128,7 +148,7 @@
 		return trailing;
 	}
 
-#if defined(_WIN64)
+#if defined(_WIN64) || defined (__APPLE__)
 	static inline uint32_t as_bsr64(uint64_t value) AS_noexcept {
 		unsigned long trailing;
 		_BitScanReverse64(&trailing, value);
