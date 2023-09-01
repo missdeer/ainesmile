@@ -12,10 +12,7 @@ IF (Qt6_FOUND)
 ENDIF(Qt6_FOUND)
 
 find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
-if((NOT APPLE) OR MACOMP)
-        find_package(OpenMP)
-        add_compile_definitions(OMP_ENABLED)
-endif()
+find_package(OpenMP)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -61,8 +58,8 @@ set(ainesmile_headers
         stdafx.h
         tabwidget.h
         config.h
-	${CodeEdit_headers}
-	${Dialogs_headers}
+    	${CodeEdit_headers}
+    	${Dialogs_headers}
         )
 
 file(GLOB
@@ -92,36 +89,35 @@ set(ainesmile_ui
 		${Dialogs_ui}
         )
 IF(WIN32)
-    list(APPEND ainesmile_headers 
+    list(APPEND ainesmile_headers
         ShellContextMenu.h
         )
-    list(APPEND ainesmile_src 
+    list(APPEND ainesmile_src
         ShellContextMenu.cpp
         )
-ENDIF(WIN32)        
-IF(APPLE)
-ENDIF(APPLE)
+ENDIF(WIN32)
 
 qt_add_resources(qrcs ainesmile.qrc)
 
-set(TS_FILES 
+set(TS_FILES
         translations/ainesmile_zh_CN.ts
         translations/ainesmile_en_US.ts
         )
 
 IF(APPLE)
         set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ainesmile.app/Contents/Resources/translations")
+        list(APPEND ainesmile_ui ainesmile.icns)
 ELSE(APPLE)
         set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations")
 ENDIF(APPLE)
 
 IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-        # qt_create_translation(QM_FILES 
-        #     ${CMAKE_CURRENT_SOURCE_DIR} 
+        # qt_create_translation(QM_FILES
+        #     ${CMAKE_CURRENT_SOURCE_DIR}
         #     ${TS_FILES}
         #     OPTIONS -no-obsolete
         # )
-        qt_add_executable(${PROJECT_NAME}  
+        qt_add_executable(${PROJECT_NAME}
                 ${ainesmile_headers}
                 ${ainesmile_src}
                 ${ainesmile_ui}
@@ -135,7 +131,7 @@ ELSE()
         #     ${TS_FILES}
         #     OPTIONS -no-obsolete
         # )
-        add_executable(${PROJECT_NAME}  
+        add_executable(${PROJECT_NAME}
                 ${ainesmile_headers}
                 ${ainesmile_src}
                 ${ainesmile_ui}
@@ -149,17 +145,12 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         scintilla
         lexilla
         ICU::uc ICU::i18n
+        OpenMP::OpenMP_CXX
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
         Qt${QT_VERSION_MAJOR}::Widgets
         )
-
-if((NOT APPLE) OR MACOMP)
-        target_link_libraries(${PROJECT_NAME}  PRIVATE
-                OpenMP::OpenMP_CXX
-                )
-endif()
 
 IF (Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}  PRIVATE
@@ -177,10 +168,10 @@ if(APPLE)
   set_target_properties(
     ${PROJECT_NAME}
     PROPERTIES RESOURCE "./ainesmile.icns"
-               MACOSX_BUNDLE_BUNDLE_NAME "Ainesmile"
+               MACOSX_BUNDLE_BUNDLE_NAME "ainesmile"
                MACOSX_BUNDLE_GUI_IDENTIFIER "com.dfordsoft.ainesmile"
                MACOSX_BUNDLE_ICON_FILE "ainesmile.icns"
-               MACOSX_BUNDLE_INFO_STRING "Ainesmile"
+               MACOSX_BUNDLE_INFO_STRING "ainesmile"
                MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
                MACOSX_BUNDLE_SHORT_VERSION_STRING
                ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
