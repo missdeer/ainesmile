@@ -700,10 +700,23 @@ jobs:
           find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
           ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
           cd ..
+          mkdir build-avx2
+          cd build-avx2
+          cmake -G Ninja -DAVX2=ON -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ ..
+          cmake --build . --parallel --verbose
+          cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
+          mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
+          find /usr/local/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
+          ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
+          cd ..
           
       - name: package
         run: |
           cd build/src/ainesmile
+          macdeployqt ainesmile.app -verbose=1 -dmg
+          find . -name '*.dmg' -type f -print
+          cd ../../../build-avx2/src/ainesmile
           macdeployqt ainesmile.app -verbose=1 -dmg
           find . -name '*.dmg' -type f -print
         
@@ -720,5 +733,21 @@ jobs:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: build/src/ainesmile/ainesmile.dmg
           asset_name: ainesmile-macOS-x86_64.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
+        
+      - name: upload executable artifact avx2
+        uses: actions/upload-artifact@v1
+        with:
+          path: build-avx2/src/ainesmile/ainesmile.dmg
+          name: ainesmile-macOS-x86_64-avx2.dmg
+
+      - name: uploadRelease avx2
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: build-avx2/src/ainesmile/ainesmile.dmg
+          asset_name: ainesmile-macOS-x86_64-avx2.dmg
           tag: ${{ github.ref }}
           overwrite: true
