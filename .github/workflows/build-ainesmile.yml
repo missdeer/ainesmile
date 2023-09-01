@@ -696,7 +696,7 @@ jobs:
           cmake --build . --parallel --verbose
           cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
-          find /user/local/opt -name 'libicudata*.dylib' -type f -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find /usr/local/opt -name 'libicudata*.dylib' -type f -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
           cd ..
           
       - name: package
