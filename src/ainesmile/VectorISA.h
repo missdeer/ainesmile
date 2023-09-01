@@ -339,3 +339,7 @@ inline auto popcount(uint64_t x) noexcept { return as_popcount64(x); }
 #endif
 }
 #endif
+
+#if defined(__clang__) && defined(__x86_64__)
+#include <popcntintrin.h>
+#endif
