@@ -311,6 +311,11 @@ static inline bool bittest(const uint32_t *addr, uint32_t index) AS_noexcept {
 	return (*addr >> index) & true;
 }
 #else
+#if defined(__APPLE__) && defined(__clang__)
+static inline long _bittest(const long *a, long b) AS_noexcept {
+    return (*a & (1L << b)) != 0;
+}
+#endif
 static inline bool bittest(const uint32_t *addr, uint32_t index) AS_noexcept {
 	return _bittest((const long *)addr, index);
 }
