@@ -695,6 +695,7 @@ jobs:
           cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ ..
           cmake --build . --parallel --verbose
           cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
+          mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           cp /user/local/opt/icu4c/lib/libicudata*.dylib src/ainesmile/ainesmile.app/Contents/Frameworks/
           cd ..
           
@@ -719,72 +720,3 @@ jobs:
           asset_name: ainesmile-macOS-x86_64.dmg
           tag: ${{ github.ref }}
           overwrite: true
-
-  macOS-arm64:
-    runs-on: macos-13
-    strategy:
-      matrix:
-        os: [macos-13]
-        qt_ver: [6.5.2]
-        qt_arch: [clang_64]
-    env:
-      targetName: ainesmile
-    steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: ${{ matrix.qt_ver }}
-          modules: "qt5compat qtimageformats"
-          aqtversion: '==3.0.1'
-        
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          submodules: true
-      
-      - name: patch 3rdparty
-        run: |
-          cd 3rdparty
-          cp cmakes/CMakeLists.txt.lexilla lexilla/CMakeLists.txt
-          cp cmakes/CMakeLists.txt.scintilla scintilla/CMakeLists.txt
-          cd lexilla
-          git apply ../lexilla.patch
-          cd ../..
-      
-      - name: build macos
-        run: |
-          brew install boost ninja icu4c llvm
-          ./pre-build.sh mac
-          cd 3rdparty/scintilla/qt/ScintillaEdit
-          python WidgetGen.py
-          cd ../../../..
-          mkdir build
-          cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
-          cmake --build . --parallel --verbose
-          cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
-          cp /opt/homebrew/opt/icu4c/lib/libicudata*.dylib src/ainesmile/ainesmile.app/Contents/Frameworks/
-          cd ..
-          
-      - name: package
-        run: |
-          cd build/src/ainesmile
-          macdeployqt ainesmile.app -verbose=1 -dmg
-          find . -name '*.dmg' -type f -print
-        
-      - name: upload executable artifact
-        uses: actions/upload-artifact@v1
-        with:
-          path: build/src/ainesmile/ainesmile.dmg
-          name: ainesmile-macOS-arm64.dmg
-
-      - name: uploadRelease
-        if: startsWith(github.event.ref, 'refs/tags/')
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GH_TOKEN }}
-          file: build/src/ainesmile/ainesmile.dmg
-          asset_name: ainesmile-macOS-arm64.dmg
-          tag: ${{ github.ref }}
-          overwrite: true
-        
