@@ -167,8 +167,26 @@ IF (Qt6_FOUND)
             )
 ENDIF(Qt6_FOUND)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON
+                                                 MACOSX_BUNDLE ON)
 
-set_target_properties(${PROJECT_NAME}  PROPERTIES
-        WIN32_EXECUTABLE ON
-        MACOSX_BUNDLE ON
-        )
+if(APPLE)
+  set_source_files_properties(
+    "${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.icns"
+    PROPERTIES MACOSX_PACKAGE_LOCATION Resources/ainesmile.icns)
+  set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES RESOURCE "./ainesmile.icns"
+               MACOSX_BUNDLE_BUNDLE_NAME "Ainesmile"
+               MACOSX_BUNDLE_GUI_IDENTIFIER "com.dfordsoft.ainesmile"
+               MACOSX_BUNDLE_ICON_FILE "ainesmile.icns"
+               MACOSX_BUNDLE_INFO_STRING "Ainesmile"
+               MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+               MACOSX_BUNDLE_SHORT_VERSION_STRING
+               ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+endif()
+
+install(
+  TARGETS ${PROJECT_NAME}
+  BUNDLE DESTINATION .
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
