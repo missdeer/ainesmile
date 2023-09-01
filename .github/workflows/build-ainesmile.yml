@@ -658,9 +658,6 @@ jobs:
       matrix:
         include:
           - qt_arch: clang_64
-            qt_ver: 5.15.2
-            qt_modules: ""
-          - qt_arch: clang_64
             qt_ver: 6.5.2
             qt_modules: "qt5compat qtimageformats"
     env:
