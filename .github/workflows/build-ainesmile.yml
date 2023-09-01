@@ -685,7 +685,7 @@ jobs:
       
       - name: build macos
         run: |
-          brew install boost ninja icu4c llvm
+          brew install boost ninja icu4c llvm gsed
           ./pre-build.sh mac
           cd 3rdparty/scintilla/qt/ScintillaEdit
           python WidgetGen.py
@@ -696,9 +696,8 @@ jobs:
           cmake --build . --parallel --verbose
           cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
-          find /usr/local/opt/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
-          find /usr/local/lib -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
-          find /usr/local -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find /usr/local/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
           ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
           cd ..
           
