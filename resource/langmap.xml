@@ -1,58 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <AinesmileLanguageMap>
+    <language name="actionscript" suffix="as mx" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="ada" suffix="ada ads adb" commentLine="--" commentStart="" commentEnd=""/>
+    <language name="asm" suffix="asm" commentLine=";" commentStart="" commentEnd=""/>
+    <language name="asn1" suffix="mib" commentLine="" commentStart="" commentEnd=""/>
+    <language name="asp" suffix="asp aspx" commentLine="'"/>
+    <language name="autoit" suffix="au3" commentLine=";" commentStart="#CS" commentEnd="#CE"/>
+    <language name="avs" suffix="avs avsi" commentLine="#" commentStart="/*" commentEnd="*/"/>
+    <language name="baanc" suffix="bc cln" commentLine="|"/>
+    <language name="bash" suffix="bash sh bsh csh bash_profile bashrc profile" commentLine="#"/>
+    <language name="batch" suffix="bat cmd nt" commentLine="REM"/>
+    <language name="blitzbasic" suffix="bb" commentLine="" commentStart="" commentEnd=""/>
+    <language name="c" suffix="c lex" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="caml" suffix="ml mli sml thy" commentLine="" commentStart="(*" commentEnd="*)"/>
+    <language name="cmake" pattern="CMakeLists.txt" commentLine="#"/>
+    <language name="cobol" suffix="cbl cbd cdb cdc cob cpy copy lst" commentLine="*>"/>
+    <language name="csound" suffix="orc sco csd" commentLine=";" commentStart="" commentEnd=""/>
+    <language name="coffeescript" suffix="coffee litcoffee" commentLine="#" commentStart="" commentEnd=""/>
+    <language name="cpp" suffix="cpp cxx cc h hh hpp hxx ino" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="cs" suffix="cs" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="css" suffix="css" commentStart="/*" commentEnd="*/"/>
+    <language name="d" suffix="d" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="diff" suffix="diff patch"/>
+    <language name="erlang" suffix="erl hrl" commentLine="%" commentStart="" commentEnd=""/>
+    <language name="escript" suffix="src em" commentLine="" commentStart="" commentEnd=""/>
+    <language name="forth" suffix="forth" commentLine="\" commentStart="(" commentEnd=")"/>
+    <language name="fortran" suffix="f for f90 f95 f2k f23" commentLine="!"/>
+    <language name="fortran77" suffix="f77" commentLine="C"/>
+    <language name="freebasic" suffix="bas bi" commentLine="" commentStart="" commentEnd=""/>
+    <language name="gui4cli" suffix="gui" commentLine="//"/>
+    <language name="haskell" suffix="hs lhs las"  commentLine="--"/>
+    <language name="hollywood" suffix="hws" commentLine=";" commentStart="/*" commentEnd="*/"/>
+    <language name="html" suffix="html htm shtml shtm xhtml xht hta" commentLine="" commentStart="&lt;!--" commentEnd="--&gt;"/>
+    <language name="ini" suffix="ini inf url wer" commentLine=";"/>
+    <language name="inno" suffix="iss" commentLine=";" commentStart="" commentEnd=""/>
+    <language name="ihex" suffix="hex" />
+    <language name="java" suffix="java" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="javascript" suffix="" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="javascript.js" suffix="js jsm jsx mjs" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="json" suffix="json" commentLine="" commentStart="" commentEnd=""/>
+    <language name="json5" suffix="json5 jsonc" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="jsp" suffix="jsp" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="kix" suffix="kix" commentLine=";" commentStart="" commentEnd=""/>
+    <language name="lisp" suffix="lsp lisp" commentLine=";"/>
+    <language name="latex" suffix="tex sty" commentLine="%" commentStart="" commentEnd=""/>
+    <language name="lua" suffix="lua" commentLine="--"/>
+    <language name="makefile" pattern="(GNU)?(M|m)akefile" suffix="mak mk" commentLine="#"/>
+    <language name="matlab" suffix="m" commentLine="%" commentStart="" commentEnd=""/>
+    <language name="mssql" suffix="tsql" commentStart="/*" commentEnd="*/" commentLine="--"/>
+    <language name="mmixal" suffix="mms" commentLine="%" commentStart="" commentEnd=""/>
+    <language name="nim" suffix="nim" commentLine="#" commentStart="" commentEnd=""/>
+    <language name="nncrontab" suffix="tab spf" commentLine="\" commentStart="" commentEnd=""/>
+    <language name="nfo" suffix="nfo"/>
+    <language name="nsis" suffix="nsi nsh" commentLine=";" commentStart="/*" commentEnd="*/"/>
+    <language name="oscript" suffix="osx" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="objc" suffix="mm m" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="pascal" suffix="pas pp p inc lpr" commentStart="{" commentEnd="}"/>
+    <language name="perl" suffix="pl pm plx" commentLine="#"/>
+    <language name="php" suffix="php php3 php4 php5 phps phpt phtml" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="postscript" suffix="ps" commentLine="%"/>
+    <language name="powershell" suffix="ps1 psm1 psd1" commentLine="#" commentStart="&lt;#" commentEnd="#&gt;"/>
+    <language name="props" suffix="properties conf cfg gitattributes gitconfig gitmodules editorconfig" commentLine="#"/>
+    <language name="purebasic" suffix="pb" commentLine="" commentStart="" commentEnd=""/>
+    <language name="python" suffix="py pyw" commentLine="#" tabSettings="132"/>
+    <language name="gdscript" suffix="gd" commentLine="#"/>
+    <language name="r" suffix="r s splus" commentLine="#"/>
+    <language name="rebol" suffix="r2 r3 reb" commentLine=";" commentStart="" commentEnd=""/>
+    <language name="registry" suffix="reg" commentLine=";;" commentStart="" commentEnd=""/>
+    <language name="rc" suffix="rc" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="ruby" suffix="rb rbw" commentLine="#"/>
+    <language name="rust" suffix="rs" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="scheme" suffix="scm smd ss" commentLine=";"/>
+    <language name="smalltalk" suffix="st" commentStart="&quot;" commentEnd="&quot;"/>
+    <language name="spice" suffix="scp out" commentLine="*" commentStart="" commentEnd=""/>
+    <language name="sql" suffix="sql" commentStart="/*" commentEnd="*/" commentLine="--"/>
+    <language name="srec" suffix="mot srec" />
+    <language name="swift" suffix="swift" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="tcl" suffix="tcl" commentLine="#"/>
+    <language name="tehex" suffix="tek" />
+    <language name="tex" suffix="tex" commentLine="%"/>
+    <language name="vb" suffix="vb vba vbs" commentLine="&apos;" commentStart="" commentEnd=""/>
+    <language name="txt2tags" suffix="t2t" commentLine="" commentStart="" commentEnd=""/>
+    <language name="typescript" suffix="ts tsx" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="verilog" suffix="v sv vh svh" commentLine="//" commentStart="/*" commentEnd="*/"/>
+    <language name="vhdl" suffix="vhd vhdl" commentLine="--" commentStart="/*" commentEnd="*/"/>
+    <language name="visualprolog" suffix="pro cl i pack ph" commentLine="%" commentStart="/*" commentEnd="*/"/>
+    <language name="xml" suffix="xml xaml xsl xslt xsd xul kml svg mxml xsml wsdl xlf xliff xbl sxbl sitemap gml gpx plist vcproj vcxproj csproj csxproj vbproj dbproj" commentLine="" commentStart="&lt;!--" commentEnd="--&gt;"/>
+    <language name="yaml" suffix="yml yaml" commentLine="#" tabSettings="132"/>
 	<language name="normal" pattern="" suffix="txt"/>
-	<language name="actionscript" pattern="" suffix="as mx"/>
-	<language name="ada" pattern="" suffix="ada ads adb"/>
-	<language name="asm" pattern="" suffix="asm"/>
-	<language name="asp" pattern="" suffix="asp"/>
-	<language name="autoit" pattern="" suffix="au3"/>
-	<language name="bash" pattern="" suffix="sh bsh"/>
-	<language name="batch" pattern="" suffix="bat cmd nt"/>
-	<language name="c" pattern="" suffix="c"/>
-	<language name="caml" pattern="" suffix="ml mli sml thy"/>
-	<language name="cmake" pattern="" suffix="cmake"/>
-	<language name="cobol" pattern="" suffix="cbl cbd cdb cdc cob"/>
-	<language name="cpp" pattern="" suffix="h hpp hxx cpp cxx cc"/>
-	<language name="cs" pattern="" suffix="cs"/>
-	<language name="css" pattern="" suffix="css"/>
-	<language name="d" pattern="" suffix="d"/>
-	<language name="diff" pattern="" suffix="diff patch"/>
-	<language name="fortran" pattern="" suffix="f for f90 f95 f2k"/>
-	<language name="gui4cli" pattern="" suffix=""/>
-	<language name="haskell" pattern="" suffix="hs lhs as las"/>
-	<language name="html" pattern="" suffix="html htm shtml shtm xhtml hta"/>
-	<language name="ini" pattern="" suffix="ini inf reg url"/>
-	<language name="inno" pattern="" suffix="iss"/>
-	<language name="java" pattern="" suffix="java"/>
-	<language name="javascript" pattern="" suffix="js"/>
-	<language name="jsp" pattern="" suffix="jsp"/>
-	<language name="kix" pattern="" suffix="kix"/>
-	<language name="lisp" pattern="" suffix="lsp lisp"/>
-	<language name="lua" pattern="" suffix="lua"/>
-	<language name="makefile" pattern="" suffix="mak"/>
-	<language name="matlab" pattern="" suffix="m"/>
-	<language name="nfo" pattern="" suffix="nfo"/>
-	<language name="nsis" pattern="" suffix="nsi nsh"/>
-	<language name="objc" pattern="" suffix=""/>
-	<language name="pascal" pattern="" suffix="pas inc"/>
-	<language name="perl" pattern="" suffix="pl pm plx"/>
-	<language name="php" pattern="" suffix="php php3 phtml"/>
-	<language name="postscript" pattern="" suffix="ps"/>
-	<language name="powershell" pattern="" suffix="ps1"/>
-	<language name="props" pattern="" suffix="properties"/>
-	<language name="python" pattern="" suffix="py pyw"/>
-	<language name="r" pattern="" suffix="r"/>
-	<language name="rc" pattern="" suffix="rc"/>
-	<language name="ruby" pattern="" suffix="rb rbw"/>
-	<language name="scheme" pattern="" suffix="scm smd ss"/>
-	<language name="smalltalk" pattern="" suffix="st"/>
-	<language name="sql" pattern="" suffix="sql"/>
-	<language name="tcl" pattern="" suffix="tcl"/>
-	<language name="tex" pattern="" suffix="tex"/>
-	<language name="vb" pattern="" suffix="vb vbs"/>
-	<language name="verilog" pattern="" suffix="v"/>
-	<language name="vhdl" pattern="" suffix="vhd vhdl"/>
-	<language name="xml" pattern="" suffix="xml xsml xsl xsd kml wsdl plist entitlements"/>
-	<language name="yaml" pattern="" suffix="yml"/>
-	<language name="searchResult" pattern="" suffix=""/>
 </AinesmileLanguageMap>
 
