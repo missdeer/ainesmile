@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include "config.h"
 #include "mainwindow.h"
@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
     rl.rlim_cur = qMin((rlim_t)OPEN_MAX, rl.rlim_max);
     setrlimit(RLIMIT_NOFILE, &rl);
 #endif
-    QApplication app(argc, argv);
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -29,9 +28,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("DForD Software"));
     QCoreApplication::setApplicationName(QStringLiteral("ainesmile"));
 
-    QTranslator translator;
-    QTranslator qtTranslator;
-    QStringList uiLanguages;
+    QApplication app(argc, argv);
+    QTranslator  translator;
+    QTranslator  qtTranslator;
+    QStringList  uiLanguages;
 
     uiLanguages                                   = QLocale::system().uiLanguages();
     boost::property_tree::ptree &pt               = Config::instance()->pt();
@@ -69,9 +69,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-
-    const int threadCount = QThreadPool::globalInstance()->maxThreadCount();
-    QThreadPool::globalInstance()->setMaxThreadCount(qMax(4, 2 * threadCount));
 
     Q_INIT_RESOURCE(ainesmile);
 
