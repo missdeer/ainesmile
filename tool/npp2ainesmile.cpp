@@ -53,7 +53,7 @@ void write_language_definition(language &lang)
         keyword_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(k.name_.c_str())));
         keyword_node->value(doc.allocate_string(k.keyword_list_.c_str()));
     }
-    mkdir("language");
+    
     std::string   filename("language\\" + lang.name_ + ".xml");
     std::ofstream ofs(filename.c_str(), std::ios::trunc);
     std::string   xmldoc;
