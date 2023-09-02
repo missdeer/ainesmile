@@ -1,0 +1,32 @@
+<AinesmileTheme name="rebol" desc="REBOL" ext="">
+	<style name="DEFAULT" style_id="32" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="ANY OTHER TEXT" style_id="0" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="LINE COMMENT" style_id="1" fg_color="007F00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="BLOCK COMMENT" style_id="2" fg_color="007F00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="PREFACE" style_id="3" fg_color="007F00" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="OPERATORS" style_id="4" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="CHARACTERS" style_id="5" fg_color="7F007F" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="STRING WITH QUOTES" style_id="6" fg_color="7F007F" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="STRING WITH BRACES" style_id="7" fg_color="7F007F" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="NUMBER" style_id="8" fg_color="007F7F" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="PAIR ( 800X600 )" style_id="9" fg_color="005090" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="TUPLE ( 127.0.0.1 )" style_id="10" fg_color="005090" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="BINARY ( 16#{1A803F59} )" style_id="11" fg_color="C000C0" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="MONEY" style_id="12" fg_color="003070" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="ISSUE { #123-CD-456 }" style_id="13" fg_color="800000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="TAG { &lt;TITLE HEIGHT=100&gt; }" style_id="14" fg_color="C00000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="FILE { %/C/WINNT/SOME.DLL }" style_id="15" fg_color="0080FF" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="EMAIL { JOE@MAIL.DOM }" style_id="16" fg_color="0080FF" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="URL { FTP://THERE.DOM }" style_id="17" fg_color="0080FF" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="DATE { 17-FEB-2004 1/3/99 }" style_id="18" fg_color="8000FF" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="TIME { 12:30 11:22:59 01:59:59.123 }" style_id="19" fg_color="8000FF" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="IDENTIFIERS" style_id="20" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORD (ALL)" style_id="21" fg_color="00007F" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="KEYWORD (TEST FUNCTIONS)" style_id="22" fg_color="8000C0" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="KEYWORD (DATATYPES)" style_id="23" fg_color="800060" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="KEYWORD 4" style_id="24" fg_color="DD9900" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORD 5" style_id="25" fg_color="DD9900" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORD 6" style_id="26" fg_color="DD9900" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORD 7" style_id="27" fg_color="DD9900" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+</AinesmileTheme>
+

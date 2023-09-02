@@ -1,0 +1,10 @@
+<AinesmileTheme name="diff" desc="DIFF" ext="">
+	<style name="DEFAULT" style_id="0" fg_color="C7C7C7" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+	<style name="COMMENT" style_id="1" fg_color="666666" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+	<style name="COMMAND" style_id="2" fg_color="9865A8" bg_color="2E2E2E" font_name="" font_style="1" font_size=""/>
+	<style name="HEADER" style_id="3" fg_color="C7C7C7" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+	<style name="POSITION" style_id="4" fg_color="A88AB6" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+	<style name="DELETED" style_id="5" fg_color="A88AB6" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+	<style name="ADDED" style_id="6" fg_color="F57F3D" bg_color="2E2E2E" font_name="" font_style="0" font_size=""/>
+</AinesmileTheme>
+

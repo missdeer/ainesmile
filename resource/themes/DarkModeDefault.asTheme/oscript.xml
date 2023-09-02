@@ -1,0 +1,22 @@
+<AinesmileTheme name="oscript" desc="OScript" ext="">
+	<style name="DEFAULT TEXT STYLE" style_id="0" fg_color="DCDCCC" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="SINGLE-LINE COMMENT" style_id="1" fg_color="7F9F7F" bg_color="3F3F3F" font_name="" font_style="3" font_size=""/>
+	<style name="MULTI-LINE COMMENT" style_id="2" fg_color="7F9F7F" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="#IFDEF DOC AND #ENDIF" style_id="3" fg_color="7F9F7F" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="PREPROCESSOR DIRECTIVE" style_id="4" fg_color="FFCFAF" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="NUMBER" style_id="5" fg_color="8CD0D3" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="STRING SINGLE QUOTES" style_id="6" fg_color="CC9393" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="STRING DOUBLE QUOTES" style_id="7" fg_color="CC9393" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="CONSTANT LITERAL" style_id="8" fg_color="DCA3A3" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="IDENTIFIER" style_id="9" fg_color="DCDCCC" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="SERVER-GLOBAL VARIABLE (PREFIXED BY $)" style_id="10" fg_color="FDCEAE" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="LANGUAGE NATIVE KEYWORD OR RESERVED WORD" style_id="11" fg_color="DFC47D" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="OPERATOR; EITHER SYMBOLIC OR LITERAL" style_id="12" fg_color="9F9D6D" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="LABEL TO JUMP TO WITH THE GOTO STATEMENT" style_id="13" fg_color="C89191" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORDS" style_id="14" fg_color="DFC47D" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORDS" style_id="15" fg_color="FFEBDD" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="STATIC BUILT-IN OBJECT" style_id="16" fg_color="DCDCCC" bg_color="3F3F3F" font_name="" font_style="3" font_size=""/>
+	<style name="OBJECT PROPERTY" style_id="17" fg_color="E3CEAB" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="OBJECT METHOD" style_id="18" fg_color="CEDF99" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+</AinesmileTheme>
+

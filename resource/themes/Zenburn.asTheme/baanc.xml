@@ -1,0 +1,28 @@
+<AinesmileTheme name="baanc" desc="BaanC" ext="">
+	<style name="DEFAULT" style_id="0" fg_color="DCDCCC" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="COMMENT" style_id="1" fg_color="7F9F7F" bg_color="3F3F3F" font_name="" font_style="3" font_size=""/>
+	<style name="COMMENT DOC" style_id="2" fg_color="7F9F7F" bg_color="3F3F3F" font_name="" font_style="3" font_size=""/>
+	<style name="NUMBER" style_id="3" fg_color="8CD0D3" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="KEYWORDS" style_id="4" fg_color="DFC47D" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="STRING" style_id="5" fg_color="CC9393" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="PREPROCESSOR" style_id="6" fg_color="FFCFAF" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="OPERATOR" style_id="7" fg_color="9F9D6D" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="IDENTIFIER" style_id="8" fg_color="DCDCCC" bg_color="3F3F3F" font_name="" font_style="0" font_size=""/>
+	<style name="STRING EOL NC" style_id="9" fg_color="CC9393" bg_color="3F3F3F" font_name="" font_style="3" font_size=""/>
+	<style name="FUNCTIONS" style_id="10" fg_color="E3CEAB" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="FUNCTIONS ABRIDGED" style_id="11" fg_color="E3CEAB" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="SUB SECTIONS" style_id="12" fg_color="FF4500" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="MAIN SECTIONS" style_id="13" fg_color="800080" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="PREDEFINED VARIABLE" style_id="14" fg_color="9F9D6D" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="PREDEFINED ATTRIBUTES" style_id="15" fg_color="FF0080" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="ENUM DOMAINS" style_id="16" fg_color="000080" bg_color="FFFF80" font_name="" font_style="1" font_size=""/>
+	<style name="USER DEFINED" style_id="17" fg_color="9F9D6D" bg_color="8AFFC5" font_name="" font_style="1" font_size=""/>
+	<style name="TABLE DEFINITIONS" style_id="18" fg_color="9932CC" bg_color="3F3F3F" font_name="" font_style="5" font_size=""/>
+	<style name="TABLE SQL" style_id="19" fg_color="8A2BE2" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="DLL FUNCTIONS" style_id="20" fg_color="000080" bg_color="3F3F3F" font_name="" font_style="1" font_size=""/>
+	<style name="DOMAIN DEFINITIONS" style_id="21" fg_color="B8860B" bg_color="3F3F3F" font_name="" font_style="5" font_size=""/>
+	<style name="FUNCTION DEFINITIONS" style_id="22" fg_color="B22222" bg_color="3F3F3F" font_name="" font_style="5" font_size=""/>
+	<style name="OBJECT DEFINITIONS" style_id="23" fg_color="8080FF" bg_color="3F3F3F" font_name="" font_style="5" font_size=""/>
+	<style name="PREPROC DEFINITIONS" style_id="24" fg_color="556B2F" bg_color="3F3F3F" font_name="" font_style="5" font_size=""/>
+</AinesmileTheme>
+

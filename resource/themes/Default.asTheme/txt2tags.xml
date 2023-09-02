@@ -1,0 +1,29 @@
+<AinesmileTheme name="txt2tags" desc="txt2tags" ext="">
+	<style name="DEFAULT" style_id="0" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="SPECIAL" style_id="1" fg_color="000000" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="STRONG" style_id="2" fg_color="445675" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="STRONG 2 (NOT USED)" style_id="3" fg_color="445675" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="EM1 (ITALIC)" style_id="4" fg_color="653A39" bg_color="FFFFFF" font_name="" font_style="2" font_size=""/>
+	<style name="EM2 (UNDERLINE)" style_id="5" fg_color="386742" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="H1" style_id="6" fg_color="E20700" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="H2" style_id="7" fg_color="E20700" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="H3" style_id="8" fg_color="A81D05" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="H4" style_id="9" fg_color="871704" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="H5" style_id="10" fg_color="871704" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="H6" style_id="11" fg_color="871704" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="PRECHAR (NOT USED)" style_id="12" fg_color="871704" bg_color="FFFFFF" font_name="" font_style="1" font_size=""/>
+	<style name="ULIST" style_id="13" fg_color="E300EE" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="OLIST" style_id="14" fg_color="E300EE" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="BLOCKQUOTE" style_id="15" fg_color="015F52" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="STRIKEOUT" style_id="16" fg_color="644A9B" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="HRULE" style_id="17" fg_color="FF901E" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="LINK" style_id="18" fg_color="0930DE" bg_color="FFFFFF" font_name="" font_style="2" font_size=""/>
+	<style name="CODE" style_id="19" fg_color="009F00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="CODE2" style_id="20" fg_color="009F00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="CODEBLOCK" style_id="21" fg_color="005F00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="COMMENT" style_id="22" fg_color="777777" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="OPTION" style_id="23" fg_color="C0036E" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="PREPROC" style_id="24" fg_color="848B00" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+	<style name="POSTPROC" style_id="25" fg_color="C05600" bg_color="FFFFFF" font_name="" font_style="0" font_size=""/>
+</AinesmileTheme>
+
