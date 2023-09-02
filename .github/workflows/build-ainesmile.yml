@@ -578,42 +578,7 @@ jobs:
             qt_build: qt6-static
             qt_dir: /clang64/qt6-static/lib/cmake/Qt6
             cmake_prefix_path: /clang64/qt6-static
-          - qt_arch: mingw32_qt5-gcc
-            mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            toolchains: gcc
-            c: gcc
-            cxx: g++
-            qt_build: qt5
-            qt_dir: /mingw32/lib/cmake/Qt5
-            cmake_prefix_path: /mingw32
-          - qt_arch: mingw32_qt5-static-gcc
-            mingw_arch: MINGW32
-            mingw_prefix: mingw-w64-i686
-            toolchains: gcc
-            c: gcc
-            cxx: g++
-            qt_build: qt5-static
-            qt_dir: /mingw32/qt5-static/lib/cmake/Qt5
-            cmake_prefix_path: /mingw32/qt5-static
-          - qt_arch: clang32_qt5-clang
-            mingw_arch: CLANG32
-            mingw_prefix: mingw-w64-clang-i686
-            toolchains: clang
-            c: clang
-            cxx: clang++
-            qt_build: qt5
-            qt_dir: /clang32/lib/cmake/Qt5
-            cmake_prefix_path: /clang32
-          - qt_arch: clang32_qt5-static-clang
-            mingw_arch: CLANG32
-            mingw_prefix: mingw-w64-clang-i686
-            toolchains: clang
-            c: clang
-            cxx: clang++
-            qt_build: qt5-static
-            qt_dir: /clang32/qt5-static/lib/cmake/Qt5
-            cmake_prefix_path: /clang32/qt5-static
+            
     env:
       targetName: ainesmile
 
