@@ -270,7 +270,11 @@ QString Config::matchPatternLanguage(const QString &filename)
         file.close();
     }
     BOOST_SCOPE_EXIT_END
-    if (!doc.setContent(&file))
+
+    QString errorMsg;
+    int     errorLine   = 0;
+    int     errorColumn = 0;
+    if (!doc.setContent(&file, &errorMsg, &errorLine, &errorColumn))
     {
         return defaultLanguage;
     }
