@@ -1,0 +1,7 @@
+<AinesmileLanguage name="visualprolog" pattern="" suffix="pro cl i pack ph" comment_line="%" comment_start="/*" comment_end="*/">
+	<keyword name="instre1">goal namespace interface class implement open inherits supports resolve delegate monitor constants domains predicates constructors properties clauses facts</keyword>
+	<keyword name="instre2">guard language stdcall apicall c thiscall prolog digits if then elseif else foreach do try catch finally erroneous failure procedure determ multi nondeterm anyflow and or externally from div mod rem quot in orelse otherwise</keyword>
+	<keyword name="type1">include bininclude requires orrequires if then else elseif endif error message export externally options</keyword>
+	<keyword name="type2">short detail end exception withdomain</keyword>
+</AinesmileLanguage>
+

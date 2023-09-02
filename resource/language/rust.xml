@@ -1,0 +1,10 @@
+<AinesmileLanguage name="rust" pattern="" suffix="rs" comment_line="//" comment_start="/*" comment_end="*/">
+	<keyword name="instre1">abstract as async become box break const continue crate do dyn else enum extern false final fn for if impl in let loop macro match mod move mut override priv pub ref return self static struct super trait true try type typeof unsafe unsized use virtual where while yield</keyword>
+	<keyword name="instre2">bool char f32 f64 i128 i16 i32 i64 i8 isize str u128 u16 u32 u64 u8 usize</keyword>
+	<keyword name="type1">Self</keyword>
+	<keyword name="type2"/>
+	<keyword name="type3"/>
+	<keyword name="type4"/>
+	<keyword name="type5"/>
+</AinesmileLanguage>
+

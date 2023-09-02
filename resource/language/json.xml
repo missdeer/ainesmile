@@ -1,0 +1,5 @@
+<AinesmileLanguage name="json" pattern="" suffix="json" comment_line="" comment_start="" comment_end="">
+	<keyword name="instre1">false null true</keyword>
+	<keyword name="instre2">@id @context @type @value @language @container @list @set @reverse @index @base @vocab @graph</keyword>
+</AinesmileLanguage>
+

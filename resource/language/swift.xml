@@ -1,0 +1,6 @@
+<AinesmileLanguage name="swift" pattern="" suffix="swift" comment_line="//" comment_start="/*" comment_end="*/">
+	<keyword name="instre1">class deinit enum extension func import init internal let operator private protocol public static struct subscript typealias var keywordclass.swift.statements=break case continue default do else fallthrough for if in return switch where while</keyword>
+	<keyword name="type1">as dynamicType false is nil self Self super true __COLUMN__ __FILE__ __FUNCTION__ __LINE__</keyword>
+	<keyword name="type2">associativity convenience dynamic didSet final get infix inout lazy left mutating none nonmutating optional override postfix precedence prefix Protocol required right set Type unowned weak willSet</keyword>
+</AinesmileLanguage>
+

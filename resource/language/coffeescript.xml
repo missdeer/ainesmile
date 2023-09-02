@@ -1,0 +1,6 @@
+<AinesmileLanguage name="coffeescript" pattern="" suffix="coffee litcoffee" comment_line="#" comment_start="" comment_end="">
+	<keyword name="instre1">new instanceof do return break continue throw for while until loop if else unless switch when then and or not is isnt in of by typeof delete where try catch finally prototype jQuery case default function var void with const let enum export import native class extends super constructor __hasProp __extends __slice __bind __indexOf</keyword>
+	<keyword name="instre2">Object Number Boolean Array String RegExp Function Date Math eval setInterval clearInterval setTimeout clearTimeout isFinite isNaN parseFloat parseInt escape unescape console encodeURI encodeURIComponent decodeURI decodeURIComponent window document navigator location history screen alert prompt process GLOBAL require exports</keyword>
+	<keyword name="type2">false true yes no on off undefined null NaN Infinity</keyword>
+</AinesmileLanguage>
+

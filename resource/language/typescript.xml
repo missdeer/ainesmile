@@ -1,0 +1,5 @@
+<AinesmileLanguage name="typescript" pattern="" suffix="ts tsx" comment_line="//" comment_start="/*" comment_end="*/">
+	<keyword name="instre1">abstract package symbol get module require set as declare type null NaN undefined from async await break case catch class const continue debugger default delete do else enum export extends finally for function if implements import in instanceof interface let new of private protected public return static super switch synchronized this throw try typeof var while with true false prototype yield</keyword>
+	<keyword name="type1">number string boolean void any bigint</keyword>
+</AinesmileLanguage>
+
