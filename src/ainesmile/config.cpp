@@ -286,7 +286,7 @@ QString Config::matchPatternLanguage(const QString &filename)
     {
         QString pattern = langElem.attribute("pattern");
         QString suffix  = langElem.attribute("suffix");
-        if (matchSuffix(filename, suffix) || (!pattern.isEmpty() && matchPattern(filename, pattern)))
+        if (matchSuffix(filename, suffix) || matchPattern(filename, pattern))
         {
             QString name = langElem.attribute("name");
             return name;
@@ -298,6 +298,10 @@ QString Config::matchPatternLanguage(const QString &filename)
 
 bool Config::matchPattern(const QString &filename, const QString &pattern)
 {
+    if (pattern.isEmpty())
+    {
+        return false;
+    }
     QRegularExpression regex(pattern);
 #if defined(Q_OS_WIN)
     regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
@@ -309,6 +313,10 @@ bool Config::matchPattern(const QString &filename, const QString &pattern)
 
 bool Config::matchSuffix(const QString &filename, const QString &suffix)
 {
+    if (suffix.isEmpty())
+    {
+        return false;
+    }
     QStringList suffixes = suffix.split(' ');
     QFileInfo   fi(filename);
     auto        iter = std::find_if(suffixes.begin(), suffixes.end(), [&fi](const QString &ext) {
