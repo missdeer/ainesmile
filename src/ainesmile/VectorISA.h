@@ -102,7 +102,7 @@
 		return trailing;
 	}
 
-#if defined(_WIN64)
+#if defined(__x86_64__)
 	static inline uint32_t as_ctz64(uint64_t value) AS_noexcept {
 		unsigned long trailing;
 		_BitScanForward64(&trailing, value);
@@ -192,7 +192,7 @@ unsigned char _BitScanReverse64(unsigned long *index, unsigned long long mask) {
 	//#define as_popcount(x)		__popcnt(x)
 	#define as_popcount(x)		bth_popcount(x)
 
-#if defined(_WIN64)
+#if defined(__x86_64__)
 	static __forceinline uint64_t bth_popcount64(uint64_t v) AS_noexcept {
 		v = v - ((v >> 1) & UINT64_C(0x5555555555555555));
 		v = (v & UINT64_C(0x3333333333333333)) + ((v >> 2) & UINT64_C(0x3333333333333333));
@@ -338,8 +338,4 @@ inline auto bsr(uint64_t x) noexcept { return as_bsr64(x); }
 inline auto popcount(uint64_t x) noexcept { return as_popcount64(x); }
 #endif
 }
-#endif
-
-#if defined(__clang__)
-#include <popcntintrin.h>
 #endif

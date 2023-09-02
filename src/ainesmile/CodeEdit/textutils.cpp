@@ -23,7 +23,7 @@ namespace TextUtils
             __m128i result = _mm_cmpeq_epi8(chunk, newline);
 
             // Use a popcount intrinsic to count the number of set bits in the 128-bit value.
-            lineCount += _mm_popcnt_u32(_mm_movemask_epi8(result));
+            lineCount += as_popcount(_mm_movemask_epi8(result));
 
             pData += 16;
         }
@@ -42,7 +42,7 @@ namespace TextUtils
             __m256i result = _mm256_cmpeq_epi8(chunk, newline);
 
             // Sum up the set bits from the comparison result
-            lineCount += _mm_popcnt_u32(_mm256_movemask_epi8(result));
+            lineCount += as_popcount(_mm256_movemask_epi8(result));
 
             pData += 32;
         }
