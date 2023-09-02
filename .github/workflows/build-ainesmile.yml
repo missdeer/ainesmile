@@ -698,7 +698,6 @@ jobs:
           cd build
           cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ ..
           cmake --build . --parallel --verbose
-          cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /usr/local/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
           find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
@@ -708,7 +707,6 @@ jobs:
           cd build-avx2
           cmake -G Ninja -DAVX2=ON -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/usr/local/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ ..
           cmake --build . --parallel --verbose
-          cp -r ../resource src/ainesmile/ainesmile.app/Contents/Resources
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /usr/local/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
           find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;

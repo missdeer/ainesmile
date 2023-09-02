@@ -175,6 +175,13 @@ if(APPLE)
                MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
                MACOSX_BUNDLE_SHORT_VERSION_STRING
                ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+             
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource
+    ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources/
+    )
+
 endif()
 
 install(
