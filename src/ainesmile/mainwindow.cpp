@@ -51,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setAcceptDrops(true);
     hideFeatures();
 
+    ui->menuView->addSeparator();
+    ui->menuView->addAction(ui->toolBar->toggleViewAction());
+
     m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
     m_encodingLabel->setMaximumWidth(150);
     m_encodingLabel->setContextMenuPolicy(Qt::CustomContextMenu);
