@@ -68,7 +68,7 @@
 // Clang and GCC use -march=x86-64-v3, https://clang.llvm.org/docs/UsersManual.html#x86
 // or -mavx2 -mpopcnt -mbmi -mbmi2 -mlzcnt -mmovbe
 // MSVC use /arch:AVX2
-#    if defined(_WIN64) && defined(__AVX2__)
+#    if defined(__x86_64__) && defined(__AVX2__)
 #        define AS_USE_AVX2 1
 #        include <immintrin.h> // AVX2 intrinsics
 #    else
@@ -148,7 +148,7 @@ unsigned char _BitScanReverse64(unsigned long *index, unsigned long long mask) {
 		return trailing;
 	}
 
-#if defined(_WIN64) || defined (__APPLE__)
+#if defined(__x86_64__)
 	static inline uint32_t as_bsr64(uint64_t value) AS_noexcept {
 		unsigned long trailing;
 		_BitScanReverse64(&trailing, value);
@@ -331,7 +331,7 @@ inline auto ctz(uint32_t x) noexcept { return as_ctz(x); }
 inline auto clz(uint32_t x) noexcept { return as_clz(x); }
 inline auto bsr(uint32_t x) noexcept { return as_bsr(x); }
 inline auto popcount(uint32_t x) noexcept { return as_popcount(x); }
-#if defined(_WIN64)
+#if defined(__x86_64__)
 inline auto ctz(uint64_t x) noexcept { return as_ctz64(x); }
 inline auto clz(uint64_t x) noexcept { return as_clz64(x); }
 inline auto bsr(uint64_t x) noexcept { return as_bsr64(x); }
@@ -340,6 +340,6 @@ inline auto popcount(uint64_t x) noexcept { return as_popcount64(x); }
 }
 #endif
 
-#if defined(__clang__) && defined(__x86_64__)
+#if defined(__clang__)
 #include <popcntintrin.h>
 #endif
