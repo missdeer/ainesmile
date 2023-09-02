@@ -54,6 +54,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->menuView->addSeparator();
     ui->menuView->addAction(ui->toolBar->toggleViewAction());
 
+    m_lexerLabel = new QLabel(QLatin1String("normal"), this);
+    m_lexerLabel->setMaximumWidth(100);
+    m_lexerLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_lexerLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectLanguageCustomContextMenuRequested);
+    ui->statusBar->addPermanentWidget(m_lexerLabel);
+
     m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
     m_encodingLabel->setMaximumWidth(150);
     m_encodingLabel->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -174,13 +180,17 @@ void MainWindow::onIdle()
             ui->actionSaveAsEncoding->setEnabled(true);
             m_encodingLabel->setText(page->encoding());
             m_withBOMLabel->setEnabled(page->hasBOM());
+            m_lexerLabel->setText(page->lexerName());
+            ui->actionWordWrap->setChecked(page->isWordWrap());
             return;
         }
     }
     ui->actionReopenAs->setEnabled(false);
     ui->actionSaveAsEncoding->setEnabled(true);
     m_encodingLabel->setText(QStringLiteral("UTF-8"));
+    m_lexerLabel->setText(QLatin1String(""));
     m_withBOMLabel->setEnabled(false);
+    ui->actionWordWrap->setChecked(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1087,6 +1097,27 @@ void MainWindow::onSelectEncodingCustomContextMenuRequested(QPoint pos)
     QMenu menu;
     menu.addAction(ui->actionReopenAs);
     menu.addAction(ui->actionSaveAsEncoding);
+    menu.exec(globalPos);
+}
+
+void MainWindow::onSelectLanguageCustomContextMenuRequested(QPoint pos)
+{
+    QWidget *widget = qobject_cast<QWidget *>(sender());
+    Q_ASSERT(widget);
+    auto  globalPos = widget->mapToGlobal(pos);
+    QMenu menu;
+    auto  langList = Config::instance()->supportedProgrammingLanguages();
+    for (const auto &lang : langList)
+    {
+        auto *action = menu.addAction(lang);
+        connect(action, &QAction::triggered, this, [this, lang]() {
+            auto *page = getFocusCodeEditor();
+            if (page)
+            {
+                page->setLexerName(lang);
+            }
+        });
+    }
     menu.exec(globalPos);
 }
 

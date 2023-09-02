@@ -293,8 +293,8 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-41</y>
-          <width>725</width>
+          <y>0</y>
+          <width>703</width>
           <height>405</height>
          </rect>
         </property>
@@ -926,6 +926,9 @@
    </property>
   </action>
   <action name="actionWordWrap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Word Wrap</string>
    </property>

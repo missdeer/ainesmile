@@ -63,6 +63,7 @@ private slots:
     void onSaveAsEncoding();
     void onAutoDetectEncoding(bool toggled);
     void onSelectEncodingCustomContextMenuRequested(QPoint pos);
+    void onSelectLanguageCustomContextMenuRequested(QPoint pos);
     void onIdle();
 
     void on_actionNewFile_triggered();
@@ -130,6 +131,7 @@ private:
     CodeEditor      *m_lastConnectedCodeEditPage {nullptr};
     QDockWidget     *m_dockFindReplace;
     QDockWidget     *m_dockFindResult;
+    QLabel          *m_lexerLabel;
     QLabel          *m_encodingLabel;
     QLabel          *m_withBOMLabel;
     QList<QAction *> m_recentFileActions;

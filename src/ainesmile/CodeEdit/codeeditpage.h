@@ -7,8 +7,6 @@
 
 #include "ScintillaEdit.h"
 #include "encodingutils.h"
-#include "scintillaconfig.h"
-
 
 class CodeEditor : public QWidget
 {
@@ -42,6 +40,9 @@ public:
     [[nodiscard]] bool           getShowWrapSymbol();
     [[nodiscard]] QString        encoding() const;
     [[nodiscard]] bool           hasBOM();
+    [[nodiscard]] bool           isWordWrap() const;
+    [[nodiscard]] QString        lexerName() const;
+    void                         setLexerName(const QString &lexerName);
 
     bool initialDocument();
     //    void focusInEvent(QFocusEvent * event);
@@ -121,9 +122,9 @@ private:
     ScintillaEdit     *m_sciControlSlave;
     ScintillaEdit     *m_sciFocusView;
     QString            m_filePath;
-    QString            m_encoding {"UTF-8"};
+    QString            m_encoding {QStringLiteral("UTF-8")};
+    QString            m_lexerName {QStringLiteral("normal")};
     EncodingUtils::BOM m_bom {EncodingUtils::BOM::None};
-    ScintillaConfig    m_sc;
 
     void init();
     void saveFileAsEncoding(const QString &filePath, const QString &encoding, EncodingUtils::BOM bom);

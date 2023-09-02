@@ -10,6 +10,7 @@ class Config
 private:
     static Config *instance_;
 
+    QString                     m_languageMapPath;
     boost::property_tree::ptree pt_;
     bool                        ok_ {false};
 
@@ -23,12 +24,13 @@ public:
     bool                         sync();
     bool                         init();
     [[nodiscard]] bool           isOk() const;
-    QString                      getConfigDirPath();
-    QString                      getConfigPath();
-    QString                      getThemePath();
-    QString                      getLanguageMapPath();
-    QString                      getLanguageDirPath();
-    QString                      matchPatternLanguage(const QString &filename);
+    [[nodiscard]] QString        getConfigDirPath();
+    [[nodiscard]] QString        getConfigPath();
+    [[nodiscard]] QString        getThemePath();
+    [[nodiscard]] QString        getLanguageMapPath();
+    [[nodiscard]] QString        getLanguageDirPath();
+    [[nodiscard]] QString        matchPatternLanguage(const QString &filename);
+    [[nodiscard]] QStringList    supportedProgrammingLanguages();
 };
 
 #endif // CONFIG_H

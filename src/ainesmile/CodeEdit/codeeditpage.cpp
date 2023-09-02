@@ -7,8 +7,8 @@
 
 #include "codeeditpage.h"
 #include "config.h"
+#include "scintillaconfig.h"
 #include "textutils.h"
-
 
 CodeEditor::CodeEditor(QWidget *parent)
     : QWidget(parent),
@@ -41,8 +41,8 @@ CodeEditor::CodeEditor(QWidget *parent)
 
 void CodeEditor::init()
 {
-    m_sc.initScintilla(m_sciControlMaster);
-    m_sc.initScintilla(m_sciControlSlave);
+    ScintillaConfig::initScintilla(m_sciControlMaster);
+    ScintillaConfig::initScintilla(m_sciControlSlave);
 
     connect(m_sciControlMaster, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
     connect(m_sciControlMaster, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
@@ -78,11 +78,18 @@ void CodeEditor::openFile(const QString &filePath)
         return;
     }
 
+    m_filePath = filePath;
+    if (!m_filePath.isEmpty())
+    {
+        Config *config = Config::instance();
+        Q_ASSERT(config);
+        m_lexerName = config->matchPatternLanguage(m_filePath);
+    }
+
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
 
     m_bom                                 = EncodingUtils::BOM::None;
-    m_filePath                            = filePath;
     const qint64                headerLen = 4;
     std::array<char, headerLen> header {};
     qint64                      cbRead          = file.read(header.data(), headerLen);
@@ -215,10 +222,7 @@ void CodeEditor::documentChanged()
     m_sciControlMaster->emptyUndoBuffer();
     m_sciControlSlave->emptyUndoBuffer();
     emit filePathChanged(m_filePath);
-    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
-    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
-    m_sciControlMaster->colourise(0, -1);
-    m_sciControlSlave->colourise(0, -1);
+    applyEditorStyles();
 }
 
 void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, EncodingUtils::BOM bom)
@@ -315,6 +319,13 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
 
 void CodeEditor::saveFile(const QString &filePath)
 {
+    if (!m_filePath.isEmpty())
+    {
+        Config *config = Config::instance();
+        Q_ASSERT(config);
+        m_lexerName = config->matchPatternLanguage(m_filePath);
+    }
+
     QFileInfo saveFileInfo(filePath);
     QFileInfo fileInfo(m_filePath);
     if (m_filePath.isEmpty() || saveFileInfo != fileInfo)
@@ -322,8 +333,7 @@ void CodeEditor::saveFile(const QString &filePath)
         m_filePath = filePath;
         emit filePathChanged(m_filePath);
 
-        m_sc.initEditorStyle(m_sciControlMaster, filePath);
-        m_sc.initEditorStyle(m_sciControlSlave, filePath);
+        applyEditorStyles();
     }
 
     if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
@@ -388,8 +398,10 @@ bool CodeEditor::focus()
 
 void CodeEditor::applyEditorStyles()
 {
-    m_sc.initEditorStyle(m_sciControlMaster, m_filePath);
-    m_sc.initEditorStyle(m_sciControlSlave, m_filePath);
+    ScintillaConfig::initEditorStyle(m_sciControlMaster, m_lexerName);
+    ScintillaConfig::initEditorStyle(m_sciControlSlave, m_lexerName);
+    m_sciControlMaster->colourise(0, -1);
+    m_sciControlSlave->colourise(0, -1);
 }
 
 void CodeEditor::setShowWhiteSpaceAndTAB(bool enabled)
@@ -939,4 +951,20 @@ void CodeEditor::focusChanged(bool focused)
 
         emit focusIn();
     }
+}
+
+QString CodeEditor::lexerName() const
+{
+    return m_lexerName;
+}
+
+void CodeEditor::setLexerName(const QString &lexerName)
+{
+    m_lexerName = lexerName;
+    applyEditorStyles();
+}
+
+bool CodeEditor::isWordWrap() const
+{
+    return m_sciControlMaster->wrapMode() != SC_WRAP_NONE;
 }

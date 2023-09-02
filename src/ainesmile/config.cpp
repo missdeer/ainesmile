@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <boost/scope_exit.hpp>
+
 #include <QRegularExpression>
 
 #include "config.h"
@@ -168,6 +170,11 @@ QString Config::getThemePath()
 
 QString Config::getLanguageMapPath()
 {
+    if (!m_languageMapPath.isEmpty())
+    {
+        return m_languageMapPath;
+    }
+
     QString configPath = getConfigDirPath();
     configPath.append("/langmap.xml");
     QFile file(configPath);
@@ -204,6 +211,7 @@ QString Config::getLanguageMapPath()
         QFile::copy(configFile, configPath);
     }
     qDebug() << "langmap: " << configPath;
+    m_languageMapPath = configPath;
     return configPath;
 }
 
@@ -249,19 +257,23 @@ QString Config::getLanguageDirPath()
 
 QString Config::matchPatternLanguage(const QString &filename)
 {
-    QString      langMapPath = getLanguageMapPath();
-    QDomDocument doc;
-    QFile        file(langMapPath);
+    const QString defaultLanguage = QStringLiteral("normal");
+    QString       langMapPath     = getLanguageMapPath();
+    QDomDocument  doc;
+    QFile         file(langMapPath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        return {};
+        return defaultLanguage;
     }
-    if (!doc.setContent(&file))
+    BOOST_SCOPE_EXIT(&file)
     {
         file.close();
-        return {};
     }
-    file.close();
+    BOOST_SCOPE_EXIT_END
+    if (!doc.setContent(&file))
+    {
+        return defaultLanguage;
+    }
 
     QDomElement docElem = doc.documentElement();
 
@@ -270,14 +282,14 @@ QString Config::matchPatternLanguage(const QString &filename)
     {
         QString pattern = langElem.attribute("pattern");
         QString suffix  = langElem.attribute("suffix");
-        if (matchSuffix(filename, suffix) || matchPattern(filename, pattern))
+        if (matchSuffix(filename, suffix) || (!pattern.isEmpty() && matchPattern(filename, pattern)))
         {
             QString name = langElem.attribute("name");
             return name;
         }
         langElem = langElem.nextSiblingElement("language");
     }
-    return {};
+    return defaultLanguage;
 }
 
 bool Config::matchPattern(const QString &filename, const QString &pattern)
@@ -303,6 +315,42 @@ bool Config::matchSuffix(const QString &filename, const QString &suffix)
 #endif
     });
     return suffixes.end() != iter;
+}
+
+QStringList Config::supportedProgrammingLanguages()
+{
+    static QStringList languagesList;
+    if (languagesList.isEmpty())
+    {
+        QString      langMapPath = getLanguageMapPath();
+        QDomDocument doc;
+        QFile        file(langMapPath);
+        if (!file.open(QIODevice::ReadOnly))
+        {
+            return languagesList;
+        }
+        BOOST_SCOPE_EXIT(&file)
+        {
+            file.close();
+        }
+        BOOST_SCOPE_EXIT_END
+        if (!doc.setContent(&file))
+        {
+            return languagesList;
+        }
+
+        QDomElement docElem = doc.documentElement();
+
+        QDomElement langElem = docElem.firstChildElement("language");
+        while (!langElem.isNull())
+        {
+            QString name = langElem.attribute("name");
+            languagesList.append(name);
+            langElem = langElem.nextSiblingElement("language");
+        }
+    }
+
+    return languagesList;
 }
 
 Config *Config::instance()

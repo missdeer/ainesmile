@@ -3,15 +3,14 @@
 
 class ScintillaEdit;
 
-class ScintillaConfig
+namespace ScintillaConfig
 {
-public:
-    void initScintilla(ScintillaEdit* sci);
-    void initFolderStyle(ScintillaEdit* sci);
-    void initEditorStyle(ScintillaEdit* sci, const QString& filename);
+    void initScintilla(ScintillaEdit *sci);
+    void initFolderStyle(ScintillaEdit *sci);
+    void initEditorStyle(ScintillaEdit *sci, const QString &lang);
 
-    void applyLanguageStyle(ScintillaEdit* sci, const QString& configPath);
-    void applyThemeStyle(ScintillaEdit* sci, const QString& themePath);
-};
+    void applyLanguageStyle(ScintillaEdit *sci, const QString &configPath);
+    void applyThemeStyle(ScintillaEdit *sci, const QString &themePath);
+} // namespace ScintillaConfig
 
 #endif // SCINTILLACONFIG_H
