@@ -42,7 +42,6 @@ include_directories(${Qt${QT_VERSION_MAJOR}Gui_PRIVATE_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
         CodeEdit
         Dialogs
-        uchardet
         )
 
 file(GLOB
@@ -76,17 +75,18 @@ set(ainesmile_src
         mainwindow.cpp
         tabwidget.cpp
         config.cpp
-		${CodeEdit_src}
-		${Dialogs_src}
+	${CodeEdit_src}
+	${Dialogs_src}
         )
 
 file(GLOB
         Dialogs_ui
         Dialogs/*.ui
         )
+        
 set(ainesmile_ui
         mainwindow.ui
-		${Dialogs_ui}
+	${Dialogs_ui}
         )
 IF(WIN32)
     list(APPEND ainesmile_headers
@@ -107,6 +107,7 @@ set(TS_FILES
 IF(APPLE)
         set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ainesmile.app/Contents/Resources/translations")
         list(APPEND ainesmile_ui ainesmile.icns)
+        file(GLOB resource ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/*.xml)
 ELSE(APPLE)
         set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations")
 ENDIF(APPLE)
