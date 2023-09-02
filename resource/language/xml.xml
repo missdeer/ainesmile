@@ -1,2 +1,2 @@
-<AinesmileLanguage name="xml" pattern="" suffix="xml xsml xsl xsd kml wsdl plist entitlements" comment_line="" comment_start="&lt;!--" comment_end="--&gt;"/>
+<AinesmileLanguage name="xml" pattern="" suffix="xml xaml xsl xslt xsd xul kml svg mxml xsml wsdl xlf xliff xbl sxbl sitemap gml gpx plist vcproj vcxproj csproj csxproj vbproj dbproj" comment_line="" comment_start="&lt;!--" comment_end="--&gt;"/>
 

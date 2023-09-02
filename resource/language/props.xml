@@ -1,2 +1,2 @@
-<AinesmileLanguage name="props" pattern="" suffix="properties" comment_line=";" comment_start="" comment_end=""/>
+<AinesmileLanguage name="props" pattern="" suffix="properties conf cfg gitattributes gitconfig gitmodules editorconfig" comment_line="#" comment_start="" comment_end=""/>
 

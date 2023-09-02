@@ -1,4 +1,4 @@
 <AinesmileLanguage name="batch" pattern="" suffix="bat cmd nt" comment_line="REM" comment_start="" comment_end="">
-	<keyword name="instre1">rem set if else exist errorlevel for in do break call copy chcp cd chdir choice cls country ctty date del erase dir echo exit goto loadfix loadhigh mkdir md move path pause prompt rename ren rmdir rd shift time type ver verify vol com con lpt nul defined not errorlevel cmdextversion</keyword>
+	<keyword name="instre1">assoc aux break call cd chcp chdir choice cls cmdextversion color com com1 com2 com3 com4 con copy country ctty date defined del dir do dpath echo else endlocal erase errorlevel exist exit for ftype goto if in loadfix loadhigh lpt lpt1 lpt2 lpt3 lpt4 md mkdir move not nul path pause popd prn prompt pushd rd rem ren rename rmdir set setlocal shift start time title type ver verify vol</keyword>
 </AinesmileLanguage>
 

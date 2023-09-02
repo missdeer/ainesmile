@@ -1,2 +1,4 @@
-<AinesmileLanguage name="yaml" pattern="" suffix="yml" comment_line="#" comment_start="" comment_end=""/>
+<AinesmileLanguage name="yaml" pattern="" suffix="yml yaml" comment_line="#" comment_start="" comment_end="">
+	<keyword name="instre1">true false yes no</keyword>
+</AinesmileLanguage>
 
