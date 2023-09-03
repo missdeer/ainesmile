@@ -83,7 +83,7 @@ file(GLOB
         Dialogs_ui
         Dialogs/*.ui
         )
-        
+
 set(ainesmile_ui
         mainwindow.ui
 	${Dialogs_ui}
@@ -174,9 +174,10 @@ if(APPLE)
                MACOSX_BUNDLE_ICON_FILE "ainesmile.icns"
                MACOSX_BUNDLE_INFO_STRING "ainesmile"
                MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-               MACOSX_BUNDLE_SHORT_VERSION_STRING
-               ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-             
+               MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+               MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/osxInfo.plist"
+               )
+
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/themes
