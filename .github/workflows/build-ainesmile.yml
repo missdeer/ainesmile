@@ -605,15 +605,17 @@ jobs:
           git clone https://github.com/missdeer/mingwdeployqt.git
 
       - name: Build mingwdeployqt
-        shell: msys2 {0}
+        shell: cmd
         run: |
+          set MSYSTEM=${{ matrix.mingw_arch }}
+          set PATH=${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin;${{ github.workspace}}\usr\bin;%PATH%
           cd mingwdeployqt
           mkdir build
           cd build
-          env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
-          ninja
-          cp mingwdeployqt.exe /${{ matrix.mingw_arch }}/bin/
-          cd ../..
+          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --verbose
+          copy mingwdeployqt.exe ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\
+          cd ..\..
 
       - name: copy CMakeLists.txt
         shell: msys2 {0}
