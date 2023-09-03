@@ -104,6 +104,12 @@ namespace EncodingUtils
             return QStringLiteral("UTF-8");
         }
 
-        return QString::fromLatin1(charset);
+        auto encoding = QString::fromLatin1(charset);
+        if (encoding.startsWith(QStringLiteral("ISO-8859"), Qt::CaseInsensitive))
+        {
+            return QStringLiteral("UTF-8");
+        }
+
+        return encoding;
     }
 } // namespace EncodingUtils
