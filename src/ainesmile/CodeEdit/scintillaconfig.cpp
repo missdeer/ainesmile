@@ -248,11 +248,14 @@ namespace ScintillaConfig
             int styleId = styleElem.attribute("style_id").toInt();
             if (styleId == 0)
             {
-                if (zeroId)
-                {
+                // 0 style id used as global override
+                // we can skip it if we don't need global override values
+
+                // if (zeroId)
+                // {
                     continue;
-                }
-                zeroId = true;
+                // }
+                // zeroId = true;
             }
             QString foreColor = styleElem.attribute("fg_color");
             if (!foreColor.isEmpty())
