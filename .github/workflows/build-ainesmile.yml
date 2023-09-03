@@ -599,6 +599,8 @@ jobs:
       - name: prepare mingwdeployqt
         shell: cmd
         run: |
+          dir ${{ github.workspace}}
+          dir ${{ github.workspace}}\msys64
           git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
           date /T > src\ainesmile\DATE
           time /T >> src\ainesmile\DATE
