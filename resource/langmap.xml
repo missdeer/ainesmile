@@ -46,6 +46,7 @@
     <language name="latex" suffix="tex sty" commentLine="%" commentStart="" commentEnd=""/>
     <language name="lua" suffix="lua" commentLine="--"/>
     <language name="makefile" pattern="(GNU)?(M|m)akefile" suffix="mak mk" commentLine="#"/>
+    <language name="markdown" suffix="md markdown mdown"/>
     <language name="matlab" suffix="m" commentLine="%" commentStart="" commentEnd=""/>
     <language name="mssql" suffix="tsql" commentStart="/*" commentEnd="*/" commentLine="--"/>
     <language name="mmixal" suffix="mms" commentLine="%" commentStart="" commentEnd=""/>
@@ -89,4 +90,3 @@
     <language name="yaml" suffix="yml yaml" commentLine="#" tabSettings="132"/>
 	<language name="normal" pattern="" suffix="txt"/>
 </AinesmileLanguageMap>
-
