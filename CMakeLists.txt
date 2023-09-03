@@ -63,7 +63,7 @@ if(Boost_FOUND)
     endif(MSVC)
 endif(Boost_FOUND)
 
-if(MSVC)
+if(WIN32)
 add_compile_definitions(STRSAFE_NO_DEPRECATE)
 endif()
 
