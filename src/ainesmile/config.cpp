@@ -91,7 +91,7 @@ QString Config::getConfigPath()
             dir.cdUp();
             dir.cdUp();
 #endif
-            dir.cd("resource");
+            dir.cd(QStringLiteral("resource"));
             configFile = configDir.absolutePath();
             configFile.append("/.ainesmilerc");
             Q_ASSERT(QFile::exists(configFile));
@@ -129,7 +129,7 @@ QString Config::getThemePath()
 #endif
 
         QString themeDirPath;
-        if (!configDir.cd("themes") || configDir.entryList(QDir::Files).isEmpty())
+        if (!configDir.cd(QStringLiteral("themes")) || configDir.entryList(QDir::Files).isEmpty())
         {
             QDir dir(appDirPath);
             dir.cdUp();
@@ -201,7 +201,7 @@ QString Config::getLanguageMapPath()
             dir.cdUp();
             dir.cdUp();
 #endif
-            dir.cd("resource");
+            dir.cd(QStringLiteral("resource"));
             Q_ASSERT(dir.exists());
             configFile = dir.absolutePath();
             configFile.append("/langmap.xml");
@@ -249,7 +249,9 @@ QString Config::getLanguageDirPath()
         // copy all files from configFile to langDirPath
         langDir.mkpath(langDirPath);
         QStringList files = QDir(configFile).entryList(QDir::Files);
-        std::for_each(files.begin(), files.end(), [&](const QString &f) { QFile::copy(configFile + "/" + f, langDirPath + "/" + f); });
+        std::for_each(files.begin(), files.end(), [&configFile, &langDirPath](const QString &fileName) {
+            QFile::copy(configFile + "/" + fileName, langDirPath + "/" + fileName);
+        });
     }
     qDebug() << "langDir: " << langDirPath;
     return langDirPath;
@@ -257,10 +259,10 @@ QString Config::getLanguageDirPath()
 
 QString Config::matchPatternLanguage(const QString &filename)
 {
-    const QString defaultLanguage = QStringLiteral("normal");
-    QString       langMapPath     = getLanguageMapPath();
-    QDomDocument  doc;
-    QFile         file(langMapPath);
+    QString      defaultLanguage = QStringLiteral("normal");
+    QString      langMapPath     = getLanguageMapPath();
+    QDomDocument doc;
+    QFile        file(langMapPath);
     if (!file.open(QIODevice::ReadOnly))
     {
         return defaultLanguage;
@@ -281,17 +283,17 @@ QString Config::matchPatternLanguage(const QString &filename)
 
     QDomElement docElem = doc.documentElement();
 
-    QDomElement langElem = docElem.firstChildElement("language");
+    QDomElement langElem = docElem.firstChildElement(QStringLiteral("language"));
     while (!langElem.isNull())
     {
-        QString pattern = langElem.attribute("pattern");
-        QString suffix  = langElem.attribute("suffix");
+        QString pattern = langElem.attribute(QStringLiteral("pattern"));
+        QString suffix  = langElem.attribute(QStringLiteral("suffix"));
         if (matchSuffix(filename, suffix) || matchPattern(filename, pattern))
         {
-            QString name = langElem.attribute("name");
+            QString name = langElem.attribute(QStringLiteral("name"));
             return name;
         }
-        langElem = langElem.nextSiblingElement("language");
+        langElem = langElem.nextSiblingElement(QStringLiteral("language"));
     }
     return defaultLanguage;
 }
