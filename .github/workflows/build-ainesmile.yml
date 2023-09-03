@@ -121,8 +121,8 @@ jobs:
       - name: Copy directory
         shell: pwsh
         run: |
-          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
-          Copy-Item -Path .\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -265,8 +265,8 @@ jobs:
       - name: Copy directory
         shell: pwsh
         run: |
-          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
-          Copy-Item -Path .\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -429,8 +429,8 @@ jobs:
       - name: Copy directory
         shell: pwsh
         run: |
-          Copy-Item -Path .\resource -Destination .\build\bin -Recurse -Force
-          Copy-Item -Path .\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -644,7 +644,7 @@ jobs:
           env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake --build . --parallel --verbose
           mkdir bin
           cp src/ainesmile/ainesmile.exe ./bin/
-          cp -r "../resource" ./bin/
+          cp -r "src/ainesmile/resource" ./bin/
           env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe bin/ainesmile.exe
           cd ..
           mkdir build-avx2
@@ -653,7 +653,7 @@ jobs:
           env PATH=/${{ matrix.mingw_arch }}/${{ matrix.qt_build }}/bin:/${{ matrix.mingw_arch }}/bin cmake --build . --parallel --verbose
           mkdir bin
           cp src/ainesmile/ainesmile.exe ./bin/
-          cp -r "../resource" ./bin/
+          cp -r "src/ainesmile/resource" ./bin/
           env PATH=/${{ matrix.mingw_arch }}/bin mingwdeployqt.exe bin/ainesmile.exe
           cd ..
 

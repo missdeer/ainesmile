@@ -179,10 +179,29 @@ if(APPLE)
              
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource
-    ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/themes
+    ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources/themes
     )
-
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/language
+    ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources/language
+    )
+  file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../../resource/langmap.xml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources)
+  file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../../resource/.ainesmilerc" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources)
+else()
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/themes
+    ${CMAKE_CURRENT_BINARY_DIR}/resource/themes
+    )
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/language
+    ${CMAKE_CURRENT_BINARY_DIR}/resource/language
+    )
+  file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../../resource/langmap.xml" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resource)
+  file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../../resource/.ainesmilerc" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resource)
 endif()
 
 install(
