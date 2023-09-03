@@ -19,13 +19,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # if you have any .ui files
 set(CMAKE_AUTORCC OFF) # if you have any .qrc files
 
-if (MSVC)
-    add_compile_options(/utf-8)
-endif()
-IF(WIN32)
-    add_compile_definitions(UNICODE)
-ENDIF(WIN32)
-
 add_compile_definitions(SCINTILLA_QT=1
         SCI_LEXER=1
         _CRT_SECURE_NO_DEPRECATE=1
@@ -75,8 +68,8 @@ set(ainesmile_src
         mainwindow.cpp
         tabwidget.cpp
         config.cpp
-	${CodeEdit_src}
-	${Dialogs_src}
+        ${CodeEdit_src}
+        ${Dialogs_src}
         )
 
 file(GLOB
@@ -86,7 +79,7 @@ file(GLOB
 
 set(ainesmile_ui
         mainwindow.ui
-	${Dialogs_ui}
+        ${Dialogs_ui}
         )
 IF(WIN32)
     list(APPEND ainesmile_headers

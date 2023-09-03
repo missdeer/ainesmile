@@ -64,7 +64,11 @@ if(Boost_FOUND)
 endif(Boost_FOUND)
 
 if(WIN32)
-add_compile_definitions(STRSAFE_NO_DEPRECATE)
+    add_compile_definitions(STRSAFE_NO_DEPRECATE UNICODE)
+endif()
+
+if (MSVC AND NOT "${CURRENT_COMPILER_ID}" STREQUAL "IntelLLVM")
+    add_compile_options(/utf-8)
 endif()
 
 add_subdirectory(3rdparty)
