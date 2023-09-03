@@ -613,8 +613,8 @@ jobs:
           cd mingwdeployqt
           mkdir build
           cd build
-          ..\..\cmake.bat -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
-          ..\..\cmake.bat --build . --verbose
+          call ..\..\cmake.bat -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          call ..\..\cmake.bat --build . --verbose
           copy mingwdeployqt.exe ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\
           cd ..\..
 
@@ -639,13 +639,13 @@ jobs:
           type cmake.bat
           mkdir build
           cd build
-          ..\cmake.bat -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
-          ..\cmake.bat --build . --parallel --verbose
+          call ..\cmake.bat -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          call ..\cmake.bat --build . --parallel --verbose
           cd ..
           mkdir build-avx2
           cd build-avx2
-          ..\cmake.bat -DAVX2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
-          ..\cmake.bat --build . --parallel --verbose
+          call ..\cmake.bat -DAVX2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          call ..\cmake.bat --build . --parallel --verbose
           cd ..
 
       - name: deploy
