@@ -581,12 +581,11 @@ jobs:
             
     env:
       targetName: ainesmile
-
+      msysroot: "D:\a\_temp"
     steps:
       - uses: msys2/setup-msys2@v2
         with:
           update: true
-          location: ${{ github.workspace}}\msys64
           msystem: ${{ matrix.mingw_arch }}
           install:  ${{ matrix.mingw_prefix }}-boost ${{ matrix.mingw_prefix }}-cmake ${{ matrix.mingw_prefix }}-ninja ${{ matrix.mingw_prefix }}-${{ matrix.toolchains }} ${{ matrix.mingw_prefix }}-make ${{ matrix.mingw_prefix }}-${{ matrix.qt_build }} ${{ matrix.mingw_prefix }}-openssl ${{ matrix.mingw_prefix }}-zstd ${{ matrix.mingw_prefix }}-libb2 ${{ matrix.mingw_prefix }}-jasper ${{ matrix.mingw_prefix }}-icu ${{ matrix.mingw_prefix }}-openmp
 
@@ -599,8 +598,6 @@ jobs:
       - name: prepare mingwdeployqt
         shell: cmd
         run: |
-          dir ${{ github.workspace}}
-          dir ${{ github.workspace}}\msys64
           git log -1 "--pretty=format:%h" > src\ainesmile\REVISION
           date /T > src\ainesmile\DATE
           time /T >> src\ainesmile\DATE
@@ -610,13 +607,13 @@ jobs:
         shell: cmd
         run: |
           set MSYSTEM=${{ matrix.mingw_arch }}
-          set PATH=${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin;${{ github.workspace}}\msys64\usr\bin;%PATH%
+          set PATH=${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin;%PATH%
           cd mingwdeployqt
           mkdir build
           cd build
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --verbose
-          copy mingwdeployqt.exe ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -G Ninja ..
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --verbose
+          copy mingwdeployqt.exe ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\
           cd ..\..
 
       - name: patch 3rdparty
@@ -635,17 +632,17 @@ jobs:
         shell: cmd
         run: |
           set MSYSTEM=${{ matrix.mingw_arch }}
-          set PATH=${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin;${{ github.workspace}}\msys64\usr\bin;%PATH%
+          set PATH=${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin;%PATH%
           path
           mkdir build
           cd build
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ github.workspace}}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ github.workspace}}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --parallel --verbose
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --parallel --verbose
           cd ..
           mkdir build-avx2
           cd build-avx2
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DAVX2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ github.workspace}}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ github.workspace}}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --parallel --verbose
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe -DAVX2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\cmake.exe --build . --parallel --verbose
           cd ..
 
       - name: deploy
@@ -654,12 +651,12 @@ jobs:
           cd build
           mkdir bin
           copy src\ainesmile\ainesmile.exe .\bin\
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
           cd ..
           cd build-avx2
           mkdir bin
           copy src\ainesmile\ainesmile.exe .\bin\
-          ${{ github.workspace}}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
           cd ..
 
       - name: Copy directory
