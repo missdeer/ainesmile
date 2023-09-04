@@ -5,6 +5,8 @@
 #include <unicode/ucsdet.h>
 #include <unicode/utext.h>
 
+#include <QApplication>
+
 #include "codeeditpage.h"
 #include "config.h"
 #include "scintillaconfig.h"
@@ -845,7 +847,7 @@ void CodeEditor::nextBookmark()
     sptr_t line = sci->lineFromPosition(sci->currentPos()) + 1;
 
     const int mask           = ScintillaConfig::bookmarkMask();
-    int       nextMarkedLine = sci->markerNext(line, mask);
+    sptr_t    nextMarkedLine = sci->markerNext(line, mask);
 
     if (nextMarkedLine == -1)
     {
@@ -864,7 +866,7 @@ void CodeEditor::previousBookmark()
     sptr_t line = sci->lineFromPosition(sci->currentPos()) - 1;
 
     const int mask           = ScintillaConfig::bookmarkMask();
-    int       prevMarkedLine = sci->markerPrevious(line, mask);
+    sptr_t    prevMarkedLine = sci->markerPrevious(line, mask);
 
     if (prevMarkedLine == -1)
     {
@@ -888,36 +890,101 @@ void CodeEditor::cutBookmarkLines()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    copyBookmarkLines();
+    removeBookmarkedLines();
 }
 
 void CodeEditor::copyBookmarkLines()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    QByteArray text;
+    auto       lines = bookmarkedLines(sci);
+    for (auto line : lines)
+    {
+        sptr_t lineLen   = sci->lineLength(line);
+        sptr_t lineBegin = sci->positionFromLine(line);
+        sci->setTargetRange(lineBegin, lineBegin + lineLen);
+        text.append(sci->targetText());
+    }
+    QApplication::clipboard()->setText(QString(text));
 }
 
 void CodeEditor::pasteToReplaceBookmarkedLines()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    const int marker                = ScintillaConfig::bookmarkMarker();
+    auto      bookmarkedLinesNumber = bookmarkedLines(sci);
+    auto      text                  = QApplication::clipboard()->text();
+    auto      linesText             = text.split('\n');
+    int       lineIndex             = 0;
+
+    sci->beginUndoAction();
+    for (auto bookmarkedLineNumber : bookmarkedLinesNumber)
+    {
+        if (lineIndex >= linesText.size() || lineIndex >= bookmarkedLinesNumber.size())
+        {
+            break;
+        }
+        auto linetext = linesText.at(lineIndex).toUtf8();
+        lineIndex++;
+        // do replace, skip \n at the end of the line
+        sptr_t lineLen   = sci->lineLength(bookmarkedLineNumber) - 1;
+        sptr_t lineBegin = sci->positionFromLine(bookmarkedLineNumber);
+        sci->setTargetRange(lineBegin, lineBegin + lineLen);
+        sci->replaceTarget(linetext.length(), linetext.constData());
+        sci->markerAdd(bookmarkedLineNumber, marker);
+    }
+    sci->endUndoAction();
 }
 
 void CodeEditor::removeBookmarkedLines()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    sci->beginUndoAction();
+    const int marker = ScintillaConfig::bookmarkMarker();
+    auto      lines  = bookmarkedLines(sci);
+    for (auto iter = lines.crbegin(); iter != lines.crend(); ++iter)
+    {
+        sptr_t line = *iter;
+        sci->markerDelete(line, marker);
+        deleteLine(sci, line);
+    }
+    sci->endUndoAction();
 }
 
 void CodeEditor::removeUnbookmarkedLines()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    sci->beginUndoAction();
+    auto   lines     = bookmarkedLines(sci);
+    sptr_t lineCount = sci->lineCount();
+    for (sptr_t line = lineCount - 1; line >= 0; --line)
+    {
+        if (std::find(lines.begin(), lines.end(), line) == lines.end())
+        {
+            deleteLine(sci, line);
+        }
+    }
+    sci->endUndoAction();
 }
 
 void CodeEditor::inverseBookmark()
 {
     auto *sci = getFocusView();
     Q_ASSERT(sci);
+    intptr_t lastLine = sci->lineCount();
+
+    sci->beginUndoAction();
+#pragma omp parallel for
+    for (int line = 0; line < lastLine; ++line)
+    {
+        toggleBookmarkAtLine(sci, line);
+    }
+    sci->endUndoAction();
 }
 
 void CodeEditor::wordWrap()
@@ -1097,7 +1164,8 @@ void CodeEditor::toggleBookmarkAtLine(ScintillaEdit *sci, int line)
 {
     Q_ASSERT(sci);
     const int marker = ScintillaConfig::bookmarkMarker();
-    if (sci->markerGet(line) & (ScintillaConfig::bookmarkMask()))
+    const int mask   = ScintillaConfig::bookmarkMask();
+    if (sci->markerGet(line) & mask)
     {
         // The marker can be set multiple times, so keep deleting it till it is no longer set
         while (sci->markerGet(line) & (ScintillaConfig::bookmarkMask()))
@@ -1109,4 +1177,27 @@ void CodeEditor::toggleBookmarkAtLine(ScintillaEdit *sci, int line)
     {
         sci->markerAdd(line, marker);
     }
+}
+
+std::vector<sptr_t> CodeEditor::bookmarkedLines(ScintillaEdit *sci)
+{
+    Q_ASSERT(sci);
+    std::vector<sptr_t> res;
+    const int           mask           = ScintillaConfig::bookmarkMask();
+    sptr_t              nextMarkedLine = sci->markerNext(0, mask);
+    while (nextMarkedLine != -1)
+    {
+        res.push_back(nextMarkedLine);
+        nextMarkedLine = sci->markerNext(nextMarkedLine + 1, mask);
+    }
+    return res;
+}
+
+void CodeEditor::deleteLine(ScintillaEdit *sci, sptr_t line)
+{
+    Q_ASSERT(line);
+    sptr_t lineLen   = sci->lineLength(line);
+    sptr_t lineBegin = sci->positionFromLine(line);
+    sci->setTargetRange(lineBegin, lineBegin + lineLen);
+    sci->replaceTarget(0, "");
 }

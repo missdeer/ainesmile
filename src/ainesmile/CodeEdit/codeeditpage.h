@@ -1,12 +1,15 @@
 ﻿#ifndef CODEEDITPAGE_H
 #define CODEEDITPAGE_H
 
+#include <vector>
+
 #include <QFocusEvent>
 #include <QSplitter>
 #include <QWidget>
 
 #include "ScintillaEdit.h"
 #include "encodingutils.h"
+
 
 class CodeEditor : public QWidget
 {
@@ -131,7 +134,10 @@ private:
     void documentChanged();
     void loadRawFile(const QByteArray &data);
     void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
-    void toggleBookmarkAtLine(ScintillaEdit* sci, int line);
+    void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
+
+    static void             deleteLine(ScintillaEdit *sci, sptr_t line);
+    static std::vector<sptr_t> bookmarkedLines(ScintillaEdit *sci);
 };
 
 #endif // CODEEDITPAGE_H
