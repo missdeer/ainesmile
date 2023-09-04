@@ -662,6 +662,12 @@ jobs:
           ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
           cd ..
 
+      - name: Copy directory
+        shell: pwsh
+        run: |
+          Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
         with:
