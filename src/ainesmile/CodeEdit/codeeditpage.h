@@ -131,6 +131,7 @@ private:
     void documentChanged();
     void loadRawFile(const QByteArray &data);
     void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
+    void toggleBookmarkAtLine(ScintillaEdit* sci, int line);
 };
 
 #endif // CODEEDITPAGE_H

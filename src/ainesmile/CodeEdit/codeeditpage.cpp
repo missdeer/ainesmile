@@ -435,7 +435,7 @@ void CodeEditor::updateUI(Scintilla::Update updated)
         // smart highlight
         auto *editor = qobject_cast<ScintillaEdit *>(sender());
         Q_ASSERT(editor);
-        const int smartIndicator = 1;
+        const int smartIndicator = ScintillaConfig::smartHighlightIndicator();
         editor->setIndicatorCurrent(smartIndicator);
         editor->indicatorClearRange(0, editor->length());
 
@@ -539,16 +539,7 @@ void CodeEditor::marginClicked(Scintilla::Position position, Scintilla::KeyMod /
         }
         else if (maskN == ~SC_MASK_FOLDERS) // breakpoint margin operations
         {
-            if (sci->markerGet(line))
-            {
-                sci->markerDelete(line, 1);
-                // remove breakpoint
-            }
-            else
-            {
-                sci->markerAdd(line, 1);
-                // add breakpoint
-            }
+            toggleBookmarkAtLine(sci, line);
         }
     }
 }
@@ -833,27 +824,101 @@ void CodeEditor::gotoLine()
     }
 }
 
-void CodeEditor::gotoMatchingBrace() {}
+void CodeEditor::gotoMatchingBrace()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
 
-void CodeEditor::toggleBookmark() {}
+void CodeEditor::toggleBookmark()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sptr_t line = sci->lineFromPosition(sci->currentPos());
+    toggleBookmarkAtLine(sci, line);
+}
 
-void CodeEditor::nextBookmark() {}
+void CodeEditor::nextBookmark()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sptr_t line = sci->lineFromPosition(sci->currentPos()) + 1;
 
-void CodeEditor::previousBookmark() {}
+    const int mask           = ScintillaConfig::bookmarkMask();
+    int       nextMarkedLine = sci->markerNext(line, mask);
 
-void CodeEditor::clearAllBookmarks() {}
+    if (nextMarkedLine == -1)
+    {
+        sci->gotoLine(sci->markerNext(0, mask));
+    }
+    else
+    {
+        sci->gotoLine(nextMarkedLine);
+    }
+}
 
-void CodeEditor::cutBookmarkLines() {}
+void CodeEditor::previousBookmark()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    sptr_t line = sci->lineFromPosition(sci->currentPos()) - 1;
 
-void CodeEditor::copyBookmarkLines() {}
+    const int mask           = ScintillaConfig::bookmarkMask();
+    int       prevMarkedLine = sci->markerPrevious(line, mask);
 
-void CodeEditor::pasteToReplaceBookmarkedLines() {}
+    if (prevMarkedLine == -1)
+    {
+        sci->gotoLine(sci->markerPrevious(sci->lineCount(), mask));
+    }
+    else
+    {
+        sci->gotoLine(prevMarkedLine);
+    }
+}
 
-void CodeEditor::removeBookmarkedLines() {}
+void CodeEditor::clearAllBookmarks()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+    const int marker = ScintillaConfig::bookmarkMarker();
+    sci->markerDeleteAll(marker);
+}
 
-void CodeEditor::removeUnbookmarkedLines() {}
+void CodeEditor::cutBookmarkLines()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
 
-void CodeEditor::inverseBookmark() {}
+void CodeEditor::copyBookmarkLines()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
+
+void CodeEditor::pasteToReplaceBookmarkedLines()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
+
+void CodeEditor::removeBookmarkedLines()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
+
+void CodeEditor::removeUnbookmarkedLines()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
+
+void CodeEditor::inverseBookmark()
+{
+    auto *sci = getFocusView();
+    Q_ASSERT(sci);
+}
 
 void CodeEditor::wordWrap()
 {
@@ -1026,4 +1091,22 @@ void CodeEditor::setLexerName(const QString &lexerName)
 bool CodeEditor::isWordWrap() const
 {
     return m_sciControlMaster->wrapMode() != SC_WRAP_NONE;
+}
+
+void CodeEditor::toggleBookmarkAtLine(ScintillaEdit *sci, int line)
+{
+    Q_ASSERT(sci);
+    const int marker = ScintillaConfig::bookmarkMarker();
+    if (sci->markerGet(line) & (ScintillaConfig::bookmarkMask()))
+    {
+        // The marker can be set multiple times, so keep deleting it till it is no longer set
+        while (sci->markerGet(line) & (ScintillaConfig::bookmarkMask()))
+        {
+            sci->markerDelete(line, marker);
+        }
+    }
+    else
+    {
+        sci->markerAdd(line, marker);
+    }
 }

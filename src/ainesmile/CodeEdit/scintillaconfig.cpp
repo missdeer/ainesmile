@@ -107,7 +107,7 @@ namespace ScintillaConfig
         sci->setSavePoint();
         sci->setFontQuality(SC_EFF_QUALITY_ANTIALIASED);
 
-        const int smartIndicator = 1;
+        int smartIndicator = smartHighlightIndicator();
         sci->indicSetFore(smartIndicator, 0x00FF00);
         sci->indicSetStyle(smartIndicator, INDIC_ROUNDBOX);
         sci->indicSetOutlineAlpha(smartIndicator, 150);
@@ -124,6 +124,16 @@ namespace ScintillaConfig
     void initFolderStyle(ScintillaEdit *sci)
     {
         Q_ASSERT(sci);
+        const int MARK_BOOKMARK = bookmarkMarker();
+        sci->markerSetAlpha(MARK_BOOKMARK, 70);
+        sci->markerDefine(MARK_BOOKMARK, SC_MARK_BOOKMARK);
+        sci->markerSetFore(MARK_BOOKMARK, 0xFF2020);
+        sci->markerSetBack(MARK_BOOKMARK, 0xFF2020);
+        const int MARGIN = bookmarkMargin();
+        int       mask   = sci->marginMaskN(MARGIN);
+        sci->setMarginMaskN(MARGIN, (1 << MARK_BOOKMARK) | mask);
+        sci->setMarginSensitiveN(MARGIN, true);
+
         sci->setFoldFlags(SC_FOLDFLAG_LINEAFTER_CONTRACTED);
 
         sci->markerDefine(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS);
@@ -330,4 +340,23 @@ namespace ScintillaConfig
         }
     }
 
+    constexpr int smartHighlightIndicator()
+    {
+        return 1;
+    }
+
+    constexpr int bookmarkMarker()
+    {
+        return 24;
+    }
+
+    constexpr int bookmarkMargin()
+    {
+        return 1;
+    }
+
+    int bookmarkMask()
+    {
+        return 1 << bookmarkMarker();
+    }
 } // namespace ScintillaConfig
