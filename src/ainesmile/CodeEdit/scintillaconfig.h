@@ -12,10 +12,25 @@ namespace ScintillaConfig
     void applyLanguageStyle(ScintillaEdit *sci, const QString &configPath);
     void applyThemeStyle(ScintillaEdit *sci, const QString &themePath);
 
-    constexpr int smartHighlightIndicator();
-    constexpr int bookmarkMarker();
-    constexpr int bookmarkMargin();
-    int           bookmarkMask();
+    constexpr int smartHighlightIndicator()
+    {
+        return 1;
+    }
+
+    constexpr int bookmarkMarker()
+    {
+        return 24;
+    }
+
+    constexpr int bookmarkMargin()
+    {
+        return 1;
+    }
+
+    constexpr int bookmarkMask()
+    {
+        return 1 << bookmarkMarker();
+    }
 } // namespace ScintillaConfig
 
 #endif // SCINTILLACONFIG_H

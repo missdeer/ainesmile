@@ -340,23 +340,4 @@ namespace ScintillaConfig
         }
     }
 
-    constexpr int smartHighlightIndicator()
-    {
-        return 1;
-    }
-
-    constexpr int bookmarkMarker()
-    {
-        return 24;
-    }
-
-    constexpr int bookmarkMargin()
-    {
-        return 1;
-    }
-
-    int bookmarkMask()
-    {
-        return 1 << bookmarkMarker();
-    }
 } // namespace ScintillaConfig
