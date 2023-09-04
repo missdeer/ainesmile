@@ -5,6 +5,7 @@
 #include "scintillaconfig.h"
 #include "ILexer.h"
 #include "Lexilla.h"
+#include "Scintilla.h"
 #include "ScintillaEdit.h"
 #include "config.h"
 
@@ -221,18 +222,18 @@ namespace ScintillaConfig
         }
 
         QDomElement docElem      = doc.documentElement();
-        QString     commentLine  = docElem.attribute("comment_line");
-        QString     commentStart = docElem.attribute("comment_start");
-        QString     commentEnd   = docElem.attribute("comment_end");
+        QString     commentLine  = docElem.attribute(QStringLiteral("comment_line"));
+        QString     commentStart = docElem.attribute(QStringLiteral("comment_start"));
+        QString     commentEnd   = docElem.attribute(QStringLiteral("comment_end"));
 
-        QDomElement keywordElem = docElem.firstChildElement("keyword");
+        QDomElement keywordElem = docElem.firstChildElement(QStringLiteral("keyword"));
         int         keywordSet  = 0;
         while (!keywordElem.isNull())
         {
-            QString name    = keywordElem.attribute("name");
+            QString name    = keywordElem.attribute(QStringLiteral("name"));
             QString keyword = keywordElem.text();
             sci->setKeyWords(keywordSet++, keyword.toStdString().c_str());
-            keywordElem = keywordElem.nextSiblingElement("keyword");
+            keywordElem = keywordElem.nextSiblingElement(QStringLiteral("keyword"));
         }
     }
 
@@ -260,9 +261,10 @@ namespace ScintillaConfig
         QDomElement docElem = doc.documentElement();
 
         bool zeroId = false;
-        for (QDomElement styleElem = docElem.firstChildElement("style"); !styleElem.isNull(); styleElem = styleElem.nextSiblingElement("style"))
+        for (QDomElement styleElem = docElem.firstChildElement(QStringLiteral("style")); !styleElem.isNull();
+             styleElem             = styleElem.nextSiblingElement(QStringLiteral("style")))
         {
-            int styleId = styleElem.attribute("style_id").toInt();
+            int styleId = styleElem.attribute(QStringLiteral("style_id")).toInt();
             if (styleId == 0)
             {
                 // 0 style id used as global override
@@ -274,21 +276,21 @@ namespace ScintillaConfig
                 // }
                 // zeroId = true;
             }
-            QString foreColor = styleElem.attribute("fg_color");
+            QString foreColor = styleElem.attribute(QStringLiteral("fg_color"));
             if (!foreColor.isEmpty())
             {
                 int color = foreColor.toLong(nullptr, 16);
                 color     = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
                 sci->styleSetFore(styleId, color);
             }
-            QString backColor = styleElem.attribute("bg_color");
+            QString backColor = styleElem.attribute(QStringLiteral("bg_color"));
             if (!backColor.isEmpty())
             {
                 int color = backColor.toLong(nullptr, 16);
                 color     = ((color & 0xFF0000) >> 16) | (color & 0xFF00) | ((color & 0xFF) << 16);
                 sci->styleSetBack(styleId, color);
             }
-            QString fontName = styleElem.attribute("font_name");
+            QString fontName = styleElem.attribute(QStringLiteral("font_name"));
             if (!fontName.isEmpty())
             {
                 sci->styleSetFont(styleId, fontName.toStdString().c_str());
@@ -304,7 +306,7 @@ namespace ScintillaConfig
 #endif
             }
 
-            uint fontStyle = styleElem.attribute("font_style").toUInt();
+            uint fontStyle = styleElem.attribute(QStringLiteral("font_style")).toUInt();
 
             std::map<unsigned char, std::function<void(sptr_t, bool)>> styleSetterMap = {
                 {0x01, [sci](sptr_t styleId, bool value) { sci->styleSetBold(styleId, value); }},
@@ -328,7 +330,7 @@ namespace ScintillaConfig
 #else
             const int defaultFontSize = 12;
 #endif
-            QString fontSize = styleElem.attribute("font_size");
+            QString fontSize = styleElem.attribute(QStringLiteral("font_size"));
             if (!fontSize.isEmpty())
             {
                 sci->styleSetSize(styleId, std::max(defaultFontSize, fontSize.toInt()));
@@ -336,6 +338,11 @@ namespace ScintillaConfig
             else
             {
                 sci->styleSetSize(styleId, defaultFontSize);
+            }
+
+            if (styleId == STYLE_DEFAULT)
+            {
+                sci->styleClearAll();
             }
         }
     }
