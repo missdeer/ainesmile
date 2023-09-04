@@ -3,6 +3,8 @@
 #include <boost/scope_exit.hpp>
 
 #include <QRegularExpression>
+#include <QtCore/qcontainerfwd.h>
+#include <QtCore/qstringliteral.h>
 
 #include "config.h"
 
@@ -175,9 +177,9 @@ QString Config::getLanguageMapPath()
         return m_languageMapPath;
     }
 
-    QString configPath = getConfigDirPath();
-    configPath.append("/langmap.xml");
-    QFile file(configPath);
+    QString dstLangMapFile = getConfigDirPath();
+    dstLangMapFile.append("/langmap.xml");
+    QFile file(dstLangMapFile);
     if (!file.exists())
     {
         // copy from installed directory
@@ -187,9 +189,8 @@ QString Config::getLanguageMapPath()
         configDir.cdUp();
         configDir.cd("Resources");
 #endif
-        QString configFile = configDir.absolutePath();
-        configFile.append("/langmap.xml");
-        if (!QFile::exists(configFile))
+        QString srcLangMapFile = configDir.absoluteFilePath(QStringLiteral("langmap.xml"));
+        if (!QFile::exists(srcLangMapFile))
         {
             QDir dir(appDirPath);
             dir.cdUp();
@@ -203,23 +204,22 @@ QString Config::getLanguageMapPath()
 #endif
             dir.cd(QStringLiteral("resource"));
             Q_ASSERT(dir.exists());
-            configFile = dir.absolutePath();
-            configFile.append("/langmap.xml");
-            Q_ASSERT(QFile::exists(configFile));
+            srcLangMapFile = dir.absoluteFilePath(QStringLiteral("langmap.xml"));
+            Q_ASSERT(QFile::exists(srcLangMapFile));
         }
-        qDebug() << "copy langmap from " << configFile << " to " << configPath;
-        QFile::copy(configFile, configPath);
+        qDebug() << "copy langmap from " << srcLangMapFile << " to " << dstLangMapFile;
+        QFile::copy(srcLangMapFile, dstLangMapFile);
     }
-    qDebug() << "langmap: " << configPath;
-    m_languageMapPath = configPath;
-    return configPath;
+    qDebug() << "langmap: " << dstLangMapFile;
+    m_languageMapPath = dstLangMapFile;
+    return dstLangMapFile;
 }
 
 QString Config::getLanguageDirPath()
 {
-    QString langDirPath = getConfigDirPath() + "/language";
-    QDir    langDir(langDirPath);
-    if (!langDir.exists() || langDir.entryList(QDir::Files).isEmpty())
+    QString dstLangDirPath = getConfigDirPath() + "/language";
+    QDir    dstLangDir(dstLangDirPath);
+    if (!dstLangDir.exists() || dstLangDir.entryList(QDir::Files).isEmpty())
     {
         // copy from installed directory
         QString appDirPath = QApplication::applicationDirPath();
@@ -228,9 +228,8 @@ QString Config::getLanguageDirPath()
         configDir.cdUp();
         configDir.cd("Resources");
 #endif
-        QString configFile = configDir.absolutePath();
-        configFile.append("/language");
-        QDir langDirOrig(configFile);
+        QString srcLangDirPath = configDir.absoluteFilePath(QStringLiteral("language"));
+        QDir    langDirOrig(srcLangDirPath);
         if (!langDirOrig.exists() || langDirOrig.entryList(QDir::Files).isEmpty())
         {
             QDir dir(appDirPath);
@@ -243,18 +242,18 @@ QString Config::getLanguageDirPath()
             dir.cdUp();
             dir.cdUp();
 #endif
-            dir.cd("resource/language");
-            configFile = dir.absolutePath();
+            dir.cd(QStringLiteral("resource/language"));
+            srcLangDirPath = dir.absolutePath();
         }
         // copy all files from configFile to langDirPath
-        langDir.mkpath(langDirPath);
-        QStringList files = QDir(configFile).entryList(QDir::Files);
-        std::for_each(files.begin(), files.end(), [&configFile, &langDirPath](const QString &fileName) {
-            QFile::copy(configFile + "/" + fileName, langDirPath + "/" + fileName);
+        dstLangDir.mkpath(dstLangDirPath);
+        QStringList files = QDir(srcLangDirPath).entryList(QDir::Files);
+        std::for_each(files.begin(), files.end(), [&srcLangDirPath, &dstLangDirPath](const QString &fileName) {
+            QFile::copy(srcLangDirPath + "/" + fileName, dstLangDirPath + "/" + fileName);
         });
     }
-    qDebug() << "langDir: " << langDirPath;
-    return langDirPath;
+    qDebug() << "langDir: " << dstLangDirPath;
+    return dstLangDirPath;
 }
 
 QString Config::matchPatternLanguage(const QString &filename)
