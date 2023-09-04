@@ -428,7 +428,65 @@ void CodeEditor::setShowWrapSymbol(bool enabled)
     m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
 }
 
-void CodeEditor::updateUI(Scintilla::Update /*updated*/) {}
+void CodeEditor::updateUI(Scintilla::Update updated)
+{
+    if (updated == Scintilla::Update::Content || updated == Scintilla::Update::Selection)
+    {
+        // smart highlight
+        auto *editor = qobject_cast<ScintillaEdit *>(sender());
+        Q_ASSERT(editor);
+        editor->setIndicatorCurrent(INDIC_ROUNDBOX);
+        editor->indicatorClearRange(0, editor->length());
+
+        if (editor->selectionEmpty())
+        {
+            return;
+        }
+
+        const sptr_t mainSelection  = editor->mainSelection();
+        const sptr_t selectionStart = editor->selectionNStart(mainSelection);
+        const sptr_t selectionEnd   = editor->selectionNEnd(mainSelection);
+
+        // Make sure the current selection is valid
+        if (selectionStart == selectionEnd)
+        {
+            return;
+        }
+
+        const sptr_t curPos    = editor->currentPos();
+        const sptr_t wordStart = editor->wordStartPosition(curPos, true);
+        const sptr_t wordEnd   = editor->wordEndPosition(wordStart, true);
+
+        // Make sure the selection is on word boundaries
+        if (wordStart == wordEnd || wordStart != selectionStart || wordEnd != selectionEnd)
+        {
+            return;
+        }
+
+        const QByteArray selText = editor->get_text_range(selectionStart, selectionEnd);
+
+        // TODO: Handle large files. By default Notepad++ only monitors the text on screen. However,
+        // that will not work when using a highlighted scroll bar. Testing with small files seems to
+        // have minimal impact. For large files, Qt can have a timer set to 0 to do heavier processing.
+        // Using threads seems to be a bit overkill and too burdensome to do it properly.
+
+        // const int startLine = editor->firstVisibleLine();
+        // const int linesOnScreen = editor->linesOnScreen();
+        // const int startPos = editor->positionFromLine(startLine);
+        // const int endPos = editor->lineEndPosition(startLine + linesOnScreen);
+
+        // TODO: skip hidden or folded lines?
+
+        Sci_TextToFind ttf {{0, static_cast<Sci_PositionCR>(editor->length())}, selText.constData(), {-1, -1}};
+        const int      flags = SCFIND_MATCHCASE | SCFIND_WHOLEWORD;
+
+        while (editor->send(SCI_FINDTEXT, flags, (sptr_t)&ttf) != -1)
+        {
+            editor->indicatorFillRange(ttf.chrgText.cpMin, ttf.chrgText.cpMax - ttf.chrgText.cpMin);
+            ttf.chrg.cpMin = ttf.chrgText.cpMax;
+        }
+    }
+}
 
 void CodeEditor::uriDropped(const QString &uri)
 {

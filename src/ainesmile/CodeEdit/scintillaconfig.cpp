@@ -107,6 +107,14 @@ namespace ScintillaConfig
         sci->setSavePoint();
         sci->setFontQuality(SC_EFF_QUALITY_ANTIALIASED);
 
+        const int smartIndicator = INDIC_ROUNDBOX;
+        sci->indicSetFore(smartIndicator, 0x00FF00);
+        sci->indicSetFore(smartIndicator, 0x00FF00);
+        sci->indicSetStyle(smartIndicator, INDIC_ROUNDBOX);
+        sci->indicSetOutlineAlpha(smartIndicator, 150);
+        sci->indicSetAlpha(smartIndicator, 100);
+        sci->indicSetUnder(smartIndicator, true);
+
         // sci:SetEncoding( cfg:GetString("config/encoding") )
         Config *config = Config::instance();
         Q_ASSERT(config);
@@ -163,7 +171,7 @@ namespace ScintillaConfig
         QString themePath = config->getThemePath();
         applyThemeStyle(sci, themePath + "/global_style.xml");
 
-        void   *lexerId = CreateLexer(lang.toStdString().c_str());
+        void *lexerId = CreateLexer(lang.toStdString().c_str());
         if (lexerId)
         {
             sci->setILexer((sptr_t)lexerId);
@@ -253,7 +261,7 @@ namespace ScintillaConfig
 
                 // if (zeroId)
                 // {
-                    continue;
+                continue;
                 // }
                 // zeroId = true;
             }

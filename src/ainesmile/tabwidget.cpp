@@ -158,15 +158,19 @@ int TabWidget::openFile(const QString &filePath)
     codeeditpage->grabFocus();
     // log into recent file list
     if (rf_->addFile(filePath))
+    {
         emit updateRecentFiles();
+    }
     if (isHidden())
+    {
         setHidden(false);
+    }
 
     if (count() == 2)
     {
         QWidget *w = widget(0);
-        auto    *p = qobject_cast<CodeEditor *>(w);
-        if (p->initialDocument())
+        auto    *page   = qobject_cast<CodeEditor *>(w);
+        if (page->initialDocument())
         {
             doCloseRequested(0);
             return 0;
@@ -275,11 +279,15 @@ void TabWidget::saveAll()
             filePath = QFileDialog::getSaveFileName(
                 this, tr("ainesmile Save File To"), tabText(index), tr("All Files (*);;Text Files (*.txt)"), &selectedFilter, options);
             if (!filePath.isEmpty())
+            {
                 resetTabText = true;
+            }
         }
 
         if (!filePath.isEmpty())
+        {
             page->saveFile(filePath);
+        }
 
         if (resetTabText)
         {
@@ -361,9 +369,13 @@ void TabWidget::getFileList(QStringList &fileList)
         auto *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
         if (!page->getFilePath().isEmpty())
+        {
             fileList << page->getFilePath();
+        }
         else
+        {
             fileList << tabText(i);
+        }
     }
 }
 
@@ -374,17 +386,19 @@ int TabWidget::findTabIndex(QWidget *w)
         auto *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
         if (page == w)
+        {
             return i;
+        }
     }
     return -1;
 }
 
 void TabWidget::find(FindReplace::FindReplaceOption &fro)
 {
-    QWidget *w = currentWidget();
-    if (w)
+    QWidget *widget = currentWidget();
+    if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(w);
+        auto          *page = qobject_cast<CodeEditor *>(widget);
         ScintillaEdit *sci  = page->getFocusView();
         FindReplace::findInDocument(sci, fro);
     }
@@ -392,10 +406,10 @@ void TabWidget::find(FindReplace::FindReplaceOption &fro)
 
 void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 {
-    QWidget *w = currentWidget();
-    if (w)
+    QWidget *widget = currentWidget();
+    if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(w);
+        auto          *page = qobject_cast<CodeEditor *>(widget);
         ScintillaEdit *sci  = page->getFocusView();
         FindReplace::replaceInDocument(sci, fro);
     }
@@ -403,10 +417,10 @@ void TabWidget::replace(FindReplace::FindReplaceOption &fro)
 
 void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
 {
-    QWidget *w = currentWidget();
-    if (w)
+    QWidget *widget = currentWidget();
+    if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(w);
+        auto          *page = qobject_cast<CodeEditor *>(widget);
         ScintillaEdit *sci  = page->getFocusView();
         FindReplace::replaceAllInDocument(sci, fro);
     }
