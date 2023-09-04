@@ -435,7 +435,8 @@ void CodeEditor::updateUI(Scintilla::Update updated)
         // smart highlight
         auto *editor = qobject_cast<ScintillaEdit *>(sender());
         Q_ASSERT(editor);
-        editor->setIndicatorCurrent(INDIC_ROUNDBOX);
+        const int smartIndicator = 1;
+        editor->setIndicatorCurrent(smartIndicator);
         editor->indicatorClearRange(0, editor->length());
 
         if (editor->selectionEmpty())

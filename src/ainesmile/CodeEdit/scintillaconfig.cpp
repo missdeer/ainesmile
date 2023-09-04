@@ -107,8 +107,7 @@ namespace ScintillaConfig
         sci->setSavePoint();
         sci->setFontQuality(SC_EFF_QUALITY_ANTIALIASED);
 
-        const int smartIndicator = INDIC_ROUNDBOX;
-        sci->indicSetFore(smartIndicator, 0x00FF00);
+        const int smartIndicator = 1;
         sci->indicSetFore(smartIndicator, 0x00FF00);
         sci->indicSetStyle(smartIndicator, INDIC_ROUNDBOX);
         sci->indicSetOutlineAlpha(smartIndicator, 150);
