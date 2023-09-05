@@ -11,8 +11,8 @@ private:
     static Config *instance_;
 
     QString                     m_languageMapPath;
-    boost::property_tree::ptree pt_;
-    bool                        ok_ {false};
+    boost::property_tree::ptree m_ptree;
+    bool                        m_ok {false};
 
     Config();
     bool matchPattern(const QString &filename, const QString &pattern);

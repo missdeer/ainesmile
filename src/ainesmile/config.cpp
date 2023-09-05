@@ -12,7 +12,7 @@ Config *Config::instance_ = nullptr;
 
 boost::property_tree::ptree &Config::pt()
 {
-    return pt_;
+    return m_ptree;
 }
 
 Config::Config()
@@ -22,35 +22,35 @@ Config::Config()
 
 bool Config::sync()
 {
-    ok_ = true;
+    m_ok = true;
     try
     {
-        boost::property_tree::write_json(getConfigPath().toStdString(), pt_);
+        boost::property_tree::write_json(getConfigPath().toStdString(), m_ptree);
     }
     catch (boost::property_tree::ptree_error &)
     {
-        ok_ = false;
+        m_ok = false;
     }
-    return ok_;
+    return m_ok;
 }
 
 bool Config::init()
 {
-    ok_ = true;
+    m_ok = true;
     try
     {
-        boost::property_tree::read_json(getConfigPath().toStdString(), pt_);
+        boost::property_tree::read_json(getConfigPath().toStdString(), m_ptree);
     }
     catch (boost::property_tree::ptree_error &)
     {
-        ok_ = false;
+        m_ok = false;
     }
-    return ok_;
+    return m_ok;
 }
 
 bool Config::isOk() const
 {
-    return ok_;
+    return m_ok;
 }
 
 QString Config::getConfigDirPath()
@@ -108,7 +108,7 @@ QString Config::getConfigPath()
 
 QString Config::getThemePath()
 {
-    std::string currentTheme = pt_.get<std::string>("theme", "Default");
+    std::string currentTheme = m_ptree.get<std::string>("theme", "Default");
     QString     themePath    = getConfigDirPath();
     themePath.append("/themes");
     QDir dir(themePath);
@@ -127,7 +127,7 @@ QString Config::getThemePath()
         QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resources");
+        configDir.cd(QStringLiteral("Resources"));
 #endif
 
         QString themeDirPath;
@@ -143,7 +143,7 @@ QString Config::getThemePath()
 #else
             dir.cdUp();
 #endif
-            dir.cd("resource/themes");
+            dir.cd(QStringLiteral("resource/themes"));
             themeDirPath = dir.absolutePath();
             Q_ASSERT(dir.exists());
         }
@@ -187,7 +187,7 @@ QString Config::getLanguageMapPath()
         QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resources");
+        configDir.cd(QStringLiteral("Resources"));
 #endif
         QString srcLangMapFile = configDir.absoluteFilePath(QStringLiteral("langmap.xml"));
         if (!QFile::exists(srcLangMapFile))
@@ -226,7 +226,7 @@ QString Config::getLanguageDirPath()
         QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resources");
+        configDir.cd(QStringLiteral("Resources"));
 #endif
         QString srcLangDirPath = configDir.absoluteFilePath(QStringLiteral("language"));
         QDir    langDirOrig(srcLangDirPath);
@@ -354,12 +354,12 @@ QStringList Config::supportedProgrammingLanguages()
 
         QDomElement docElem = doc.documentElement();
 
-        QDomElement langElem = docElem.firstChildElement("language");
+        QDomElement langElem = docElem.firstChildElement(QStringLiteral("language"));
         while (!langElem.isNull())
         {
-            QString name = langElem.attribute("name");
+            QString name = langElem.attribute(QStringLiteral("name"));
             languagesList.append(name);
-            langElem = langElem.nextSiblingElement("language");
+            langElem = langElem.nextSiblingElement(QStringLiteral("language"));
         }
     }
 
