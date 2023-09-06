@@ -10,7 +10,6 @@
 #include "ScintillaEdit.h"
 #include "encodingutils.h"
 
-
 class CodeEditor : public QWidget
 {
     Q_OBJECT
@@ -119,24 +118,24 @@ public slots:
     void restoreDefaultZoom();
 
 private:
-    QWidget           *m_editorPane;
-    QSplitter         *m_verticalEditorSplitter;
-    ScintillaEdit     *m_sciControlMaster;
-    ScintillaEdit     *m_sciControlSlave;
-    ScintillaEdit     *m_sciFocusView;
-    QString            m_filePath;
-    QString            m_encoding {QStringLiteral("UTF-8")};
-    QString            m_lexerName {QStringLiteral("normal")};
-    EncodingUtils::BOM m_bom {EncodingUtils::BOM::None};
+    QWidget       *m_editorPane;
+    QSplitter     *m_verticalEditorSplitter;
+    ScintillaEdit *m_sciControlMaster;
+    ScintillaEdit *m_sciControlSlave;
+    ScintillaEdit *m_sciFocusView;
+    QString        m_filePath;
+    QString        m_encoding {QStringLiteral("UTF-8")};
+    QString        m_lexerName {QStringLiteral("normal")};
+    BOM            m_bom {BOM::None};
 
     void init();
-    void saveFileAsEncoding(const QString &filePath, const QString &encoding, EncodingUtils::BOM bom);
+    void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
     void documentChanged();
     void loadRawFile(const QByteArray &data);
     void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
     void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
 
-    static void             deleteLine(ScintillaEdit *sci, sptr_t line);
+    static void                deleteLine(ScintillaEdit *sci, sptr_t line);
     static std::vector<sptr_t> bookmarkedLines(ScintillaEdit *sci);
 };
 

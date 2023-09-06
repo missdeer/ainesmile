@@ -101,7 +101,7 @@ void CodeEditor::openFile(const QString &filePath)
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
 
-    m_bom                                 = EncodingUtils::BOM::None;
+    m_bom                                 = BOM::None;
     const qint64                headerLen = 4;
     std::array<char, headerLen> header {};
     qint64                      cbRead          = file.read(header.data(), headerLen);
@@ -110,14 +110,14 @@ void CodeEditor::openFile(const QString &filePath)
 
     file.seek(length);
     auto data = file.readAll();
-    if (bom == EncodingUtils::BOM::UTF8)
+    if (bom == BOM::UTF8)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
         m_bom      = bom;
         loadRawFile(data);
         return;
     }
-    if (bom != EncodingUtils::BOM::None)
+    if (bom != BOM::None)
     {
         auto encoding = EncodingUtils::encodingNameForBOM(bom);
         loadFileAsEncoding(data, encoding);
@@ -131,7 +131,7 @@ void CodeEditor::openFile(const QString &filePath)
     {
         if (!charsetDetected)
         {
-            m_bom = EncodingUtils::BOM::None;
+            m_bom = BOM::None;
             file.seek(0);
             QString encoding = EncodingUtils::fileEncodingDetect(data);
             if (!encoding.isEmpty() && encoding.toUpper() != QByteArrayLiteral("UTF-8"))
@@ -237,7 +237,7 @@ void CodeEditor::documentChanged()
     applyEditorStyles();
 }
 
-void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, EncodingUtils::BOM bom)
+void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom)
 {
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -1075,16 +1075,16 @@ bool CodeEditor::getShowWrapSymbol()
 void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
 {
     m_encoding = encoding.toUtf8();
-    m_bom      = EncodingUtils::BOM::None;
+    m_bom      = BOM::None;
     if (withBOM)
     {
-        static std::map<QString, EncodingUtils::BOM> encodingNameBOMMap = {
-            {QStringLiteral("UTF-8"), EncodingUtils::BOM::UTF8},
-            {QStringLiteral("UTF-16LE"), EncodingUtils::BOM::UTF16LE},
-            {QStringLiteral("UTF-16BE"), EncodingUtils::BOM::UTF16BE},
-            {QStringLiteral("UTF-32LE"), EncodingUtils::BOM::UTF32LE},
-            {QStringLiteral("UTF-32BE"), EncodingUtils::BOM::UTF32BE},
-            {QStringLiteral("GB18030"), EncodingUtils::BOM::GB18030},
+        static std::map<QString, BOM> encodingNameBOMMap = {
+            {QStringLiteral("UTF-8"), BOM::UTF8},
+            {QStringLiteral("UTF-16LE"), BOM::UTF16LE},
+            {QStringLiteral("UTF-16BE"), BOM::UTF16BE},
+            {QStringLiteral("UTF-32LE"), BOM::UTF32LE},
+            {QStringLiteral("UTF-32BE"), BOM::UTF32BE},
+            {QStringLiteral("GB18030"), BOM::GB18030},
         };
         auto iter = encodingNameBOMMap.find(encoding.toUpper());
         if (encodingNameBOMMap.end() != iter)
@@ -1099,7 +1099,7 @@ void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
         return;
     }
     qint64 skipBytes = 0;
-    if (m_bom != EncodingUtils::BOM::None)
+    if (m_bom != BOM::None)
     {
         auto bom  = EncodingUtils::generateBOM(m_bom);
         skipBytes = bom.length();
@@ -1113,16 +1113,16 @@ void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
 void CodeEditor::saveAsEncoding(const QString &encoding, bool withBOM)
 {
     m_encoding = encoding.toUtf8();
-    m_bom      = EncodingUtils::BOM::None;
+    m_bom      = BOM::None;
     if (withBOM)
     {
-        static std::map<QString, EncodingUtils::BOM> encodingNameBOMMap = {
-            {QStringLiteral("UTF-8"), EncodingUtils::BOM::UTF8},
-            {QStringLiteral("UTF-16LE"), EncodingUtils::BOM::UTF16LE},
-            {QStringLiteral("UTF-16BE"), EncodingUtils::BOM::UTF16BE},
-            {QStringLiteral("UTF-32LE"), EncodingUtils::BOM::UTF32LE},
-            {QStringLiteral("UTF-32BE"), EncodingUtils::BOM::UTF32BE},
-            {QStringLiteral("GB18030"), EncodingUtils::BOM::GB18030},
+        static std::map<QString, BOM> encodingNameBOMMap = {
+            {QStringLiteral("UTF-8"), BOM::UTF8},
+            {QStringLiteral("UTF-16LE"), BOM::UTF16LE},
+            {QStringLiteral("UTF-16BE"), BOM::UTF16BE},
+            {QStringLiteral("UTF-32LE"), BOM::UTF32LE},
+            {QStringLiteral("UTF-32BE"), BOM::UTF32BE},
+            {QStringLiteral("GB18030"), BOM::GB18030},
         };
         auto iter = encodingNameBOMMap.find(encoding.toUpper());
         if (encodingNameBOMMap.end() != iter)
@@ -1140,7 +1140,7 @@ QString CodeEditor::encoding() const
 
 bool CodeEditor::hasBOM()
 {
-    return m_bom != EncodingUtils::BOM::None;
+    return m_bom != BOM::None;
 }
 
 void CodeEditor::focusChanged(bool focused)
