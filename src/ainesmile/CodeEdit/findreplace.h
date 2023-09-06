@@ -12,31 +12,33 @@
 
 class CodeEditor;
 
-namespace FindReplace
+enum class FindScope : int8_t
 {
+    FS_DOCUMENT = 0,
+    FS_ALLOPENED_DOCUMENT,
+    FS_DIRECOTRY,
+    FS_DIRECTORY_WITH_SUBDIRECTORY,
+};
 
-    enum class FindScope : int
-    {
-        FS_DOCUMENT = 0,
-        FS_ALLOPENED_DOCUMENT,
-        FS_DIRECOTRY,
-        FS_DIRECTORY_WITH_SUBDIRECTORY,
-    };
+struct FindReplaceOption
+{
+    bool      matchCase;
+    bool      matchWholeWord;
+    bool      searchUp;
+    bool      regexp;
+    FindScope scope;
+    QString   strToFind;
+    QString   strReplaceWith;
+    QString   directory;
+    QString   filters;
+};
 
-    struct FindReplaceOption
-    {
-        bool      matchCase;
-        bool      matchWholeWord;
-        bool      searchUp;
-        bool      regexp;
-        FindScope scope;
-        QString   strToFind;
-        QString   strReplaceWith;
-        QString   directory;
-        QString   filters;
-    };
-    CodeEditor *previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
-    CodeEditor *nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
+class FindReplace : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit FindReplace(QObject *parent = nullptr) : QObject(parent) {}
 
     // find in current document
     bool findInDocument(CodeEditor *page, FindReplaceOption &fro);
@@ -60,6 +62,12 @@ namespace FindReplace
     bool replaceAllInDirectory(FindReplaceOption &fro);
     //  replace all results in directory with it's sub-directories
     bool replaceAllInDirectories(FindReplaceOption &fro);
-} // namespace FindReplace
+
+signals:
+
+private:
+    CodeEditor *previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
+    CodeEditor *nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
+};
 
 #endif // FINDREPLACE_H

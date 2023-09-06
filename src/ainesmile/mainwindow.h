@@ -15,6 +15,7 @@ namespace Ui
 }
 
 class CodeEditor;
+class FindReplace;
 
 class MainWindow : public QMainWindow
 {
@@ -136,6 +137,7 @@ private:
     QLabel          *m_lexerLabel;
     QLabel          *m_encodingLabel;
     QLabel          *m_withBOMLabel;
+    FindReplace     *m_findReplacer;
     QList<QAction *> m_recentFileActions;
     RecentFiles      m_recentFiles;
     bool             m_aboutToQuit {false};

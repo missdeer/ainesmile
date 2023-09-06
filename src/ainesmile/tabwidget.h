@@ -38,10 +38,6 @@ public:
     void getFileList(QStringList &fileList);
     int  findTabIndex(QWidget *widget);
 
-    void find(FindReplace::FindReplaceOption &fro);
-    void replace(FindReplace::FindReplaceOption &fro);
-    void replaceAll(FindReplace::FindReplaceOption &fro);
-
     void    getAllEditors(std::vector<CodeEditor *> &docs);
     QString getCurrentFilePath();
 

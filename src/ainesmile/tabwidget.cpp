@@ -393,36 +393,6 @@ int TabWidget::findTabIndex(QWidget *w)
     return -1;
 }
 
-void TabWidget::find(FindReplace::FindReplaceOption &fro)
-{
-    QWidget *widget = currentWidget();
-    if (widget)
-    {
-        auto *page = qobject_cast<CodeEditor *>(widget);
-        FindReplace::findInDocument(page, fro);
-    }
-}
-
-void TabWidget::replace(FindReplace::FindReplaceOption &fro)
-{
-    QWidget *widget = currentWidget();
-    if (widget)
-    {
-        auto *page = qobject_cast<CodeEditor *>(widget);
-        FindReplace::replaceInDocument(page, fro);
-    }
-}
-
-void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
-{
-    QWidget *widget = currentWidget();
-    if (widget)
-    {
-        auto *page = qobject_cast<CodeEditor *>(widget);
-        FindReplace::replaceAllInDocument(page, fro);
-    }
-}
-
 void TabWidget::getAllEditors(std::vector<CodeEditor *> &docs)
 {
     for (int i = 0; i < count(); i++)
