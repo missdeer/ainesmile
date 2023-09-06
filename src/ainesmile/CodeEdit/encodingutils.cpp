@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include <boost/scope_exit.hpp>
 #include <unicode/ucnv.h>
@@ -91,25 +91,28 @@ namespace EncodingUtils
         {
             return QStringLiteral("UTF-8");
         }
-
-        const UCharsetMatch *match = ucsdet_detect(csd, &status);
-        if (U_FAILURE(status))
+        int32_t               matchesFound = 0;
+        const UCharsetMatch **matches      = ucsdet_detectAll(csd, &matchesFound, &status);
+        if (U_FAILURE(status) || matchesFound == 0)
         {
             return QStringLiteral("UTF-8");
         }
 
-        const char *charset = ucsdet_getName(match, &status);
-        if (U_FAILURE(status))
+        QStringList encodings;
+        for (int32_t i = 0; i < matchesFound; i++)
         {
-            return QStringLiteral("UTF-8");
+            const char *name = ucsdet_getName(matches[i], &status);
+            encodings.append(QString::fromLatin1(name));
         }
 
-        auto encoding = QString::fromLatin1(charset);
-        if (encoding.startsWith(QStringLiteral("ISO-8859"), Qt::CaseInsensitive))
+        if (!encodings.isEmpty())
         {
-            return QStringLiteral("UTF-8");
+            // sort
+            std::stable_partition(
+                encodings.begin(), encodings.end(), [](const QString &str) { return !str.startsWith(QStringLiteral("ISO-"), Qt::CaseInsensitive); });
+            return encodings.front();
         }
 
-        return encoding;
+        return QStringLiteral("UTF-8");
     }
 } // namespace EncodingUtils
