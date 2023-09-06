@@ -954,12 +954,12 @@ void MainWindow::on_btnFind_clicked()
 
     switch (ui->cbScope->currentIndex())
     {
-    case FindScope::FS_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
     break;
-    case FindScope::FS_ALLOPENED_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         std::vector<CodeEditor *> slaveDocs;
@@ -1010,21 +1010,21 @@ void MainWindow::on_btnFindAll_clicked()
 
     switch (ui->cbScope->currentIndex())
     {
-    case FindScope::FS_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
     break;
-    case FindScope::FS_ALLOPENED_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         m_findReplacer->findAllInDocuments(docs, fro);
     }
-    case FindScope::FS_DIRECOTRY:
+    case static_cast<int>(FindScope::FS_DIRECOTRY):
         m_findReplacer->findAllInDirectory(fro);
         break;
-    case FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+    case static_cast<int>(FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY):
         m_findReplacer->findAllInDirectories(fro);
         break;
     }
@@ -1056,13 +1056,13 @@ void MainWindow::on_btnReplace_clicked()
 
     switch (ui->cbScope->currentIndex())
     {
-    case FindScope::FS_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceInDocument(page, fro);
     }
     break;
 
-    case FindScope::FS_ALLOPENED_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         std::vector<CodeEditor *> slaveDocs;
@@ -1115,22 +1115,22 @@ void MainWindow::on_btnReplaceAll_clicked()
 
     switch (ui->cbScope->currentIndex())
     {
-    case FindScope::FS_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceAllInDocument(page, fro);
     }
     break;
-    case FindScope::FS_ALLOPENED_DOCUMENT: {
+    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         m_findReplacer->replaceAllInDocuments(docs, fro);
     }
     break;
-    case FindScope::FS_DIRECOTRY:
+    case static_cast<int>(FindScope::FS_DIRECOTRY):
         m_findReplacer->replaceAllInDirectory(fro);
         break;
-    case FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+    case static_cast<int>(FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY):
         m_findReplacer->replaceAllInDirectories(fro);
         break;
     }
