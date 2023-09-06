@@ -11,17 +11,17 @@ TabWidget::TabWidget(QWidget *parent) : QTabWidget(parent)
 
 void TabWidget::setTheOtherSide(TabWidget *tabWidget)
 {
-    theOtherSide_ = tabWidget;
+    m_theOtherSide = tabWidget;
 }
 
 void TabWidget::setRecentFiles(RecentFiles *recentFiles)
 {
-    rf_ = recentFiles;
+    m_recentFiles = recentFiles;
 }
 
 void TabWidget::setAboutToQuit(bool aboutToQuit)
 {
-    aboutToQuit_ = aboutToQuit;
+    m_aboutToQuit = aboutToQuit;
 }
 
 void TabWidget::mousePressEvent(QMouseEvent *event)
@@ -95,13 +95,13 @@ void TabWidget::doCloseRequested(int index)
                 return; // don't close this tab
 
             page->saveFile(filePath);
-            if (rf_->addFile(filePath))
+            if (m_recentFiles->addFile(filePath))
                 emit updateRecentFiles();
         }
     }
     else
     {
-        if (count() + theOtherSide_->count() == 1 && !page->isModified() && !aboutToQuit_ && page->getFilePath().isEmpty())
+        if (count() + m_theOtherSide->count() == 1 && !page->isModified() && !m_aboutToQuit && page->getFilePath().isEmpty())
         {
             // the only unmodified page, just skip this action
             return;
@@ -157,7 +157,7 @@ int TabWidget::openFile(const QString &filePath)
     codeeditpage->setFocus();
     codeeditpage->grabFocus();
     // log into recent file list
-    if (rf_->addFile(filePath))
+    if (m_recentFiles->addFile(filePath))
     {
         emit updateRecentFiles();
     }
@@ -168,8 +168,8 @@ int TabWidget::openFile(const QString &filePath)
 
     if (count() == 2)
     {
-        QWidget *w = widget(0);
-        auto    *page   = qobject_cast<CodeEditor *>(w);
+        QWidget *w    = widget(0);
+        auto    *page = qobject_cast<CodeEditor *>(w);
         if (page->initialDocument())
         {
             doCloseRequested(0);
@@ -188,7 +188,7 @@ void TabWidget::openFiles(const QStringList &files)
         if (QFile::exists(fileInfo.absoluteFilePath()))
         {
             // check if the file has been opened already
-            if (!fileExists(fileInfo) && !theOtherSide_->fileExists(fileInfo))
+            if (!fileExists(fileInfo) && !m_theOtherSide->fileExists(fileInfo))
             {
                 // create an edit page, open the file
                 index = openFile(fileInfo.absoluteFilePath());
@@ -259,7 +259,7 @@ void TabWidget::saveAsCurrentFile()
         setTabText(index, QFileInfo(filePath).fileName());
         setTabToolTip(index, filePath);
 
-        rf_->replaceFile(originalFilePath, filePath);
+        m_recentFiles->replaceFile(originalFilePath, filePath);
         emit updateRecentFiles();
     }
 }
@@ -398,9 +398,8 @@ void TabWidget::find(FindReplace::FindReplaceOption &fro)
     QWidget *widget = currentWidget();
     if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(widget);
-        ScintillaEdit *sci  = page->getFocusView();
-        FindReplace::findInDocument(sci, fro);
+        auto *page = qobject_cast<CodeEditor *>(widget);
+        FindReplace::findInDocument(page, fro);
     }
 }
 
@@ -409,9 +408,8 @@ void TabWidget::replace(FindReplace::FindReplaceOption &fro)
     QWidget *widget = currentWidget();
     if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(widget);
-        ScintillaEdit *sci  = page->getFocusView();
-        FindReplace::replaceInDocument(sci, fro);
+        auto *page = qobject_cast<CodeEditor *>(widget);
+        FindReplace::replaceInDocument(page, fro);
     }
 }
 
@@ -420,19 +418,17 @@ void TabWidget::replaceAll(FindReplace::FindReplaceOption &fro)
     QWidget *widget = currentWidget();
     if (widget)
     {
-        auto          *page = qobject_cast<CodeEditor *>(widget);
-        ScintillaEdit *sci  = page->getFocusView();
-        FindReplace::replaceAllInDocument(sci, fro);
+        auto *page = qobject_cast<CodeEditor *>(widget);
+        FindReplace::replaceAllInDocument(page, fro);
     }
 }
 
-void TabWidget::getAllEditors(QList<ScintillaEdit *> &docs)
+void TabWidget::getAllEditors(std::vector<CodeEditor *> &docs)
 {
     for (int i = 0; i < count(); i++)
     {
         auto *page = qobject_cast<CodeEditor *>(widget(i));
         Q_ASSERT(page);
-        ScintillaEdit *sci = page->getFocusView();
-        docs.push_back(sci);
+        docs.push_back(page);
     }
 }

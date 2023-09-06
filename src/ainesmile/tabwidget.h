@@ -42,7 +42,7 @@ public:
     void replace(FindReplace::FindReplaceOption &fro);
     void replaceAll(FindReplace::FindReplaceOption &fro);
 
-    void    getAllEditors(QList<ScintillaEdit *> &docs);
+    void    getAllEditors(std::vector<CodeEditor *> &docs);
     QString getCurrentFilePath();
 
 protected:
@@ -55,9 +55,9 @@ public slots:
     void onOpenFilesRequest(const QStringList &file);
 
 private:
-    TabWidget   *theOtherSide_ {nullptr};
-    RecentFiles *rf_;
-    bool         aboutToQuit_ {false};
+    TabWidget   *m_theOtherSide {nullptr};
+    RecentFiles *m_recentFiles;
+    bool         m_aboutToQuit {false};
 };
 
 #endif // TABWIDGET_H

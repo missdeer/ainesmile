@@ -126,6 +126,8 @@ private slots:
 
     void on_btnReplaceAll_clicked();
 
+    void on_btnFindAll_clicked();
+
 private:
     Ui::MainWindow  *ui;
     CodeEditor      *m_lastConnectedCodeEditPage {nullptr};

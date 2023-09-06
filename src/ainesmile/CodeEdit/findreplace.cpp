@@ -7,14 +7,41 @@
 #include "stdafx.h"
 
 #include "findreplace.h"
-#include "ScintillaEdit.h"
+#include "codeeditpage.h"
 
 namespace FindReplace
 {
 
-    bool findInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
+    CodeEditor *previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
     {
-        int flags = 0;
+        auto iter = std::find(pages.begin(), pages.end(), currentPage);
+        if (pages.end() == iter || pages.begin() == iter)
+        {
+            return nullptr;
+        }
+
+        return *std::prev(iter);
+    }
+
+    CodeEditor *nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
+    {
+        auto iter = std::find(pages.begin(), pages.end(), currentPage);
+        if (pages.end() == iter)
+        {
+            return nullptr;
+        }
+        iter = std::next(iter);
+        if (pages.end() == iter)
+        {
+            return nullptr;
+        }
+        return *iter;
+    }
+
+    bool findInDocument(CodeEditor *page, FindReplaceOption &fro)
+    {
+        ScintillaEdit *sci   = page->getFocusView();
+        int            flags = 0;
         if (fro.matchCase)
         {
             flags |= SCFIND_MATCHCASE;
@@ -65,7 +92,51 @@ namespace FindReplace
         return false;
     }
 
-    bool findAllInDocuments(QList<ScintillaEdit *> &scis, FindReplaceOption &fro)
+    CodeEditor *findInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
+    {
+        bool inCurrentPage = findInDocument(currentPage, fro);
+        if (inCurrentPage)
+        {
+            return currentPage;
+        }
+        CodeEditor *page = nullptr;
+        if (fro.searchUp)
+        {
+            page          = previousPage(currentPage, pages);
+            inCurrentPage = findInDocument(currentPage, fro);
+            while (page && !inCurrentPage)
+            {
+                page = previousPage(page, pages);
+                if (!page)
+                {
+                    break;
+                }
+                inCurrentPage = findInDocument(currentPage, fro);
+            }
+        }
+        else
+        {
+            //  get next page
+            page          = nextPage(currentPage, pages);
+            inCurrentPage = findInDocument(currentPage, fro);
+            while (page && !inCurrentPage)
+            {
+                page = nextPage(page, pages);
+                if (!page)
+                {
+                    break;
+                }
+                inCurrentPage = findInDocument(currentPage, fro);
+            }
+        }
+        if (inCurrentPage)
+        {
+            return page;
+        }
+        return nullptr;
+    }
+
+    bool findAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
     {
         int flags = 0;
         if (fro.matchCase)
@@ -80,8 +151,9 @@ namespace FindReplace
         {
             flags |= SCFIND_CXX11REGEX;
         }
-        for (ScintillaEdit *sci : scis)
+        for (auto *page : pages)
         {
+            auto  *sci   = page->getFocusView();
             sptr_t start = 0;
             sptr_t end   = sci->textLength();
             if (fro.searchUp)
@@ -130,9 +202,10 @@ namespace FindReplace
         return true;
     }
 
-    bool replaceInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
+    bool replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
     {
-        int flags = 0;
+        ScintillaEdit *sci   = page->getFocusView();
+        int            flags = 0;
         if (fro.matchCase)
         {
             flags |= SCFIND_MATCHCASE;
@@ -176,9 +249,54 @@ namespace FindReplace
         return false;
     }
 
-    bool replaceAllInDocument(ScintillaEdit *sci, FindReplaceOption &fro)
+    CodeEditor *replaceInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
     {
-        int flags = 0;
+        bool inCurrentPage = replaceInDocument(currentPage, fro);
+        if (inCurrentPage)
+        {
+            return currentPage;
+        }
+        CodeEditor *page = nullptr;
+        if (fro.searchUp)
+        {
+            page          = previousPage(currentPage, pages);
+            inCurrentPage = replaceInDocument(currentPage, fro);
+            while (page && !inCurrentPage)
+            {
+                page = previousPage(page, pages);
+                if (!page)
+                {
+                    break;
+                }
+                inCurrentPage = replaceInDocument(currentPage, fro);
+            }
+        }
+        else
+        {
+            //  get next page
+            page          = nextPage(currentPage, pages);
+            inCurrentPage = replaceInDocument(currentPage, fro);
+            while (page && !inCurrentPage)
+            {
+                page = nextPage(page, pages);
+                if (!page)
+                {
+                    break;
+                }
+                inCurrentPage = replaceInDocument(currentPage, fro);
+            }
+        }
+        if (inCurrentPage)
+        {
+            return page;
+        }
+        return nullptr;
+    }
+
+    bool replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro)
+    {
+        ScintillaEdit *sci   = page->getFocusView();
+        int            flags = 0;
         if (fro.matchCase)
         {
             flags |= SCFIND_MATCHCASE;
@@ -211,9 +329,9 @@ namespace FindReplace
         return true;
     }
 
-    bool replaceAllInDocuments(QList<ScintillaEdit *> &scis, FindReplaceOption &fro)
+    bool replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
     {
-        std::for_each(scis.begin(), scis.end(), [&fro](auto &&PH1) { return replaceAllInDocument(std::forward<decltype(PH1)>(PH1), fro); });
+        std::for_each(pages.begin(), pages.end(), [&fro](auto &&PH1) { return replaceAllInDocument(std::forward<decltype(PH1)>(PH1), fro); });
         return true;
     }
 
@@ -243,5 +361,4 @@ namespace FindReplace
         }
         return true;
     }
-
 } // namespace FindReplace

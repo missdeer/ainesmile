@@ -906,6 +906,8 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
         ui->btnSelectDirectory->setVisible(false);
         ui->lbFilters->setVisible(false);
         ui->cbFilters->setVisible(false);
+        ui->btnFind->setEnabled(true);
+        ui->btnReplace->setEnabled(true);
     }
     else
     {
@@ -915,6 +917,8 @@ void MainWindow::on_cbScope_currentIndexChanged(int index)
         ui->btnSelectDirectory->setVisible(true);
         ui->lbFilters->setVisible(true);
         ui->cbFilters->setVisible(true);
+        ui->btnFind->setEnabled(false);
+        ui->btnReplace->setEnabled(false);
     }
 }
 
@@ -949,8 +953,79 @@ void MainWindow::on_btnFind_clicked()
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
-    auto *tabWidget = getFocusTabWidget();
-    tabWidget->find(fro);
+
+    switch (ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_DOCUMENT:
+        getFocusTabWidget()->find(fro);
+        break;
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
+        std::vector<CodeEditor *> docs;
+        ui->tabWidget->getAllEditors(docs);
+        std::vector<CodeEditor *> slaveDocs;
+        ui->tabWidgetSlave->getAllEditors(slaveDocs);
+        std::vector<CodeEditor *> allDocs(docs);
+        std::copy(slaveDocs.begin(), slaveDocs.end(), std::back_inserter(allDocs));
+        auto *currentWidget    = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
+        auto *newCurrentWidget = FindReplace::findInDocuments(currentWidget, allDocs, fro);
+        if (currentWidget != newCurrentWidget)
+        {
+            if (std::find(docs.begin(), docs.end(), newCurrentWidget) != docs.end())
+            {
+                ui->tabWidget->setCurrentWidget(newCurrentWidget);
+            }
+            if (std::find(slaveDocs.begin(), slaveDocs.end(), newCurrentWidget) != slaveDocs.end())
+            {
+                ui->tabWidgetSlave->setCurrentWidget(newCurrentWidget);
+            }
+        }
+    }
+    break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::on_btnFindAll_clicked()
+{
+    const QString &strToFind = ui->cbFind->lineEdit()->text();
+    if (strToFind.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("Please input text to search."), QMessageBox::Ok);
+        return;
+    }
+    updateFindList();
+
+    FindReplace::FindReplaceOption fro {
+        ui->cbMatchCase->isChecked(),
+        ui->cbMatchWholeWord->isChecked(),
+        ui->cbSearchUp->isChecked(),
+        ui->cbRegexp->isChecked(),
+        static_cast<FindReplace::FindScope>(ui->cbScope->currentIndex()),
+        ui->cbFind->lineEdit()->text(),
+        ui->cbReplace->lineEdit()->text(),
+        ui->edtDirectory->text(),
+        ui->cbFilters->lineEdit()->text(),
+    };
+
+    switch (ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_DOCUMENT:
+        getFocusTabWidget()->find(fro);
+        break;
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
+        std::vector<CodeEditor *> docs;
+        ui->tabWidget->getAllEditors(docs);
+        ui->tabWidgetSlave->getAllEditors(docs);
+        FindReplace::findAllInDocuments(docs, fro);
+    }
+    case FindReplace::FindScope::FS_DIRECOTRY:
+        FindReplace::findAllInDirectory(fro);
+        break;
+    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+        FindReplace::findAllInDirectories(fro);
+        break;
+    }
 }
 
 void MainWindow::on_btnReplace_clicked()
@@ -976,8 +1051,38 @@ void MainWindow::on_btnReplace_clicked()
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
-    auto *tabWidget = getFocusTabWidget();
-    tabWidget->replace(fro);
+
+    switch (ui->cbScope->currentIndex())
+    {
+    case FindReplace::FindScope::FS_DOCUMENT:
+        getFocusTabWidget()->replace(fro);
+        break;
+
+    case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
+        std::vector<CodeEditor *> docs;
+        ui->tabWidget->getAllEditors(docs);
+        std::vector<CodeEditor *> slaveDocs;
+        ui->tabWidgetSlave->getAllEditors(slaveDocs);
+        std::vector<CodeEditor *> allDocs(docs);
+        std::copy(slaveDocs.begin(), slaveDocs.end(), std::back_inserter(allDocs));
+        auto *currentWidget    = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
+        auto *newCurrentWidget = FindReplace::replaceInDocuments(currentWidget, allDocs, fro);
+        if (currentWidget != newCurrentWidget)
+        {
+            if (std::find(docs.begin(), docs.end(), newCurrentWidget) != docs.end())
+            {
+                ui->tabWidget->setCurrentWidget(newCurrentWidget);
+            }
+            if (std::find(slaveDocs.begin(), slaveDocs.end(), newCurrentWidget) != slaveDocs.end())
+            {
+                ui->tabWidgetSlave->setCurrentWidget(newCurrentWidget);
+            }
+        }
+    }
+    break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
@@ -1010,12 +1115,18 @@ void MainWindow::on_btnReplaceAll_clicked()
         getFocusTabWidget()->replaceAll(fro);
         break;
     case FindReplace::FindScope::FS_ALLOPENED_DOCUMENT: {
-        QList<ScintillaEdit *> docs;
+        std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         FindReplace::replaceAllInDocuments(docs, fro);
     }
     break;
+    case FindReplace::FindScope::FS_DIRECOTRY:
+        FindReplace::replaceAllInDirectory(fro);
+        break;
+    case FindReplace::FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY:
+        FindReplace::replaceAllInDirectories(fro);
+        break;
     }
 }
 

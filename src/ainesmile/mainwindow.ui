@@ -465,6 +465,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="btnFindAll">
+             <property name="text">
+              <string>Find All</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="btnReplace">
              <property name="text">
               <string>Replace</string>
