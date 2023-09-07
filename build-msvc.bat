@@ -1,9 +1,0 @@
-cd 3rdparty\scintilla\qt\ScintillaEdit\
-python WidgetGen.py
-cd ..\..\..\..
-git log -n 1 | head -n 1 | gawk '{print $2}' > src\ainesmile\REVISION
-date /T > src\ainesmile\DATE
-time /T >> src\ainesmile\DATE
-qmake -r CONFIG+=release
-nmake
-copy /y 3rdparty\scintilla\bin\ScintillaEdit3.dll src\ainesmile\release\ScintillaEdit3.dll
