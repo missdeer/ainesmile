@@ -11,7 +11,7 @@
 #include "findreplace.h"
 #include "codeeditpage.h"
 
-CodeEditor *FindReplace::previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
+CodeEditor *FindReplacer::previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
 {
     auto iter = std::find(pages.begin(), pages.end(), currentPage);
     if (pages.end() == iter || pages.begin() == iter)
@@ -22,7 +22,7 @@ CodeEditor *FindReplace::previousPage(CodeEditor *currentPage, std::vector<CodeE
     return *std::prev(iter);
 }
 
-CodeEditor *FindReplace::nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
+CodeEditor *FindReplacer::nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
 {
     auto iter = std::find(pages.begin(), pages.end(), currentPage);
     if (pages.end() == iter)
@@ -37,7 +37,7 @@ CodeEditor *FindReplace::nextPage(CodeEditor *currentPage, std::vector<CodeEdito
     return *iter;
 }
 
-bool FindReplace::findInDocument(CodeEditor *page, FindReplaceOption &fro)
+bool FindReplacer::findInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
     ScintillaEdit *sci   = page->getFocusView();
     int            flags = 0;
@@ -91,7 +91,7 @@ bool FindReplace::findInDocument(CodeEditor *page, FindReplaceOption &fro)
     return false;
 }
 
-CodeEditor *FindReplace::findInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
+CodeEditor *FindReplacer::findInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
     bool inCurrentPage = findInDocument(currentPage, fro);
     if (inCurrentPage)
@@ -135,7 +135,7 @@ CodeEditor *FindReplace::findInDocuments(CodeEditor *currentPage, std::vector<Co
     return nullptr;
 }
 
-bool FindReplace::findAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
+bool FindReplacer::findAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
     int flags = 0;
     if (fro.matchCase)
@@ -178,7 +178,7 @@ bool FindReplace::findAllInDocuments(std::vector<CodeEditor *> &pages, FindRepla
     return true;
 }
 
-bool FindReplace::findAllInDirectory(FindReplaceOption &fro)
+bool FindReplacer::findAllInDirectory(FindReplaceOption &fro)
 {
     QDir dir(fro.directory);
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
@@ -195,7 +195,7 @@ bool FindReplace::findAllInDirectory(FindReplaceOption &fro)
     return true;
 }
 
-bool FindReplace::findAllInDirectories(FindReplaceOption &fro)
+bool FindReplacer::findAllInDirectories(FindReplaceOption &fro)
 {
     QDir dir(fro.directory);
     dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot | QDir::AllDirs);
@@ -208,7 +208,7 @@ bool FindReplace::findAllInDirectories(FindReplaceOption &fro)
     return true;
 }
 
-bool FindReplace::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
+bool FindReplacer::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
     ScintillaEdit *sci   = page->getFocusView();
     int            flags = 0;
@@ -255,7 +255,7 @@ bool FindReplace::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
     return false;
 }
 
-CodeEditor *FindReplace::replaceInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
+CodeEditor *FindReplacer::replaceInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
     bool inCurrentPage = replaceInDocument(currentPage, fro);
     if (inCurrentPage)
@@ -299,7 +299,7 @@ CodeEditor *FindReplace::replaceInDocuments(CodeEditor *currentPage, std::vector
     return nullptr;
 }
 
-bool FindReplace::replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro)
+bool FindReplacer::replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
     ScintillaEdit *sci   = page->getFocusView();
     int            flags = 0;
@@ -335,13 +335,13 @@ bool FindReplace::replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro)
     return true;
 }
 
-bool FindReplace::replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
+bool FindReplacer::replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
     std::for_each(pages.begin(), pages.end(), [this, &fro](auto &&PH1) { return replaceAllInDocument(std::forward<decltype(PH1)>(PH1), fro); });
     return true;
 }
 
-bool FindReplace::replaceAllInDirectory(FindReplaceOption &fro)
+bool FindReplacer::replaceAllInDirectory(FindReplaceOption &fro)
 {
     QDir dir(fro.directory);
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
@@ -355,7 +355,7 @@ bool FindReplace::replaceAllInDirectory(FindReplaceOption &fro)
     return true;
 }
 
-bool FindReplace::replaceAllInDirectories(FindReplaceOption &fro)
+bool FindReplacer::replaceAllInDirectories(FindReplaceOption &fro)
 {
     QDir dir(fro.directory);
     dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot | QDir::AllDirs);

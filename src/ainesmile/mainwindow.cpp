@@ -21,7 +21,7 @@ public:
     IdleEvent() : QEvent(AppIdleEventType) {}
 };
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_findReplacer(new FindReplace(this))
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_findReplacer(new FindReplacer(this))
 {
     ui->setupUi(this);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentPageChanged);
@@ -76,6 +76,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
+    ui->cbScope->addItems({FindReplaceConst::FS_DOCUMENT,
+                           FindReplaceConst::FS_ALLOPENED_DOCUMENTS,
+                           FindReplaceConst::FS_DIRECTORY,
+                           FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES});
     ui->cbScope->setCurrentIndex(1);
     ui->cbScope->setCurrentIndex(0);
     ui->dockFindReplace->close();
@@ -945,21 +949,21 @@ void MainWindow::on_btnFind_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        static_cast<FindScope>(ui->cbScope->currentIndex()),
+        ui->cbScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    switch (ui->cbScope->currentIndex())
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
-    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
-    break;
-    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
+
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         std::vector<CodeEditor *> slaveDocs;
@@ -980,10 +984,6 @@ void MainWindow::on_btnFind_clicked()
             }
         }
     }
-    break;
-    default:
-        break;
-    }
 }
 
 void MainWindow::on_btnFindAll_clicked()
@@ -1001,32 +1001,32 @@ void MainWindow::on_btnFindAll_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        static_cast<FindScope>(ui->cbScope->currentIndex()),
+        ui->cbScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    switch (ui->cbScope->currentIndex())
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
-    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
-    break;
-    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         m_findReplacer->findAllInDocuments(docs, fro);
     }
-    case static_cast<int>(FindScope::FS_DIRECOTRY):
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY)
+    {
         m_findReplacer->findAllInDirectory(fro);
-        break;
-    case static_cast<int>(FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY):
+    }
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
+    {
         m_findReplacer->findAllInDirectories(fro);
-        break;
     }
 }
 
@@ -1047,22 +1047,21 @@ void MainWindow::on_btnReplace_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        static_cast<FindScope>(ui->cbScope->currentIndex()),
+        ui->cbScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    switch (ui->cbScope->currentIndex())
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
-    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceInDocument(page, fro);
     }
-    break;
 
-    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         std::vector<CodeEditor *> slaveDocs;
@@ -1083,10 +1082,6 @@ void MainWindow::on_btnReplace_clicked()
             }
         }
     }
-    break;
-    default:
-        break;
-    }
 }
 
 void MainWindow::on_btnReplaceAll_clicked()
@@ -1106,33 +1101,35 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        static_cast<FindScope>(ui->cbScope->currentIndex()),
+        ui->cbScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    switch (ui->cbScope->currentIndex())
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
-    case static_cast<int>(FindScope::FS_DOCUMENT): {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceAllInDocument(page, fro);
     }
-    break;
-    case static_cast<int>(FindScope::FS_ALLOPENED_DOCUMENT): {
+
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         m_findReplacer->replaceAllInDocuments(docs, fro);
     }
-    break;
-    case static_cast<int>(FindScope::FS_DIRECOTRY):
+
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY)
+    {
         m_findReplacer->replaceAllInDirectory(fro);
-        break;
-    case static_cast<int>(FindScope::FS_DIRECTORY_WITH_SUBDIRECTORY):
+    }
+
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
+    {
         m_findReplacer->replaceAllInDirectories(fro);
-        break;
     }
 }
 

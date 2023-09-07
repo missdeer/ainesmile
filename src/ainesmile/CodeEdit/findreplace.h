@@ -8,37 +8,39 @@
 
 #include <vector>
 
+#include <QObject>
 #include <QString>
+
 
 class CodeEditor;
 
-enum class FindScope : int8_t
+namespace FindReplaceConst
 {
-    FS_DOCUMENT = 0,
-    FS_ALLOPENED_DOCUMENT,
-    FS_DIRECOTRY,
-    FS_DIRECTORY_WITH_SUBDIRECTORY,
-};
+    inline const QString FS_DOCUMENT                      = QStringLiteral("Current Document");
+    inline const QString FS_ALLOPENED_DOCUMENTS           = QStringLiteral("All Opened Documents");
+    inline const QString FS_DIRECTORY                     = QStringLiteral("Directory");
+    inline const QString FS_DIRECTORY_WITH_SUBDIRECTORIES = QStringLiteral("Directory with Sub-directories");
+} // namespace FindReplaceConst
 
 struct FindReplaceOption
 {
-    bool      matchCase;
-    bool      matchWholeWord;
-    bool      searchUp;
-    bool      regexp;
-    FindScope scope;
-    QString   strToFind;
-    QString   strReplaceWith;
-    QString   directory;
-    QString   filters;
+    bool    matchCase;
+    bool    matchWholeWord;
+    bool    searchUp;
+    bool    regexp;
+    QString scope;
+    QString strToFind;
+    QString strReplaceWith;
+    QString directory;
+    QString filters;
 };
 
-class FindReplace : public QObject
+class FindReplacer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FindReplace(QObject *parent = nullptr) : QObject(parent) {}
+    explicit FindReplacer(QObject *parent = nullptr) : QObject(parent) {}
 
     // find in current document
     bool findInDocument(CodeEditor *page, FindReplaceOption &fro);
