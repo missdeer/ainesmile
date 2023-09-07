@@ -900,7 +900,7 @@ void MainWindow::hideFeatures()
 
 void MainWindow::on_cbScope_currentIndexChanged(int index)
 {
-    if (index == 0 || index == 1)
+    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT || ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         // document
         ui->lbDirectory->setVisible(false);
