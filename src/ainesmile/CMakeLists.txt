@@ -172,6 +172,11 @@ ENDIF(Qt6_FOUND)
 set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON
                                                  MACOSX_BUNDLE ON)
 
+if(Boost_FOUND)
+   # dont use include_directories, use target_include_directories instead to let lupdate skip boost directories
+   target_include_directories(${PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+endif()
+
 if(APPLE)
   set_source_files_properties(
     "${CMAKE_CURRENT_SOURCE_DIR}/ainesmile.icns"
