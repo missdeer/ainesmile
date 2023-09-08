@@ -123,6 +123,8 @@ jobs:
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -267,6 +269,8 @@ jobs:
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -431,6 +435,8 @@ jobs:
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
@@ -667,6 +673,8 @@ jobs:
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
+          Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v1
