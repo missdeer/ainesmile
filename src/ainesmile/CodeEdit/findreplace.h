@@ -9,17 +9,16 @@
 #include <vector>
 
 #include <QObject>
-#include <QString>
-
+#include <QCoreApplication>
 
 class CodeEditor;
 
 namespace FindReplaceConst
 {
-    inline const QString FS_DOCUMENT                      = QStringLiteral("Current Document");
-    inline const QString FS_ALLOPENED_DOCUMENTS           = QStringLiteral("All Opened Documents");
-    inline const QString FS_DIRECTORY                     = QStringLiteral("Directory");
-    inline const QString FS_DIRECTORY_WITH_SUBDIRECTORIES = QStringLiteral("Directory with Sub-directories");
+    inline const QString FS_DOCUMENT                      = QCoreApplication::translate("FindReplaceConst","Current Document");
+    inline const QString FS_ALLOPENED_DOCUMENTS           = QCoreApplication::translate("FindReplaceConst","All Opened Documents");
+    inline const QString FS_DIRECTORY                     = QCoreApplication::translate("FindReplaceConst","Directory");
+    inline const QString FS_DIRECTORY_WITH_SUBDIRECTORIES = QCoreApplication::translate("FindReplaceConst","Directory with Sub-directories");
 } // namespace FindReplaceConst
 
 struct FindReplaceOption
