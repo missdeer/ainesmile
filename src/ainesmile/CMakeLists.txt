@@ -114,11 +114,11 @@ set(TS_FILES
         )
 
 IF(APPLE)
-        set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ainesmile.app/Contents/Resources/translations")
+        set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/ainesmile.app/Contents/Resources/translations")
         list(APPEND ainesmile_ui ainesmile.icns)
         file(GLOB resource ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/*.xml)
 ELSE(APPLE)
-        set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations")
+        set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/translations")
 ENDIF(APPLE)
 
 IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

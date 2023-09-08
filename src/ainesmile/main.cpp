@@ -9,6 +9,73 @@
 #    define SHARE_PATH ""
 #endif
 
+QStringList sortUILanguages(const QStringList &languages)
+{
+    QStringList sortedLanguages;
+    QStringList englishLanguages;
+
+    for (const QString &lang : languages)
+    {
+        if (lang.startsWith(QStringLiteral("en")))
+        {
+            englishLanguages << lang;
+        }
+        else
+        {
+            sortedLanguages << lang;
+        }
+    }
+
+    sortedLanguages << englishLanguages;
+    return sortedLanguages;
+}
+
+void installTranslator(QTranslator &translator, QTranslator &qtTranslator)
+{
+    QDir translationDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+    translationDir.cdUp();
+    translationDir.cd(QStringLiteral("Resources"));
+#endif
+    translationDir.cd(QStringLiteral("translations"));
+
+    const QStringList uiLanguages = sortUILanguages(QLocale::system().uiLanguages());
+    for (const auto &locale : uiLanguages)
+    {
+        QString qmFileName = QStringLiteral("ainesmile_%1.qm").arg(locale).replace('-', '_');
+        if (translator.load(qmFileName, translationDir.absolutePath()))
+        {
+            QApplication::installTranslator(&translator);
+
+            qDebug() << "all ui languages:" << uiLanguages << ", locale:" << locale << ", use qm file name:" << qmFileName;
+            if (qtTranslator.load(QStringLiteral("qt_%1.qm").arg(locale).replace('-', '_'), translationDir.absolutePath()))
+            {
+                QApplication::installTranslator(&qtTranslator);
+            }
+            return;
+        }
+
+        qDebug() << "no translation file is matched for " << locale << " from " << translationDir.absolutePath();
+    }
+    for (const auto &locale : uiLanguages)
+    {
+        QString qmFileName = QStringLiteral("ainesmile_%1.qm").arg(QLocale(locale).name()).replace('-', '_');
+        if (translator.load(qmFileName, translationDir.absolutePath()))
+        {
+            QApplication::installTranslator(&translator);
+
+            qDebug() << "all ui languages:" << uiLanguages << ", locale:" << QLocale(locale).name() << ", use qm file name:" << qmFileName;
+            if (qtTranslator.load(QStringLiteral("qt_%1.qm").arg(QLocale(locale).name()).replace('-', '_'), translationDir.absolutePath()))
+            {
+                QApplication::installTranslator(&qtTranslator);
+            }
+            return;
+        }
+
+        qDebug() << "no translation file is matched for " << locale << " from " << translationDir.absolutePath();
+    }
+}
+
 int main(int argc, char *argv[])
 {
 #ifndef Q_OS_WIN
@@ -29,46 +96,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(QStringLiteral("ainesmile"));
 
     QApplication app(argc, argv);
-    QTranslator  translator;
-    QTranslator  qtTranslator;
-    QStringList  uiLanguages;
 
-    uiLanguages                                   = QLocale::system().uiLanguages();
-    boost::property_tree::ptree &pt               = Config::instance()->pt();
-    QString                      overrideLanguage = QString::fromStdString(pt.get<std::string>("General/OverrideLanguage", ""));
-    if (!overrideLanguage.isEmpty())
-    {
-        uiLanguages.prepend(overrideLanguage);
-    }
-    const QString &ainesmileTrPath = QCoreApplication::applicationDirPath() + QLatin1String(SHARE_PATH "/translations");
-    for (auto &locale : uiLanguages)
-    {
-        locale = QLocale(locale).name();
-        if (translator.load(QLatin1String("ainesmile_") + locale, ainesmileTrPath))
-        {
-            const QString &qtTrPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-            const QString &qtTrFile = QLatin1String("qt_") + locale;
-            // Binary installer puts Qt tr files into aiensmileTrPath
-            if (qtTranslator.load(qtTrFile, qtTrPath) || qtTranslator.load(qtTrFile, ainesmileTrPath))
-            {
-                QApplication::installTranslator(&translator);
-                QApplication::installTranslator(&qtTranslator);
-                app.setProperty("ainesmile_locale", locale);
-                break;
-            }
-            translator.load(QString()); // unload()
-        }
-        else if (locale == QLatin1String("C") /* overrideLanguage == "English" */)
-        {
-            // use built-in
-            break;
-        }
-        else if (locale.startsWith(QLatin1String("en")) /* "English" is built-in */)
-        {
-            // use built-in
-            break;
-        }
-    }
+    QTranslator translator;
+    QTranslator qtTranslator;
+    installTranslator(translator, qtTranslator);
 
     Q_INIT_RESOURCE(ainesmile);
 
