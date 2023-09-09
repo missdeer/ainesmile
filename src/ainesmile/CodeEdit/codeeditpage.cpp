@@ -989,7 +989,6 @@ void CodeEditor::inverseBookmark()
     intptr_t lastLine = sci->lineCount();
 
     sci->beginUndoAction();
-#pragma omp parallel for
     for (int line = 0; line < lastLine; ++line)
     {
         toggleBookmarkAtLine(sci, line);
