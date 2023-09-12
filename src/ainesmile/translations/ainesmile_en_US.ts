@@ -787,7 +787,7 @@ Keep It Simple &amp; Stupid!</translation>
  <context>
   <name>QObject</name>
   <message>
-   <location filename="../main.cpp" line="142"/>
+   <location filename="../main.cpp" line="171"/>
    <source>aiensmile</source>
    <translation type="unfinished">aiensmile</translation>
   </message>
@@ -822,6 +822,14 @@ Keep It Simple &amp; Stupid!</translation>
    <location filename="../tabwidget.cpp" line="280"/>
    <source>All Files (*);;Text Files (*.txt)</source>
    <translation type="unfinished">All Files (*);;Text Files (*.txt)</translation>
+  </message>
+ </context>
+ <context>
+  <name>main</name>
+  <message>
+   <location filename="../main.cpp" line="91"/>
+   <source>Edit with ainesmile</source>
+   <translation type="unfinished">Edit with ainesmile</translation>
   </message>
  </context>
 </TS>

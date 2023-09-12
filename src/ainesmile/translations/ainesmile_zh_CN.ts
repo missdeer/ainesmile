@@ -111,27 +111,27 @@
   <message>
    <location filename="../mainwindow.ui" line="345"/>
    <source>Directory:</source>
-   <translation type="unfinished">目录：</translation>
+   <translation>目录：</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="357"/>
    <source>...</source>
-   <translation type="unfinished">...</translation>
+   <translation>...</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="366"/>
    <source>Filters:</source>
-   <translation type="unfinished">过滤器：</translation>
+   <translation>过滤器：</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="377"/>
    <source>*.*</source>
-   <translation type="unfinished">*.*</translation>
+   <translation>*.*</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="412"/>
    <source>Regexp</source>
-   <translation type="unfinished">正则表达式</translation>
+   <translation>正则表达式</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="442"/>
@@ -151,12 +151,12 @@
   <message>
    <location filename="../mainwindow.ui" line="122"/>
    <source>Encoding</source>
-   <translation type="unfinished">编码</translation>
+   <translation>编码</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="449"/>
    <source>Find All</source>
-   <translation type="unfinished">查找全部</translation>
+   <translation>查找全部</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="481"/>
@@ -166,7 +166,7 @@
   <message>
    <location filename="../mainwindow.ui" line="508"/>
    <source>Standard Toolbar</source>
-   <translation type="unfinished">标准工具栏</translation>
+   <translation>标准工具栏</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="536"/>
@@ -351,27 +351,27 @@
   <message>
    <location filename="../mainwindow.ui" line="768"/>
    <source>&amp;Find/Replace...</source>
-   <translation type="unfinished">查找替换</translation>
+   <translation>查找替换</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="771"/>
    <source>Find or Replace</source>
-   <translation type="unfinished">查找替换</translation>
+   <translation>查找替换</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="1108"/>
    <source>Reopen As...</source>
-   <translation type="unfinished">重新打开为...</translation>
+   <translation>重新打开为...</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="1113"/>
    <source>Save As...</source>
-   <translation type="unfinished">另存为...</translation>
+   <translation>另存为...</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="1124"/>
    <source>Auto Detect</source>
-   <translation type="unfinished">自动检测</translation>
+   <translation>自动检测</translation>
   </message>
   <message>
    <location filename="../mainwindow.ui" line="730"/>
@@ -753,17 +753,19 @@
    <source>Build at %1
 Revision: %2
 Keep It Simple &amp; Stupid!</source>
-   <translation type="unfinished">构建于 %1...</translation>
+   <translation>构建于 %1
+版本号：%2
+保持简单！</translation>
   </message>
   <message>
    <location filename="../mainwindow.cpp" line="733"/>
    <source>About ainesmile</source>
-   <translation type="unfinished">关于ainesmile</translation>
+   <translation>关于ainesmile</translation>
   </message>
   <message>
    <location filename="../mainwindow.cpp" line="930"/>
    <source>Select Directory</source>
-   <translation type="unfinished">选择目录</translation>
+   <translation>选择目录</translation>
   </message>
   <message>
    <location filename="../mainwindow.cpp" line="942"/>
@@ -771,7 +773,7 @@ Keep It Simple &amp; Stupid!</source>
    <location filename="../mainwindow.cpp" line="1038"/>
    <location filename="../mainwindow.cpp" line="1092"/>
    <source>Warning</source>
-   <translation type="unfinished">警告</translation>
+   <translation>警告</translation>
   </message>
   <message>
    <location filename="../mainwindow.cpp" line="942"/>
@@ -779,15 +781,15 @@ Keep It Simple &amp; Stupid!</source>
    <location filename="../mainwindow.cpp" line="1038"/>
    <location filename="../mainwindow.cpp" line="1092"/>
    <source>Please input text to search.</source>
-   <translation type="unfinished">请输入文本进行搜索</translation>
+   <translation>请输入文本进行搜索</translation>
   </message>
  </context>
  <context>
   <name>QObject</name>
   <message>
-   <location filename="../main.cpp" line="142"/>
+   <location filename="../main.cpp" line="171"/>
    <source>aiensmile</source>
-   <translation type="unfinished">aiensmile</translation>
+   <translation>aiensmile</translation>
   </message>
  </context>
  <context>
@@ -820,6 +822,14 @@ Keep It Simple &amp; Stupid!</source>
    <location filename="../tabwidget.cpp" line="280"/>
    <source>All Files (*);;Text Files (*.txt)</source>
    <translation>所有文件(*);;文本文件(*.txt)</translation>
+  </message>
+ </context>
+ <context>
+  <name>main</name>
+  <message>
+   <location filename="../main.cpp" line="91"/>
+   <source>Edit with ainesmile</source>
+   <translation>使用ainesmile编辑</translation>
   </message>
  </context>
 </TS>
