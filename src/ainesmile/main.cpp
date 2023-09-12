@@ -9,6 +9,15 @@
 #    define SHARE_PATH ""
 #endif
 
+#if defined(Q_OS_WIN)
+#    include <Windows.h>
+
+#    include <shlobj.h>
+#    include <tchar.h>
+
+#    pragma comment(lib, "Shell32.lib")
+#endif
+
 QStringList sortUILanguages(const QStringList &languages)
 {
     QStringList sortedLanguages;
@@ -76,6 +85,23 @@ void installTranslator(QTranslator &translator, QTranslator &qtTranslator)
     }
 }
 
+#if defined(Q_OS_WIN)
+void addExplorerContextMenu()
+{
+    const QString menuName = QCoreApplication::translate("main", "Edit with ainesmile");
+    const QString appPath  = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
+
+    QSettings menuNameSettings(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile)", QSettings::NativeFormat);
+    menuNameSettings.setValue(".", menuName);
+    menuNameSettings.setValue("icon", appPath);
+
+    QSettings openCmdSettings(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile\command)", QSettings::NativeFormat);
+    openCmdSettings.setValue(".", "\"" + appPath + R"(" "%1")");
+
+    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
+}
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifndef Q_OS_WIN
@@ -119,6 +145,9 @@ int main(int argc, char *argv[])
     }
 #else // windows
     QNetworkProxyFactory::setUseSystemConfiguration(true);
+#    if defined(Q_OS_WIN)
+    addExplorerContextMenu();
+#    endif
 #endif
 
     MainWindow mainWindow;
