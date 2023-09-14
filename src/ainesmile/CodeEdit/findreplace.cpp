@@ -6,7 +6,7 @@
 
 #include "stdafx.h"
 
-#include <filesystem>
+#include <QTextStream>
 
 #include "findreplace.h"
 #include "codeeditpage.h"
@@ -35,6 +35,23 @@ CodeEditor *FindReplacer::nextPage(CodeEditor *currentPage, std::vector<CodeEdit
         return nullptr;
     }
     return *iter;
+}
+
+bool FindReplacer::findAllInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        return false;
+    }
+    QTextStream instream(&file);
+
+    while (!instream.atEnd())
+    {
+        QString line = instream.readLine();
+    }
+
+    return false;
 }
 
 bool FindReplacer::findInDocument(CodeEditor *page, FindReplaceOption &fro)
@@ -152,7 +169,7 @@ bool FindReplacer::findAllInDocuments(std::vector<CodeEditor *> &pages, FindRepl
     }
 
     int count = static_cast<int>(pages.size());
-#pragma omp parallel for
+
     for (int i = 0; i < count; i++)
     {
         auto  *page  = pages.at(i);
@@ -180,17 +197,30 @@ bool FindReplacer::findAllInDocuments(std::vector<CodeEditor *> &pages, FindRepl
 
 bool FindReplacer::findAllInDirectory(FindReplaceOption &fro)
 {
-    QDir dir(fro.directory);
+    return findAllInDirectory(fro.directory, fro);
+}
+
+bool FindReplacer::findAllInDirectory(const QString &dirPath, FindReplaceOption &fro)
+{
+    QDir dir(dirPath);
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(fro.filters.split(QChar(';')));
 
     QFileInfoList &&fileInfos = dir.entryInfoList();
     int             count     = static_cast<int>(fileInfos.size());
+
 #pragma omp parallel for
     for (int i = 0; i < count; i++)
     {
         const auto &fileInfo = fileInfos.at(i);
-        fileInfo.absoluteFilePath();
+        if (fileInfo.isFile())
+        {
+            findAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+        else if (fileInfo.isDir())
+        {
+            findAllInDirectory(fileInfo.absoluteFilePath(), fro);
+        }
     }
     return true;
 }
@@ -203,7 +233,16 @@ bool FindReplacer::findAllInDirectories(FindReplaceOption &fro)
     QDirIterator iter(dir, QDirIterator::Subdirectories);
     while (iter.hasNext())
     {
-        QString filePath = iter.next();
+        iter.next();
+        auto fileInfo = iter.fileInfo();
+        if (fileInfo.isFile())
+        {
+            findAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+        else if (fileInfo.isDir())
+        {
+            findAllInDirectory(fileInfo.absoluteFilePath(), fro);
+        }
     }
     return true;
 }
@@ -341,16 +380,37 @@ bool FindReplacer::replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindR
     return true;
 }
 
+bool FindReplacer::replaceAllInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    return false;
+}
+
 bool FindReplacer::replaceAllInDirectory(FindReplaceOption &fro)
 {
-    QDir dir(fro.directory);
+    return replaceAllInDirectory(fro.directory, fro);
+}
+
+bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro)
+{
+    QDir dir(dirPath);
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(fro.filters.split(QChar(';')));
 
     QFileInfoList &&fileInfos = dir.entryInfoList();
-    for (auto &fileInfo : fileInfos)
+    int             count     = static_cast<int>(fileInfos.size());
+
+#pragma omp parallel for
+    for (int i = 0; i < count; i++)
     {
-        fileInfo.absoluteFilePath();
+        const auto &fileInfo = fileInfos.at(i);
+        if (fileInfo.isFile())
+        {
+            replaceAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+        else if (fileInfo.isDir())
+        {
+            replaceAllInDirectory(fileInfo.absoluteFilePath(), fro);
+        }
     }
     return true;
 }
@@ -363,7 +423,16 @@ bool FindReplacer::replaceAllInDirectories(FindReplaceOption &fro)
     QDirIterator iter(dir, QDirIterator::Subdirectories);
     while (iter.hasNext())
     {
-        QString filePath = iter.next();
+        iter.next();
+        auto fileInfo = iter.fileInfo();
+        if (fileInfo.isFile())
+        {
+            replaceAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+        else if (fileInfo.isDir())
+        {
+            replaceAllInDirectory(fileInfo.absoluteFilePath(), fro);
+        }
     }
     return true;
 }
