@@ -3,19 +3,11 @@
 #include "config.h"
 #include "mainwindow.h"
 
-#ifdef Q_OS_MAC
-#    define SHARE_PATH "/../Resources"
-#else
-#    define SHARE_PATH ""
-#endif
-
 #if defined(Q_OS_WIN)
 #    include <Windows.h>
 
 #    include <shlobj.h>
 #    include <tchar.h>
-
-#    pragma comment(lib, "Shell32.lib")
 #endif
 
 QStringList sortUILanguages(const QStringList &languages)
@@ -91,12 +83,12 @@ void addExplorerContextMenu()
     const QString menuName = QCoreApplication::translate("main", "Edit with ainesmile");
     const QString appPath  = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
 
-    QSettings menuNameSettings(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile)", QSettings::NativeFormat);
-    menuNameSettings.setValue(".", menuName);
-    menuNameSettings.setValue("icon", appPath);
+    QSettings menuNameSettings(QStringLiteral(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile)"), QSettings::NativeFormat);
+    menuNameSettings.setValue(QStringLiteral("."), menuName);
+    menuNameSettings.setValue(QStringLiteral("icon"), appPath);
 
-    QSettings openCmdSettings(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile\command)", QSettings::NativeFormat);
-    openCmdSettings.setValue(".", "\"" + appPath + R"(" "%1")");
+    QSettings openCmdSettings(QStringLiteral(R"(HKEY_CURRENT_USER\Software\Classes\*\shell\ainesmile\command)"), QSettings::NativeFormat);
+    openCmdSettings.setValue(QStringLiteral("."), QStringLiteral("\"%1\"").arg(appPath) + QStringLiteral(" \"%1\""));
 
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 }
@@ -168,7 +160,7 @@ int main(int argc, char *argv[])
         mainWindow.newDocument();
     }
 
-    mainWindow.setWindowTitle(QObject::tr("aiensmile"));
+    mainWindow.setWindowTitle(QStringLiteral("aiensmile"));
 
     QObject::connect(&app, &QGuiApplication::lastWindowClosed, &app, &QCoreApplication::quit);
     return QCoreApplication::exec();

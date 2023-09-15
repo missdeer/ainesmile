@@ -173,8 +173,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON
                                                  MACOSX_BUNDLE ON)
 
 if(Boost_FOUND)
-   # dont use include_directories, use target_include_directories instead to let lupdate skip boost directories
-   target_include_directories(${PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+  # dont use include_directories, use target_include_directories instead to let lupdate skip boost directories
+  target_include_directories(${PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+endif()
+
+if(WIN32)
+  target_link_libraries(${PROJECT_NAME} PRIVATE Shell32)
 endif()
 
 if(APPLE)
