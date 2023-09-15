@@ -6,6 +6,8 @@
 
 #include "stdafx.h"
 
+#include <algorithm>
+
 #include <QRegularExpression>
 #include <QTextStream>
 

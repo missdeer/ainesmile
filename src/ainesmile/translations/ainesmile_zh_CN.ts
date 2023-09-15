@@ -819,7 +819,7 @@ Keep It Simple &amp; Stupid!</source>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="83"/>
+        <location filename="../main.cpp" line="82"/>
         <source>Edit with ainesmile</source>
         <translation>使用ainesmile编辑</translation>
     </message>

@@ -7,7 +7,6 @@
 #    include <Windows.h>
 
 #    include <shlobj.h>
-#    include <tchar.h>
 #endif
 
 QStringList sortUILanguages(const QStringList &languages)

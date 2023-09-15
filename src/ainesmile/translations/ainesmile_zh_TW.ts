@@ -817,7 +817,7 @@ Keep It Simple &amp; Stupid!</source>
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="83"/>
+        <location filename="../main.cpp" line="82"/>
         <source>Edit with ainesmile</source>
         <translation type="unfinished">使用ainesmile編輯</translation>
     </message>
