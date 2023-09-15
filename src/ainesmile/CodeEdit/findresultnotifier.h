@@ -9,7 +9,7 @@ class FindResultNotifier : public QObject
 public:
     explicit FindResultNotifier(QObject *parent = nullptr);
 
-    void addResult(const QString &filePath, int startPos, int length);
+    void addResult(const QString &filePath, const QString &context, int line, int column, int length);
 signals:
-    void found(QString, int, int);
+    void found(QString, QString, int, int, int);
 };

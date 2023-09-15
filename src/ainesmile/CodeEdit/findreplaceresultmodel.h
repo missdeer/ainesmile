@@ -1,4 +1,4 @@
-#ifndef FINDREPLACERESULTMODEL_H
+﻿#ifndef FINDREPLACERESULTMODEL_H
 #define FINDREPLACERESULTMODEL_H
 
 #include <QAbstractItemModel>
@@ -28,10 +28,13 @@ public:
     bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
 
+public slots:
+    void onAddFindResult(const QString &filePath, const QString &context, int line, int column, int length);
+
 private:
     static FindReplaceResultModel *m_instance;
-    FindReplaceResultModel();
-    ~FindReplaceResultModel() override;
+                                   FindReplaceResultModel();
+    ~                              FindReplaceResultModel() override;
 
     [[nodiscard]] FindReplaceResultItem *getItem(const QModelIndex &index) const;
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include "findreplaceresultmodel.h"
 
@@ -182,7 +182,7 @@ bool FindReplaceResultModel::removeRows(int position, int rows, const QModelInde
 
 FindReplaceResultModel::FindReplaceResultModel()
 {
-    QVector<QVariant> rootData {tr("Position"), tr("Context")};
+    QVector<QVariant> rootData {tr("File"), tr("Position"), tr("Context")};
 
     rootItem = new FindReplaceResultItem(rootData);
 }
@@ -204,3 +204,5 @@ FindReplaceResultItem *FindReplaceResultModel::getItem(const QModelIndex &index)
     }
     return rootItem;
 }
+
+void FindReplaceResultModel::onAddFindResult(const QString &filePath, const QString &context, int line, int column, int length) {}

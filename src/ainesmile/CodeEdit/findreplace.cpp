@@ -11,6 +11,7 @@
 
 #include "findreplace.h"
 #include "codeeditpage.h"
+#include "findreplaceresultmodel.h"
 #include "findresultnotifier.h"
 
 CodeEditor *FindReplacer::previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
@@ -47,18 +48,24 @@ bool FindReplacer::findAllStringInFile(const QString &filePath, FindReplaceOptio
         return false;
     }
     FindResultNotifier notifier;
-    auto               insensitive = (fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
-    QTextStream        instream(&file);
+    connect(
+        &notifier, &FindResultNotifier::found, FindReplaceResultModel::instance(), &FindReplaceResultModel::onAddFindResult, Qt::QueuedConnection);
 
+    auto        insensitive = (fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
+    QTextStream instream(&file);
+    int         lineNr = 0;
     while (!instream.atEnd())
     {
-        QString line     = instream.readLine();
-        int     startPos = 0;
-        auto    pos      = line.indexOf(fro.strToFind, startPos, insensitive);
+        QString line = instream.readLine();
+        lineNr++;
+        int  startPos = 0;
+        auto pos      = line.indexOf(fro.strToFind, startPos, insensitive);
         while (pos >= 0)
         {
             // notify find result
-            notifier.addResult(filePath, pos, fro.strToFind.length());
+            int  from    = std::min(pos - 10, 0);
+            auto context = line.mid(from, fro.strToFind.length() + 20);
+            notifier.addResult(filePath, context, lineNr, from, fro.strToFind.length());
 
             // find next
             startPos = pos + fro.strToFind.length();
@@ -77,6 +84,9 @@ bool FindReplacer::findAllRegexpInFile(const QString &filePath, FindReplaceOptio
         return false;
     }
     FindResultNotifier notifier;
+    connect(
+        &notifier, &FindResultNotifier::found, FindReplaceResultModel::instance(), &FindReplaceResultModel::onAddFindResult, Qt::QueuedConnection);
+
     QRegularExpression pattern(fro.strToFind);
     if (!fro.matchCase)
     {
@@ -84,16 +94,20 @@ bool FindReplacer::findAllRegexpInFile(const QString &filePath, FindReplaceOptio
     }
     QTextStream instream(&file);
 
+    int lineNr = 0;
     while (!instream.atEnd())
     {
-        QString                 line     = instream.readLine();
+        QString line = instream.readLine();
+        lineNr++;
         int                     startPos = 0;
         QRegularExpressionMatch match;
         auto                    pos = line.indexOf(pattern, startPos, &match);
         while (pos >= 0)
         {
             // notify find result
-            notifier.addResult(filePath, pos, match.capturedLength());
+            int  from    = std::min(pos - 10, 0);
+            auto context = line.mid(from, match.capturedLength() + 20);
+            notifier.addResult(filePath, context, lineNr, from, match.capturedLength());
 
             // find next
             startPos = pos + match.capturedLength();
