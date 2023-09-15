@@ -257,54 +257,46 @@ bool FindReplacer::findAllInDocuments(std::vector<CodeEditor *> &pages, FindRepl
 
 bool FindReplacer::findAllInDirectory(FindReplaceOption &fro)
 {
-    return findAllInDirectory(fro.directory, fro);
+    return findAllInDirectory(fro.directory, fro, false);
 }
 
-bool FindReplacer::findAllInDirectory(const QString &dirPath, FindReplaceOption &fro)
+bool FindReplacer::findAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive)
 {
     QDir dir(dirPath);
-    dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(fro.filters.split(QChar(';')));
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
 
-    QFileInfoList &&fileInfos = dir.entryInfoList();
-    int             count     = static_cast<int>(fileInfos.size());
+    QFileInfoList fileInfos = dir.entryInfoList();
+    int           count     = static_cast<int>(fileInfos.size());
 
 #pragma omp parallel for
     for (int i = 0; i < count; i++)
     {
         const auto &fileInfo = fileInfos.at(i);
-        if (fileInfo.isFile())
+        findAllInFile(fileInfo.absoluteFilePath(), fro);
+    }
+
+    if (recursive)
+    {
+        dir.setNameFilters(QStringList());
+        dir.setFilter(QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+
+        QFileInfoList fileInfos = dir.entryInfoList();
+        int           count     = static_cast<int>(fileInfos.size());
+
+        for (int i = 0; i < count; i++)
         {
-            findAllInFile(fileInfo.absoluteFilePath(), fro);
-        }
-        else if (fileInfo.isDir())
-        {
-            findAllInDirectory(fileInfo.absoluteFilePath(), fro);
+            const auto &fileInfo = fileInfos.at(i);
+            findAllInDirectory(fileInfo.absoluteFilePath(), fro, true);
         }
     }
+
     return true;
 }
 
 bool FindReplacer::findAllInDirectories(FindReplaceOption &fro)
 {
-    QDir dir(fro.directory);
-    dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot | QDir::AllDirs);
-    dir.setNameFilters(fro.filters.split(QChar(';')));
-    QDirIterator iter(dir, QDirIterator::Subdirectories);
-    while (iter.hasNext())
-    {
-        iter.next();
-        auto fileInfo = iter.fileInfo();
-        if (fileInfo.isFile())
-        {
-            findAllInFile(fileInfo.absoluteFilePath(), fro);
-        }
-        else if (fileInfo.isDir())
-        {
-            findAllInDirectory(fileInfo.absoluteFilePath(), fro);
-        }
-    }
-    return true;
+    return findAllInDirectory(fro.directory, fro, true);
 }
 
 bool FindReplacer::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
@@ -447,29 +439,36 @@ bool FindReplacer::replaceAllInFile(const QString &filePath, FindReplaceOption &
 
 bool FindReplacer::replaceAllInDirectory(FindReplaceOption &fro)
 {
-    return replaceAllInDirectory(fro.directory, fro);
+    return replaceAllInDirectory(fro.directory, fro, false);
 }
 
-bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro)
+bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive)
 {
     QDir dir(dirPath);
-    dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(fro.filters.split(QChar(';')));
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
 
     QFileInfoList &&fileInfos = dir.entryInfoList();
     int             count     = static_cast<int>(fileInfos.size());
-
 #pragma omp parallel for
     for (int i = 0; i < count; i++)
     {
         const auto &fileInfo = fileInfos.at(i);
-        if (fileInfo.isFile())
+        replaceAllInFile(fileInfo.absoluteFilePath(), fro);
+    }
+
+    if (recursive)
+    {
+        dir.setNameFilters(QStringList());
+        dir.setFilter(QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+
+        QFileInfoList &&fileInfos = dir.entryInfoList();
+        int             count     = static_cast<int>(fileInfos.size());
+
+        for (int i = 0; i < count; i++)
         {
-            replaceAllInFile(fileInfo.absoluteFilePath(), fro);
-        }
-        else if (fileInfo.isDir())
-        {
-            replaceAllInDirectory(fileInfo.absoluteFilePath(), fro);
+            const auto &fileInfo = fileInfos.at(i);
+            replaceAllInDirectory(fileInfo.absoluteFilePath(), fro, true);
         }
     }
     return true;
@@ -477,22 +476,5 @@ bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOpti
 
 bool FindReplacer::replaceAllInDirectories(FindReplaceOption &fro)
 {
-    QDir dir(fro.directory);
-    dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot | QDir::AllDirs);
-    dir.setNameFilters(fro.filters.split(QChar(';')));
-    QDirIterator iter(dir, QDirIterator::Subdirectories);
-    while (iter.hasNext())
-    {
-        iter.next();
-        auto fileInfo = iter.fileInfo();
-        if (fileInfo.isFile())
-        {
-            replaceAllInFile(fileInfo.absoluteFilePath(), fro);
-        }
-        else if (fileInfo.isDir())
-        {
-            replaceAllInDirectory(fileInfo.absoluteFilePath(), fro);
-        }
-    }
-    return true;
+    return replaceAllInDirectory(fro.directory, fro, true);
 }

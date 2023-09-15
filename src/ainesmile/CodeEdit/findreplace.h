@@ -72,9 +72,9 @@ private:
     bool        findAllInFile(const QString &filePath, FindReplaceOption &fro);
     bool        findAllStringInFile(const QString &filePath, FindReplaceOption &fro);
     bool        findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        findAllInDirectory(const QString &dirPath, FindReplaceOption &fro);
+    bool        findAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
     bool        replaceAllInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro);
+    bool        replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
 };
 
 #endif // FINDREPLACE_H
