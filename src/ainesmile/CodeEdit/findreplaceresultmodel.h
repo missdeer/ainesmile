@@ -33,8 +33,10 @@ public slots:
 
 private:
     static FindReplaceResultModel *m_instance;
-                                   FindReplaceResultModel();
-    ~                              FindReplaceResultModel() override;
+
+    FindReplaceResultModel();
+
+    ~FindReplaceResultModel() override;
 
     [[nodiscard]] FindReplaceResultItem *getItem(const QModelIndex &index) const;
 

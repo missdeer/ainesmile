@@ -1,4 +1,4 @@
-#ifndef FINDREPLACERESULTITEM_H
+﻿#ifndef FINDREPLACERESULTITEM_H
 #define FINDREPLACERESULTITEM_H
 
 #include <QList>
@@ -8,8 +8,8 @@
 class FindReplaceResultItem
 {
 public:
-    explicit FindReplaceResultItem(const QVector<QVariant> &data, FindReplaceResultItem *parent = 0);
-    ~FindReplaceResultItem();
+    explicit FindReplaceResultItem(const QVector<QVariant> &data, FindReplaceResultItem *parent = nullptr);
+    ~        FindReplaceResultItem();
 
     FindReplaceResultItem *child(int number);
     [[nodiscard]] int      childCount() const;

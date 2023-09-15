@@ -555,7 +555,7 @@ void MainWindow::onCurrentDocumentChanged()
 
 void MainWindow::onRecentFileTriggered()
 {
-    QAction *action = qobject_cast<QAction *>(sender());
+    auto *action = qobject_cast<QAction *>(sender());
     Q_ASSERT(action);
 
     QString file = action->text();
