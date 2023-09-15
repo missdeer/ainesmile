@@ -52,23 +52,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->menuView->addSeparator();
     ui->menuView->addAction(ui->toolBar->toggleViewAction());
 
-    m_lexerLabel = new QLabel(QLatin1String("normal"), this);
-    m_lexerLabel->setMaximumWidth(100);
-    m_lexerLabel->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(m_lexerLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectLanguageCustomContextMenuRequested);
-    ui->statusBar->addPermanentWidget(m_lexerLabel);
-
-    m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
-    m_encodingLabel->setMaximumWidth(150);
-    m_encodingLabel->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(m_encodingLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
-    ui->statusBar->addPermanentWidget(m_encodingLabel);
-
-    m_withBOMLabel = new QLabel(QStringLiteral("BOM"), this);
-    m_withBOMLabel->setEnabled(false);
-    m_withBOMLabel->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(m_withBOMLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
-    ui->statusBar->addPermanentWidget(m_withBOMLabel);
+    createStatusBarWidgets();
 
     QList<int> sizes;
     sizes << ui->widget->width() / 2 << ui->widget->width() / 2;
@@ -76,12 +60,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
-    ui->cbScope->addItems({FindReplaceConst::FS_DOCUMENT,
-                           FindReplaceConst::FS_ALLOPENED_DOCUMENTS,
-                           FindReplaceConst::FS_DIRECTORY,
-                           FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES});
-    ui->cbScope->setCurrentIndex(1);
-    ui->cbScope->setCurrentIndex(0);
+    ui->cbFindReplaceScope->addItems({FindReplaceConst::FS_DOCUMENT,
+                                      FindReplaceConst::FS_ALLOPENED_DOCUMENTS,
+                                      FindReplaceConst::FS_DIRECTORY,
+                                      FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES});
+    ui->cbFindReplaceScope->setCurrentIndex(1);
+    ui->cbFindReplaceScope->setCurrentIndex(0);
     ui->dockFindReplace->close();
     ui->dockFindResult->close();
 
@@ -900,7 +884,8 @@ void MainWindow::hideFeatures()
 
 void MainWindow::on_cbScope_currentIndexChanged(int index)
 {
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT || ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DOCUMENT ||
+        ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         // document
         ui->lbDirectory->setVisible(false);
@@ -949,20 +934,20 @@ void MainWindow::on_btnFind_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        ui->cbScope->currentText(),
+        ui->cbFindReplaceScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
@@ -1001,30 +986,30 @@ void MainWindow::on_btnFindAll_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        ui->cbScope->currentText(),
+        ui->cbFindReplaceScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->findInDocument(page, fro);
     }
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
         ui->tabWidgetSlave->getAllEditors(docs);
         m_findReplacer->findAllInDocuments(docs, fro);
     }
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DIRECTORY)
     {
         m_findReplacer->findAllInDirectory(fro);
     }
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
     {
         m_findReplacer->findAllInDirectories(fro);
     }
@@ -1047,20 +1032,20 @@ void MainWindow::on_btnReplace_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        ui->cbScope->currentText(),
+        ui->cbFindReplaceScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceInDocument(page, fro);
     }
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
@@ -1101,20 +1086,20 @@ void MainWindow::on_btnReplaceAll_clicked()
         ui->cbMatchWholeWord->isChecked(),
         ui->cbSearchUp->isChecked(),
         ui->cbRegexp->isChecked(),
-        ui->cbScope->currentText(),
+        ui->cbFindReplaceScope->currentText(),
         ui->cbFind->lineEdit()->text(),
         ui->cbReplace->lineEdit()->text(),
         ui->edtDirectory->text(),
         ui->cbFilters->lineEdit()->text(),
     };
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DOCUMENT)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DOCUMENT)
     {
         auto *page = qobject_cast<CodeEditor *>(getFocusTabWidget()->currentWidget());
         m_findReplacer->replaceAllInDocument(page, fro);
     }
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_ALLOPENED_DOCUMENTS)
     {
         std::vector<CodeEditor *> docs;
         ui->tabWidget->getAllEditors(docs);
@@ -1122,12 +1107,12 @@ void MainWindow::on_btnReplaceAll_clicked()
         m_findReplacer->replaceAllInDocuments(docs, fro);
     }
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DIRECTORY)
     {
         m_findReplacer->replaceAllInDirectory(fro);
     }
 
-    if (ui->cbScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
+    if (ui->cbFindReplaceScope->currentText() == FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES)
     {
         m_findReplacer->replaceAllInDirectories(fro);
     }
@@ -1242,4 +1227,24 @@ void MainWindow::customEvent(QEvent *event)
         onIdle();
         QCoreApplication::postEvent(this, new IdleEvent()); // repost the event to keep it running when idle
     }
+}
+void MainWindow::createStatusBarWidgets()
+{
+    m_lexerLabel = new QLabel(QLatin1String("normal"), this);
+    m_lexerLabel->setMaximumWidth(100);
+    m_lexerLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_lexerLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectLanguageCustomContextMenuRequested);
+    ui->statusBar->addPermanentWidget(m_lexerLabel);
+
+    m_encodingLabel = new QLabel(QStringLiteral("UTF-8"), this);
+    m_encodingLabel->setMaximumWidth(150);
+    m_encodingLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_encodingLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
+    ui->statusBar->addPermanentWidget(m_encodingLabel);
+
+    m_withBOMLabel = new QLabel(QStringLiteral("BOM"), this);
+    m_withBOMLabel->setEnabled(false);
+    m_withBOMLabel->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_withBOMLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
+    ui->statusBar->addPermanentWidget(m_withBOMLabel);
 }

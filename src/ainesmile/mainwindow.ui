@@ -337,7 +337,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbScope"/>
+            <widget class="QComboBox" name="cbFindReplaceScope"/>
            </item>
            <item>
             <widget class="QLabel" name="lbDirectory">

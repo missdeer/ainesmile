@@ -137,7 +137,7 @@ private:
     QLabel          *m_lexerLabel;
     QLabel          *m_encodingLabel;
     QLabel          *m_withBOMLabel;
-    FindReplacer     *m_findReplacer;
+    FindReplacer    *m_findReplacer;
     QList<QAction *> m_recentFileActions;
     RecentFiles      m_recentFiles;
     bool             m_aboutToQuit {false};
@@ -150,6 +150,8 @@ private:
     void readFindHistory();
     void readReplaceHistory();
     void readFindReplaceFiltersHistory();
+
+    void createStatusBarWidgets();
 };
 
 inline MainWindow *g_mainWindow = nullptr;
