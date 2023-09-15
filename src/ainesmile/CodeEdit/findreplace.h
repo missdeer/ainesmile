@@ -70,6 +70,8 @@ private:
     CodeEditor *previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
     CodeEditor *nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
     bool        findAllInFile(const QString &filePath, FindReplaceOption &fro);
+    bool        findAllStringInFile(const QString &filePath, FindReplaceOption &fro);
+    bool        findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
     bool        findAllInDirectory(const QString &dirPath, FindReplaceOption &fro);
     bool        replaceAllInFile(const QString &filePath, FindReplaceOption &fro);
     bool        replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro);

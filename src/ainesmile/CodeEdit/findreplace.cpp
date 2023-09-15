@@ -6,10 +6,12 @@
 
 #include "stdafx.h"
 
+#include <QRegularExpression>
 #include <QTextStream>
 
 #include "findreplace.h"
 #include "codeeditpage.h"
+#include "findresultnotifier.h"
 
 CodeEditor *FindReplacer::previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
 {
@@ -37,21 +39,79 @@ CodeEditor *FindReplacer::nextPage(CodeEditor *currentPage, std::vector<CodeEdit
     return *iter;
 }
 
-bool FindReplacer::findAllInFile(const QString &filePath, FindReplaceOption &fro)
+bool FindReplacer::findAllStringInFile(const QString &filePath, FindReplaceOption &fro)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
         return false;
     }
+    FindResultNotifier notifier;
+    auto               insensitive = (fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
+    QTextStream        instream(&file);
+
+    while (!instream.atEnd())
+    {
+        QString line     = instream.readLine();
+        int     startPos = 0;
+        auto    pos      = line.indexOf(fro.strToFind, startPos, insensitive);
+        while (pos >= 0)
+        {
+            // notify find result
+            notifier.addResult(filePath, pos, fro.strToFind.length());
+
+            // find next
+            startPos = pos + fro.strToFind.length();
+            pos      = line.indexOf(fro.strToFind, startPos, insensitive);
+        }
+    }
+
+    return true;
+}
+
+bool FindReplacer::findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        return false;
+    }
+    FindResultNotifier notifier;
+    QRegularExpression pattern(fro.strToFind);
+    if (!fro.matchCase)
+    {
+        pattern.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    }
     QTextStream instream(&file);
 
     while (!instream.atEnd())
     {
-        QString line = instream.readLine();
+        QString                 line     = instream.readLine();
+        int                     startPos = 0;
+        QRegularExpressionMatch match;
+        auto                    pos = line.indexOf(pattern, startPos, &match);
+        while (pos >= 0)
+        {
+            // notify find result
+            notifier.addResult(filePath, pos, match.capturedLength());
+
+            // find next
+            startPos = pos + match.capturedLength();
+            pos      = line.indexOf(pattern, startPos, &match);
+        }
     }
 
     return false;
+}
+
+bool FindReplacer::findAllInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    if (fro.regexp)
+    {
+        return findAllRegexpInFile(filePath, fro);
+    }
+
+    return findAllStringInFile(filePath, fro);
 }
 
 bool FindReplacer::findInDocument(CodeEditor *page, FindReplaceOption &fro)
