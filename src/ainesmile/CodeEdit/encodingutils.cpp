@@ -1,10 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <boost/scope_exit.hpp>
-#include <unicode/ucnv.h>
-#include <unicode/ucsdet.h>
-#include <unicode/utext.h>
-
 #include "encodingutils.h"
 
 namespace EncodingUtils

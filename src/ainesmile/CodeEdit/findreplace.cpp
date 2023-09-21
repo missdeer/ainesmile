@@ -6,11 +6,6 @@
 
 #include "stdafx.h"
 
-#include <algorithm>
-
-#include <QRegularExpression>
-#include <QTextStream>
-
 #include "findreplace.h"
 #include "codeeditpage.h"
 #include "findreplaceresultmodel.h"

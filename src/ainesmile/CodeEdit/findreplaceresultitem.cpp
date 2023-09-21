@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <QStringList>
-
 #include "findreplaceresultitem.h"
 
 FindReplaceResultItem::FindReplaceResultItem(const QVector<QVariant> &data, FindReplaceResultItem *parent) : itemData(data), parentItem(parent) {}

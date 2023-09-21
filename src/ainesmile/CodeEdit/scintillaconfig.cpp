@@ -1,6 +1,4 @@
-#include "stdafx.h"
-
-#include <boost/scope_exit.hpp>
+﻿#include "stdafx.h"
 
 #include "scintillaconfig.h"
 #include "ILexer.h"

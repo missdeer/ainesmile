@@ -1,8 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <QCoreApplication>
-#include <QEvent>
-
 #include "mainwindow.h"
 #include "codeeditpage.h"
 #include "config.h"
