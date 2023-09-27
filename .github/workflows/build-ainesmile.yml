@@ -18,7 +18,7 @@ env:
   COMPILER_VERSION: 2023.2.0
   TBB_VERSION: 2021.10.0
   VS_VER: vs2022
-  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.6/LLVM-16.0.6-win64.exe
+  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.1/LLVM-17.0.1-win64.exe
 
 jobs:
   win64-msvc:
