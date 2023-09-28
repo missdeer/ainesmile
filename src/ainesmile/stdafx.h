@@ -35,6 +35,7 @@
 #    include <QDateTime>
 #    include <QDesktopServices>
 #    include <QDockWidget>
+#    include <QDomDocument>
 #    include <QEvent>
 #    include <QFile>
 #    include <QFileDialog>
@@ -47,6 +48,7 @@
 #    include <QNetworkProxy>
 #    include <QRegularExpression>
 #    include <QSettings>
+#    include <QStandardPaths>
 #    include <QStringList>
 #    include <QTextStream>
 #    include <QThreadPool>
