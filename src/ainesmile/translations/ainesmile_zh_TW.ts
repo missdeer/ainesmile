@@ -734,50 +734,50 @@
         <translation type="unfinished">自動檢測</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="495"/>
+        <location filename="../mainwindow.cpp" line="493"/>
         <source>Untitled%1</source>
         <translation type="unfinished">未命名%1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="662"/>
+        <location filename="../mainwindow.cpp" line="660"/>
         <source>ainesmile Open Files</source>
         <translation type="unfinished">ainesmile 開啟檔案</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="662"/>
+        <location filename="../mainwindow.cpp" line="660"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">所有檔案(*);;文字檔案(*.txt)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="717"/>
+        <location filename="../mainwindow.cpp" line="715"/>
         <source>Build at %1
 Revision: %2
 Keep It Simple &amp; Stupid!</source>
         <translation type="unfinished">構建於 %1...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="719"/>
+        <location filename="../mainwindow.cpp" line="717"/>
         <source>About ainesmile</source>
         <translation type="unfinished">關於ainesmile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="917"/>
+        <location filename="../mainwindow.cpp" line="915"/>
         <source>Select Directory</source>
         <translation type="unfinished">選擇目錄</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="929"/>
-        <location filename="../mainwindow.cpp" line="981"/>
-        <location filename="../mainwindow.cpp" line="1025"/>
-        <location filename="../mainwindow.cpp" line="1079"/>
+        <location filename="../mainwindow.cpp" line="927"/>
+        <location filename="../mainwindow.cpp" line="979"/>
+        <location filename="../mainwindow.cpp" line="1023"/>
+        <location filename="../mainwindow.cpp" line="1077"/>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="929"/>
-        <location filename="../mainwindow.cpp" line="981"/>
-        <location filename="../mainwindow.cpp" line="1025"/>
-        <location filename="../mainwindow.cpp" line="1079"/>
+        <location filename="../mainwindow.cpp" line="927"/>
+        <location filename="../mainwindow.cpp" line="979"/>
+        <location filename="../mainwindow.cpp" line="1023"/>
+        <location filename="../mainwindow.cpp" line="1077"/>
         <source>Please input text to search.</source>
         <translation type="unfinished">請輸入文字進行搜尋</translation>
     </message>

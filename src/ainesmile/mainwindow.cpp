@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <QtCore/qtclasshelpermacros.h>
-
 #include "mainwindow.h"
 #include "codeeditpage.h"
 #include "config.h"
@@ -695,7 +693,7 @@ void MainWindow::on_actionAboutApp_triggered()
 #if defined(Q_OS_MAC)
         date = QString::fromUtf8(d);
 #else
-        date     = QString::fromLocal8Bit(d);
+        date = QString::fromLocal8Bit(d);
 #endif
         date = date.replace(QLatin1String("\n"), QLatin1String(" "));
         fileDate.close();
