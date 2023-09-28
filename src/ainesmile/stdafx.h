@@ -43,6 +43,7 @@
 #    include <QInputDialog>
 #    include <QLibraryInfo>
 #    include <QListWidget>
+#    include <QMenu>
 #    include <QMessageBox>
 #    include <QMimeData>
 #    include <QNetworkProxy>
