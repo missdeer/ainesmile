@@ -3,7 +3,7 @@
 #include "recentfiles.h"
 #include "config.h"
 
-RecentFiles::RecentFiles()
+RecentFiles::RecentFiles(QObject *parent) : QObject(parent)
 {
     init();
 }

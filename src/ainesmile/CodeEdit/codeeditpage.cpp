@@ -292,7 +292,7 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
             {
                 // Handle conversion error
                 const char *errorName = u_errorName(errorCode);
-                QMessageBox::critical(this, tr("Error"), tr("converting from UTF-8 to %1 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
+                QMessageBox::critical(this, tr("Error"), tr("converting from UTF-8 to %1 failed: %2").arg(encoding, errorName), QMessageBox::Ok);
                 return;
             }
             ptrdiff_t bytesGenerated = target - targetStart;
@@ -507,7 +507,7 @@ void CodeEditor::linesAdded(Scintilla::Position /*linesAdded*/)
     sptr_t line_count = sci->lineCount();
     sptr_t left       = sci->marginLeft() + 2;
     sptr_t right      = sci->marginRight() + 2;
-    sptr_t width      = left + right + sci->textWidth(STYLE_LINENUMBER, QString("%1").arg(line_count).toStdString().c_str());
+    sptr_t width      = left + right + sci->textWidth(STYLE_LINENUMBER, QStringLiteral("%1").arg(line_count).toStdString().c_str());
     if (width > sci->marginWidthN(0))
     {
         sci->setMarginWidthN(0, width);

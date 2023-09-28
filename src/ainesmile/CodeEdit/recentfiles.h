@@ -18,7 +18,7 @@ private:
     [[nodiscard]] bool exists(const QStringList &container, const QString &file);
 
 public:
-    RecentFiles();
+    explicit RecentFiles(QObject *parent = nullptr);
     ~RecentFiles() override;
     void                       replaceFile(const QString &originalFile, const QString &newFile);
     bool                       addFile(const QString &file);

@@ -77,7 +77,7 @@ QString Config::getConfigPath()
         QDir    configDir(appDirPath);
 #if defined(Q_OS_MAC)
         configDir.cdUp();
-        configDir.cd("Resources");
+        configDir.cd(QStringLiteral("Resources"));
 #endif
         QString configFile = configDir.absolutePath();
         configFile.append("/.ainesmilerc");

@@ -34,7 +34,7 @@ public slots:
 private:
     static FindReplaceResultModel *m_instance;
 
-    FindReplaceResultModel();
+    explicit FindReplaceResultModel(QObject *parent = nullptr);
 
     ~FindReplaceResultModel() override;
 

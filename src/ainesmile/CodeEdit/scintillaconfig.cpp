@@ -183,10 +183,10 @@ namespace ScintillaConfig
         if (lexerId)
         {
             sci->setILexer((sptr_t)lexerId);
-            applyThemeStyle(sci, QString("%1/%2.xml").arg(themePath, lang));
+            applyThemeStyle(sci, QStringLiteral("%1/%2.xml").arg(themePath, lang));
 
             QString langPath = config->getLanguageDirPath();
-            applyLanguageStyle(sci, QString("%1/%2.xml").arg(langPath, lang));
+            applyLanguageStyle(sci, QStringLiteral("%1/%2.xml").arg(langPath, lang));
         }
         else
         {
@@ -219,10 +219,10 @@ namespace ScintillaConfig
             return;
         }
 
-        QDomElement docElem      = doc.documentElement();
-        QString     commentLine  = docElem.attribute(QStringLiteral("comment_line"));
-        QString     commentStart = docElem.attribute(QStringLiteral("comment_start"));
-        QString     commentEnd   = docElem.attribute(QStringLiteral("comment_end"));
+        QDomElement docElem = doc.documentElement();
+        // QString     commentLine  = docElem.attribute(QStringLiteral("comment_line"));
+        // QString     commentStart = docElem.attribute(QStringLiteral("comment_start"));
+        // QString     commentEnd   = docElem.attribute(QStringLiteral("comment_end"));
 
         QDomElement keywordElem = docElem.firstChildElement(QStringLiteral("keyword"));
         int         keywordSet  = 0;

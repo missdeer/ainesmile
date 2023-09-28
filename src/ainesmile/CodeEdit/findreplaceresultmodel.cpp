@@ -180,7 +180,7 @@ bool FindReplaceResultModel::removeRows(int position, int rows, const QModelInde
     return success;
 }
 
-FindReplaceResultModel::FindReplaceResultModel()
+FindReplaceResultModel::FindReplaceResultModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QVector<QVariant> rootData {tr("File"), tr("Position"), tr("Context")};
 

@@ -734,22 +734,22 @@
         <translation type="unfinished">Auto Detect</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="490"/>
+        <location filename="../mainwindow.cpp" line="495"/>
         <source>Untitled%1</source>
         <translation type="unfinished">Untitled%1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="657"/>
+        <location filename="../mainwindow.cpp" line="662"/>
         <source>ainesmile Open Files</source>
         <translation type="unfinished">ainesmile Open Files</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="657"/>
+        <location filename="../mainwindow.cpp" line="662"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">All Files (*);;Text Files (*.txt)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="712"/>
+        <location filename="../mainwindow.cpp" line="717"/>
         <source>Build at %1
 Revision: %2
 Keep It Simple &amp; Stupid!</source>
@@ -758,28 +758,28 @@ Revision: %2
 Keep It Simple &amp; Stupid!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="714"/>
+        <location filename="../mainwindow.cpp" line="719"/>
         <source>About ainesmile</source>
         <translation type="unfinished">About ainesmile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="912"/>
+        <location filename="../mainwindow.cpp" line="917"/>
         <source>Select Directory</source>
         <translation type="unfinished">Select Directory</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="924"/>
-        <location filename="../mainwindow.cpp" line="976"/>
-        <location filename="../mainwindow.cpp" line="1020"/>
-        <location filename="../mainwindow.cpp" line="1074"/>
+        <location filename="../mainwindow.cpp" line="929"/>
+        <location filename="../mainwindow.cpp" line="981"/>
+        <location filename="../mainwindow.cpp" line="1025"/>
+        <location filename="../mainwindow.cpp" line="1079"/>
         <source>Warning</source>
         <translation type="unfinished">Warning</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="924"/>
-        <location filename="../mainwindow.cpp" line="976"/>
-        <location filename="../mainwindow.cpp" line="1020"/>
-        <location filename="../mainwindow.cpp" line="1074"/>
+        <location filename="../mainwindow.cpp" line="929"/>
+        <location filename="../mainwindow.cpp" line="981"/>
+        <location filename="../mainwindow.cpp" line="1025"/>
+        <location filename="../mainwindow.cpp" line="1079"/>
         <source>Please input text to search.</source>
         <translation type="unfinished">Please input text to search.</translation>
     </message>
