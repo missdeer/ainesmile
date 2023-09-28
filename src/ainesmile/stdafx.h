@@ -53,9 +53,6 @@
 #    include <QTranslator>
 #    include <QUrl>
 #    include <QVBoxLayout>
-#    include <QtNetwork>
-#    include <QtWidgets>
-#    include <QtXml>
 
 #    ifndef Q_MOC_RUN
 #        if defined(emit)
