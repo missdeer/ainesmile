@@ -1,4 +1,9 @@
 *.o
+.cache
+.vscode
+*.clazy.yaml
+compile_commands.json
+*.user
 *.obj
 moc_*.cpp
 ui_*.h
