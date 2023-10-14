@@ -1,11 +1,11 @@
-#include <cstring>
+﻿#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #    include <direct.h>
 #else
 #    include <sys/stat.h>
@@ -53,7 +53,7 @@ void write_language_definition(language &lang)
         keyword_node->append_attribute(doc.allocate_attribute("name", doc.allocate_string(k.name_.c_str())));
         keyword_node->value(doc.allocate_string(k.keyword_list_.c_str()));
     }
-    
+
     std::string   filename("language\\" + lang.name_ + ".xml");
     std::ofstream ofs(filename.c_str(), std::ios::trunc);
     std::string   xmldoc;
@@ -302,7 +302,8 @@ int main(int argc, char *argv[])
     rapidxml::xml_node<> *type_node = root_node->first_node("Languages");
     if (type_node)
     {
-        std::cout << "this is a language definition file, be sure there is a folder named language, generating language definition files..." << std::endl;
+        std::cout << "this is a language definition file, be sure there is a folder named language, generating language definition files..."
+                  << std::endl;
         parse_language_definition(type_node);
         return 0;
     }
@@ -314,7 +315,7 @@ int main(int argc, char *argv[])
         char *dot   = strrchr(argv[1], '.');
         _theme_name = std::string(argv[1], dot - argv[1]);
         _theme_name.append(".asTheme");
-#if defined(WIN32)
+#if defined(_WIN32)
         mkdir(_theme_name.c_str());
 #else
         mkdir(_theme_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);

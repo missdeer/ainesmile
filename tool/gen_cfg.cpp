@@ -1,20 +1,20 @@
+﻿#include <fstream>
 #include <iostream>
-#include <fstream>
-#include <vector>
 #include <iterator>
 #include <string>
 #include <vector>
-#if defined(WIN32)
-#include <direct.h>
+#if defined(_WIN32)
+#    include <direct.h>
 #else
-#include <dirent.h>
+#    include <dirent.h>
 #endif
 #include <boost/assert.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ini_parser.hpp>
-#include <boost/property_tree/info_parser.hpp>
+
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
 
@@ -102,8 +102,7 @@ int main(int argc, char *argv[])
     write_xml(".Ainesmilerc.xml", pt);
     write_json(".Ainesmilerc.json", pt);
     write_info(".Ainesmilerc.info", pt);
-    //write_ini(".Ainesmilerc.ini", pt);
+    // write_ini(".Ainesmilerc.ini", pt);
 
     return 0;
 }
-

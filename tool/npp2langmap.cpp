@@ -1,11 +1,11 @@
-#include <fstream>
+﻿#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <list>
 #include <string>
 #include <vector>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #    include <direct.h>
 #else
 #    include <dirent.h>
@@ -14,7 +14,6 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_print.hpp"
-
 
 std::string _theme_name;
 
