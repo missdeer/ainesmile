@@ -88,8 +88,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     if (settings.contains("windowState"))
     {
         restoreState(settings.value("windowState").toByteArray());
-        restoreDockWidget(ui->dockFindReplace);
-        restoreDockWidget(ui->dockFindResult);
+        // restoreDockWidget(ui->dockFindReplace);
+        // restoreDockWidget(ui->dockFindResult);
     }
 
     // Post the initial idle event
