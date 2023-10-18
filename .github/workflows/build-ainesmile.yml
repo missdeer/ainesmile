@@ -170,7 +170,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.2
+            qt_ver: 6.6.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -316,7 +316,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.2
+            qt_ver: 6.6.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
