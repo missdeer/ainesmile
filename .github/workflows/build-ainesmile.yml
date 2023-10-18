@@ -19,6 +19,7 @@ env:
   TBB_VERSION: 2021.10.0
   VS_VER: vs2022
   clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.3/LLVM-17.0.3-win64.exe
+  ninja_link: https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
 
 jobs:
   win64-msvc:
@@ -93,7 +94,7 @@ jobs:
           time /T >> src\ainesmile\DATE
           mkdir build
           cd build
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -106,7 +107,7 @@ jobs:
           cd ..
           mkdir build-avx2
           cd build-avx2
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DAVX2=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -239,7 +240,7 @@ jobs:
           time /T >> src\ainesmile\DATE
           mkdir build
           cd build
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -252,7 +253,7 @@ jobs:
           cd ..
           mkdir build-avx2
           cd build-avx2
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DAVX2=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -401,7 +402,7 @@ jobs:
           time /T >> src\ainesmile\DATE
           mkdir build
           cd build
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -416,7 +417,7 @@ jobs:
           cd ..
           mkdir build-avx2
           cd build-avx2
-          curl -o ninja.zip -sSL https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
           cmake -DAVX2=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
@@ -717,7 +718,7 @@ jobs:
             qt_ver: 5.15.2
             qt_modules: ""
           - qt_arch: clang_64
-            qt_ver: 6.5.2
+            qt_ver: 6.6.0
             qt_modules: "qt5compat qtimageformats"
     env:
       targetName: ainesmile
