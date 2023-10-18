@@ -18,7 +18,7 @@ env:
   COMPILER_VERSION: 2023.2.0
   TBB_VERSION: 2021.10.0
   VS_VER: vs2022
-  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.1/LLVM-17.0.1-win64.exe
+  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.3/LLVM-17.0.3-win64.exe
 
 jobs:
   win64-msvc:
@@ -32,7 +32,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.5.2
+            qt_ver: 6.6.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
