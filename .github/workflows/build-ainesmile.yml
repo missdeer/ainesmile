@@ -34,7 +34,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.0
+            qt_ver: 6.6.1
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -171,7 +171,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.0
+            qt_ver: 6.6.1
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -317,7 +317,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.0
+            qt_ver: 6.6.1
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -560,33 +560,6 @@ jobs:
             qt_build: qt6
             qt_dir: /clang64/lib/cmake/Qt6
             cmake_prefix_path: /clang64
-          - qt_arch: ucrt64_qt6-static-gcc
-            mingw_arch: UCRT64
-            mingw_prefix: mingw-w64-ucrt-x86_64
-            toolchains: gcc
-            c: gcc
-            cxx: g++
-            qt_build: qt6-static
-            qt_dir: /ucrt64/qt6-static/lib/cmake/Qt6
-            cmake_prefix_path: /ucrt64/qt6-static
-          - qt_arch: mingw64_qt6-static-gcc
-            mingw_arch: MINGW64
-            mingw_prefix: mingw-w64-x86_64
-            toolchains: gcc
-            c: gcc
-            cxx: g++
-            qt_build: qt6-static
-            qt_dir: /mingw64/qt6-static/lib/cmake/Qt6
-            cmake_prefix_path: /mingw64/qt6-static
-          - qt_arch: clang64_qt6-static-clang
-            mingw_arch: CLANG64
-            mingw_prefix: mingw-w64-clang-x86_64
-            toolchains: clang
-            c: clang
-            cxx: clang++
-            qt_build: qt6-static
-            qt_dir: /clang64/qt6-static/lib/cmake/Qt6
-            cmake_prefix_path: /clang64/qt6-static
             
     env:
       targetName: ainesmile
@@ -712,7 +685,7 @@ jobs:
           overwrite: true
 
   macOS-x86_64:
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       matrix:
         include:
@@ -720,7 +693,7 @@ jobs:
             qt_ver: 5.15.2
             qt_modules: ""
           - qt_arch: clang_64
-            qt_ver: 6.6.0
+            qt_ver: 6.6.1
             qt_modules: "qt5compat qtimageformats"
     env:
       targetName: ainesmile
