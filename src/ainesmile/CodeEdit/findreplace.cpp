@@ -60,7 +60,7 @@ bool FindReplacer::findAllStringInFile(const QString &filePath, FindReplaceOptio
         while (pos >= 0)
         {
             // notify find result
-            int  from    = std::min((int)pos - 10, 0);
+            int  from    = std::min(static_cast<int>(pos) - 10, 0);
             auto context = line.mid(from, fro.strToFind.length() + 20);
             notifier.addResult(filePath, context, lineNr, from, fro.strToFind.length());
 
@@ -127,22 +127,10 @@ bool FindReplacer::findAllInFile(const QString &filePath, FindReplaceOption &fro
 
 bool FindReplacer::findInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
+    int            flags = setFlags(fro);
     ScintillaEdit *sci   = page->getFocusView();
-    int            flags = 0;
-    if (fro.matchCase)
-    {
-        flags |= SCFIND_MATCHCASE;
-    }
-    if (fro.matchWholeWord)
-    {
-        flags |= SCFIND_WHOLEWORD;
-    }
-    if (fro.regexp)
-    {
-        flags |= SCFIND_CXX11REGEX;
-    }
-    sptr_t start = sci->currentPos();
-    sptr_t end   = sci->textLength();
+    sptr_t         start = sci->currentPos();
+    sptr_t         end   = sci->textLength();
     if (fro.searchUp)
     {
         end = 0;
@@ -181,69 +169,18 @@ bool FindReplacer::findInDocument(CodeEditor *page, FindReplaceOption &fro)
 
 CodeEditor *FindReplacer::findInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
-    bool inCurrentPage = findInDocument(currentPage, fro);
-    if (inCurrentPage)
-    {
-        return currentPage;
-    }
-    CodeEditor *page = nullptr;
-    if (fro.searchUp)
-    {
-        page          = previousPage(currentPage, pages);
-        inCurrentPage = findInDocument(currentPage, fro);
-        while (page && !inCurrentPage)
-        {
-            page = previousPage(page, pages);
-            if (!page)
-            {
-                break;
-            }
-            inCurrentPage = findInDocument(currentPage, fro);
-        }
-    }
-    else
-    {
-        //  get next page
-        page          = nextPage(currentPage, pages);
-        inCurrentPage = findInDocument(currentPage, fro);
-        while (page && !inCurrentPage)
-        {
-            page = nextPage(page, pages);
-            if (!page)
-            {
-                break;
-            }
-            inCurrentPage = findInDocument(currentPage, fro);
-        }
-    }
-    if (inCurrentPage)
-    {
-        return page;
-    }
-    return nullptr;
+    return handleInDocuments(currentPage, pages, fro, [this](auto &&page, auto &&fro) {
+        return findInDocument(std::forward<decltype(page)>(page), std::forward<decltype(fro)>(fro));
+    });
 }
 
 bool FindReplacer::findAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
-    int flags = 0;
-    if (fro.matchCase)
-    {
-        flags |= SCFIND_MATCHCASE;
-    }
-    if (fro.matchWholeWord)
-    {
-        flags |= SCFIND_WHOLEWORD;
-    }
-    if (fro.regexp)
-    {
-        flags |= SCFIND_CXX11REGEX;
-    }
+    int flags = setFlags(fro);
 
-    int count = static_cast<int>(pages.size());
-
-    for (int i = 0; i < count; i++)
+    for (auto *page : pages)
     {
-        auto  *page  = pages.at(i);
+        Q_ASSERT(page);
         auto  *sci   = page->getFocusView();
         sptr_t start = 0;
         sptr_t end   = sci->textLength();
@@ -312,22 +249,10 @@ bool FindReplacer::findAllInDirectories(FindReplaceOption &fro)
 
 bool FindReplacer::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
+    int            flags = setFlags(fro);
     ScintillaEdit *sci   = page->getFocusView();
-    int            flags = 0;
-    if (fro.matchCase)
-    {
-        flags |= SCFIND_MATCHCASE;
-    }
-    if (fro.matchWholeWord)
-    {
-        flags |= SCFIND_WHOLEWORD;
-    }
-    if (fro.regexp)
-    {
-        flags |= SCFIND_CXX11REGEX;
-    }
-    sptr_t start = sci->currentPos();
-    sptr_t end   = sci->textLength();
+    sptr_t         start = sci->currentPos();
+    sptr_t         end   = sci->textLength();
     if (fro.searchUp)
     {
         end = 0;
@@ -359,66 +284,17 @@ bool FindReplacer::replaceInDocument(CodeEditor *page, FindReplaceOption &fro)
 
 CodeEditor *FindReplacer::replaceInDocuments(CodeEditor *currentPage, std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
-    bool inCurrentPage = replaceInDocument(currentPage, fro);
-    if (inCurrentPage)
-    {
-        return currentPage;
-    }
-    CodeEditor *page = nullptr;
-    if (fro.searchUp)
-    {
-        page          = previousPage(currentPage, pages);
-        inCurrentPage = replaceInDocument(currentPage, fro);
-        while (page && !inCurrentPage)
-        {
-            page = previousPage(page, pages);
-            if (!page)
-            {
-                break;
-            }
-            inCurrentPage = replaceInDocument(currentPage, fro);
-        }
-    }
-    else
-    {
-        //  get next page
-        page          = nextPage(currentPage, pages);
-        inCurrentPage = replaceInDocument(currentPage, fro);
-        while (page && !inCurrentPage)
-        {
-            page = nextPage(page, pages);
-            if (!page)
-            {
-                break;
-            }
-            inCurrentPage = replaceInDocument(currentPage, fro);
-        }
-    }
-    if (inCurrentPage)
-    {
-        return page;
-    }
-    return nullptr;
+    return handleInDocuments(currentPage, pages, fro, [this](auto &&page, auto &&fro) {
+        return replaceInDocument(std::forward<decltype(page)>(page), std::forward<decltype(fro)>(fro));
+    });
 }
 
 bool FindReplacer::replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro)
 {
+    int            flags = setFlags(fro);
     ScintillaEdit *sci   = page->getFocusView();
-    int            flags = 0;
-    if (fro.matchCase)
-    {
-        flags |= SCFIND_MATCHCASE;
-    }
-    if (fro.matchWholeWord)
-    {
-        flags |= SCFIND_WHOLEWORD;
-    }
-    if (fro.regexp)
-    {
-        flags |= SCFIND_CXX11REGEX;
-    }
-    sptr_t start = 0;
-    sptr_t end   = sci->textLength();
+    sptr_t         start = 0;
+    sptr_t         end   = sci->textLength();
     if (fro.searchUp)
     {
         end = 0;
@@ -439,7 +315,7 @@ bool FindReplacer::replaceAllInDocument(CodeEditor *page, FindReplaceOption &fro
 
 bool FindReplacer::replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindReplaceOption &fro)
 {
-    std::for_each(pages.begin(), pages.end(), [this, &fro](auto &&PH1) { return replaceAllInDocument(std::forward<decltype(PH1)>(PH1), fro); });
+    std::for_each(pages.begin(), pages.end(), [this, &fro](auto &&page) { return replaceAllInDocument(std::forward<decltype(page)>(page), fro); });
     return true;
 }
 
@@ -488,4 +364,66 @@ bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOpti
 bool FindReplacer::replaceAllInDirectories(FindReplaceOption &fro)
 {
     return replaceAllInDirectory(fro.directory, fro, true);
+}
+
+int FindReplacer::setFlags(FindReplaceOption &fro)
+{
+    int flags = 0;
+    if (fro.matchCase)
+    {
+        flags |= SCFIND_MATCHCASE;
+    }
+    if (fro.matchWholeWord)
+    {
+        flags |= SCFIND_WHOLEWORD;
+    }
+    if (fro.regexp)
+    {
+        flags |= SCFIND_CXX11REGEX;
+    }
+
+    return flags;
+}
+
+CodeEditor *FindReplacer::handleInDocuments(CodeEditor                                            *currentPage,
+                                            std::vector<CodeEditor *>                             &pages,
+                                            FindReplaceOption                                     &fro,
+                                            std::function<bool(CodeEditor *, FindReplaceOption &)> handleInDocument)
+{
+    bool inCurrentPage = handleInDocument(currentPage, fro);
+    if (inCurrentPage)
+    {
+        return currentPage;
+    }
+    bool isSearchUp = fro.searchUp;
+    return handlePages(currentPage, pages, fro, handleInDocument, [this, isSearchUp](auto &&currentPage, auto &&pages) {
+        if (isSearchUp)
+        {
+            return previousPage(std::forward<decltype(currentPage)>(currentPage), std::forward<decltype(pages)>(pages));
+        }
+        return nextPage(std::forward<decltype(currentPage)>(currentPage), std::forward<decltype(pages)>(pages));
+    });
+}
+
+CodeEditor *FindReplacer::handlePages(CodeEditor                                                            *currentPage,
+                                      std::vector<CodeEditor *>                                             &pages,
+                                      FindReplaceOption                                                     &fro,
+                                      std::function<bool(CodeEditor *, FindReplaceOption &)>                 handleInDocument,
+                                      std::function<CodeEditor *(CodeEditor *, std::vector<CodeEditor *> &)> getPage)
+{
+    auto *page          = getPage(currentPage, pages);
+    bool  inCurrentPage = handleInDocument(currentPage, fro);
+
+    while (page && !inCurrentPage)
+    {
+        page = getPage(page, pages);
+        if (!page)
+        {
+            break;
+        }
+
+        inCurrentPage = handleInDocument(currentPage, fro);
+    }
+
+    return (inCurrentPage ? page : nullptr);
 }

@@ -69,12 +69,24 @@ signals:
 private:
     CodeEditor *previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
     CodeEditor *nextPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages);
-    bool        findAllInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        findAllStringInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        findAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
-    bool        replaceAllInFile(const QString &filePath, FindReplaceOption &fro);
-    bool        replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
+    CodeEditor *handleInDocuments(CodeEditor                                            *currentPage,
+                                  std::vector<CodeEditor *>                             &pages,
+                                  FindReplaceOption                                     &fro,
+                                  std::function<bool(CodeEditor *, FindReplaceOption &)> handleInDocument);
+
+    CodeEditor *handlePages(CodeEditor                                                            *currentPage,
+                            std::vector<CodeEditor *>                                             &pages,
+                            FindReplaceOption                                                     &fro,
+                            std::function<bool(CodeEditor *, FindReplaceOption &)>                 handleInDocument,
+                            std::function<CodeEditor *(CodeEditor *, std::vector<CodeEditor *> &)> getPage);
+
+    bool findAllInFile(const QString &filePath, FindReplaceOption &fro);
+    bool findAllStringInFile(const QString &filePath, FindReplaceOption &fro);
+    bool findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
+    bool findAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
+    bool replaceAllInFile(const QString &filePath, FindReplaceOption &fro);
+    bool replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
+    int  setFlags(FindReplaceOption &fro);
 };
 
 #endif // FINDREPLACE_H
