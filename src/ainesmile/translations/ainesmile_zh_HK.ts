@@ -790,26 +790,26 @@ Keep It Simple &amp; Stupid!</source>
         <translation type="unfinished">移動到另一側</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="81"/>
+        <location filename="../tabwidget.cpp" line="83"/>
         <source>Confirm</source>
         <translation type="unfinished">確認</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="81"/>
+        <location filename="../tabwidget.cpp" line="83"/>
         <source>This document is not saved, save it now?</source>
         <translation type="unfinished">該文檔沒有保存，現在保存嗎？</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="91"/>
-        <location filename="../tabwidget.cpp" line="252"/>
-        <location filename="../tabwidget.cpp" line="280"/>
+        <location filename="../tabwidget.cpp" line="93"/>
+        <location filename="../tabwidget.cpp" line="259"/>
+        <location filename="../tabwidget.cpp" line="287"/>
         <source>ainesmile Save File To</source>
         <translation type="unfinished">ainesmile 保存文件到</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="91"/>
-        <location filename="../tabwidget.cpp" line="252"/>
-        <location filename="../tabwidget.cpp" line="280"/>
+        <location filename="../tabwidget.cpp" line="93"/>
+        <location filename="../tabwidget.cpp" line="259"/>
+        <location filename="../tabwidget.cpp" line="287"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">所有文件(*);;文本文件(*.txt)</translation>
     </message>

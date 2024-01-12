@@ -102,7 +102,7 @@ bool FindReplacer::findAllRegexpInFile(const QString &filePath, FindReplaceOptio
         while (pos >= 0)
         {
             // notify find result
-            int  from    = std::min((int)pos - 10, 0);
+            int  from    = std::min(static_cast<int>(pos) - 10, 0);
             auto context = line.mid(from, match.capturedLength() + 20);
             notifier.addResult(filePath, context, lineNr, from, match.capturedLength());
 

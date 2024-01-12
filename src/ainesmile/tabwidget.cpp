@@ -34,10 +34,10 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
         {
             setCurrentIndex(index);
 
-            auto *contentMenu_ = new QMenu(this);
+            auto *contentMenu = new QMenu(this);
             auto *action       = new QAction(tr("Move to the other side"), this);
             connect(action, &QAction::triggered, this, &TabWidget::exchangeTab);
-            contentMenu_->addAction(action);
+            contentMenu->addAction(action);
 
 #if defined(Q_OS_WIN)
             auto *page = qobject_cast<CodeEditor *>(currentWidget());
@@ -47,11 +47,11 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
             {
                 CShellContextMenu scm;
                 auto              pos = mapToGlobal(event->pos());
-                scm.ShowContextMenu(contentMenu_, this, pos, filePath.replace(QChar('/'), QChar('\\')));
+                scm.ShowContextMenu(contentMenu, this, pos, filePath.replace(QChar('/'), QChar('\\')));
                 return;
             }
 #endif
-            contentMenu_->popup(mapToGlobal(event->pos()));
+            contentMenu->popup(mapToGlobal(event->pos()));
         }
     }
     else
@@ -67,7 +67,9 @@ bool TabWidget::focus()
         auto *page = qobject_cast<CodeEditor *>(currentWidget());
         Q_ASSERT(page);
         if (page->focus())
+        {
             return true;
+        }
     }
     return false;
 }
@@ -92,11 +94,15 @@ void TabWidget::doCloseRequested(int index)
             }
 
             if (filePath.isEmpty())
+            {
                 return; // don't close this tab
+            }
 
             page->saveFile(filePath);
             if (m_recentFiles->addFile(filePath))
+            {
                 emit updateRecentFiles();
+            }
         }
     }
     else
@@ -170,6 +176,7 @@ int TabWidget::openFile(const QString &filePath)
     {
         QWidget *w    = widget(0);
         auto    *page = qobject_cast<CodeEditor *>(w);
+        Q_ASSERT(page);
         if (page->initialDocument())
         {
             doCloseRequested(0);
@@ -182,7 +189,7 @@ int TabWidget::openFile(const QString &filePath)
 void TabWidget::openFiles(const QStringList &files)
 {
     int index = 0;
-    foreach (const QString &file, files)
+    for (const auto &file : files)
     {
         QFileInfo fileInfo(file);
         if (QFile::exists(fileInfo.absoluteFilePath()))

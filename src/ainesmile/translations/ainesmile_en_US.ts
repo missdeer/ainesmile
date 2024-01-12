@@ -792,26 +792,26 @@ Keep It Simple &amp; Stupid!</translation>
         <translation type="unfinished">Move to the other side</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="81"/>
+        <location filename="../tabwidget.cpp" line="83"/>
         <source>Confirm</source>
         <translation type="unfinished">Confirm</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="81"/>
+        <location filename="../tabwidget.cpp" line="83"/>
         <source>This document is not saved, save it now?</source>
         <translation type="unfinished">This document is not saved, save it now?</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="91"/>
-        <location filename="../tabwidget.cpp" line="252"/>
-        <location filename="../tabwidget.cpp" line="280"/>
+        <location filename="../tabwidget.cpp" line="93"/>
+        <location filename="../tabwidget.cpp" line="259"/>
+        <location filename="../tabwidget.cpp" line="287"/>
         <source>ainesmile Save File To</source>
         <translation type="unfinished">ainesmile Save File To</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="91"/>
-        <location filename="../tabwidget.cpp" line="252"/>
-        <location filename="../tabwidget.cpp" line="280"/>
+        <location filename="../tabwidget.cpp" line="93"/>
+        <location filename="../tabwidget.cpp" line="259"/>
+        <location filename="../tabwidget.cpp" line="287"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">All Files (*);;Text Files (*.txt)</translation>
     </message>
