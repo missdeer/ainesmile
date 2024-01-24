@@ -80,61 +80,11 @@ void CodeEditor::openFile(const QString &filePath)
         m_lexerName = config->matchPatternLanguage(filePath);
     }
     m_document.setFilePath(filePath);
-
-    auto &ptree              = Config::instance()->pt();
-    bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
-
-    m_document.setBOM(BOM::None);
-    const qint64                headerLen = 4;
-    std::array<char, headerLen> header {};
-    qint64                      cbRead          = file.read(header.data(), headerLen);
-    bool                        charsetDetected = false;
-    auto [bom, length]                          = EncodingUtils::checkBOM(QByteArray::fromRawData(header.data(), cbRead));
-
-    file.seek(length);
-    auto data = file.readAll();
-    if (bom == BOM::UTF8)
-    {
-        m_document.setEncoding(QByteArrayLiteral("UTF-8"));
-        m_document.setBOM(bom);
-        loadRawData(data);
-        return;
-    }
-    if (bom != BOM::None)
-    {
-        auto encoding = EncodingUtils::encodingNameForBOM(bom);
-        m_document.setEncoding(encoding);
-        m_document.setBOM(bom);
-        charsetDetected = true;
-        loadDataAsEncoding();
-        return;
-    }
-
-    if (autoDetectEncoding)
-    {
-        if (!charsetDetected)
-        {
-            m_document.setBOM(BOM::None);
-            file.seek(0);
-            QString encoding = EncodingUtils::fileEncodingDetect(data);
-            if (!encoding.isEmpty() && encoding.toUpper() != QByteArrayLiteral("UTF-8"))
-            {
-                m_document.setEncoding(encoding);
-                charsetDetected = true;
-                loadDataAsEncoding();
-                return;
-            }
-        }
-    }
-    if (!charsetDetected)
-    {
-        m_document.setEncoding(QByteArrayLiteral("UTF-8"));
-        loadRawData(data);
-        return;
-    }
+    m_document.setForceEncoding(false);
+    loadDataFromFile();
 }
 
-void CodeEditor::loadDataAsEncoding()
+void CodeEditor::loadDataFromFile()
 {
     auto data = m_document.loadFromFile();
     // display text
@@ -142,16 +92,6 @@ void CodeEditor::loadDataAsEncoding()
     int lineCount = TextUtils::getLineCount(data.constData(), data.length());
     m_sciControlMaster->allocateLines(lineCount);
     m_sciControlMaster->appendText(data.length(), (const char *)data.constData());
-
-    documentChanged();
-}
-
-void CodeEditor::loadRawData(const QByteArray &data)
-{
-    m_sciControlMaster->clearAll();
-    int lineCount = TextUtils::getLineCount(data);
-    m_sciControlMaster->allocateLines(lineCount);
-    m_sciControlMaster->appendText(data.length(), data.constData());
 
     documentChanged();
 }
@@ -1024,21 +964,8 @@ void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
         }
     }
 
-    QFile file(m_document.filePath());
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        return;
-    }
-    qint64 skipBytes = 0;
-    if (m_document.bom() != BOM::None)
-    {
-        auto bom  = EncodingUtils::generateBOM(m_document.bom());
-        skipBytes = bom.length();
-    }
-    file.seek(skipBytes);
-    auto data = file.readAll();
-    loadDataAsEncoding();
-    file.close();
+    m_document.setForceEncoding(true);
+    loadDataFromFile();
 }
 
 void CodeEditor::saveAsEncoding(const QString &encoding, bool withBOM)

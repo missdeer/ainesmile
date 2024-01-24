@@ -61,6 +61,7 @@ QByteArray ASDocument::convertReadDataEncoding(const QByteArray &data)
     }
     ptrdiff_t bytesConsumed  = source - sourceStart;
     ptrdiff_t bytesGenerated = target - targetStart;
+    targetBuffer.resize(bytesGenerated);
     return targetBuffer;
 }
 
@@ -129,6 +130,12 @@ QByteArray ASDocument::loadFromFile()
     if (!file.open(QIODevice::ReadOnly))
     {
         return {};
+    }
+
+    if (m_forceEncoding)
+    {
+        auto data = file.readAll();
+        return convertReadDataEncoding(data);
     }
 
     auto &ptree              = Config::instance()->pt();
@@ -248,4 +255,14 @@ QByteArray ASDocument::convertWriteDataEncoding(const QByteArray &data)
     ptrdiff_t bytesGenerated = target - targetStart;
     targetBuffer.resize(bytesGenerated);
     return targetBuffer;
+}
+
+void ASDocument::setForceEncoding(bool forceEncoding)
+{
+    m_forceEncoding = forceEncoding;
+}
+
+bool ASDocument::forceEncoding() const
+{
+    return m_forceEncoding;
 }

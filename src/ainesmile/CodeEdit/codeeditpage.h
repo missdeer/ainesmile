@@ -130,8 +130,7 @@ private:
     void init();
     void documentChanged();
     void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
-    void loadRawData(const QByteArray &data);
-    void loadDataAsEncoding();
+    void loadDataFromFile();
     void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
 
     static void                deleteLine(ScintillaEdit *sci, sptr_t line);

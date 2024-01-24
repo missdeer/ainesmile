@@ -20,7 +20,11 @@ public:
     [[nodiscard]] BOM  bom() const;
     [[nodiscard]] bool hasBOM() const;
 
+    void               setForceEncoding(bool forceEncoding);
+    [[nodiscard]] bool forceEncoding() const;
+
 private:
+    bool                     m_forceEncoding {false};
     QString                  m_filePath;
     QString                  m_encoding {QStringLiteral("UTF-8")};
     QString                  m_errorMessage;
