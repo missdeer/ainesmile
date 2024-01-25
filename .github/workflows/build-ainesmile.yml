@@ -19,7 +19,7 @@ env:
   COMPILER_VERSION: 2024.0.0
   TBB_VERSION: 2021.11.0
   VS_VER: vs2022
-  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.5/LLVM-17.0.5-win64.exe
+  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.6/LLVM-17.0.6-win64.exe
   ninja_link: https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
 
 jobs:
