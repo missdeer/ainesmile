@@ -121,7 +121,7 @@ namespace EncodingUtils
         if (encoding.isEmpty() || encoding.toLower() == QStringLiteral("system"))
         {
 #if defined(Q_OS_WIN)
-            const size_t bufferSize = 100;
+            const size_t bufferSize             = 100;
             WCHAR        localeData[bufferSize] = {0}; // Buffer to store locale information
 
             if (GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, localeData, bufferSize))
@@ -129,6 +129,10 @@ namespace EncodingUtils
                 return QStringLiteral("windows-") + QString::fromWCharArray(localeData);
             }
 #endif
+        }
+        else
+        {
+            return encoding;
         }
         return QStringLiteral("UTF-8");
     }
