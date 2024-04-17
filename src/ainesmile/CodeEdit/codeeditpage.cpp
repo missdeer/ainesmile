@@ -95,10 +95,16 @@ void CodeEditor::loadDataFromFile()
         QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(m_document.filePath())), QMessageBox::Ok);
         return;
     }
+    if (data.isEmpty())
+    {
+        return;
+    }
     // display text
     int lineCount = TextUtils::getLineCount(data.constData(), data.length());
     m_sciControlMaster->allocateLines(lineCount);
+    m_sciControlMaster->setModEventMask(SC_MOD_NONE);
     m_sciControlMaster->appendText(data.length(), (const char *)data.constData());
+    m_sciControlMaster->setModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT);
 
     documentChanged();
 }
