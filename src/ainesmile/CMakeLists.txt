@@ -204,7 +204,14 @@ if(APPLE)
                MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
                MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/osxInfo.plist"
                )
-
+  add_custom_command(TARGET ${PROJECT_NAME} 
+        POST_BUILD COMMAND 
+        ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Libs/"
+        $<TARGET_FILE:${PROJECT_NAME}>)
+  add_custom_command(TARGET ${PROJECT_NAME} 
+        POST_BUILD COMMAND 
+        ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "/Users/missdeer/llvm/output/lib"
+        $<TARGET_FILE:${PROJECT_NAME}>)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/../../resource/themes
