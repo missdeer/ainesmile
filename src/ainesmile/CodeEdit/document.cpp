@@ -14,51 +14,57 @@ QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString
     {
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(fromEncoding).arg(errorName);
-        return {};
+        return data;
     }
-    BOOST_SCOPE_EXIT(sourceConv)
-    {
-        ucnv_close(sourceConv);
-    }
-    BOOST_SCOPE_EXIT_END
 
     UConverter *targetConv = ucnv_open(toEncoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("creating converter for UTF-8 failed: %1").arg(errorName);
-        return {};
+        ucnv_close(sourceConv);
+        return data;
     }
-    BOOST_SCOPE_EXIT(targetConv)
+    BOOST_SCOPE_EXIT(sourceConv, targetConv)
     {
+        ucnv_close(sourceConv);
         ucnv_close(targetConv);
     }
     BOOST_SCOPE_EXIT_END
 
-    const qint64 sourceSize  = data.length();
-    const char  *source      = data.constData();
-    const char  *sourceStart = data.constData();
-    const char  *sourceLimit = source + sourceSize;
+    const qint64      sourceSize  = data.length();
+    const char       *source      = data.constData();
+    const char *const sourceStart = data.constData();
+    const char *const sourceLimit = source + sourceSize;
 
-    const qint64 targetBufferSize = sourceSize * 2;
+    const qint64 targetBufferSize = sourceSize * 4;
     QByteArray   targetBuffer;
     targetBuffer.resize(targetBufferSize);
-    char *target      = targetBuffer.data();
-    char *targetStart = target;
-    char *targetLimit = target + targetBufferSize;
+    char             *target      = targetBuffer.data();
+    const char *const targetStart = target;
+    char             *targetLimit = target + targetBufferSize;
     // convert encoding
     ucnv_convertEx(targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
 
     if (errorCode == U_BUFFER_OVERFLOW_ERROR)
     {
-        errorCode = U_ZERO_ERROR;
+        qint64 usedSize       = target - targetStart;
+        qint64 additionalSize = targetBufferSize * 2 - usedSize;
+        targetBuffer.resize(usedSize + additionalSize);
+        target      = targetBuffer.data() + usedSize;
+        targetLimit = targetBuffer.data() + targetBuffer.size();
+        errorCode   = U_ZERO_ERROR;
+        // retry
+        ucnv_convertEx(
+            targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
     }
-    else if (U_FAILURE(errorCode))
+
+    if (U_FAILURE(errorCode))
     {
         // Handle conversion error
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("converting from %1 to %2 failed: %3").arg(fromEncoding).arg(toEncoding).arg(errorName);
-        return {};
+        return data;
     }
     ptrdiff_t bytesConsumed  = source - sourceStart;
     ptrdiff_t bytesGenerated = target - targetStart;
