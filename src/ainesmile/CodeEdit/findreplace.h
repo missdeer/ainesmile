@@ -15,10 +15,10 @@ class CodeEditor;
 
 namespace FindReplaceConst
 {
-    inline const QString FS_DOCUMENT                      = QCoreApplication::translate("FindReplaceConst", "Current Document");
-    inline const QString FS_ALLOPENED_DOCUMENTS           = QCoreApplication::translate("FindReplaceConst", "All Opened Documents");
-    inline const QString FS_DIRECTORY                     = QCoreApplication::translate("FindReplaceConst", "Directory");
-    inline const QString FS_DIRECTORY_WITH_SUBDIRECTORIES = QCoreApplication::translate("FindReplaceConst", "Directory with Sub-directories");
+    inline QString FS_DOCUMENT;
+    inline QString FS_ALLOPENED_DOCUMENTS;
+    inline QString FS_DIRECTORY;
+    inline QString FS_DIRECTORY_WITH_SUBDIRECTORIES;
 } // namespace FindReplaceConst
 
 struct FindReplaceOption

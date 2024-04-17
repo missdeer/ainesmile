@@ -60,6 +60,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidgetSlave->hide();
     ui->tabWidget->setFocus();
 
+    FindReplaceConst::FS_DOCUMENT                      = tr("Current Document");
+    FindReplaceConst::FS_ALLOPENED_DOCUMENTS           = tr("All Opened Documents");
+    FindReplaceConst::FS_DIRECTORY                     = tr("Directory");
+    FindReplaceConst::FS_DIRECTORY_WITH_SUBDIRECTORIES = tr("Directory with Sub-directories");
+
     ui->cbFindReplaceScope->addItems({FindReplaceConst::FS_DOCUMENT,
                                       FindReplaceConst::FS_ALLOPENED_DOCUMENTS,
                                       FindReplaceConst::FS_DIRECTORY,

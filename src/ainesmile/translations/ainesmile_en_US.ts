@@ -734,22 +734,42 @@
         <translation type="unfinished">Auto Detect</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="493"/>
+        <location filename="../mainwindow.cpp" line="63"/>
+        <source>Current Document</source>
+        <translation type="unfinished">Current Document</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="64"/>
+        <source>All Opened Documents</source>
+        <translation type="unfinished">All Opened Documents</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="65"/>
+        <source>Directory</source>
+        <translation type="unfinished">Directory</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="66"/>
+        <source>Directory with Sub-directories</source>
+        <translation type="unfinished">Directory with Sub-directories</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="498"/>
         <source>Untitled%1</source>
         <translation type="unfinished">Untitled%1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="660"/>
+        <location filename="../mainwindow.cpp" line="665"/>
         <source>ainesmile Open Files</source>
         <translation type="unfinished">ainesmile Open Files</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="660"/>
+        <location filename="../mainwindow.cpp" line="665"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">All Files (*);;Text Files (*.txt)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="715"/>
+        <location filename="../mainwindow.cpp" line="720"/>
         <source>Build at %1
 Revision: %2
 Keep It Simple &amp; Stupid!</source>
@@ -758,28 +778,28 @@ Revision: %2
 Keep It Simple &amp; Stupid!</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="717"/>
+        <location filename="../mainwindow.cpp" line="722"/>
         <source>About ainesmile</source>
         <translation type="unfinished">About ainesmile</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="915"/>
+        <location filename="../mainwindow.cpp" line="920"/>
         <source>Select Directory</source>
         <translation type="unfinished">Select Directory</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="927"/>
-        <location filename="../mainwindow.cpp" line="979"/>
-        <location filename="../mainwindow.cpp" line="1023"/>
-        <location filename="../mainwindow.cpp" line="1077"/>
+        <location filename="../mainwindow.cpp" line="932"/>
+        <location filename="../mainwindow.cpp" line="984"/>
+        <location filename="../mainwindow.cpp" line="1028"/>
+        <location filename="../mainwindow.cpp" line="1082"/>
         <source>Warning</source>
         <translation type="unfinished">Warning</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="927"/>
-        <location filename="../mainwindow.cpp" line="979"/>
-        <location filename="../mainwindow.cpp" line="1023"/>
-        <location filename="../mainwindow.cpp" line="1077"/>
+        <location filename="../mainwindow.cpp" line="932"/>
+        <location filename="../mainwindow.cpp" line="984"/>
+        <location filename="../mainwindow.cpp" line="1028"/>
+        <location filename="../mainwindow.cpp" line="1082"/>
         <source>Please input text to search.</source>
         <translation type="unfinished">Please input text to search.</translation>
     </message>
