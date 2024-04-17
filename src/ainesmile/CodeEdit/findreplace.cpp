@@ -319,9 +319,143 @@ bool FindReplacer::replaceAllInDocuments(std::vector<CodeEditor *> &pages, FindR
     return true;
 }
 
+bool FindReplacer::replaceAllRegexpInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    // 使用QFile读取文件
+    // 在文件中查找fro.strToFind正则表达式，要匹配fro.matchCase和fro.matchWholeWord标志
+    // 然后将其替换为fro.strReplaceWith
+    // 最后写回文件
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite))
+    {
+        return false;
+    }
+    QFileInfo   fileInfo(file);
+    QTextStream in(&file);
+
+    QString tempFileName = QDir::tempPath() + "/." + fileInfo.fileName() + ".tmp";
+    QFile   tempFile(tempFileName);
+    if (!tempFile.open(QIODevice::WriteOnly))
+    {
+        file.close();
+        return false;
+    }
+
+    QTextStream out(&tempFile);
+
+    QString searchString  = fro.strToFind;
+    QString replaceString = fro.strReplaceWith;
+
+    if (fro.matchWholeWord)
+    {
+        searchString = "\\b" + searchString + "\\b";
+    }
+
+    QRegularExpression regex(searchString);
+    if (!fro.matchCase)
+    {
+        regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    }
+
+    while (!in.atEnd())
+    {
+        QString line = in.readLine();
+        line.replace(regex, replaceString);
+        out << line << "\n";
+    }
+
+    file.resize(0);
+    file.close();
+
+    tempFile.rename(filePath);
+    tempFile.close();
+    return true;
+}
+
+bool FindReplacer::replaceAllStringInFile(const QString &filePath, FindReplaceOption &fro)
+{
+    // 使用QFile读取文件
+    // 在文件中查找fro.strToFind字符串，要匹配fro.matchCase和fro.matchWholeWord标志
+    // 然后将其替换为fro.strReplaceWith
+    // 最后写回文件
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite))
+    {
+        return false;
+    }
+    QFileInfo   fileInfo(file);
+    QTextStream in(&file);
+
+    QString tempFileName = QDir::tempPath() + "/." + fileInfo.fileName() + ".tmp";
+    QFile   tempFile(tempFileName);
+    if (!tempFile.open(QIODevice::WriteOnly))
+    {
+        file.close();
+        return false;
+    }
+
+    QTextStream out(&tempFile);
+
+    QString searchString  = fro.strToFind;
+    QString replaceString = fro.strReplaceWith;
+
+    const Qt::CaseSensitivity cs         = fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    const QString             characters = QStringLiteral("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    // do replace all
+    if (fro.matchWholeWord)
+    {
+        while (!in.atEnd())
+        {
+            QString line      = in.readLine();
+            int     fromIndex = 0;
+            for (int index = line.indexOf(searchString, fromIndex, cs); index >= 0; index = line.indexOf(searchString, fromIndex, cs))
+            {
+                // check line[index - 1] and line[index + searchString.length()] is not a word character
+                bool isNotWordChar = (index > 0 && !characters.contains(line[index - 1])) &&
+                                     (index + searchString.length() < line.length() && !characters.contains(line[index + searchString.length()]));
+
+                if (!isNotWordChar)
+                {
+                    // whole word match failed
+                    fromIndex = index + 1;
+                    continue;
+                }
+                // replace line[index:index + searchString.length()] with replaceString
+                line.replace(index, searchString.length(), replaceString);
+                out << line << "\n";
+                fromIndex = index + replaceString.length();
+            }
+        }
+    }
+    else
+    {
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+            line.replace(searchString, replaceString, cs);
+            out << line << "\n";
+        }
+    }
+
+    file.resize(0);
+    file.close();
+
+    if (!tempFile.rename(filePath))
+    {
+        return false;
+    }
+    tempFile.close();
+    return true;
+}
+
 bool FindReplacer::replaceAllInFile(const QString &filePath, FindReplaceOption &fro)
 {
-    return false;
+    if (fro.regexp)
+    {
+        return replaceAllRegexpInFile(filePath, fro);
+    }
+
+    return replaceAllStringInFile(filePath, fro);
 }
 
 bool FindReplacer::replaceAllInDirectory(FindReplaceOption &fro)

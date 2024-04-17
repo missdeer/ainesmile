@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <QTextCodec>
+
 #include "encodingutils.h"
 
 namespace EncodingUtils
@@ -93,21 +95,45 @@ namespace EncodingUtils
             return QStringLiteral("UTF-8");
         }
 
-        QStringList encodings;
+        using encodingPair = std::pair<QString, int32_t>;
+        std::vector<encodingPair> encodings;
         for (int32_t i = 0; i < matchesFound; i++)
         {
+            auto confidence = ucsdet_getConfidence(matches[i], &status);
+            if (U_FAILURE(status) || confidence < 50)
+            {
+                continue;
+            }
             const char *name = ucsdet_getName(matches[i], &status);
-            encodings.append(QString::fromLatin1(name));
+            if (U_FAILURE(status))
+            {
+                continue;
+            }
+            encodings.emplace_back(QString::fromLatin1(name), confidence);
         }
 
-        if (!encodings.isEmpty())
+        if (!encodings.empty())
         {
-            // sort
-            std::stable_partition(
-                encodings.begin(), encodings.end(), [](const QString &str) { return !str.startsWith(QStringLiteral("ISO-"), Qt::CaseInsensitive); });
-            return encodings.front();
+            return encodings.front().first;
         }
+        QTextCodec *codec    = QTextCodec::codecForLocale();
+        auto        encoding = QString::fromLatin1(codec->name());
+        if (encoding.isEmpty() || encoding.toLower() == QStringLiteral("system"))
+        {
+#if defined(Q_OS_WIN)
+            const size_t bufferSize             = 100;
+            WCHAR        localeData[bufferSize] = {0}; // Buffer to store locale information
 
+            if (GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, localeData, bufferSize))
+            {
+                return QStringLiteral("windows-") + QString::fromWCharArray(localeData);
+            }
+#endif
+        }
+        else
+        {
+            return encoding;
+        }
         return QStringLiteral("UTF-8");
     }
 } // namespace EncodingUtils

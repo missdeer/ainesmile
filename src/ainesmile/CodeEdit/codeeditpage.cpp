@@ -62,149 +62,49 @@ ScintillaEdit *CodeEditor::getFocusView()
 
 bool CodeEditor::initialDocument()
 {
-    return !isModified() && m_filePath.isEmpty();
+    return !isModified() && m_document.filePath().isEmpty();
 }
 
-void CodeEditor::openFile(const QString &filePath)
+bool CodeEditor::openFile(const QString &filePath)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        return;
+        QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(filePath)), QMessageBox::Ok);
+        return false;
     }
 
-    m_filePath = filePath;
-    if (!m_filePath.isEmpty())
+    if (!filePath.isEmpty())
     {
         Config *config = Config::instance();
         Q_ASSERT(config);
-        m_lexerName = config->matchPatternLanguage(m_filePath);
+        m_lexerName = config->matchPatternLanguage(filePath);
     }
-
-    auto &ptree              = Config::instance()->pt();
-    bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
-
-    m_bom                                 = BOM::None;
-    const qint64                headerLen = 4;
-    std::array<char, headerLen> header {};
-    qint64                      cbRead          = file.read(header.data(), headerLen);
-    bool                        charsetDetected = false;
-    auto [bom, length]                          = EncodingUtils::checkBOM(QByteArray::fromRawData(header.data(), cbRead));
-
-    file.seek(length);
-    auto data = file.readAll();
-    if (bom == BOM::UTF8)
-    {
-        m_encoding = QByteArrayLiteral("UTF-8");
-        m_bom      = bom;
-        loadRawFile(data);
-        return;
-    }
-    if (bom != BOM::None)
-    {
-        auto encoding = EncodingUtils::encodingNameForBOM(bom);
-        loadFileAsEncoding(data, encoding);
-        m_encoding      = encoding;
-        m_bom           = bom;
-        charsetDetected = true;
-        return;
-    }
-
-    if (autoDetectEncoding)
-    {
-        if (!charsetDetected)
-        {
-            m_bom = BOM::None;
-            file.seek(0);
-            QString encoding = EncodingUtils::fileEncodingDetect(data);
-            if (!encoding.isEmpty() && encoding.toUpper() != QByteArrayLiteral("UTF-8"))
-            {
-                loadFileAsEncoding(data, encoding);
-                m_encoding      = encoding.toUtf8();
-                charsetDetected = true;
-                return;
-            }
-        }
-    }
-    if (!charsetDetected)
-    {
-        m_encoding = QByteArrayLiteral("UTF-8");
-        loadRawFile(data);
-        return;
-    }
+    m_document.setFilePath(filePath);
+    m_document.setForceEncoding(false);
+    loadDataFromFile();
+    return true;
 }
 
-void CodeEditor::loadFileAsEncoding(const QByteArray &data, const QString &encoding)
+void CodeEditor::loadDataFromFile()
 {
-    UErrorCode errorCode = U_ZERO_ERROR;
-
-    UConverter *sourceConv = ucnv_open(encoding.toStdString().c_str(), &errorCode);
-    if (U_FAILURE(errorCode))
+    m_sciControlMaster->clearAll();
+    auto [ok, data] = m_document.loadFromFile();
+    if (!ok)
     {
-        const char *errorName = u_errorName(errorCode);
-        QMessageBox::critical(this, tr("Error"), tr("creating converter for %1 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
+        QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(m_document.filePath())), QMessageBox::Ok);
         return;
     }
-    BOOST_SCOPE_EXIT(sourceConv)
+    if (data.isEmpty())
     {
-        ucnv_close(sourceConv);
-    }
-    BOOST_SCOPE_EXIT_END
-
-    UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
-    if (U_FAILURE(errorCode))
-    {
-        const char *errorName = u_errorName(errorCode);
-        QMessageBox::critical(this, tr("Error"), tr("creating converter for UTF-8 failed: %1").arg(errorName), QMessageBox::Ok);
         return;
     }
-    BOOST_SCOPE_EXIT(targetConv)
-    {
-        ucnv_close(targetConv);
-    }
-    BOOST_SCOPE_EXIT_END
-
-    const qint64 sourceSize  = data.length();
-    const char  *source      = data.constData();
-    const char  *sourceStart = data.constData();
-    const char  *sourceLimit = source + sourceSize;
-
-    const qint64      targetBufferSize = sourceSize * 2;
-    std::vector<char> targetBuffer;
-    targetBuffer.resize(targetBufferSize);
-    char *target      = targetBuffer.data();
-    char *targetStart = target;
-    char *targetLimit = target + targetBufferSize;
-    // convert encoding
-    ucnv_convertEx(targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
-
-    if (errorCode == U_BUFFER_OVERFLOW_ERROR)
-    {
-        errorCode = U_ZERO_ERROR;
-    }
-    else if (U_FAILURE(errorCode))
-    {
-        const char *errorName = u_errorName(errorCode);
-        QMessageBox::critical(this, tr("Error"), tr("converting from %1 to UTF-8 failed: %2").arg(encoding).arg(errorName), QMessageBox::Ok);
-        return;
-    }
-    ptrdiff_t bytesConsumed  = source - sourceStart;
-    ptrdiff_t bytesGenerated = target - targetStart;
     // display text
-    m_sciControlMaster->clearAll();
-    int lineCount = TextUtils::getLineCount(targetStart, bytesGenerated);
+    int lineCount = TextUtils::getLineCount(data.constData(), data.length());
     m_sciControlMaster->allocateLines(lineCount);
-    m_sciControlMaster->appendText(bytesGenerated, (const char *)targetStart);
-
-    documentChanged();
-}
-
-void CodeEditor::loadRawFile(const QByteArray &data)
-{
-    m_sciControlMaster->clearAll();
-    int lineCount = TextUtils::getLineCount(data);
-    m_sciControlMaster->allocateLines(lineCount);
-    m_sciControlMaster->appendText(data.length(), data.constData());
+    m_sciControlMaster->setModEventMask(SC_MOD_NONE);
+    m_sciControlMaster->appendText(data.length(), (const char *)data.constData());
+    m_sciControlMaster->setModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT);
 
     documentChanged();
 }
@@ -216,7 +116,7 @@ void CodeEditor::documentChanged()
 
     m_sciControlMaster->emptyUndoBuffer();
     m_sciControlSlave->emptyUndoBuffer();
-    emit filePathChanged(m_filePath);
+    emit filePathChanged(m_document.filePath());
     applyEditorStyles();
 }
 
@@ -232,13 +132,13 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
         BOOST_SCOPE_EXIT_END
 
         sptr_t textLength = m_sciControlMaster->textLength();
+        auto   data       = m_sciControlMaster->getText(textLength + 1);
         //  check bom & encoding
         auto bytes = EncodingUtils::generateBOM(bom);
         if (!bytes.isEmpty())
         {
             file.write(bytes);
         }
-        auto data = m_sciControlMaster->getText(textLength + 1);
         if (encoding.toUpper() != QByteArrayLiteral("UTF-8") && encoding.toLower() != QByteArrayLiteral("ASCII") &&
             encoding.toLower() != QByteArrayLiteral("ANSI"))
         {
@@ -314,32 +214,34 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
 
 void CodeEditor::saveFile(const QString &filePath)
 {
-    if (!m_filePath.isEmpty())
+    if (!m_document.filePath().isEmpty())
     {
         Config *config = Config::instance();
         Q_ASSERT(config);
-        m_lexerName = config->matchPatternLanguage(m_filePath);
+        m_lexerName = config->matchPatternLanguage(m_document.filePath());
     }
 
     QFileInfo saveFileInfo(filePath);
-    QFileInfo fileInfo(m_filePath);
-    if (m_filePath.isEmpty() || saveFileInfo != fileInfo)
+    QFileInfo fileInfo(m_document.filePath());
+    if (m_document.filePath().isEmpty() || saveFileInfo != fileInfo)
     {
-        m_filePath = filePath;
-        emit filePathChanged(m_filePath);
+        m_document.setFilePath(filePath);
+        emit filePathChanged(m_document.filePath());
 
         applyEditorStyles();
     }
 
-    if (m_sciControlMaster->modify() || m_filePath.isEmpty() || saveFileInfo != fileInfo)
+    if (m_sciControlMaster->modify() || m_document.filePath().isEmpty() || saveFileInfo != fileInfo)
     {
-        saveFileAsEncoding(filePath, m_encoding, m_bom);
+        sptr_t textLength = m_sciControlMaster->textLength();
+        auto   data       = m_sciControlMaster->getText(textLength + 1);
+        m_document.saveToFile(data);
     }
 }
 
-const QString &CodeEditor::getFilePath() const
+QString CodeEditor::getFilePath() const
 {
-    return m_filePath;
+    return m_document.filePath();
 }
 
 bool CodeEditor::canClose()
@@ -616,12 +518,12 @@ void CodeEditor::clearReadOnlyFlag()
 void CodeEditor::currentFullFilePathToClipboard()
 {
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(m_filePath);
+    clipboard->setText(m_document.filePath());
 }
 
 void CodeEditor::currentFileNameToClipboard()
 {
-    QFileInfo   fi(m_filePath);
+    QFileInfo   fi(m_document.filePath());
     QClipboard *clipboard = QApplication::clipboard();
     Q_ASSERT(clipboard);
     clipboard->setText(fi.fileName());
@@ -629,7 +531,7 @@ void CodeEditor::currentFileNameToClipboard()
 
 void CodeEditor::currentDirectoryPathToClipboard()
 {
-    QFileInfo   fi(m_filePath);
+    QFileInfo   fi(m_document.filePath());
     QClipboard *clipboard = QApplication::clipboard();
     Q_ASSERT(clipboard);
     clipboard->setText(fi.absolutePath());
@@ -1056,8 +958,8 @@ bool CodeEditor::getShowWrapSymbol()
 
 void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
 {
-    m_encoding = encoding.toUtf8();
-    m_bom      = BOM::None;
+    m_document.setEncoding(encoding);
+    m_document.setBOM(BOM::None);
     if (withBOM)
     {
         static std::map<QString, BOM> encodingNameBOMMap = {
@@ -1071,31 +973,18 @@ void CodeEditor::reopenAsEncoding(const QString &encoding, bool withBOM)
         auto iter = encodingNameBOMMap.find(encoding.toUpper());
         if (encodingNameBOMMap.end() != iter)
         {
-            m_bom = iter->second;
+            m_document.setBOM(iter->second);
         }
     }
 
-    QFile file(m_filePath);
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        return;
-    }
-    qint64 skipBytes = 0;
-    if (m_bom != BOM::None)
-    {
-        auto bom  = EncodingUtils::generateBOM(m_bom);
-        skipBytes = bom.length();
-    }
-    file.seek(skipBytes);
-    auto data = file.readAll();
-    loadFileAsEncoding(data, encoding);
-    file.close();
+    m_document.setForceEncoding(true);
+    loadDataFromFile();
 }
 
 void CodeEditor::saveAsEncoding(const QString &encoding, bool withBOM)
 {
-    m_encoding = encoding.toUtf8();
-    m_bom      = BOM::None;
+    m_document.setEncoding(encoding);
+    m_document.setBOM(BOM::None);
     if (withBOM)
     {
         static std::map<QString, BOM> encodingNameBOMMap = {
@@ -1109,20 +998,22 @@ void CodeEditor::saveAsEncoding(const QString &encoding, bool withBOM)
         auto iter = encodingNameBOMMap.find(encoding.toUpper());
         if (encodingNameBOMMap.end() != iter)
         {
-            m_bom = iter->second;
+            m_document.setBOM(iter->second);
         }
     }
-    saveFileAsEncoding(m_filePath, m_encoding, m_bom);
+    sptr_t textLength = m_sciControlMaster->textLength();
+    auto   data       = m_sciControlMaster->getText(textLength + 1);
+    m_document.saveToFile(data);
 }
 
 QString CodeEditor::encoding() const
 {
-    return m_encoding;
+    return m_document.encoding();
 }
 
 bool CodeEditor::hasBOM()
 {
-    return m_bom != BOM::None;
+    return m_document.hasBOM();
 }
 
 void CodeEditor::focusChanged(bool focused)

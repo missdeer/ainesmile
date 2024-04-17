@@ -85,6 +85,8 @@ private:
     bool findAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
     bool findAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
     bool replaceAllInFile(const QString &filePath, FindReplaceOption &fro);
+    bool replaceAllStringInFile(const QString &filePath, FindReplaceOption &fro);
+    bool replaceAllRegexpInFile(const QString &filePath, FindReplaceOption &fro);
     bool replaceAllInDirectory(const QString &dirPath, FindReplaceOption &fro, bool recursive);
     int  setFlags(FindReplaceOption &fro);
 };

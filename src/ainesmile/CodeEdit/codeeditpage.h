@@ -8,6 +8,7 @@
 #include <QWidget>
 
 #include "ScintillaEdit.h"
+#include "document.h"
 #include "encodingutils.h"
 
 class CodeEditor : public QWidget
@@ -17,11 +18,11 @@ public:
     explicit CodeEditor(QWidget *parent = nullptr);
 
     [[nodiscard]] ScintillaEdit *getFocusView();
-    void                         openFile(const QString &filePath);
+    bool                         openFile(const QString &filePath);
     void                         saveFile(const QString &filePath);
     void                         reopenAsEncoding(const QString &encoding, bool withBOM);
     void                         saveAsEncoding(const QString &encoding, bool withBOM);
-    [[nodiscard]] const QString &getFilePath() const;
+    [[nodiscard]] QString        getFilePath() const;
     [[nodiscard]] bool           canClose();
     [[nodiscard]] bool           canCut();
     [[nodiscard]] bool           canCopy();
@@ -123,16 +124,13 @@ private:
     ScintillaEdit *m_sciControlMaster;
     ScintillaEdit *m_sciControlSlave;
     ScintillaEdit *m_sciFocusView;
-    QString        m_filePath;
-    QString        m_encoding {QStringLiteral("UTF-8")};
     QString        m_lexerName {QStringLiteral("normal")};
-    BOM            m_bom {BOM::None};
+    ASDocument     m_document;
 
     void init();
-    void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
     void documentChanged();
-    void loadRawFile(const QByteArray &data);
-    void loadFileAsEncoding(const QByteArray &data, const QString &encoding);
+    void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
+    void loadDataFromFile();
     void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
 
     static void                deleteLine(ScintillaEdit *sci, sptr_t line);

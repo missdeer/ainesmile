@@ -147,11 +147,8 @@ int main(int argc, char *argv[])
 
     if (argc >= 2)
     {
-        QStringList files;
-        for (int i = 1; i < argc; i++)
-        {
-            files << QString(argv[i]);
-        }
+        QStringList files = QApplication::arguments();
+        files.removeFirst();
         mainWindow.openFiles(files);
     }
     else
