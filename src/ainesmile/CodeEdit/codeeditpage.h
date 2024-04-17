@@ -18,7 +18,7 @@ public:
     explicit CodeEditor(QWidget *parent = nullptr);
 
     [[nodiscard]] ScintillaEdit *getFocusView();
-    void                         openFile(const QString &filePath);
+    bool                         openFile(const QString &filePath);
     void                         saveFile(const QString &filePath);
     void                         reopenAsEncoding(const QString &encoding, bool withBOM);
     void                         saveAsEncoding(const QString &encoding, bool withBOM);

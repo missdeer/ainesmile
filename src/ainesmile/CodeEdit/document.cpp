@@ -5,15 +5,15 @@
 #include "document.h"
 #include "config.h"
 
-QByteArray ASDocument::convertReadDataEncoding(const QByteArray &data)
+QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString &fromEncoding, const QString &toEncoding)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
 
-    UConverter *sourceConv = ucnv_open(m_encoding.toStdString().c_str(), &errorCode);
+    UConverter *sourceConv = ucnv_open(fromEncoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
         const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(m_encoding).arg(errorName);
+        m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(fromEncoding).arg(errorName);
         return {};
     }
     BOOST_SCOPE_EXIT(sourceConv)
@@ -22,7 +22,7 @@ QByteArray ASDocument::convertReadDataEncoding(const QByteArray &data)
     }
     BOOST_SCOPE_EXIT_END
 
-    UConverter *targetConv = ucnv_open("UTF-8", &errorCode);
+    UConverter *targetConv = ucnv_open(toEncoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
         const char *errorName = u_errorName(errorCode);
@@ -55,8 +55,9 @@ QByteArray ASDocument::convertReadDataEncoding(const QByteArray &data)
     }
     else if (U_FAILURE(errorCode))
     {
+        // Handle conversion error
         const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("converting from %1 to UTF-8 failed: %2").arg(m_encoding).arg(errorName);
+        m_errorMessage        = QObject::tr("converting from %1 to %2 failed: %3").arg(fromEncoding).arg(toEncoding).arg(errorName);
         return {};
     }
     ptrdiff_t bytesConsumed  = source - sourceStart;
@@ -93,7 +94,7 @@ bool ASDocument::saveToFile(const QByteArray &data)
         return true;
     }
 
-    auto newData = convertWriteDataEncoding(data);
+    auto newData = convertDataEncoding(data, QStringLiteral("UTF-8"), m_encoding);
     file.write(newData);
     return true;
 }
@@ -124,18 +125,18 @@ bool ASDocument::hasBOM() const
     return m_bom != BOM::None;
 }
 
-QByteArray ASDocument::loadFromFile()
+std::tuple<bool, QByteArray> ASDocument::loadFromFile()
 {
     QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        return {};
+        return {false, {}};
     }
 
     if (m_forceEncoding)
     {
         auto data = file.readAll();
-        return convertReadDataEncoding(data);
+        return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
     }
 
     auto &ptree              = Config::instance()->pt();
@@ -154,7 +155,7 @@ QByteArray ASDocument::loadFromFile()
     {
         m_encoding = QByteArrayLiteral("UTF-8");
         m_bom      = bom;
-        return data;
+        return {true, data};
     }
     if (bom != BOM::None)
     {
@@ -162,7 +163,7 @@ QByteArray ASDocument::loadFromFile()
         m_encoding      = encoding;
         m_bom           = bom;
         charsetDetected = true;
-        return convertReadDataEncoding(data);
+        return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
     }
 
     if (autoDetectEncoding)
@@ -176,16 +177,16 @@ QByteArray ASDocument::loadFromFile()
             {
                 m_encoding      = encoding.toUtf8();
                 charsetDetected = true;
-                return convertReadDataEncoding(data);
+                return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
             }
         }
     }
     if (!charsetDetected)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
-        return data;
+        return {true, data};
     }
-    return {};
+    return {false, {}};
 }
 
 void ASDocument::setEncoding(const QString &encoding)
@@ -196,65 +197,6 @@ void ASDocument::setEncoding(const QString &encoding)
 void ASDocument::setBOM(BOM bom)
 {
     m_bom = bom;
-}
-
-QByteArray ASDocument::convertWriteDataEncoding(const QByteArray &data)
-{
-    UErrorCode errorCode = U_ZERO_ERROR;
-
-    UConverter *sourceConv = ucnv_open("UTF-8", &errorCode);
-    if (U_FAILURE(errorCode))
-    {
-        const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("creating converter for UTF-8 failed: %1").arg(errorName);
-        return data;
-    }
-    BOOST_SCOPE_EXIT(sourceConv)
-    {
-        ucnv_close(sourceConv);
-    }
-    BOOST_SCOPE_EXIT_END
-
-    UConverter *targetConv = ucnv_open(m_encoding.toStdString().c_str(), &errorCode);
-    if (U_FAILURE(errorCode))
-    {
-        const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(m_encoding).arg(errorName);
-        return data;
-    }
-    BOOST_SCOPE_EXIT(targetConv)
-    {
-        ucnv_close(targetConv);
-    }
-    BOOST_SCOPE_EXIT_END
-    qint64      textLength  = data.size();
-    const char *source      = data.constData();
-    const char *sourceStart = source;
-    const char *sourceLimit = source + textLength;
-
-    const qint64 targetBufferSize = textLength * 2;
-    QByteArray   targetBuffer;
-    targetBuffer.resize(targetBufferSize);
-    char *target      = targetBuffer.data();
-    char *targetStart = target;
-    char *targetLimit = target + targetBufferSize;
-    // convert encoding
-    ucnv_convertEx(targetConv, sourceConv, &target, targetLimit, &source, sourceLimit, nullptr, nullptr, nullptr, nullptr, true, true, &errorCode);
-
-    if (errorCode == U_BUFFER_OVERFLOW_ERROR)
-    {
-        errorCode = U_ZERO_ERROR;
-    }
-    else if (U_FAILURE(errorCode))
-    {
-        // Handle conversion error
-        const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("converting from UTF-8 to %1 failed: %2").arg(m_encoding, errorName);
-        return data;
-    }
-    ptrdiff_t bytesGenerated = target - targetStart;
-    targetBuffer.resize(bytesGenerated);
-    return targetBuffer;
 }
 
 void ASDocument::setForceEncoding(bool forceEncoding)

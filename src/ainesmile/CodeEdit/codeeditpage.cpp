@@ -65,12 +65,13 @@ bool CodeEditor::initialDocument()
     return !isModified() && m_document.filePath().isEmpty();
 }
 
-void CodeEditor::openFile(const QString &filePath)
+bool CodeEditor::openFile(const QString &filePath)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        return;
+        QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(filePath)), QMessageBox::Ok);
+        return false;
     }
 
     if (!filePath.isEmpty())
@@ -82,13 +83,19 @@ void CodeEditor::openFile(const QString &filePath)
     m_document.setFilePath(filePath);
     m_document.setForceEncoding(false);
     loadDataFromFile();
+    return true;
 }
 
 void CodeEditor::loadDataFromFile()
 {
-    auto data = m_document.loadFromFile();
-    // display text
     m_sciControlMaster->clearAll();
+    auto [ok, data] = m_document.loadFromFile();
+    if (!ok)
+    {
+        QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(m_document.filePath())), QMessageBox::Ok);
+        return;
+    }
+    // display text
     int lineCount = TextUtils::getLineCount(data.constData(), data.length());
     m_sciControlMaster->allocateLines(lineCount);
     m_sciControlMaster->appendText(data.length(), (const char *)data.constData());

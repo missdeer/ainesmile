@@ -5,8 +5,8 @@
 class ASDocument
 {
 public:
-    [[nodiscard]] QByteArray loadFromFile();
-    bool                     saveToFile(const QByteArray &data);
+    [[nodiscard]] std::tuple<bool, QByteArray> loadFromFile();
+    bool                                       saveToFile(const QByteArray &data);
 
     [[nodiscard]] std::tuple<QString, QString> errorMessage() const;
 
@@ -29,6 +29,5 @@ private:
     QString                  m_encoding {QStringLiteral("UTF-8")};
     QString                  m_errorMessage;
     BOM                      m_bom {BOM::None};
-    [[nodiscard]] QByteArray convertReadDataEncoding(const QByteArray &data);
-    [[nodiscard]] QByteArray convertWriteDataEncoding(const QByteArray &data);
+    [[nodiscard]] QByteArray convertDataEncoding(const QByteArray &data, const QString &fromEncoding, const QString &toEncoding);
 };
