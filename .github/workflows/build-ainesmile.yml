@@ -34,7 +34,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.1
+            qt_ver: 6.7.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -171,7 +171,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.1
+            qt_ver: 6.7.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -317,7 +317,7 @@ jobs:
             msvc_arch: x64
             output_dir: x86_64
           - qt_arch: win64_msvc2019_64
-            qt_ver: 6.6.1
+            qt_ver: 6.7.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -693,7 +693,7 @@ jobs:
             qt_ver: 5.15.2
             qt_modules: ""
           - qt_arch: clang_64
-            qt_ver: 6.6.1
+            qt_ver: 6.7.0
             qt_modules: "qt5compat qtimageformats"
     env:
       targetName: ainesmile
