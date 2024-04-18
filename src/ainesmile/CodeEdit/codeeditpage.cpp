@@ -103,7 +103,6 @@ void CodeEditor::documentChanged()
     if (m_sciControlSlave)
     {
         m_sciControlSlave->gotoPos(0);
-        m_sciControlSlave->emptyUndoBuffer();
         updateLineNumberMargin(m_sciControlSlave);
     }
 }
@@ -193,10 +192,6 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
         }
 
         m_sciControlMaster->setSavePoint();
-        if (m_sciControlSlave)
-        {
-            m_sciControlSlave->setSavePoint();
-        }
         emit modifiedNotification();
         return;
     }
@@ -517,19 +512,11 @@ void CodeEditor::selectAll()
 void CodeEditor::setReadOnly()
 {
     m_sciControlMaster->setReadOnly(true);
-    if (m_sciControlSlave)
-    {
-        m_sciControlSlave->setReadOnly(true);
-    }
 }
 
 void CodeEditor::clearReadOnlyFlag()
 {
     m_sciControlMaster->setReadOnly(false);
-    if (m_sciControlSlave)
-    {
-        m_sciControlSlave->setReadOnly(false);
-    }
 }
 
 void CodeEditor::currentFullFilePathToClipboard()
