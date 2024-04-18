@@ -132,6 +132,7 @@ private:
     void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
     void loadDataFromFile();
     void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
+    void updateLineNumberMargin(ScintillaEdit *sci);
 
     static void                deleteLine(ScintillaEdit *sci, sptr_t line);
     static std::vector<sptr_t> bookmarkedLines(ScintillaEdit *sci);

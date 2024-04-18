@@ -118,6 +118,8 @@ void CodeEditor::documentChanged()
     m_sciControlSlave->emptyUndoBuffer();
     emit filePathChanged(m_document.filePath());
     applyEditorStyles();
+    updateLineNumberMargin(m_sciControlMaster);
+    updateLineNumberMargin(m_sciControlSlave);
 }
 
 void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom)
@@ -405,7 +407,12 @@ void CodeEditor::modified(Scintilla::ModificationFlags /*type*/,
 
 void CodeEditor::linesAdded(Scintilla::Position /*linesAdded*/)
 {
-    auto  *sci        = qobject_cast<ScintillaEdit *>(sender());
+    auto *sci = qobject_cast<ScintillaEdit *>(sender());
+    updateLineNumberMargin(sci);
+}
+
+void CodeEditor::updateLineNumberMargin(ScintillaEdit *sci)
+{
     sptr_t line_count = sci->lineCount();
     sptr_t left       = sci->marginLeft() + 2;
     sptr_t right      = sci->marginRight() + 2;
