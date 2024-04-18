@@ -1,0 +1,25 @@
+diff --git a/src/EditView.cxx b/src/EditView.cxx
+index 7070bc60..d99fbd54 100644
+--- a/src/EditView.cxx
++++ b/src/EditView.cxx
+@@ -505,6 +505,12 @@ void EditView::LayoutLine(const EditModel &model, Surface *surface, const ViewSt
+ 			// If only 1 thread needed then use the main thread, else spin up multiple
+ 			const std::launch policy = (multiThreaded) ? std::launch::async : std::launch::deferred;
+ 
++#if defined (_OPENMP)
++#pragma omp parallel num_threads(threads)
++			{
++				LayoutSegments(pCache, surface, vstyle, ll, segments, nextIndex, textUnicode, multiThreadedContext);
++			}
++#else
+ 			std::vector<std::future<void>> futures;
+ 			for (size_t th = 0; th < threads; th++) {
+ 				// Find relative positions of everything except for tabs
+@@ -517,6 +523,7 @@ void EditView::LayoutLine(const EditModel &model, Surface *surface, const ViewSt
+ 			for (const std::future<void> &f : futures) {
+ 				f.wait();
+ 			}
++#endif
+ 		}
+ 
+ 		// Accumulate absolute positions from relative positions within segments and expand tabs
