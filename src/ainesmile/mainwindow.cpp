@@ -722,6 +722,11 @@ void MainWindow::on_actionAboutApp_triggered()
     QMessageBox::about(this, tr("About ainesmile"), text);
 }
 
+void MainWindow::on_actionAboutQt_triggered()
+{
+    QMessageBox::aboutQt(this);
+}
+
 void MainWindow::on_actionDForDSoftwareHome_triggered()
 {
     QDesktopServices::openUrl(QUrl(QStringLiteral("http://www.dfordsoft.com")));

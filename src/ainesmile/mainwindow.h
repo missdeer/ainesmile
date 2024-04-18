@@ -83,6 +83,8 @@ private slots:
 
     void on_actionAboutApp_triggered();
 
+    void on_actionAboutQt_triggered();
+
     void on_actionDForDSoftwareHome_triggered();
 
     void on_actionAinesmileProductPage_triggered();

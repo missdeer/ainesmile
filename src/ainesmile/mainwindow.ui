@@ -14,7 +14,7 @@
    <string>ainesmile</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ainesmile.qrc">
+   <iconset>
     <normaloff>:/rc/ainesmile.png</normaloff>:/rc/ainesmile.png</iconset>
   </property>
   <property name="dockOptions">
@@ -153,6 +153,7 @@
     <addaction name="actionAinesmileProductPage"/>
     <addaction name="separator"/>
     <addaction name="actionAboutApp"/>
+    <addaction name="actionAboutQt"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -529,7 +530,7 @@
   </widget>
   <action name="actionOpenFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/fileopen.png</normaloff>:/rc/image/fileopen.png</iconset>
    </property>
    <property name="text">
@@ -541,7 +542,7 @@
   </action>
   <action name="actionSaveFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filesave.png</normaloff>:/rc/image/filesave.png</iconset>
    </property>
    <property name="text">
@@ -585,7 +586,7 @@
   </action>
   <action name="actionNewFile">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filenew.png</normaloff>:/rc/image/filenew.png</iconset>
    </property>
    <property name="text">
@@ -597,7 +598,7 @@
   </action>
   <action name="actionSaveAll">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filesaveall.png</normaloff>:/rc/image/filesaveall.png</iconset>
    </property>
    <property name="text">
@@ -624,7 +625,7 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/fileprint.png</normaloff>:/rc/image/fileprint.png</iconset>
    </property>
    <property name="text">
@@ -651,7 +652,7 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/undo.png</normaloff>:/rc/image/undo.png</iconset>
    </property>
    <property name="text">
@@ -663,7 +664,7 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/redo.png</normaloff>:/rc/image/redo.png</iconset>
    </property>
    <property name="text">
@@ -675,7 +676,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editcut.png</normaloff>:/rc/image/editcut.png</iconset>
    </property>
    <property name="text">
@@ -687,7 +688,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editcopy.png</normaloff>:/rc/image/editcopy.png</iconset>
    </property>
    <property name="text">
@@ -699,7 +700,7 @@
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/editpaste.png</normaloff>:/rc/image/editpaste.png</iconset>
    </property>
    <property name="text">
@@ -761,7 +762,7 @@
   </action>
   <action name="actionFind">
    <property name="icon">
-    <iconset resource="ainesmile.qrc">
+    <iconset>
      <normaloff>:/rc/image/filefind.png</normaloff>:/rc/image/filefind.png</iconset>
    </property>
    <property name="text">
@@ -1124,6 +1125,11 @@
     <string>Auto Detect</string>
    </property>
   </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1133,8 +1139,6 @@
    <header>tabwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="ainesmile.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
