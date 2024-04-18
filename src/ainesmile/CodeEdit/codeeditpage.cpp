@@ -5,54 +5,37 @@
 #include "scintillaconfig.h"
 #include "textutils.h"
 
-CodeEditor::CodeEditor(QWidget *parent)
-    : QWidget(parent),
-      m_verticalEditorSplitter(new QSplitter(Qt::Vertical, parent)),
-      m_sciControlMaster(new ScintillaEdit(m_verticalEditorSplitter)),
-      m_sciControlSlave(new ScintillaEdit(m_verticalEditorSplitter)),
-      m_sciFocusView(m_sciControlMaster)
+CodeEditor::CodeEditor(QWidget *parent) : QWidget(parent), m_sciControlMaster(new ScintillaEdit(m_editorSplitter)), m_sciFocusView(m_sciControlMaster)
 {
-    m_verticalEditorSplitter->addWidget(m_sciControlSlave);
-    m_verticalEditorSplitter->addWidget(m_sciControlMaster);
-
-    QList<int> sizes;
-    sizes << 0 << 0x7FFFF; // << 0;
-    m_verticalEditorSplitter->setSizes(sizes);
-
     auto *m_mainLayout = new QVBoxLayout;
     Q_ASSERT(m_mainLayout);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     // m_mainLayout->setMargin(0);
-    m_mainLayout->addWidget(m_verticalEditorSplitter);
+    m_mainLayout->addWidget(m_sciControlMaster);
     setLayout(m_mainLayout);
+    m_sciFocusView = m_sciControlMaster;
 
     init();
 
-    m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
-
     m_sciControlMaster->setSavePoint();
-    m_sciControlSlave->setSavePoint();
 }
 
 void CodeEditor::init()
 {
-    ScintillaConfig::initScintilla(m_sciControlMaster);
-    ScintillaConfig::initScintilla(m_sciControlSlave);
+    initSci(m_sciControlMaster);
+}
 
-    connect(m_sciControlMaster, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
-    connect(m_sciControlMaster, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
-    connect(m_sciControlMaster, &ScintillaEdit::modified, this, &CodeEditor::modified);
-    connect(m_sciControlMaster, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
-    connect(m_sciControlMaster, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
-    connect(m_sciControlMaster, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
-    connect(m_sciControlMaster, &ScintillaEdit::focusChanged, this, &CodeEditor::focusChanged);
-    connect(m_sciControlSlave, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
-    connect(m_sciControlSlave, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
-    connect(m_sciControlSlave, &ScintillaEdit::modified, this, &CodeEditor::modified);
-    connect(m_sciControlSlave, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
-    connect(m_sciControlSlave, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
-    connect(m_sciControlSlave, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
-    connect(m_sciControlSlave, &ScintillaEdit::focusChanged, this, &CodeEditor::focusChanged);
+void CodeEditor::initSci(ScintillaEdit *sci)
+{
+    ScintillaConfig::initScintilla(sci);
+
+    connect(sci, &ScintillaEdit::linesAdded, this, &CodeEditor::linesAdded);
+    connect(sci, &ScintillaEdit::marginClicked, this, &CodeEditor::marginClicked);
+    connect(sci, &ScintillaEdit::modified, this, &CodeEditor::modified);
+    connect(sci, &ScintillaEdit::dwellEnd, this, &CodeEditor::dwellEnd);
+    connect(sci, &ScintillaEdit::updateUi, this, &CodeEditor::updateUI);
+    connect(sci, &ScintillaEdit::uriDropped, this, &CodeEditor::uriDropped);
+    connect(sci, &ScintillaEdit::focusChanged, this, &CodeEditor::focusChanged);
 }
 
 ScintillaEdit *CodeEditor::getFocusView()
@@ -112,14 +95,17 @@ void CodeEditor::loadDataFromFile()
 void CodeEditor::documentChanged()
 {
     m_sciControlMaster->gotoPos(0);
-    m_sciControlSlave->gotoPos(0);
 
     m_sciControlMaster->emptyUndoBuffer();
-    m_sciControlSlave->emptyUndoBuffer();
     emit filePathChanged(m_document.filePath());
     applyEditorStyles();
     updateLineNumberMargin(m_sciControlMaster);
-    updateLineNumberMargin(m_sciControlSlave);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->gotoPos(0);
+        m_sciControlSlave->emptyUndoBuffer();
+        updateLineNumberMargin(m_sciControlSlave);
+    }
 }
 
 void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom)
@@ -207,7 +193,10 @@ void CodeEditor::saveFileAsEncoding(const QString &filePath, const QString &enco
         }
 
         m_sciControlMaster->setSavePoint();
-        m_sciControlSlave->setSavePoint();
+        if (m_sciControlSlave)
+        {
+            m_sciControlSlave->setSavePoint();
+        }
         emit modifiedNotification();
         return;
     }
@@ -292,39 +281,54 @@ void CodeEditor::grabFocus()
 
 bool CodeEditor::focus()
 {
-    return (m_sciControlMaster->focus() || m_sciControlSlave->focus());
+    return (m_sciControlMaster->focus() || (m_sciControlSlave && m_sciControlSlave->focus()));
 }
 
 void CodeEditor::applyEditorStyles()
 {
     ScintillaConfig::initEditorStyle(m_sciControlMaster, m_lexerName);
-    ScintillaConfig::initEditorStyle(m_sciControlSlave, m_lexerName);
     m_sciControlMaster->colourise(0, -1);
-    m_sciControlSlave->colourise(0, -1);
+    if (m_sciControlSlave)
+    {
+        ScintillaConfig::initEditorStyle(m_sciControlSlave, m_lexerName);
+        m_sciControlSlave->colourise(0, -1);
+    }
 }
 
 void CodeEditor::setShowWhiteSpaceAndTAB(bool enabled)
 {
     m_sciControlMaster->setViewWS(enabled ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
-    m_sciControlSlave->setViewWS(enabled ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setViewWS(enabled ? SCWS_VISIBLEALWAYS : SCWS_INVISIBLE);
+    }
 }
 
 void CodeEditor::setShowEndOfLine(bool enabled)
 {
     m_sciControlMaster->setViewEOL(enabled);
-    m_sciControlSlave->setViewEOL(enabled);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setViewEOL(enabled);
+    }
 }
 
 void CodeEditor::setShowIndentGuide(bool enabled)
 {
     m_sciControlMaster->setIndentationGuides(enabled ? SC_IV_REAL : SC_IV_NONE);
-    m_sciControlSlave->setIndentationGuides(enabled ? SC_IV_REAL : SC_IV_NONE);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setIndentationGuides(enabled ? SC_IV_REAL : SC_IV_NONE);
+    }
 }
 
 void CodeEditor::setShowWrapSymbol(bool enabled)
 {
     m_sciControlMaster->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
-    m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setWrapVisualFlags(enabled ? SC_WRAPVISUALFLAG_END : SC_WRAPVISUALFLAG_NONE);
+    }
 }
 
 void CodeEditor::updateUI(Scintilla::Update updated)
@@ -513,13 +517,19 @@ void CodeEditor::selectAll()
 void CodeEditor::setReadOnly()
 {
     m_sciControlMaster->setReadOnly(true);
-    m_sciControlSlave->setReadOnly(true);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setReadOnly(true);
+    }
 }
 
 void CodeEditor::clearReadOnlyFlag()
 {
     m_sciControlMaster->setReadOnly(false);
-    m_sciControlSlave->setReadOnly(false);
+    if (m_sciControlSlave)
+    {
+        m_sciControlSlave->setReadOnly(false);
+    }
 }
 
 void CodeEditor::currentFullFilePathToClipboard()
@@ -893,18 +903,24 @@ void CodeEditor::wordWrap()
     if (m_sciControlMaster->wrapMode() == SC_WRAP_NONE)
     {
         m_sciControlMaster->setWrapMode(SC_WRAP_WORD);
-        m_sciControlSlave->setWrapMode(SC_WRAP_WORD);
+        if (m_sciControlSlave)
+        {
+            m_sciControlSlave->setWrapMode(SC_WRAP_WORD);
+        }
     }
     else
     {
         m_sciControlMaster->setWrapMode(SC_WRAP_NONE);
-        m_sciControlSlave->setWrapMode(SC_WRAP_NONE);
+        if (m_sciControlSlave)
+        {
+            m_sciControlSlave->setWrapMode(SC_WRAP_NONE);
+        }
     }
 }
 
 void CodeEditor::focusOnAnotherView()
 {
-    if (m_sciControlMaster->focus())
+    if (m_sciControlMaster->focus() && m_sciControlSlave)
     {
         m_sciControlSlave->grabFocus();
     }
@@ -1032,6 +1048,13 @@ void CodeEditor::focusChanged(bool focused)
 
         emit focusIn();
     }
+    else
+    {
+        if (!m_sciControlSlave)
+        {
+            m_sciFocusView = m_sciControlMaster;
+        }
+    }
 }
 
 QString CodeEditor::lexerName() const
@@ -1090,4 +1113,55 @@ void CodeEditor::deleteLine(ScintillaEdit *sci, sptr_t line)
     sptr_t lineBegin = sci->positionFromLine(line);
     sci->setTargetRange(lineBegin, lineBegin + lineLen);
     sci->replaceTarget(0, "");
+}
+
+bool CodeEditor::isSplittered() const
+{
+    return m_editorSplitter != nullptr;
+}
+
+void CodeEditor::splitEditor(Qt::Orientation orientation, int size)
+{
+    Q_ASSERT(!m_editorSplitter);
+    if (m_editorSplitter == nullptr)
+    {
+        m_editorSplitter  = new QSplitter(orientation, this);
+        m_sciControlSlave = new ScintillaEdit(m_editorSplitter);
+        Q_ASSERT(m_sciControlSlave);
+        m_sciControlMaster->setParent(m_editorSplitter);
+        m_editorSplitter->addWidget(m_sciControlMaster);
+        m_editorSplitter->addWidget(m_sciControlSlave);
+        layout()->addWidget(m_editorSplitter);
+
+        QList<int> sizes {size, size};
+        m_editorSplitter->setSizes(sizes);
+
+        m_sciControlSlave->set_doc(m_sciControlMaster->get_doc());
+        initSci(m_sciControlSlave);
+    }
+}
+
+void CodeEditor::splitEditorRight()
+{
+    splitEditor(Qt::Horizontal, width() / 2);
+}
+
+void CodeEditor::splitEditorDown()
+{
+    splitEditor(Qt::Vertical, height() / 2);
+}
+
+void CodeEditor::cancelSplit()
+{
+    Q_ASSERT(m_editorSplitter);
+    if (m_editorSplitter != nullptr)
+    {
+        m_sciFocusView = m_sciControlMaster;
+        delete m_sciControlSlave;
+        m_sciControlSlave = nullptr;
+        m_sciControlMaster->setParent(this);
+        layout()->addWidget(m_sciControlMaster);
+        delete m_editorSplitter;
+        m_editorSplitter = nullptr;
+    }
 }

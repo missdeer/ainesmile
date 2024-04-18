@@ -812,26 +812,41 @@ Keep It Simple &amp; Stupid!</translation>
         <translation type="unfinished">Move to the other side</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="83"/>
+        <location filename="../tabwidget.cpp" line="46"/>
+        <source>Cancel Split</source>
+        <translation type="unfinished">Cancel Split</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="52"/>
+        <source>Split Editor Right</source>
+        <translation type="unfinished">Split Editor Right</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="55"/>
+        <source>Split Editor Down</source>
+        <translation type="unfinished">Split Editor Down</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="98"/>
         <source>Confirm</source>
         <translation type="unfinished">Confirm</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="83"/>
+        <location filename="../tabwidget.cpp" line="98"/>
         <source>This document is not saved, save it now?</source>
         <translation type="unfinished">This document is not saved, save it now?</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="93"/>
-        <location filename="../tabwidget.cpp" line="259"/>
-        <location filename="../tabwidget.cpp" line="287"/>
+        <location filename="../tabwidget.cpp" line="108"/>
+        <location filename="../tabwidget.cpp" line="274"/>
+        <location filename="../tabwidget.cpp" line="302"/>
         <source>ainesmile Save File To</source>
         <translation type="unfinished">ainesmile Save File To</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="93"/>
-        <location filename="../tabwidget.cpp" line="259"/>
-        <location filename="../tabwidget.cpp" line="287"/>
+        <location filename="../tabwidget.cpp" line="108"/>
+        <location filename="../tabwidget.cpp" line="274"/>
+        <location filename="../tabwidget.cpp" line="302"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation type="unfinished">All Files (*);;Text Files (*.txt)</translation>
     </message>

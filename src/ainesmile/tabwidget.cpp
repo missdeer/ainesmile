@@ -35,13 +35,28 @@ void TabWidget::mousePressEvent(QMouseEvent *event)
             setCurrentIndex(index);
 
             auto *contentMenu = new QMenu(this);
-            auto *action       = new QAction(tr("Move to the other side"), this);
+            auto *action      = new QAction(tr("Move to the other side"), this);
             connect(action, &QAction::triggered, this, &TabWidget::exchangeTab);
             contentMenu->addAction(action);
 
-#if defined(Q_OS_WIN)
             auto *page = qobject_cast<CodeEditor *>(currentWidget());
             Q_ASSERT(page);
+            if (page->isSplittered())
+            {
+                auto *action = new QAction(tr("Cancel Split"), this);
+                connect(action, &QAction::triggered, page, &CodeEditor::cancelSplit);
+                contentMenu->addAction(action);
+            }
+            else
+            {
+                auto *actionSplitRight = new QAction(tr("Split Editor Right"), this);
+                connect(actionSplitRight, &QAction::triggered, page, &CodeEditor::splitEditorRight);
+                contentMenu->addAction(actionSplitRight);
+                auto *actionSplitDown = new QAction(tr("Split Editor Down"), this);
+                connect(actionSplitDown, &QAction::triggered, page, &CodeEditor::splitEditorDown);
+                contentMenu->addAction(actionSplitDown);
+            }
+#if defined(Q_OS_WIN)
             QString filePath = page->getFilePath();
             if (!filePath.isEmpty())
             {

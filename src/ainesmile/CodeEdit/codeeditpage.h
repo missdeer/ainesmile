@@ -49,6 +49,7 @@ public:
 
     bool initialDocument();
     //    void focusInEvent(QFocusEvent * event);
+    [[nodiscard]] bool isSplittered() const;
 signals:
     void focusIn();
     void modifiedNotification();
@@ -118,21 +119,27 @@ public slots:
     void zoomOut();
     void restoreDefaultZoom();
 
+    void splitEditorRight();
+    void splitEditorDown();
+    void cancelSplit();
+
 private:
     QWidget       *m_editorPane;
-    QSplitter     *m_verticalEditorSplitter;
+    QSplitter     *m_editorSplitter {nullptr};
     ScintillaEdit *m_sciControlMaster;
-    ScintillaEdit *m_sciControlSlave;
+    ScintillaEdit *m_sciControlSlave {nullptr};
     ScintillaEdit *m_sciFocusView;
     QString        m_lexerName {QStringLiteral("normal")};
     ASDocument     m_document;
 
     void init();
+    void initSci(ScintillaEdit *sci);
     void documentChanged();
     void saveFileAsEncoding(const QString &filePath, const QString &encoding, BOM bom);
     void loadDataFromFile();
     void toggleBookmarkAtLine(ScintillaEdit *sci, int line);
     void updateLineNumberMargin(ScintillaEdit *sci);
+    void splitEditor(Qt::Orientation orientation, int size);
 
     static void                deleteLine(ScintillaEdit *sci, sptr_t line);
     static std::vector<sptr_t> bookmarkedLines(ScintillaEdit *sci);

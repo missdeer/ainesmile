@@ -812,26 +812,41 @@ Keep It Simple &amp; Stupid!</source>
         <translation>移动到另一侧</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="83"/>
+        <location filename="../tabwidget.cpp" line="46"/>
+        <source>Cancel Split</source>
+        <translation type="unfinished">取消拆分</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="52"/>
+        <source>Split Editor Right</source>
+        <translation type="unfinished">左右拆分</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="55"/>
+        <source>Split Editor Down</source>
+        <translation type="unfinished">上下拆分</translation>
+    </message>
+    <message>
+        <location filename="../tabwidget.cpp" line="98"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="83"/>
+        <location filename="../tabwidget.cpp" line="98"/>
         <source>This document is not saved, save it now?</source>
         <translation>该文档没有保存，现在保存吗？</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="93"/>
-        <location filename="../tabwidget.cpp" line="259"/>
-        <location filename="../tabwidget.cpp" line="287"/>
+        <location filename="../tabwidget.cpp" line="108"/>
+        <location filename="../tabwidget.cpp" line="274"/>
+        <location filename="../tabwidget.cpp" line="302"/>
         <source>ainesmile Save File To</source>
         <translation>ainesmile 保存文件到</translation>
     </message>
     <message>
-        <location filename="../tabwidget.cpp" line="93"/>
-        <location filename="../tabwidget.cpp" line="259"/>
-        <location filename="../tabwidget.cpp" line="287"/>
+        <location filename="../tabwidget.cpp" line="108"/>
+        <location filename="../tabwidget.cpp" line="274"/>
+        <location filename="../tabwidget.cpp" line="302"/>
         <source>All Files (*);;Text Files (*.txt)</source>
         <translation>所有文件(*);;文本文件(*.txt)</translation>
     </message>
