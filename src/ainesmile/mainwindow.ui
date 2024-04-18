@@ -1129,6 +1129,9 @@
    <property name="text">
     <string>About Qt...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
