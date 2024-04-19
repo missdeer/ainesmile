@@ -2,6 +2,7 @@
 
 #include "encodingutils.h"
 
+struct UConverter;
 class ASDocument
 {
 public:
