@@ -8,43 +8,38 @@
 namespace
 {
     const qint64 fileMappingBlockSize = 4 * 1024 * 1024;
+} // namespace
+
+void ASDocument::closeConverters(UConverter *fromConverter, UConverter *toConverter)
+{
+    ucnv_close(fromConverter);
+    ucnv_close(toConverter);
 }
 
-QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString &fromEncoding, const QString &toEncoding)
+std::tuple<UConverter *, UConverter *> ASDocument::prepareConverters(const QString &fromEncoding, const QString &toEncoding)
 {
-    return convertDataEncoding(data.constData(), data.length(), fromEncoding, toEncoding);
-}
-
-QByteArray ASDocument::convertDataEncoding(const char *data, qint64 length, const QString &fromEncoding, const QString &toEncoding)
-{
-    if (fromEncoding.toLower() == toEncoding.toLower())
-    {
-        return {data, static_cast<int>(length)};
-    }
-    UErrorCode errorCode = U_ZERO_ERROR;
-
-    UConverter *sourceConv = ucnv_open(fromEncoding.toStdString().c_str(), &errorCode);
+    UErrorCode  errorCode = U_ZERO_ERROR;
+    UConverter *fromConv  = ucnv_open(fromEncoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(fromEncoding).arg(errorName);
-        return {data, static_cast<int>(length)};
+        return {nullptr, nullptr};
     }
-
-    UConverter *targetConv = ucnv_open(toEncoding.toStdString().c_str(), &errorCode);
+    UConverter *toConv = ucnv_open(toEncoding.toStdString().c_str(), &errorCode);
     if (U_FAILURE(errorCode))
     {
         const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("creating converter for UTF-8 failed: %1").arg(errorName);
-        ucnv_close(sourceConv);
-        return {data, static_cast<int>(length)};
+        m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(toEncoding).arg(errorName);
+        ucnv_close(fromConv);
+        return {nullptr, nullptr};
     }
-    BOOST_SCOPE_EXIT(sourceConv, targetConv)
-    {
-        ucnv_close(sourceConv);
-        ucnv_close(targetConv);
-    }
-    BOOST_SCOPE_EXIT_END
+    return {fromConv, toConv};
+}
+
+std::tuple<QByteArray, int> ASDocument::convertDataEncoding(const char *data, qint64 length, UConverter *sourceConv, UConverter *targetConv)
+{
+    UErrorCode errorCode = U_ZERO_ERROR;
 
     const qint64      sourceSize  = length;
     const char       *source      = data;
@@ -77,13 +72,13 @@ QByteArray ASDocument::convertDataEncoding(const char *data, qint64 length, cons
     {
         // Handle conversion error
         const char *errorName = u_errorName(errorCode);
-        m_errorMessage        = QObject::tr("converting from %1 to %2 failed: %3").arg(fromEncoding).arg(toEncoding).arg(errorName);
-        return data;
+        m_errorMessage        = QObject::tr("converting failed: %3").arg(errorName);
+        return {{data, static_cast<int>(length)}, static_cast<int>(length)};
     }
     ptrdiff_t bytesConsumed  = source - sourceStart;
     ptrdiff_t bytesGenerated = target - targetStart;
     targetBuffer.resize(bytesGenerated);
-    return targetBuffer;
+    return {targetBuffer, bytesConsumed};
 }
 
 bool ASDocument::saveToFile(const QByteArray &data)
@@ -114,7 +109,13 @@ bool ASDocument::saveToFile(const QByteArray &data)
         return true;
     }
 
-    auto newData = convertDataEncoding(data, QStringLiteral("UTF-8"), m_encoding);
+    auto [fromConv, toConv] = prepareConverters(QStringLiteral("UTF-8"), m_encoding);
+    if (!fromConv || !toConv)
+    {
+        return false;
+    }
+    auto [newData, _] = convertDataEncoding(data.constData(), data.length(), fromConv, toConv);
+    closeConverters(fromConv, toConv);
     file.write(newData);
     return true;
 }
@@ -148,6 +149,16 @@ bool ASDocument::hasBOM() const
 bool ASDocument::loadEncodedFile(
     QFile &file, const QString &fromEncoding, const QString &toEncoding, std::function<void(qint64, const char *)> load, qint64 offset)
 {
+    auto [fromConv, toConv] = prepareConverters(fromEncoding, toEncoding);
+    if (!fromConv || !toConv)
+    {
+        return false;
+    }
+    BOOST_SCOPE_EXIT(this_, fromConv, toConv)
+    {
+        this_->closeConverters(fromConv, toConv);
+    }
+    BOOST_SCOPE_EXIT_END
     qint64 leftSize = file.size() - offset;
     while (leftSize > 0)
     {
@@ -155,14 +166,15 @@ bool ASDocument::loadEncodedFile(
         auto  *mapped       = file.map(offset, expectedSize);
         if (mapped)
         {
-            offset += expectedSize;
-            leftSize -= expectedSize;
-            auto decodedData = convertDataEncoding((const char *)mapped, expectedSize, fromEncoding, toEncoding);
+            auto [decodedData, bytesConsumed] = convertDataEncoding((const char *)mapped, expectedSize, fromConv, toConv);
             load(decodedData.length(), decodedData.constData());
+            offset += bytesConsumed;
+            leftSize -= bytesConsumed;
             file.unmap(mapped);
         }
         else
         {
+            m_errorMessage = QObject::tr("creating file mapping failed");
             return false;
         }
     }
@@ -233,7 +245,7 @@ bool ASDocument::loadFromFile(std::function<void(qint64, const char *)> load)
         auto encoding = EncodingUtils::encodingNameForBOM(bom);
         m_encoding    = encoding;
         m_bom         = bom;
-        return loadEncodedFile(file, encoding, QStringLiteral("UTF-8"), load, length);
+        return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load, length);
     }
 
     if (autoDetectEncoding)
