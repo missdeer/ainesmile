@@ -71,24 +71,23 @@ bool CodeEditor::openFile(const QString &filePath)
 
 void CodeEditor::loadDataFromFile()
 {
+    m_sciControlMaster->setReadOnly(false);
+    m_sciControlMaster->cancel();
+    m_sciControlMaster->setUndoCollection(false);
+    m_sciControlMaster->emptyUndoBuffer();
     m_sciControlMaster->clearAll();
-    auto [ok, data] = m_document.loadFromFile();
+    m_sciControlMaster->setXOffset(0);
+    m_sciControlMaster->setModEventMask(SC_MOD_NONE);
+    bool ok = m_document.loadFromFile([this](qint64 size, const char *data) { m_sciControlMaster->appendText(size, data); });
+    m_sciControlMaster->setModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT);
+    m_sciControlMaster->setUndoCollection(true);
+    m_sciControlMaster->emptyUndoBuffer();
+    m_sciControlMaster->setSavePoint();
     if (!ok)
     {
         QMessageBox::warning(this, tr("Error"), tr("Cannot open file %1.").arg(QDir::toNativeSeparators(m_document.filePath())), QMessageBox::Ok);
         return;
     }
-    if (data.isEmpty())
-    {
-        return;
-    }
-    // display text
-    int lineCount = TextUtils::getLineCount(data.constData(), data.length());
-    m_sciControlMaster->allocateLines(lineCount);
-    m_sciControlMaster->setModEventMask(SC_MOD_NONE);
-    m_sciControlMaster->appendText(data.length(), (const char *)data.constData());
-    m_sciControlMaster->setModEventMask(SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT);
-
     documentChanged();
 }
 
@@ -282,11 +281,10 @@ bool CodeEditor::focus()
 void CodeEditor::applyEditorStyles()
 {
     ScintillaConfig::initEditorStyle(m_sciControlMaster, m_lexerName);
-    m_sciControlMaster->colourise(0, -1);
+    // m_sciControlMaster->colourise(0, -1);
     if (m_sciControlSlave)
     {
         ScintillaConfig::initEditorStyle(m_sciControlSlave, m_lexerName);
-        m_sciControlSlave->colourise(0, -1);
     }
 }
 

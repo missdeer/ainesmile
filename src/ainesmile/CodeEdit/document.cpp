@@ -5,8 +5,22 @@
 #include "document.h"
 #include "config.h"
 
+namespace
+{
+    const qint64 fileMappingBlockSize = 4 * 1024 * 1024;
+}
+
 QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString &fromEncoding, const QString &toEncoding)
 {
+    return convertDataEncoding(data.constData(), data.length(), fromEncoding, toEncoding);
+}
+
+QByteArray ASDocument::convertDataEncoding(const char *data, qint64 length, const QString &fromEncoding, const QString &toEncoding)
+{
+    if (fromEncoding.toLower() == toEncoding.toLower())
+    {
+        return {data, static_cast<int>(length)};
+    }
     UErrorCode errorCode = U_ZERO_ERROR;
 
     UConverter *sourceConv = ucnv_open(fromEncoding.toStdString().c_str(), &errorCode);
@@ -14,7 +28,7 @@ QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString
     {
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("creating converter for %1 failed: %2").arg(fromEncoding).arg(errorName);
-        return data;
+        return {data, static_cast<int>(length)};
     }
 
     UConverter *targetConv = ucnv_open(toEncoding.toStdString().c_str(), &errorCode);
@@ -23,7 +37,7 @@ QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString
         const char *errorName = u_errorName(errorCode);
         m_errorMessage        = QObject::tr("creating converter for UTF-8 failed: %1").arg(errorName);
         ucnv_close(sourceConv);
-        return data;
+        return {data, static_cast<int>(length)};
     }
     BOOST_SCOPE_EXIT(sourceConv, targetConv)
     {
@@ -32,9 +46,9 @@ QByteArray ASDocument::convertDataEncoding(const QByteArray &data, const QString
     }
     BOOST_SCOPE_EXIT_END
 
-    const qint64      sourceSize  = data.length();
-    const char       *source      = data.constData();
-    const char *const sourceStart = data.constData();
+    const qint64      sourceSize  = length;
+    const char       *source      = data;
+    const char *const sourceStart = data;
     const char *const sourceLimit = source + sourceSize;
 
     const qint64 targetBufferSize = sourceSize * 4;
@@ -131,23 +145,75 @@ bool ASDocument::hasBOM() const
     return m_bom != BOM::None;
 }
 
-std::tuple<bool, QByteArray> ASDocument::loadFromFile()
+bool ASDocument::loadEncodedFile(
+    QFile &file, const QString &fromEncoding, const QString &toEncoding, std::function<void(qint64, const char *)> load, qint64 offset)
+{
+    qint64 leftSize = file.size() - offset;
+    while (leftSize > 0)
+    {
+        qint64 expectedSize = std::min(leftSize, fileMappingBlockSize);
+        auto  *mapped       = file.map(offset, expectedSize);
+        if (mapped)
+        {
+            offset += expectedSize;
+            leftSize -= expectedSize;
+            auto decodedData = convertDataEncoding((const char *)mapped, expectedSize, fromEncoding, toEncoding);
+            load(decodedData.length(), decodedData.constData());
+            file.unmap(mapped);
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ASDocument::loadFile(QFile &file, std::function<void(qint64, const char *)> load, qint64 offset)
+{
+    qint64 leftSize = file.size() - offset;
+    while (leftSize > 0)
+    {
+        qint64 expectedSize = std::min(leftSize, fileMappingBlockSize);
+        auto  *mapped       = file.map(offset, expectedSize);
+        if (mapped)
+        {
+            offset += expectedSize;
+            leftSize -= expectedSize;
+            load(expectedSize, (const char *)mapped);
+            file.unmap(mapped);
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ASDocument::loadFromFile(std::function<void(qint64, const char *)> load)
 {
     QFile file(m_filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        return {false, {}};
-    }
-
-    if (m_forceEncoding)
-    {
-        auto data = file.readAll();
-        return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
+        return false;
     }
 
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
+    if ((!m_forceEncoding && !autoDetectEncoding) || m_encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) == 0)
+    {
+        m_encoding = QStringLiteral("UTF-8");
+        return loadFile(file, load);
+    }
 
+    if (m_forceEncoding)
+    {
+        return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load);
+    }
+
+    // detect encoding
+    // check BOM first, if BOM is not found, try to guess encoding
     m_bom                                 = BOM::None;
     const qint64                headerLen = 4;
     std::array<char, headerLen> header {};
@@ -156,43 +222,39 @@ std::tuple<bool, QByteArray> ASDocument::loadFromFile()
     auto [bom, length]                          = EncodingUtils::checkBOM(QByteArray::fromRawData(header.data(), cbRead));
 
     file.seek(length);
-    auto data = file.readAll();
     if (bom == BOM::UTF8)
     {
         m_encoding = QByteArrayLiteral("UTF-8");
         m_bom      = bom;
-        return {true, data};
+        return loadFile(file, load, length);
     }
     if (bom != BOM::None)
     {
-        auto encoding   = EncodingUtils::encodingNameForBOM(bom);
-        m_encoding      = encoding;
-        m_bom           = bom;
-        charsetDetected = true;
-        return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
+        auto encoding = EncodingUtils::encodingNameForBOM(bom);
+        m_encoding    = encoding;
+        m_bom         = bom;
+        return loadEncodedFile(file, encoding, QStringLiteral("UTF-8"), load, length);
     }
 
     if (autoDetectEncoding)
     {
-        if (!charsetDetected)
-        {
-            m_bom = BOM::None;
-            file.seek(0);
-            QString encoding = EncodingUtils::fileEncodingDetect(data);
-            if (!encoding.isEmpty() && encoding.toUpper() != QByteArrayLiteral("UTF-8"))
-            {
-                m_encoding      = encoding.toUtf8();
-                charsetDetected = true;
-                return {true, convertDataEncoding(data, m_encoding, QStringLiteral("UTF-8"))};
-            }
-        }
+        m_bom = BOM::None;
+        file.seek(0);
+        // QString encoding = EncodingUtils::fileEncodingDetect(data);
+        // if (!encoding.isEmpty())
+        // {
+        //     if (encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) == 0)
+        //     {
+        //         m_encoding = QByteArrayLiteral("UTF-8");
+        //         return loadFile(file, load, length);
+        //     }
+        //     m_encoding = encoding.toUtf8();
+        //     // convert encoding & load it
+        // }
     }
-    if (!charsetDetected)
-    {
-        m_encoding = QByteArrayLiteral("UTF-8");
-        return {true, data};
-    }
-    return {false, {}};
+
+    m_encoding = QByteArrayLiteral("UTF-8");
+    return loadFile(file, load, length);
 }
 
 void ASDocument::setEncoding(const QString &encoding)
