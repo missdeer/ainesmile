@@ -70,6 +70,11 @@ namespace EncodingUtils
 
     QString fileEncodingDetect(const QByteArray &data)
     {
+        return fileEncodingDetect(data.constData(), data.length());
+    }
+
+    QString fileEncodingDetect(const char *data, int length)
+    {
         UErrorCode status = U_ZERO_ERROR;
 
         UCharsetDetector *csd = ucsdet_open(&status);
@@ -83,7 +88,7 @@ namespace EncodingUtils
         }
         BOOST_SCOPE_EXIT_END
 
-        ucsdet_setText(csd, data.constData(), data.length(), &status);
+        ucsdet_setText(csd, data, length, &status);
         if (U_FAILURE(status))
         {
             return QStringLiteral("UTF-8");

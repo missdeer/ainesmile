@@ -23,7 +23,7 @@ enum class BOM : std::uint8_t
 
 namespace EncodingUtils
 {
-
+    QString                      fileEncodingDetect(const char *data, int length);
     QString                      fileEncodingDetect(const QByteArray &data);
     std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data);
     QByteArray                   encodingNameForBOM(BOM bom);
