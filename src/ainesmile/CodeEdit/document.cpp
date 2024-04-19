@@ -112,6 +112,7 @@ bool ASDocument::saveToFile(const QByteArray &data)
     auto [fromConv, toConv] = prepareConverters(QStringLiteral("UTF-8"), m_encoding);
     if (!fromConv || !toConv)
     {
+        m_errorMessage = QObject::tr("creating converter for %1 & UTF-8 failed").arg(m_encoding);
         return false;
     }
     auto [newData, _] = convertDataEncoding(data.constData(), data.length(), fromConv, toConv);
@@ -152,6 +153,7 @@ bool ASDocument::loadEncodedFile(
     auto [fromConv, toConv] = prepareConverters(fromEncoding, toEncoding);
     if (!fromConv || !toConv)
     {
+        m_errorMessage = QObject::tr("creating converter for %1 & UTF-8 failed").arg(m_encoding);
         return false;
     }
     BOOST_SCOPE_EXIT(this_, fromConv, toConv)
@@ -164,19 +166,16 @@ bool ASDocument::loadEncodedFile(
     {
         qint64 expectedSize = std::min(leftSize, fileMappingBlockSize);
         auto  *mappedData   = file.map(offset, expectedSize);
-        if (mappedData)
-        {
-            auto [decodedData, bytesConsumed] = convertDataEncoding((const char *)mappedData, expectedSize, fromConv, toConv);
-            load(decodedData.length(), decodedData.constData());
-            offset += bytesConsumed;
-            leftSize -= bytesConsumed;
-            file.unmap(mappedData);
-        }
-        else
+        if (!mappedData)
         {
             m_errorMessage = QObject::tr("creating file mapping failed");
             return false;
         }
+        auto [decodedData, bytesConsumed] = convertDataEncoding((const char *)mappedData, expectedSize, fromConv, toConv);
+        load(decodedData.length(), decodedData.constData());
+        offset += bytesConsumed;
+        leftSize -= bytesConsumed;
+        file.unmap(mappedData);
     }
     return true;
 }
@@ -187,18 +186,16 @@ bool ASDocument::loadFile(QFile &file, std::function<void(qint64, const char *)>
     while (leftSize > 0)
     {
         qint64 expectedSize = std::min(leftSize, fileMappingBlockSize);
-        auto  *mapped       = file.map(offset, expectedSize);
-        if (mapped)
+        auto  *mappedData   = file.map(offset, expectedSize);
+        if (!mappedData)
         {
-            offset += expectedSize;
-            leftSize -= expectedSize;
-            load(expectedSize, (const char *)mapped);
-            file.unmap(mapped);
-        }
-        else
-        {
+            m_errorMessage = QObject::tr("creating file mapping failed");
             return false;
         }
+        offset += expectedSize;
+        leftSize -= expectedSize;
+        load(expectedSize, (const char *)mappedData);
+        file.unmap(mappedData);
     }
     return true;
 }
