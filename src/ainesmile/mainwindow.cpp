@@ -1,5 +1,11 @@
 ﻿#include "stdafx.h"
 
+#include <QPageSetupDialog>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
+#include <QPrinter>
+#include <QPrinterInfo>
+
 #include "mainwindow.h"
 #include "codeeditpage.h"
 #include "config.h"
@@ -9,6 +15,7 @@
 #include "preferencedialog.h"
 #include "ui_mainwindow.h"
 #include "windowlistdialog.h"
+
 
 const QEvent::Type AppIdleEventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
@@ -1258,3 +1265,11 @@ void MainWindow::createStatusBarWidgets()
     connect(m_withBOMLabel, &QWidget::customContextMenuRequested, this, &MainWindow::onSelectEncodingCustomContextMenuRequested);
     ui->statusBar->addPermanentWidget(m_withBOMLabel);
 }
+
+void MainWindow::on_actionPageSetup_triggered()
+{
+    QPageSetupDialog dlg(this);
+    dlg.exec();
+}
+
+void MainWindow::on_actionPrint_triggered() {}

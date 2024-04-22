@@ -136,8 +136,8 @@
     <addaction name="actionCloseAll"/>
     <addaction name="actionCloseAllButActiveDocument"/>
     <addaction name="separator"/>
+    <addaction name="actionPageSetup"/>
     <addaction name="actionPrint"/>
-    <addaction name="actionPrintNow"/>
     <addaction name="separator"/>
     <addaction name="menuRecentFiles"/>
     <addaction name="separator"/>
@@ -1131,6 +1131,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="actionPageSetup">
+   <property name="text">
+    <string>Page Setup...</string>
    </property>
   </action>
  </widget>

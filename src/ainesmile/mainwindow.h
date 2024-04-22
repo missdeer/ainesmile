@@ -131,6 +131,10 @@ private slots:
 
     void on_btnFindAll_clicked();
 
+    void on_actionPageSetup_triggered();
+
+    void on_actionPrint_triggered();
+
 private:
     Ui::MainWindow  *ui;
     CodeEditor      *m_lastConnectedCodeEditPage {nullptr};

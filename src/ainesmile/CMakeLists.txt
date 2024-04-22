@@ -6,14 +6,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(NOT QT5 AND NOT QT6)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
 elseif(QT5)
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
 elseif(QT6)
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network  LinguistTools)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Network PrintSupport LinguistTools)
 endif()
 IF (Qt6_FOUND)
         find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
@@ -169,6 +169,7 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
         Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::PrintSupport
         )
 
 IF (Qt6_FOUND)
