@@ -19,8 +19,8 @@ env:
   COMPILER_VERSION: 2024.1.0
   TBB_VERSION: 2021.12.0
   VS_VER: vs2022
-  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.3/LLVM-18.1.3-win64.exe
-  ninja_link: https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip
+  clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.4/LLVM-18.1.4-win64.exe
+  ninja_link: https://github.com/ninja-build/ninja/releases/download/v1.12.0/ninja-win.zip
 
 jobs:
   win64-msvc:
@@ -589,8 +589,8 @@ jobs:
         shell: cmd
         run: |
           echo set MSYSTEM=${{ matrix.mingw_arch }} > cmake.bat
-          echo set PATH=%PATH%;${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin >> cmake.bat
-          echo cmake.exe %%* >> cmake.bat
+          echo set PATH=${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin;%PATH% >> cmake.bat
+          echo "C:\Program Files\CMake\bin\cmake.exe" %%* >> cmake.bat
           type cmake.bat
           cd mingwdeployqt
           mkdir build
@@ -616,8 +616,8 @@ jobs:
         shell: cmd
         run: |
           echo set MSYSTEM=${{ matrix.mingw_arch }} > cmake.bat
-          echo set PATH=%PATH%;${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin >> cmake.bat
-          echo cmake.exe %%* >> cmake.bat
+          echo set PATH=${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin;${{ env.msysroot }}\msys64\usr\bin;%PATH% >> cmake.bat
+          echo "C:\Program Files\CMake\bin\cmake.exe" %%* >> cmake.bat
           type cmake.bat
           mkdir build
           cd build
