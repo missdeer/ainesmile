@@ -741,7 +741,7 @@
     <message>
         <location filename="../mainwindow.ui" line="1138"/>
         <source>Page Setup...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">頁面設定...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
@@ -815,7 +815,7 @@ Keep It Simple &amp; Stupid!</source>
         <location filename="../mainwindow.cpp" line="1282"/>
         <location filename="../mainwindow.cpp" line="1289"/>
         <source>Print Document</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">列印文件</translation>
     </message>
 </context>
 <context>
