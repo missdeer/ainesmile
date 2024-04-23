@@ -130,11 +130,13 @@ ELSE(APPLE)
 ENDIF(APPLE)
 
 IF(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+        IF(NOT MINGW OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         qt_create_translation(QM_FILES
             ${CMAKE_CURRENT_SOURCE_DIR}
             ${TS_FILES}
             OPTIONS -no-obsolete -no-recursive
         )
+        ENDIF()
         qt_add_executable(${PROJECT_NAME}
                 ${ainesmile_headers}
                 ${ainesmile_src}
