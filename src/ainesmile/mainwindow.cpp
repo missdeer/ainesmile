@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 
 #include <QPageSetupDialog>
+#include <QPainter>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
 #include <QPrinter>
@@ -16,6 +17,11 @@
 #include "ui_mainwindow.h"
 #include "windowlistdialog.h"
 
+#if defined(Q_OS_WIN)
+#    pragma comment(linker, "\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#endif
 
 const QEvent::Type AppIdleEventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
@@ -383,10 +389,6 @@ void MainWindow::connectSignals(CodeEditor *page)
     connect(ui->actionUndo, &QAction::triggered, page, &CodeEditor::undo);
     disconnect(ui->actionRedo, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionRedo, &QAction::triggered, page, &CodeEditor::redo);
-    disconnect(ui->actionPrint, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPrint, &QAction::triggered, page, &CodeEditor::print);
-    disconnect(ui->actionPrintNow, &QAction::triggered, nullptr, nullptr);
-    connect(ui->actionPrintNow, &QAction::triggered, page, &CodeEditor::printNow);
     disconnect(ui->actionDelete, &QAction::triggered, nullptr, nullptr);
     connect(ui->actionDelete, &QAction::triggered, page, &CodeEditor::deleteCurrent);
     disconnect(ui->actionSelectAll, &QAction::triggered, nullptr, nullptr);
@@ -1272,4 +1274,20 @@ void MainWindow::on_actionPageSetup_triggered()
     dlg.exec();
 }
 
-void MainWindow::on_actionPrint_triggered() {}
+void MainWindow::on_actionPrint_triggered()
+{
+    QPrinter printer;
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print Document"));
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    QPainter painter;
+    painter.begin(&printer);
+
+    QString text = tr("Print Document");
+    painter.drawText(100, 100, 500, 500, Qt::AlignLeft | Qt::AlignTop, text);
+
+    painter.end();
+}
