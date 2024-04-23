@@ -4,7 +4,6 @@
 #include <QPainter>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
-#include <QPrinter>
 #include <QPrinterInfo>
 
 #include "mainwindow.h"
@@ -1270,24 +1269,38 @@ void MainWindow::createStatusBarWidgets()
 
 void MainWindow::on_actionPageSetup_triggered()
 {
-    QPageSetupDialog dlg(this);
+    auto availablePrinters = QPrinterInfo::availablePrinterNames();
+    if (availablePrinters.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("No printers available."), QMessageBox::Ok);
+        return;
+    }
+    QPageSetupDialog dlg(&m_printer, this);
     dlg.exec();
 }
 
 void MainWindow::on_actionPrint_triggered()
 {
-    QPrinter printer;
+    auto availablePrinters = QPrinterInfo::availablePrinterNames();
+    if (availablePrinters.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("No printers available."), QMessageBox::Ok);
+        return;
+    }
 
-    QPrintDialog dialog(&printer, this);
+    QPrintDialog dialog(&m_printer, this);
     dialog.setWindowTitle(tr("Print Document"));
     if (dialog.exec() != QDialog::Accepted)
+    {
         return;
+    }
 
     QPainter painter;
-    painter.begin(&printer);
+    painter.begin(&m_printer);
 
-    QString text = tr("Print Document");
-    painter.drawText(100, 100, 500, 500, Qt::AlignLeft | Qt::AlignTop, text);
+    auto *editor = getFocusCodeEditor();
+    Q_ASSERT(editor);
+    editor->print(painter);
 
     painter.end();
 }

@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QMainWindow>
+#include <QPrinter>
 
 #include "recentfiles.h"
 #include "tabwidget.h"
@@ -148,6 +149,7 @@ private:
     RecentFiles      m_recentFiles;
     bool             m_aboutToQuit {false};
     bool             m_exchanging {false};
+    QPrinter         m_printer;
 
     void updateFindList();
     void updateReplaceList();

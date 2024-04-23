@@ -11,6 +11,8 @@
 #include "document.h"
 #include "encodingutils.h"
 
+QT_FORWARD_DECLARE_CLASS(QPainter);
+
 class CodeEditor : public QWidget
 {
     Q_OBJECT
@@ -76,8 +78,7 @@ public slots:
     void copy();
     void cut();
     void paste();
-    void print();
-    void printNow();
+    void print(QPainter& painter);
     void deleteCurrent();
     void selectAll();
     void setReadOnly();

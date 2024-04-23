@@ -1,9 +1,12 @@
 ﻿#include "stdafx.h"
 
+#include <QPainter>
+
 #include "codeeditpage.h"
 #include "config.h"
 #include "scintillaconfig.h"
 #include "textutils.h"
+
 
 CodeEditor::CodeEditor(QWidget *parent) : QWidget(parent), m_sciControlMaster(new ScintillaEdit(m_editorSplitter)), m_sciFocusView(m_sciControlMaster)
 {
@@ -489,9 +492,7 @@ void CodeEditor::paste()
     sci->paste();
 }
 
-void CodeEditor::print() {}
-
-void CodeEditor::printNow() {}
+void CodeEditor::print(QPainter &painter) {}
 
 void CodeEditor::deleteCurrent()
 {
