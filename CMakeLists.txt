@@ -16,8 +16,6 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 option(AVX2 "Target CPU does support AVX2")
 option(MACOMP "Enables OpenMP on macOS")
-option(QT5 "Build with Qt5")
-option(QT6 "Build with Qt6")
 
 set(CURRENT_COMPILER_ID "${CMAKE_CXX_COMPILER_ID}")
 message("Compiler ID is: ${CURRENT_COMPILER_ID}")
