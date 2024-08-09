@@ -1,7 +1,10 @@
 ﻿#include "stdafx.h"
 
+#include <algorithm>
+
 #include "recentfiles.h"
 #include "config.h"
+
 
 RecentFiles::RecentFiles(QObject *parent) : QObject(parent)
 {
@@ -69,8 +72,7 @@ void RecentFiles::sync()
 bool RecentFiles::exists(const QStringList &container, const QString &file)
 {
     QFileInfo fileInfo(file);
-    auto iter = std::find_if(container.begin(), container.end(), [&fileInfo](const QString &filePath) { return QFileInfo(filePath) == fileInfo; });
-    return container.end() != iter;
+    return std::any_of(container.begin(), container.end(), [&fileInfo](const QString &filePath) { return QFileInfo(filePath) == fileInfo; });
 }
 
 void RecentFiles::init()

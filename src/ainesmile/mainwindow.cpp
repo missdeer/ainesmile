@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <algorithm>
+
 #include <QPageSetupDialog>
 #include <QPainter>
 #include <QPrintDialog>
@@ -15,6 +17,7 @@
 #include "preferencedialog.h"
 #include "ui_mainwindow.h"
 #include "windowlistdialog.h"
+
 
 #if defined(Q_OS_WIN)
 #    pragma comment(linker, "\"/manifestdependency:type='win32' \
@@ -1145,8 +1148,7 @@ void MainWindow::updateFindList()
         try
         {
             auto findTexts = ptree.get_child("find.texts");
-            auto iter = std::find_if(findTexts.begin(), findTexts.end(), [&strToFind](const auto &val) { return val.second.data() == strToFind; });
-            if (findTexts.end() != iter)
+            if (std::any_of(findTexts.begin(), findTexts.end(), [&strToFind](const auto &val) { return val.second.data() == strToFind; }))
             {
                 return;
             }
@@ -1166,9 +1168,7 @@ void MainWindow::updateReplaceList()
     {
         auto &ptree        = Config::instance()->pt();
         auto  replaceTexts = ptree.get_child("replace.texts");
-        auto  iter =
-            std::find_if(replaceTexts.begin(), replaceTexts.end(), [&strReplace](const auto &val) { return val.second.data() == strReplace; });
-        if (replaceTexts.end() == iter)
+        if (std::none_of(replaceTexts.begin(), replaceTexts.end(), [&strReplace](const auto &val) { return val.second.data() == strReplace; }))
         {
             ptree.add("replace.texts.text", strReplace);
             ui->cbReplace->addItem(QString::fromStdString(strReplace));
@@ -1182,8 +1182,7 @@ void MainWindow::updateFindReplaceFilterList()
     {
         auto &ptree       = Config::instance()->pt();
         auto  filterTexts = ptree.get_child("filters.texts");
-        auto  iter = std::find_if(filterTexts.begin(), filterTexts.end(), [&strFilters](const auto &val) { return val.second.data() == strFilters; });
-        if (filterTexts.end() == iter)
+        if (std::none_of(filterTexts.begin(), filterTexts.end(), [&strFilters](const auto &val) { return val.second.data() == strFilters; }))
         {
             ptree.add("filters.texts.text", strFilters);
             ui->cbFilters->addItem(QString::fromStdString(strFilters));
