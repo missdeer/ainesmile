@@ -130,13 +130,13 @@ jobs:
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build\bin
           name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
 
       - name: upload avx2 executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build-avx2\bin
           name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
@@ -276,7 +276,7 @@ jobs:
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build\bin
           name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
@@ -292,7 +292,7 @@ jobs:
           overwrite: true
 
       - name: upload avx2 executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build-avx2\bin
           name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
@@ -443,7 +443,7 @@ jobs:
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build\bin
           name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}.zip
@@ -460,7 +460,7 @@ jobs:
 
 
       - name: upload avx2 executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build-avx2\bin
           name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
@@ -654,7 +654,7 @@ jobs:
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
 
       - name: upload executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build\bin
           name: ainesmile-${{ matrix.qt_arch }}.zip
@@ -670,7 +670,7 @@ jobs:
           overwrite: true
 
       - name: upload avx2 executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build-avx2\bin
           name: ainesmile-${{ matrix.qt_arch }}-avx2.zip
@@ -756,7 +756,7 @@ jobs:
           find . -name '*.dmg' -type f -print
 
       - name: upload executable artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build/src/ainesmile/ainesmile.dmg
           name: ainesmile-macOS-${{ matrix.qt_ver }}-x86_64.dmg
@@ -772,7 +772,7 @@ jobs:
           overwrite: true
 
       - name: upload executable artifact avx2
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build-avx2/src/ainesmile/ainesmile.dmg
           name: ainesmile-macOS-${{ matrix.qt_ver }}-x86_64-avx2.dmg
