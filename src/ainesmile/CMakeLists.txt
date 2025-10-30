@@ -15,6 +15,7 @@ find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
 find_package(OpenMP)
 find_package(TBB REQUIRED)
 find_package(Boost 1.79.0 REQUIRED)
+find_package(hwy CONFIG REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -27,6 +28,7 @@ add_compile_definitions(SCINTILLA_QT=1
         SCI_STATIC_LINK=1
         NO_DLL=1
         EXPORT_IMPORT_API=
+        HWY_COMPILE_ALL_ATTAINABLE=1
         )
 
 IF(APPLE)
@@ -145,6 +147,7 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         ICU::uc ICU::i18n
         OpenMP::OpenMP_CXX
         TBB::tbb
+        hwy::hwy
         Qt${QT_VERSION_MAJOR}::Network
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Xml
