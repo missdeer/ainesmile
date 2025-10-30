@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.21)
 project(ainesmile VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -14,19 +14,7 @@ ENDIF(Qt6_FOUND)
 find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
 find_package(OpenMP)
 find_package(TBB REQUIRED)
-
-find_package(Boost 1.79.0)
-if(Boost_FOUND)
-    #include_directories(${Boost_INCLUDE_DIRS})
-    link_directories(${Boost_LIBRARY_DIRS})
-
-    set(Boost_USE_STATIC_LIBS ON)
-
-    set(Boost_USE_MULTITHREADED ON)
-    if(MSVC)
-      set(Boost_USE_STATIC_RUNTIME ON)
-    endif(MSVC)
-endif(Boost_FOUND)
+find_package(Boost 1.79.0 REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -174,8 +162,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON
                                                  MACOSX_BUNDLE ON)
 
 if(Boost_FOUND)
-  # dont use include_directories, use target_include_directories instead to let lupdate skip boost directories
-  target_include_directories(${PROJECT_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+  target_link_directories(${PROJECT_NAME} PUBLIC Boost::headers)
 endif()
 
 if(WIN32)
