@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <hwy/highway.h>
+
 #include "config.h"
 #include "mainwindow.h"
 
@@ -113,6 +115,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(QStringLiteral("ainesmile"));
 
     QApplication app(argc, argv);
+
+    // Pre-warm Highway dynamic dispatch
+    hwy::GetChosenTarget().Update(hwy::SupportedTargets());
 
     QTranslator translator;
     QTranslator qtTranslator;

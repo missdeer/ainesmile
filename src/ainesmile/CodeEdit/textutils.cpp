@@ -1,63 +1,71 @@
 #include "stdafx.h"
 
 #include "textutils.h"
-#include "VectorISA.h"
 
+#undef HWY_TARGET_INCLUDE
+#define HWY_TARGET_INCLUDE "CodeEdit/textutils.cpp"
+#include <hwy/foreach_target.h>
+#include <hwy/highway.h>
 
+HWY_BEFORE_NAMESPACE();
 namespace TextUtils
 {
+    namespace HWY_NAMESPACE
+    {
+        int getLineCountImpl(const char *pData, qint64 length)
+        {
+            namespace hn = hwy::HWY_NAMESPACE;
+            using D      = hn::ScalableTag<uint8_t>;
+            const D d;
+
+            int         lineCount = 0;
+            const char *pEnd      = pData + length;
+
+            // Create a vector containing the newline character
+            const auto newline = hn::Set(d, '\n');
+
+            // Get the number of lanes (bytes) in a vector
+            const size_t N = hn::Lanes(d);
+
+            // Main loop processes N bytes at a time
+            while (pData + N <= pEnd)
+            {
+                // Load data into a Highway vector
+                const auto chunk = hn::LoadU(d, reinterpret_cast<const uint8_t *>(pData));
+
+                // Compare with newline character
+                const auto mask = hn::Eq(chunk, newline);
+
+                // Count matches using PopCount
+                lineCount += hn::CountTrue(d, mask);
+
+                pData += N;
+            }
+
+            // Process any remaining bytes
+            while (pData < pEnd)
+            {
+                if (*pData == '\n')
+                {
+                    ++lineCount;
+                }
+                ++pData;
+            }
+
+            return lineCount + 1;
+        }
+    } // namespace HWY_NAMESPACE
+} // namespace TextUtils
+HWY_AFTER_NAMESPACE();
+
+#if HWY_ONCE
+namespace TextUtils
+{
+    HWY_EXPORT(getLineCountImpl);
+
     int getLineCount(const char *pData, qint64 length)
     {
-        int         lineCount = 0;
-        const char *pEnd      = pData + length;
-#if AS_USE_SSE2
-        // Prepare a 128-bit register with 16 bytes set to '\n'
-        __m128i newline = _mm_set1_epi8('\n');
-
-        // Main loop processes 16 bytes at a time
-        while (pData + 15 < pEnd)
-        {
-            __m128i chunk = _mm_loadu_si128((__m128i const *)pData);
-
-            // Compare 16 bytes to '\n', result is 0 for non-matching bytes, 0xFF for matching bytes
-            __m128i result = _mm_cmpeq_epi8(chunk, newline);
-
-            // Use a popcount intrinsic to count the number of set bits in the 128-bit value.
-            lineCount += as_popcount(_mm_movemask_epi8(result));
-
-            pData += 16;
-        }
-
-#elif AS_USE_AVX2
-
-        // Prepare a 256-bit register with 32 bytes set to '\n'
-        __m256i newline = _mm256_set1_epi8('\n');
-
-        // Main loop processes 32 bytes at a time
-        while (pData + 31 < pEnd)
-        {
-            __m256i chunk = _mm256_loadu_si256((__m256i const *)pData);
-
-            // Compare 32 bytes to '\n', result is 0 for non-matching bytes, 0xFF for matching bytes
-            __m256i result = _mm256_cmpeq_epi8(chunk, newline);
-
-            // Sum up the set bits from the comparison result
-            lineCount += as_popcount(_mm256_movemask_epi8(result));
-
-            pData += 32;
-        }
-#else
-#endif
-        // Process any remaining bytes
-        while (pData < pEnd)
-        {
-            if (*pData == '\n')
-            {
-                ++lineCount;
-            }
-            ++pData;
-        }
-        return lineCount + 1;
+        return HWY_DYNAMIC_DISPATCH(getLineCountImpl)(pData, length);
     }
 
     int getLineCount(const QByteArray &data)
@@ -66,3 +74,4 @@ namespace TextUtils
     }
 
 } // namespace TextUtils
+#endif // HWY_ONCE
