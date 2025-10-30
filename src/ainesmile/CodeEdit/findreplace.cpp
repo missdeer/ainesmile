@@ -11,6 +11,143 @@
 #include "findreplaceresultmodel.h"
 #include "findresultnotifier.h"
 
+#undef HWY_TARGET_INCLUDE
+#define HWY_TARGET_INCLUDE "CodeEdit/findreplace.cpp"
+#include <hwy/foreach_target.h>
+#include <hwy/highway.h>
+
+HWY_BEFORE_NAMESPACE();
+namespace FindReplaceInternal
+{
+    namespace HWY_NAMESPACE
+    {
+        // SIMD-accelerated string search that finds all occurrences in a buffer
+        // Returns a vector of byte offsets where matches were found
+        std::vector<size_t> findAllOccurrencesImpl(const char *buffer, size_t bufferLen, const char *searchStr, size_t searchLen, bool caseSensitive)
+        {
+            std::vector<size_t> results;
+            if (searchLen == 0 || bufferLen < searchLen)
+            {
+                return results;
+            }
+
+            namespace hn = hwy::HWY_NAMESPACE;
+            using D      = hn::ScalableTag<uint8_t>;
+            const D d;
+
+            const size_t  N         = hn::Lanes(d);
+            const char   *bufferEnd = buffer + bufferLen;
+            const char   *searchEnd = bufferEnd - searchLen + 1;
+            const char   *p         = buffer;
+            const uint8_t firstChar =
+                caseSensitive ? static_cast<uint8_t>(searchStr[0]) : static_cast<uint8_t>(std::tolower(static_cast<unsigned char>(searchStr[0])));
+
+            // Create a vector with the first character of the search string
+            const auto firstCharVec = hn::Set(d, firstChar);
+
+            // Main SIMD loop: scan for first character
+            while (p + N <= searchEnd)
+            {
+                // Load chunk of buffer
+                auto chunk = hn::LoadU(d, reinterpret_cast<const uint8_t *>(p));
+
+                // Case-insensitive: convert to lowercase
+                if (!caseSensitive)
+                {
+                    // Convert uppercase A-Z (0x41-0x5A) to lowercase by setting bit 5
+                    const auto isUpper = hn::And(hn::Ge(chunk, hn::Set(d, 'A')), hn::Le(chunk, hn::Set(d, 'Z')));
+                    chunk              = hn::IfThenElse(isUpper, hn::Or(chunk, hn::Set(d, 0x20)), chunk);
+                }
+
+                // Find matches of first character
+                const auto mask = hn::Eq(chunk, firstCharVec);
+
+                // Check each match
+                uint64_t bits = hn::detail::BitsFromMask(mask);
+                while (bits != 0)
+                {
+                    const size_t lane     = hwy::Num0BitsBelowLS1Bit_Nonzero64(bits);
+                    const char  *matchPos = p + lane;
+
+                    // Verify full string match
+                    bool fullMatch = true;
+                    for (size_t i = 1; i < searchLen && fullMatch; ++i)
+                    {
+                        if (caseSensitive)
+                        {
+                            fullMatch = (matchPos[i] == searchStr[i]);
+                        }
+                        else
+                        {
+                            fullMatch =
+                                (std::tolower(static_cast<unsigned char>(matchPos[i])) == std::tolower(static_cast<unsigned char>(searchStr[i])));
+                        }
+                    }
+
+                    if (fullMatch)
+                    {
+                        results.push_back(matchPos - buffer);
+                    }
+
+                    bits &= bits - 1; // Clear the lowest set bit
+                }
+
+                p += N;
+            }
+
+            // Process remaining bytes with scalar code
+            while (p < searchEnd)
+            {
+                bool match;
+                if (caseSensitive)
+                {
+                    match = (*p == searchStr[0]);
+                }
+                else
+                {
+                    match = (std::tolower(static_cast<unsigned char>(*p)) == std::tolower(static_cast<unsigned char>(searchStr[0])));
+                }
+
+                if (match)
+                {
+                    bool fullMatch = true;
+                    for (size_t i = 1; i < searchLen && fullMatch; ++i)
+                    {
+                        if (caseSensitive)
+                        {
+                            fullMatch = (p[i] == searchStr[i]);
+                        }
+                        else
+                        {
+                            fullMatch = (std::tolower(static_cast<unsigned char>(p[i])) == std::tolower(static_cast<unsigned char>(searchStr[i])));
+                        }
+                    }
+
+                    if (fullMatch)
+                    {
+                        results.push_back(p - buffer);
+                    }
+                }
+                ++p;
+            }
+
+            return results;
+        }
+    } // namespace HWY_NAMESPACE
+} // namespace FindReplaceInternal
+HWY_AFTER_NAMESPACE();
+
+#if HWY_ONCE
+namespace FindReplaceInternal
+{
+    HWY_EXPORT(findAllOccurrencesImpl);
+
+    std::vector<size_t> findAllOccurrences(const char *buffer, size_t bufferLen, const char *searchStr, size_t searchLen, bool caseSensitive)
+    {
+        return HWY_DYNAMIC_DISPATCH(findAllOccurrencesImpl)(buffer, bufferLen, searchStr, searchLen, caseSensitive);
+    }
+} // namespace FindReplaceInternal
+
 CodeEditor *FindReplacer::previousPage(CodeEditor *currentPage, std::vector<CodeEditor *> &pages)
 {
     auto iter = std::find(pages.begin(), pages.end(), currentPage);
@@ -44,30 +181,57 @@ bool FindReplacer::findAllStringInFile(const QString &filePath, FindReplaceOptio
     {
         return false;
     }
+
+    // Read entire file into buffer for SIMD processing
+    QByteArray fileData = file.readAll();
+    file.close();
+
+    if (fileData.isEmpty())
+    {
+        return true;
+    }
+
     FindResultNotifier notifier;
     connect(
         &notifier, &FindResultNotifier::found, FindReplaceResultModel::instance(), &FindReplaceResultModel::onAddFindResult, Qt::QueuedConnection);
 
-    auto        insensitive = (fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
-    QTextStream instream(&file);
-    int         lineNr = 0;
-    while (!instream.atEnd())
-    {
-        QString line = instream.readLine();
-        lineNr++;
-        int  startPos = 0;
-        auto pos      = line.indexOf(fro.strToFind, startPos, insensitive);
-        while (pos >= 0)
-        {
-            // notify find result
-            int  from    = std::min(static_cast<int>(pos) - 10, 0);
-            auto context = line.mid(from, fro.strToFind.length() + 20);
-            notifier.addResult(filePath, context, lineNr, from, fro.strToFind.length());
+    // Convert search string to UTF-8
+    QByteArray searchBytes = fro.strToFind.toUtf8();
 
-            // find next
-            startPos = pos + fro.strToFind.length();
-            pos      = line.indexOf(fro.strToFind, startPos, insensitive);
+    // Use Highway-accelerated search
+    const std::vector<size_t> matches =
+        FindReplaceInternal::findAllOccurrences(fileData.constData(), fileData.size(), searchBytes.constData(), searchBytes.size(), fro.matchCase);
+
+    // Pre-calculate line start positions for efficient line number lookup
+    std::vector<size_t> lineStarts;
+    lineStarts.push_back(0);
+    for (size_t i = 0; i < static_cast<size_t>(fileData.size()); ++i)
+    {
+        if (fileData[i] == '\n')
+        {
+            lineStarts.push_back(i + 1);
         }
+    }
+
+    // Process each match and calculate line/column
+    for (size_t matchPos : matches)
+    {
+        // Binary search to find line number
+        auto lineIter = std::upper_bound(lineStarts.begin(), lineStarts.end(), matchPos);
+        int  lineNr   = static_cast<int>(std::distance(lineStarts.begin(), lineIter));
+
+        // Calculate column position (within the line)
+        size_t lineStart = lineStarts[lineNr - 1];
+        int    colPos    = static_cast<int>(matchPos - lineStart);
+
+        // Extract context: 10 chars before match + match + 10 chars after
+        size_t     contextStart = (matchPos >= 10) ? (matchPos - 10) : 0;
+        size_t     contextLen   = std::min(static_cast<size_t>(searchBytes.size() + 20), static_cast<size_t>(fileData.size() - contextStart));
+        QByteArray contextBytes = fileData.mid(contextStart, contextLen);
+        QString    context      = QString::fromUtf8(contextBytes);
+
+        // Notify result
+        notifier.addResult(filePath, context, lineNr, colPos, fro.strToFind.length());
     }
 
     return true;
@@ -217,7 +381,7 @@ bool FindReplacer::findAllInDirectory(const QString &dirPath, FindReplaceOption 
     QFileInfoList fileInfos = dir.entryInfoList();
     int           count     = static_cast<int>(fileInfos.size());
 
-#pragma omp parallel for
+#    pragma omp parallel for
     for (int i = 0; i < count; i++)
     {
         const auto &fileInfo = fileInfos.at(i);
@@ -374,77 +538,100 @@ bool FindReplacer::replaceAllRegexpInFile(const QString &filePath, FindReplaceOp
 
 bool FindReplacer::replaceAllStringInFile(const QString &filePath, FindReplaceOption &fro)
 {
-    // 使用QFile读取文件
-    // 在文件中查找fro.strToFind字符串，要匹配fro.matchCase和fro.matchWholeWord标志
-    // 然后将其替换为fro.strReplaceWith
-    // 最后写回文件
     QFile file(filePath);
-    if (!file.open(QIODevice::ReadWrite))
+    if (!file.open(QIODevice::ReadOnly))
     {
         return false;
     }
-    QFileInfo   fileInfo(file);
-    QTextStream in(&file);
 
-    QString tempFileName = QDir::tempPath() + "/." + fileInfo.fileName() + ".tmp";
-    QFile   tempFile(tempFileName);
-    if (!tempFile.open(QIODevice::WriteOnly))
-    {
-        file.close();
-        return false;
-    }
-
-    QTextStream out(&tempFile);
-
-    QString searchString  = fro.strToFind;
-    QString replaceString = fro.strReplaceWith;
-
-    const Qt::CaseSensitivity cs         = fro.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
-    const QString             characters = QStringLiteral("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
-    // do replace all
-    if (fro.matchWholeWord)
-    {
-        while (!in.atEnd())
-        {
-            QString line      = in.readLine();
-            int     fromIndex = 0;
-            for (int index = line.indexOf(searchString, fromIndex, cs); index >= 0; index = line.indexOf(searchString, fromIndex, cs))
-            {
-                // check line[index - 1] and line[index + searchString.length()] is not a word character
-                bool isNotWordChar = (index > 0 && !characters.contains(line[index - 1])) &&
-                                     (index + searchString.length() < line.length() && !characters.contains(line[index + searchString.length()]));
-
-                if (!isNotWordChar)
-                {
-                    // whole word match failed
-                    fromIndex = index + 1;
-                    continue;
-                }
-                // replace line[index:index + searchString.length()] with replaceString
-                line.replace(index, searchString.length(), replaceString);
-                out << line << "\n";
-                fromIndex = index + replaceString.length();
-            }
-        }
-    }
-    else
-    {
-        while (!in.atEnd())
-        {
-            QString line = in.readLine();
-            line.replace(searchString, replaceString, cs);
-            out << line << "\n";
-        }
-    }
-
-    file.resize(0);
+    // Read entire file into buffer
+    QByteArray fileData = file.readAll();
     file.close();
 
-    if (!tempFile.rename(filePath))
+    if (fileData.isEmpty())
+    {
+        return true;
+    }
+
+    // Convert search and replace strings to UTF-8
+    QByteArray searchBytes  = fro.strToFind.toUtf8();
+    QByteArray replaceBytes = fro.strReplaceWith.toUtf8();
+
+    // Use Highway-accelerated search to find all matches
+    std::vector<size_t> matches =
+        FindReplaceInternal::findAllOccurrences(fileData.constData(), fileData.size(), searchBytes.constData(), searchBytes.size(), fro.matchCase);
+
+    if (matches.empty())
+    {
+        return true; // No matches, file unchanged
+    }
+
+    // Handle whole word matching if required
+    if (fro.matchWholeWord)
+    {
+        std::vector<size_t> filteredMatches;
+        filteredMatches.reserve(matches.size());
+
+        // Work directly on byte buffer - word characters are all ASCII
+        auto isWordChar = [](char c) -> bool { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'; };
+
+        for (size_t matchPos : matches)
+        {
+            // Check byte before match
+            bool validBefore = (matchPos == 0) || !isWordChar(fileData[matchPos - 1]);
+
+            // Check byte after match
+            size_t afterPos   = matchPos + searchBytes.size();
+            bool   validAfter = (afterPos >= static_cast<size_t>(fileData.size())) || !isWordChar(fileData[afterPos]);
+
+            if (validBefore && validAfter)
+            {
+                filteredMatches.push_back(matchPos);
+            }
+        }
+        matches = std::move(filteredMatches);
+    }
+
+    if (matches.empty())
+    {
+        return true; // No valid matches after whole word filtering
+    }
+
+    // Build new content with replacements (reverse order to maintain positions)
+    QByteArray newData;
+    newData.reserve(fileData.size() + matches.size() * (replaceBytes.size() - searchBytes.size()));
+
+    size_t lastPos = 0;
+    for (size_t matchPos : matches)
+    {
+        // Copy data before match
+        newData.append(fileData.mid(lastPos, matchPos - lastPos));
+        // Append replacement
+        newData.append(replaceBytes);
+        // Skip the matched string
+        lastPos = matchPos + searchBytes.size();
+    }
+    // Copy remaining data
+    newData.append(fileData.mid(lastPos));
+
+    // Use QSaveFile for atomic, safe file replacement
+    QSaveFile saveFile(filePath);
+    if (!saveFile.open(QIODevice::WriteOnly))
     {
         return false;
     }
-    tempFile.close();
+
+    if (saveFile.write(newData) != newData.size())
+    {
+        saveFile.cancelWriting();
+        return false;
+    }
+
+    if (!saveFile.commit())
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -471,7 +658,7 @@ bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOpti
 
     QFileInfoList &&fileInfos = dir.entryInfoList();
     int             count     = static_cast<int>(fileInfos.size());
-#pragma omp parallel for
+#    pragma omp     parallel for
     for (int i = 0; i < count; i++)
     {
         const auto &fileInfo = fileInfos.at(i);
@@ -561,3 +748,5 @@ CodeEditor *FindReplacer::handlePages(CodeEditor                                
 
     return (inCurrentPage ? page : nullptr);
 }
+
+#endif // HWY_ONCE
