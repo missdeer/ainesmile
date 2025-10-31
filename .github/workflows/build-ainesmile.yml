@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           target: desktop
           version: ${{ matrix.qt_ver }}
@@ -47,7 +47,7 @@ jobs:
           modules: ${{ matrix.qt_modules }}
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
-          aqtversion: '==3.0.1'
+          aqtversion: '==3.3.*'
 
       - uses: actions/checkout@v2
         with:
