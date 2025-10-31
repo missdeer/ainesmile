@@ -161,13 +161,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - qt_arch: win64_msvc2019_64
-            qt_ver: 5.15.2
-            qt_modules: ""
-            msvc_arch: x64
-            output_dir: x86_64
-          - qt_arch: win64_msvc2019_64
-            qt_ver: 6.7.2
+          - qt_arch: win64_msvc2022_64
+            qt_ver: 6.10.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -176,7 +171,7 @@ jobs:
 
     steps:
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           target: desktop
           version: ${{ matrix.qt_ver }}
@@ -184,7 +179,7 @@ jobs:
           modules: ${{ matrix.qt_modules }}
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
-          aqtversion: '==3.0.1'
+          aqtversion: '==3.3.*'
 
       - uses: actions/checkout@v2
         with:
@@ -218,7 +213,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost[core] icu tbb
+          pkgs: boost[core] icu tbb highway
           triplet: x64-windows-release
           token: ${{ github.token }}
 
@@ -307,13 +302,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - qt_arch: win64_msvc2019_64
-            qt_ver: 5.15.2
-            qt_modules: ""
-            msvc_arch: x64
-            output_dir: x86_64
-          - qt_arch: win64_msvc2019_64
-            qt_ver: 6.7.2
+          - qt_arch: win64_msvc2022_64
+            qt_ver: 6.10.0
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -322,7 +312,7 @@ jobs:
 
     steps:
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           target: desktop
           version: ${{ matrix.qt_ver }}
@@ -330,7 +320,7 @@ jobs:
           modules: ${{ matrix.qt_modules }}
           cache: 'true'
           cache-key-prefix: 'install-qt-action-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}'
-          aqtversion: '==3.0.1'
+          aqtversion: '==3.3.*'
 
       - name: cache intel install
         id: cache-install
@@ -378,7 +368,7 @@ jobs:
         uses: johnwason/vcpkg-action@v5
         id: vcpkg
         with:
-          pkgs: boost[core] icu tbb
+          pkgs: boost[core] icu tbb highway
           triplet: x64-windows-release
           token: ${{ github.token }}
 
