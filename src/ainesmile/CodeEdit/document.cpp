@@ -210,65 +210,84 @@ bool ASDocument::loadFromFile(std::function<void(qint64, const char *)> load)
 
     auto &ptree              = Config::instance()->pt();
     bool  autoDetectEncoding = ptree.get<bool>("encoding.auto_detect", false);
-    if ((!m_forceEncoding && !autoDetectEncoding) || (m_forceEncoding && m_encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) == 0))
+
+    // Fast path: no encoding detection needed
+    if (!m_forceEncoding && !autoDetectEncoding)
     {
         m_encoding = QStringLiteral("UTF-8");
+        m_bom      = BOM::None;
         return loadFile(file, load);
     }
 
+    // User specified encoding
     if (m_forceEncoding)
     {
+        m_bom = BOM::None;
+        if (m_encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) == 0)
+        {
+            m_encoding = QStringLiteral("UTF-8");
+            return loadFile(file, load);
+        }
         return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load);
     }
 
-    // detect encoding
-    // check BOM first, if BOM is not found, try to guess encoding
-    m_bom                                 = BOM::None;
-    const qint64                headerLen = 4;
-    std::array<char, headerLen> header {};
-    qint64                      cbRead          = file.read(header.data(), headerLen);
-    bool                        charsetDetected = false;
-    auto [bom, length]                          = EncodingUtils::checkBOM(QByteArray::fromRawData(header.data(), cbRead));
+    // Auto-detect encoding
+    qint64 fileSize = file.size();
 
-    file.seek(length);
-    if (bom == BOM::UTF8)
+    // Handle empty or invalid file size
+    if (fileSize <= 0)
     {
-        m_encoding = QByteArrayLiteral("UTF-8");
-        m_bom      = bom;
-        return loadFile(file, load, length);
+        m_encoding = QStringLiteral("UTF-8");
+        m_bom      = BOM::None;
+        return loadFile(file, load);
     }
+
+    // Map file once for both BOM check and ICU detection
+    qint64 expectedSize = std::min(fileSize, fileMappingBlockSize);
+    auto  *mappedData   = file.map(0, expectedSize);
+    if (!mappedData)
+    {
+        m_errorMessage = QObject::tr("creating file mapping failed");
+        return false;
+    }
+
+    // Check BOM first
+    auto [bom, bomLength] = EncodingUtils::checkBOM(QByteArray::fromRawData(reinterpret_cast<const char *>(mappedData), expectedSize));
+
     if (bom != BOM::None)
     {
-        auto encoding = EncodingUtils::encodingNameForBOM(bom);
-        m_encoding    = encoding;
-        m_bom         = bom;
-        return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load, length);
-    }
+        m_bom              = bom;
+        QByteArray encName = EncodingUtils::encodingNameForBOM(bom);
 
-    if (autoDetectEncoding)
-    {
-        m_bom = BOM::None;
-        file.seek(0);
-        qint64 fileSize     = file.size();
-        qint64 expectedSize = std::min(fileSize, fileMappingBlockSize);
-        auto  *mappedData   = file.map(0, expectedSize);
-        if (mappedData)
+        // If BOM is recognized but encoding is not supported (UTF7, UTF1, etc.),
+        // fall through to ICU detection
+        if (!encName.isEmpty())
         {
-            QString encoding = EncodingUtils::fileEncodingDetect((const char *)mappedData, static_cast<int>(expectedSize));
-            if (!encoding.isEmpty())
-            {
-                if (encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) != 0)
-                {
-                    m_encoding = encoding.toUtf8();
-                    return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load, length);
-                }
-            }
+            m_encoding = encName;
             file.unmap(mappedData);
+
+            if (bom == BOM::UTF8)
+            {
+                return loadFile(file, load, bomLength);
+            }
+            return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load, bomLength);
         }
+        // Unsupported BOM - reset and try ICU detection
+        m_bom = BOM::None;
     }
 
-    m_encoding = QByteArrayLiteral("UTF-8");
-    return loadFile(file, load, length);
+    // No BOM found (or unsupported BOM), use ICU to detect encoding
+    QString encoding = EncodingUtils::fileEncodingDetect(reinterpret_cast<const char *>(mappedData), static_cast<int>(expectedSize));
+    file.unmap(mappedData);
+
+    if (!encoding.isEmpty() && encoding.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) != 0)
+    {
+        m_encoding = encoding;
+        return loadEncodedFile(file, m_encoding, QStringLiteral("UTF-8"), load);
+    }
+
+    m_encoding = QStringLiteral("UTF-8");
+    return loadFile(file, load);
 }
 
 void ASDocument::setEncoding(const QString &encoding)

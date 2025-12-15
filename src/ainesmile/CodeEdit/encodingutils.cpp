@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 
+#include <array>
+
 #include <QTextCodec>
 
 #include "encodingutils.h"
@@ -8,24 +10,26 @@ namespace EncodingUtils
 {
     std::pair<BOM, std::uint8_t> checkBOM(const QByteArray &data)
     {
-        static std::map<QByteArray, BOM> bomMap = {
-            {QByteArrayLiteral("\xEF\xBB\xBF"), BOM::UTF8},
-            {QByteArrayLiteral("\xFF\xFE"), BOM::UTF16LE},
-            {QByteArrayLiteral("\xFE\xFF"), BOM::UTF16BE},
-            {QByteArrayLiteral("\xFF\xFE\x00\x00"), BOM::UTF32LE},
-            {QByteArrayLiteral("\x00\x00\xFE\xFF"), BOM::UTF32BE},
-            {QByteArrayLiteral("\x2B\x2F\x76"), BOM::UTF7},
-            {QByteArrayLiteral("\xF7\x64\x4C"), BOM::UTF1},
-            {QByteArrayLiteral("\xDD\x73\x66\x73"), BOM::UTFEBCDIC},
-            {QByteArrayLiteral("\x0E\xFE\xFF"), BOM::SCSU},
-            {QByteArrayLiteral("\xFB\xEE\x28"), BOM::BOCU1},
-            {QByteArrayLiteral("\x84\x31\x95\x33"), BOM::GB18030},
+        // Ordered by length descending to avoid misdetection
+        // (e.g., UTF-32LE starts with same bytes as UTF-16LE)
+        static const std::array bomList = {
+            std::pair {QByteArrayLiteral("\xFF\xFE\x00\x00"), BOM::UTF32LE},
+            std::pair {QByteArrayLiteral("\x00\x00\xFE\xFF"), BOM::UTF32BE},
+            std::pair {QByteArrayLiteral("\x84\x31\x95\x33"), BOM::GB18030},
+            std::pair {QByteArrayLiteral("\xDD\x73\x66\x73"), BOM::UTFEBCDIC},
+            std::pair {QByteArrayLiteral("\xEF\xBB\xBF"), BOM::UTF8},
+            std::pair {QByteArrayLiteral("\x2B\x2F\x76"), BOM::UTF7},
+            std::pair {QByteArrayLiteral("\xF7\x64\x4C"), BOM::UTF1},
+            std::pair {QByteArrayLiteral("\x0E\xFE\xFF"), BOM::SCSU},
+            std::pair {QByteArrayLiteral("\xFB\xEE\x28"), BOM::BOCU1},
+            std::pair {QByteArrayLiteral("\xFF\xFE"), BOM::UTF16LE},
+            std::pair {QByteArrayLiteral("\xFE\xFF"), BOM::UTF16BE},
         };
-        for (auto &[bytes, bom] : bomMap)
+        for (const auto &[bytes, bom] : bomList)
         {
-            if (data.length() >= bytes.length() && bytes == data.mid(0, bytes.length()))
+            if (data.length() >= bytes.length() && data.startsWith(bytes))
             {
-                return {bom, bytes.length()};
+                return {bom, static_cast<std::uint8_t>(bytes.length())};
             }
         }
         return {BOM::None, 0};
@@ -104,13 +108,15 @@ namespace EncodingUtils
         std::vector<encodingPair> encodings;
         for (int32_t i = 0; i < matchesFound; i++)
         {
-            auto confidence = ucsdet_getConfidence(matches[i], &status);
-            if (U_FAILURE(status) || confidence < 50)
+            UErrorCode matchStatus = U_ZERO_ERROR;
+            auto       confidence  = ucsdet_getConfidence(matches[i], &matchStatus);
+            if (U_FAILURE(matchStatus) || confidence < 50)
             {
                 continue;
             }
-            const char *name = ucsdet_getName(matches[i], &status);
-            if (U_FAILURE(status))
+            matchStatus      = U_ZERO_ERROR;
+            const char *name = ucsdet_getName(matches[i], &matchStatus);
+            if (U_FAILURE(matchStatus))
             {
                 continue;
             }
@@ -121,8 +127,12 @@ namespace EncodingUtils
         {
             return encodings.front().first;
         }
-        QTextCodec *codec    = QTextCodec::codecForLocale();
-        auto        encoding = QString::fromLatin1(codec->name());
+        QTextCodec *codec = QTextCodec::codecForLocale();
+        if (!codec)
+        {
+            return QStringLiteral("UTF-8");
+        }
+        auto encoding = QString::fromLatin1(codec->name());
         if (encoding.isEmpty() || encoding.toLower() == QStringLiteral("system"))
         {
 #if defined(Q_OS_WIN)
