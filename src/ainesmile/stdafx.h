@@ -48,6 +48,7 @@
 #    include <QMimeData>
 #    include <QNetworkProxy>
 #    include <QRegularExpression>
+#    include <QSaveFile>
 #    include <QSettings>
 #    include <QStandardPaths>
 #    include <QStringList>
