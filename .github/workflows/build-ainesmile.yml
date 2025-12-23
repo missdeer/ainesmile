@@ -714,7 +714,7 @@ jobs:
           cd ../../../..
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
+          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
           cmake --build . --parallel --verbose
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /opt/homebrew/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
@@ -723,7 +723,7 @@ jobs:
           cd ..
           mkdir build-avx2
           cd build-avx2
-          cmake -G Ninja -DAVX2=ON -DCMAKE_OSX_ARCHITECTURES=x86_64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
+          cmake -G Ninja -DAVX2=ON -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
           cmake --build . --parallel --verbose
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /opt/homebrew/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
