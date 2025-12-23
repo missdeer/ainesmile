@@ -12,7 +12,6 @@ IF (Qt6_FOUND)
 ENDIF(Qt6_FOUND)
 
 find_package(ICU 70.0 COMPONENTS uc i18n REQUIRED)
-find_package(OpenMP)
 find_package(TBB REQUIRED)
 find_package(Boost 1.79.0 REQUIRED)
 find_package(hwy CONFIG REQUIRED)
@@ -145,7 +144,6 @@ target_link_libraries(${PROJECT_NAME}  PRIVATE
         scintilla
         lexilla
         ICU::uc ICU::i18n
-        OpenMP::OpenMP_CXX
         TBB::tbb
         hwy::hwy
         Qt${QT_VERSION_MAJOR}::Network

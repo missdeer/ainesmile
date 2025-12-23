@@ -381,12 +381,13 @@ bool FindReplacer::findAllInDirectory(const QString &dirPath, FindReplaceOption 
     QFileInfoList fileInfos = dir.entryInfoList();
     int           count     = static_cast<int>(fileInfos.size());
 
-#    pragma omp parallel for
-    for (int i = 0; i < count; i++)
-    {
-        const auto &fileInfo = fileInfos.at(i);
-        findAllInFile(fileInfo.absoluteFilePath(), fro);
-    }
+    tbb::parallel_for(tbb::blocked_range<int>(0, count), [&](const tbb::blocked_range<int> &range) {
+        for (int i = range.begin(); i < range.end(); i++)
+        {
+            const auto &fileInfo = fileInfos.at(i);
+            findAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+    });
 
     if (recursive)
     {
@@ -658,12 +659,13 @@ bool FindReplacer::replaceAllInDirectory(const QString &dirPath, FindReplaceOpti
 
     QFileInfoList &&fileInfos = dir.entryInfoList();
     int             count     = static_cast<int>(fileInfos.size());
-#    pragma omp     parallel for
-    for (int i = 0; i < count; i++)
-    {
-        const auto &fileInfo = fileInfos.at(i);
-        replaceAllInFile(fileInfo.absoluteFilePath(), fro);
-    }
+    tbb::parallel_for(tbb::blocked_range<int>(0, count), [&](const tbb::blocked_range<int> &range) {
+        for (int i = range.begin(); i < range.end(); i++)
+        {
+            const auto &fileInfo = fileInfos.at(i);
+            replaceAllInFile(fileInfo.absoluteFilePath(), fro);
+        }
+    });
 
     if (recursive)
     {
