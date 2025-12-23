@@ -830,14 +830,14 @@ jobs:
 
       - name: build macos
         run: |
-          brew install boost ninja icu4c llvm gsed tbb highway
+          brew install boost ninja icu4c gsed tbb highway
           ./pre-build.sh mac
           cd 3rdparty/scintilla/qt/ScintillaEdit
           python WidgetGen.py
           cd ../../../..
           mkdir build
           cd build
-          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
+          cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release ..
           cmake --build . --parallel --verbose
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
           find /opt/homebrew/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
