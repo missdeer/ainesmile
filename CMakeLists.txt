@@ -64,7 +64,4 @@ endif()
 
 add_subdirectory(3rdparty)
 add_subdirectory(src)
-
-IF(BUILD_TOOLS OR NOT APPLE)
-    add_subdirectory(tools)
-ENDIF()
+add_subdirectory(tools)
