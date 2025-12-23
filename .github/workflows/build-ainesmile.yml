@@ -840,7 +840,7 @@ jobs:
           cmake -G Ninja -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release ..
           cmake --build . --parallel --verbose
           mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
-          find /opt/homebrew/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
+          find /opt/homebrew/opt/icu4c/lib -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
           find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
           ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
           cd ..
