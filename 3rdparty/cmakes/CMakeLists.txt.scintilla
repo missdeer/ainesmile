@@ -22,7 +22,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON) # if you have any .ui files
 set(CMAKE_AUTORCC ON) # if you have any .qrc files
 
-find_package(OpenMP)
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_BINARY_DIR})
 
@@ -48,7 +47,6 @@ ELSE()
 ENDIF()
 
 target_link_libraries(scintilla PRIVATE 
-        OpenMP::OpenMP_CXX
         Qt::Widgets
         Qt::Network
         )
