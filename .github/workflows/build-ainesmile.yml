@@ -22,6 +22,7 @@ env:
   VS_VER: vs2022
   clang_link: https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.2/LLVM-20.1.2-win64.exe
   ninja_link: https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip
+  Qt6_Version: 6.10.1
 
 jobs:
   win64-msvc:
@@ -30,7 +31,7 @@ jobs:
       matrix:
         include:
           - qt_arch: win64_msvc2022_64
-            qt_ver: 6.10.0
+            qt_ver: ${{ env.Qt6_Version }}
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -93,7 +94,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake -DAVX2=OFF -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\*.exe bin\
@@ -115,14 +116,28 @@ jobs:
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
-
+          mkdir build-avx512
+          cd build-avx512
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
+          7z x ninja.zip
+          cmake -DAVX512=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake --build . --parallel --verbose
+          mkdir bin
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
+          windeployqt bin\ainesmile.exe
+          
       - name: Copy directory
         shell: pwsh
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\resource -Destination .\build-avx512\bin -Recurse -Force
           Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\translations -Destination .\build-avx512\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v4
@@ -135,6 +150,12 @@ jobs:
         with:
           path: build-avx2\bin
           name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
+
+      - name: upload avx512 executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build-avx512\bin
+          name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
 
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -156,13 +177,23 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
 
+      - name: uploadRelease avx512
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+          asset_name: ainesmile-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
   win64-clang-msvc:
     runs-on: windows-latest
     strategy:
       matrix:
         include:
           - qt_arch: win64_msvc2022_64
-            qt_ver: 6.10.0
+            qt_ver: ${{ env.Qt6_Version }}
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -234,7 +265,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake -DAVX2=OFF -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\*.exe bin\
@@ -256,14 +287,29 @@ jobs:
           copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
+          mkdir build-avx512
+          cd build-avx512
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
+          7z x ninja.zip
+          cmake -DAVX512=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake --build . --parallel --verbose
+          mkdir bin
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
+          windeployqt bin\ainesmile.exe
+          cd ..
 
       - name: Copy directory
         shell: pwsh
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\resource -Destination .\build-avx512\bin -Recurse -Force
           Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\translations -Destination .\build-avx512\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v4
@@ -297,13 +343,29 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
 
+      - name: upload avx512 executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build-avx512\bin
+          name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+
+      - name: uploadRelease avx512
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+          asset_name: ainesmile-clang-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
   win64-intel-msvc:
     runs-on: windows-latest
     strategy:
       matrix:
         include:
           - qt_arch: win64_msvc2022_64
-            qt_ver: 6.10.0
+            qt_ver: ${{ env.Qt6_Version }}
             qt_modules: "qt5compat qtimageformats"
             msvc_arch: x64
             output_dir: x86_64
@@ -392,7 +454,7 @@ jobs:
           cd build
           curl -o ninja.zip -sSL ${{ env.ninja_link }}
           7z x ninja.zip
-          cmake -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake -DAVX2=OFF -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
           cmake --build . --parallel --verbose
           mkdir bin
           copy src\ainesmile\*.exe bin\
@@ -418,14 +480,31 @@ jobs:
           copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libiomp5md.dll" bin\
           windeployqt bin\ainesmile.exe
           cd ..
+          mkdir build-avx512
+          cd build-avx512
+          curl -o ninja.zip -sSL ${{ env.ninja_link }}
+          7z x ninja.zip
+          cmake -DAVX512=ON -DCMAKE_MAKE_PROGRAM=ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx -G Ninja "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=OFF ..
+          cmake --build . --parallel --verbose
+          mkdir bin
+          copy src\ainesmile\*.exe bin\
+          copy src\ainesmile\*.dll bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icudt*.dll" bin\
+          copy "${{ github.workspace}}\vcpkg\packages\icu_x64-windows\tools\icu\bin\icuuc*.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libmmd.dll" bin\
+          copy "C:\Program Files (x86)\Intel\oneAPI\compiler\${{ env.COMPILER_VERSION }}\windows\redist\intel64_win\compiler\libiomp5md.dll" bin\
+          windeployqt bin\ainesmile.exe
+          cd ..
 
       - name: Copy directory
         shell: pwsh
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\resource -Destination .\build-avx512\bin -Recurse -Force
           Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\translations -Destination .\build-avx512\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v4
@@ -457,6 +536,22 @@ jobs:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
           asset_name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx2.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: upload avx512 executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build-avx512\bin
+          name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+
+      - name: uploadRelease avx512
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
+          asset_name: ainesmile-intel-${{ matrix.qt_arch }}-${{ matrix.qt_ver }}-avx512.zip
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -607,12 +702,17 @@ jobs:
           type cmake.bat
           mkdir build
           cd build
-          call ..\cmake.bat -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          call ..\cmake.bat -DAVX2=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
           call ..\cmake.bat --build . --parallel --verbose -- -k 99
           cd ..
           mkdir build-avx2
           cd build-avx2
           call ..\cmake.bat -DAVX2=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
+          call ..\cmake.bat --build . --parallel --verbose -- -k 99
+          cd ..
+          mkdir build-avx512
+          cd build-avx512
+          call ..\cmake.bat -DAVX512=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.c }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} "-DQT_DIR=${{ env.msysroot }}\msys64\${{ matrix.qt_dir }}" "-DCMAKE_PREFIX_PATH=${{ env.msysroot }}\msys64\${{ matrix.cmake_prefix_path }}" -G Ninja ..
           call ..\cmake.bat --build . --parallel --verbose -- -k 99
           cd ..
 
@@ -629,14 +729,21 @@ jobs:
           copy src\ainesmile\ainesmile.exe .\bin\
           ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
           cd ..
+          cd build-avx512
+          mkdir bin
+          copy src\ainesmile\ainesmile.exe .\bin\
+          ${{ env.msysroot }}\msys64\${{ matrix.mingw_arch }}\bin\mingwdeployqt.exe bin\ainesmile.exe
+          cd ..
 
       - name: Copy directory
         shell: pwsh
         run: |
           Copy-Item -Path .\build\src\ainesmile\resource -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\resource -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\resource -Destination .\build-avx512\bin -Recurse -Force
           Copy-Item -Path .\build\src\ainesmile\translations -Destination .\build\bin -Recurse -Force
           Copy-Item -Path .\build-avx2\src\ainesmile\translations -Destination .\build-avx2\bin -Recurse -Force
+          Copy-Item -Path .\build-avx512\src\ainesmile\translations -Destination .\build-avx512\bin -Recurse -Force
 
       - name: upload executable artifact
         uses: actions/upload-artifact@v4
@@ -669,6 +776,22 @@ jobs:
           asset_name: ainesmile-${{ matrix.qt_arch }}-avx2.zip
           tag: ${{ github.ref }}
           overwrite: true
+          
+      - name: upload avx512 executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build-avx512\bin
+          name: ainesmile-${{ matrix.qt_arch }}-avx512.zip
+
+      - name: uploadRelease avx512
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: ainesmile-${{ matrix.qt_arch }}-avx512.zip
+          asset_name: ainesmile-${{ matrix.qt_arch }}-avx512.zip
+          tag: ${{ github.ref }}
+          overwrite: true
 
   macOS-x86_64:
     runs-on: macos-latest
@@ -679,7 +802,7 @@ jobs:
             qt_ver: 5.15.2
             qt_modules: ""
           - qt_arch: clang_64
-            qt_ver: 6.7.2
+            qt_ver: ${{ env.Qt6_Version }}
             qt_modules: "qt5compat qtimageformats"
     env:
       targetName: ainesmile
@@ -689,7 +812,7 @@ jobs:
         with:
           version: ${{ matrix.qt_ver }}
           modules: ${{ matrix.qt_modules }}
-          aqtversion: '==3.0.1'
+          aqtversion: '==3.3.*'
 
       - uses: actions/checkout@v2
         with:
@@ -721,22 +844,10 @@ jobs:
           find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
           ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
           cd ..
-          mkdir build-avx2
-          cd build-avx2
-          cmake -G Ninja -DAVX2=ON -DCMAKE_OSX_ARCHITECTURES=arm64 "-DCMAKE_PREFIX_PATH=/opt/homebrew/opt/icu4c" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ ..
-          cmake --build . --parallel --verbose
-          mkdir src/ainesmile/ainesmile.app/Contents/Frameworks
-          find /opt/homebrew/Cellar/icu4c -name 'libicudata*.dylib' -type f -print -exec cp {} src/ainesmile/ainesmile.app/Contents/Frameworks/ \;
-          find src/ainesmile/ainesmile.app/Contents/Frameworks -name "libicudata.*.*.dylib" -type f -print -exec sh -c 'new_file=$(echo "$0" | gsed -E "s/(libicudata\.[0-9]+)\.[0-9]+(\.dylib)/\1\2/"); mv -f "$0" "$new_file"' {} \;
-          ls -l src/ainesmile/ainesmile.app/Contents/Frameworks
-          cd ..
 
       - name: package
         run: |
           cd build/src/ainesmile
-          macdeployqt ainesmile.app -verbose=1 -dmg
-          find . -name '*.dmg' -type f -print
-          cd ../../../build-avx2/src/ainesmile
           macdeployqt ainesmile.app -verbose=1 -dmg
           find . -name '*.dmg' -type f -print
 
@@ -753,21 +864,5 @@ jobs:
           repo_token: ${{ secrets.GH_TOKEN }}
           file: build/src/ainesmile/ainesmile.dmg
           asset_name: ainesmile-macOS-${{ matrix.qt_ver }}-x86_64.dmg
-          tag: ${{ github.ref }}
-          overwrite: true
-
-      - name: upload executable artifact avx2
-        uses: actions/upload-artifact@v4
-        with:
-          path: build-avx2/src/ainesmile/ainesmile.dmg
-          name: ainesmile-macOS-${{ matrix.qt_ver }}-x86_64-avx2.dmg
-
-      - name: uploadRelease avx2
-        if: startsWith(github.event.ref, 'refs/tags/')
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GH_TOKEN }}
-          file: build-avx2/src/ainesmile/ainesmile.dmg
-          asset_name: ainesmile-macOS-${{ matrix.qt_ver }}-x86_64-avx2.dmg
           tag: ${{ github.ref }}
           overwrite: true
