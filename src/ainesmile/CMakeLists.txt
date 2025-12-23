@@ -162,10 +162,6 @@ ENDIF(Qt6_FOUND)
 set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON
                                                  MACOSX_BUNDLE ON)
 
-if(Boost_FOUND)
-  target_link_directories(${PROJECT_NAME} PUBLIC Boost::headers)
-endif()
-
 if(WIN32)
   target_link_libraries(${PROJECT_NAME} PRIVATE Shell32)
 endif()
