@@ -2,11 +2,6 @@
 project(AinesmileEditor VERSION 1.0.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-if(NOT DEFINED CMAKE_OSX_ARCHITECTURES)
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
-endif()
-
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     set(BUILD_TYPE Debug)
     add_compile_definitions(LOGS_ENABLED)
