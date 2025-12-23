@@ -205,11 +205,11 @@ bool FindReplacer::findAllStringInFile(const QString &filePath, FindReplaceOptio
     // Pre-calculate line start positions for efficient line number lookup
     std::vector<size_t> lineStarts;
     lineStarts.push_back(0);
-    for (size_t i = 0; i < static_cast<size_t>(fileData.size()); ++i)
+    for (int i = 0; i < fileData.size(); ++i)
     {
         if (fileData[i] == '\n')
         {
-            lineStarts.push_back(i + 1);
+            lineStarts.push_back(static_cast<size_t>(i) + 1);
         }
     }
 
@@ -579,11 +579,11 @@ bool FindReplacer::replaceAllStringInFile(const QString &filePath, FindReplaceOp
         for (size_t matchPos : matches)
         {
             // Check byte before match
-            bool validBefore = (matchPos == 0) || !isWordChar(fileData[matchPos - 1]);
+            bool validBefore = (matchPos == 0) || !isWordChar(fileData[static_cast<int>(matchPos - 1)]);
 
             // Check byte after match
             size_t afterPos   = matchPos + searchBytes.size();
-            bool   validAfter = (afterPos >= static_cast<size_t>(fileData.size())) || !isWordChar(fileData[afterPos]);
+            bool   validAfter = (afterPos >= static_cast<size_t>(fileData.size())) || !isWordChar(fileData[static_cast<int>(afterPos)]);
 
             if (validBefore && validAfter)
             {
